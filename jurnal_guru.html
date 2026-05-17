@@ -226,14 +226,14 @@
 
         /* UKURAN KOLOM DESKTOP */
         .col-no { width: 3%; text-align: center; }
-        .col-hari { width: 11%; white-space: nowrap; }
+        .col-hari { width: 14%; white-space: nowrap; }
         .col-jam { width: 8%; text-align: center; }
         .col-kelas { width: 6%; text-align: center; }
         .col-pert { width: 6%; text-align: center; }
-        .col-tp { width: 26%; }
+        .col-tp { width: 20%; }
         .col-materi { width: 20%; }
         .col-absensi { width: 10%; }
-        .col-refleksi { width: 10%; }
+        .col-refleksi { width: 16%; }
 
         .print-text-wrap {
             display: none;
@@ -398,7 +398,7 @@
 <body>
 
     <div class="menu-kontrol">
-        <span style="font-weight: bold; color: #f8fafc;">SMPN 110 JAKARTA</span>
+        <h1><span style="font-weight: bold; color: #f8fafc;">SMPN 110 JAKARTA</span></h1>
         <div class="btn-group">
             <button id="btn_simpan_sheet" class="btn btn-save" onclick="simpanKeSpreadsheet()">💾 Simpan ke Google Sheets</button>
             <button class="btn btn-print" onclick="jalankanCetak()">🖨️ Cetak / Simpan PDF</button>
@@ -407,16 +407,16 @@
 
     <div class="container">
         <h1>JURNAL AGENDA MENGAJAR GURU</h1>
-        <h3 id="auto_tahun_ajaran">Tahun Ajaran: -</h3>
+        <h2 id="auto_tahun_ajaran">Tahun Ajaran: -</h2>
 
         <div class="divider"></div>
-
+<br>
         <div class="profil-guru">
             <div class="profil-grid">
                 <div class="form-group">
                     <label>Nama Guru</label>
                     <select id="nama_guru" onchange="isiNipOtomatis()">
-                        <option value="">-- Pilih Nama Guru --</option>
+                        <option value="">-- Pilih Guru --</option>
                         <option value="Sunardi, M.Pd.">Sunardi, M.Pd.</option>
                         <option value="Popy, S.Ag.">Popy, S.Ag.</option>
                         <option value="Purwanto, S.Pd.">Purwanto, S.Pd.</option>
@@ -463,7 +463,7 @@
                 </div>
             </div>
         </div>
-
+<br>
         <h2>Catatan Harian Mengajar</h2>
         <button class="btn btn-add" onclick="tambahBarisMengajarBlank()">➕ Tambah Baris Kelas Kosong</button>
         
@@ -486,8 +486,8 @@
                 </tbody>
             </table>
         </div>
-
-        <h2>Catatan Refleksi Bulanan Guru</h2>
+<br>
+        <h2>Catatan Refleksi Bulanan Guru</h2><br><br>
         <div class="refleksi-container">
             <label><strong>1. Apa yang berjalan efektif bulan ini?</strong></label>
             <textarea id="refleksi_1" placeholder="Tulis analisis keberhasilan metode mengajar Anda di sini..."></textarea>
@@ -547,7 +547,7 @@
         };
 
         const opsiDropdownTP = `
-            <option value="">-- Pilih Tujuan Pembelajaran --</option>
+            <option value="">-</option>
             <option value="Menerapkan berpikir komputasional dalam menyelesaikan persoalan yang mengandung himpunan data berstruktur sederhana dengan volume kecil; memahami konsep lembar kerja pengolah data.">Pert. 1: Konsep Data & Perkakas Pengolah Lembar Kerja (Bab 6)</option>
             <option value="Memahami pemanfaatan perangkat teknologi pengolah lembar kerja; menggunakan fungsi dasar statistik untuk mengolah data.">Pert. 2: Formula dan Fungsi Dasar SUM, AVERAGE, MAX, MIN (Bab 6)</option>
             <option value="Memahami pemanfaatan perangkat teknologi pengolah lembar kerja; menggunakan logika komputasional untuk penyaringan data.">Pert. 3: Fungsi Logika IF dan Fitur Sort - Filter Data (Bab 6)</option>
@@ -565,7 +565,7 @@
         `;
 
         const opsiDropdownMateri = `
-            <option value="">-- Pilih Materi Pokok --</option>
+            <option value="">-</option>
             <option value="Mengenal Data, Analisis Data, dan Perkakas Pengolah Lembar Kerja (Cell, Row, Column, Worksheet)">Pert. 1: Mengenal Data & Perkakas Pengolah Lembar Kerja</option>
             <option value="Formula dan Fungsi Dasar (SUM, AVERAGE, MAX, MIN)">Pert. 2: Formula dan Fungsi Dasar (SUM, AVERAGE, MAX, MIN)</option>
             <option value="Fungsi Logika (IF) dan Fitur Otomatisasi Data (Sort dan Filter)">Pert. 3: Fungsi Logika (IF) dan Fitur Sort - Filter</option>
@@ -583,14 +583,14 @@
         `;
 
         const opsiDropdownKelas = `
-            <option value="">-- Kelas --</option>
+            <option value="">-</option>
             <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
             <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
             <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
         `;
 
         const opsiDropdownPertemuan = `
-            <option value="">-- Pert --</option>
+            <option value="">-</option>
             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
             <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
         `;
@@ -787,7 +787,7 @@
 
             const form = document.createElement("form");
             form.method = "POST"; 
-            form.action = "https://script.google.com/macros/s/AKfycbxELqDWY0V3GKY8rQcWa1wXZKCeVRRd8vnn9Fq7GcOmHGnnF8lIGVeaxZjqWdpKPHLr/exec"; 
+            form.action = "https://script.google.com/macros/s/AKfycbzg7UOZ7TAehOut5iwwXSUG86-dyHe9J67xmUQnRLJdlAmV4Ok5TDD3dzA6TPypOJY-/exec"; 
             form.target = idUnik;
 
             const hiddenInput = document.createElement("input");
