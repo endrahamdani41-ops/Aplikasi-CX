@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presensi Guru</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #0f172a; color: #e2e8f0; font-family: sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .check-item input:checked + span { background-color: #8b5cf6; border-color: #8b5cf6; color: white; }
+        input, select, textarea { font-size: 16px !important; }
+    </style>
+</head>
+<body class="p-3 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <header class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-xl font-bold text-indigo-400">PRESENSI GURU</h1>
+                <p class="text-slate-500 text-xs">Sistem Database Google Sheets</p>
+            </div>
+            <button onclick="exportExcel()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-file-excel"></i> Laporan Excel
+            </button>
+        </header>
+
+        <div class="grid lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4">
+                <div class="glass p-5 rounded-2xl">
+                    <h3 class="text-white font-bold mb-4 text-sm uppercase tracking-widest flex items-center gap-2">
+                        <span class="w-1 h-4 bg-indigo-500 rounded-full"></span> Input Presensi
+                    </h3>
+                    
+                    <form id="formPresensi" class="space-y-4">
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Tanggal</label>
+                            <input type="date" id="tanggal_input" name="tanggal_input" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Nama Guru</label>
+                            <select name="teacher_name" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
+                                <option value="">-- Pilih Guru --</option>
+                                <option>Sunardi, M.Pd.</option><option>Popy, S.Ag.</option><option>Purwanto, S.Pd.</option>
+                                <option>Sri Murwani, M.Pd.</option><option>Endang Retna Ningsih, M.Pd.</option><option>Badriah, M.Pd.</option>
+                                <option>Lelalahi, S.Pd.</option><option>Dra. Lilin Suryani, M.M.</option><option>Endra Triyanto Hamdani, S.Kom.</option>
+                                <option>Asril Yansah, S.Pd.</option><option>Sukiswati, S.Pd.</option><option>Ing.Muh. Nurus Syiroj, S.Pd.</option>
+                                <option>Sri Purnamawati, S.Pd.</option><option>Suningsih, S.Pd.</option><option>Bahrul Ulum, S.Pd.</option>
+                                <option>Siti Maimona, S.Pd.I, M.M.</option><option>Sapari, S.Pd.</option><option>Hani Realita Alvi, S.Pd.</option>
+                                <option>Amrullah, S.Pd.I, S.Pd.</option><option>Eny Setyowati, S.Pd.</option><option>Hasbi Nurhidayat, S.Sos.I</option>
+                                <option>Nurina Permatasari, S.Pd.</option><option>Heru Damara, S.Pd.</option><option>Endah Sulstyorini, M.Pd.</option>
+                                <option>Riswadi, S.Pd.</option><option>Sidiq Prakoso, S.Pd.</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Status</label>
+                                <select name="status" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white">
+                                    <option>Sakit</option><option>Izin</option><option>Alpha</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Kelas</label>
+                                <select name="class_name" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
+                                    <option value="">Pilih</option>
+                                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>7E</option><option>7F</option>
+                                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option><option>8E</option><option>8F</option>
+                                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Mata Pelajaran</label>
+                            <select name="subject" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
+                                <option value="">-- Mata Pelajaran --</option>
+                                <option>PAI</option><option>Pendidikan Pancasila</option><option>Bahasa Indonesia</option>
+                                <option>Matematika</option><option>IPA</option><option>IPS</option>
+                                <option>Bahasa Inggris</option><option>PJOK</option><option>Informatika</option>
+                                <option>Seni Budaya</option><option>BK</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Jam Ke</label>
+                            <div class="grid grid-cols-4 gap-2 mt-1">
+                                <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="1" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">1</span></label>
+                                <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="2" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">2</span></label>
+                                <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="3" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">3</span></label>
+                                <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="4" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">4</span></label>
+                                <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="5" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">5</span></label>
+                                <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="6" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">6</span></label>
+                                <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="7" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">7</span></label>
+                                <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="8" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">8</span></label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Keterangan / Alasan</label>
+                            <textarea name="reason" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white text-sm" placeholder="Alasan ketidakhadiran..."></textarea>
+                        </div>
+                        <button type="submit" id="btnSimpan" class="w-full bg-indigo-600 hover:bg-indigo-500 p-4 rounded-xl font-bold uppercase tracking-widest active:scale-95 transition-all shadow-lg flex justify-center items-center gap-2">
+                            <span>Simpan ke Google Sheet</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8">
+                <div class="relative mb-4">
+                    <input type="text" id="search" placeholder="Cari histori pengisian hari ini..." class="w-full p-4 pl-12 rounded-2xl glass outline-none text-sm border-none shadow-xl">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                </div>
+                
+                <div class="glass rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse" id="tabel-tampil">
+                            <thead>
+                                <tr class="bg-slate-800/80 text-slate-400 uppercase text-[10px] border-b border-slate-700">
+                                    <th class="p-3 text-center w-12">No.</th>
+                                    <th class="p-3">Nama Guru</th>
+                                    <th class="p-3 hidden md:table-cell">Mata Pelajaran</th>
+                                    <th class="p-3 text-center">Kls</th>
+                                    <th class="p-3 text-center">Jam</th>
+                                    <th class="p-3 hidden md:table-cell">Alasan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table id="tabel-ekspor" style="display:none">
+        <thead>
+            <tr><th>No.</th><th>Tanggal</th><th>Nama Guru</th><th>Status</th><th>Mata Pelajaran</th><th>Kelas</th><th>Jam Ke</th><th>Alasan</th></tr>
+        </thead>
+        <tbody id="tabelEksporBody"></tbody>
+    </table>
+
+    <script>
+        // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzHN0L9WfaO88efTgGYTpbVz7XtuLWOM4ZIVNaxVT7aTBWHrQWiyJ0XIk_RHezogPytIw/exec";
+
+        let nomorUrut = 1;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("tanggal_input").value = new Date().toISOString().slice(0, 10);
+        });
+
+        document.getElementById("formPresensi").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById("btnSimpan");
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Memproses...`;
+
+            let checkedHours = [];
+            document.querySelectorAll("input[name='hour_check']:checked").forEach(cb => checkedHours.push(cb.value));
+            
+            if (checkedHours.length === 0) {
+                alert("Pilih minimal satu jam pelajaran!");
+                btn.disabled = false;
+                btn.innerHTML = "Simpan ke Google Sheet";
+                return;
+            }
+
+            const rawFormData = new FormData(this);
+            
+            const secureData = new URLSearchParams();
+            secureData.append("tanggal_input", rawFormData.get("tanggal_input"));
+            secureData.append("teacher_name", rawFormData.get("teacher_name"));
+            secureData.append("status", rawFormData.get("status"));
+            secureData.append("class_name", rawFormData.get("class_name"));
+            secureData.append("subject", rawFormData.get("subject"));
+            secureData.append("class_hour", checkedHours.join(", "));
+            secureData.append("reason", rawFormData.get("reason").trim() || "-");
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: secureData.toString()
+            })
+            .then(() => {
+                alert("Data berhasil masuk ke Google Spreadsheet!");
+                
+                const bodyTampil = document.getElementById("tabelBody");
+                const bodyEkspor = document.getElementById("tabelEksporBody");
+                
+                const tglBiasa = rawFormData.get("tanggal_input").split("-").reverse().join("/");
+
+                const newRowTampil = `
+                    <tr class="search-item border-b border-slate-800/50 bg-emerald-500/5 transition-all">
+                        <td class="p-3 text-center text-xs font-bold text-slate-400 row-number">${nomorUrut}</td>
+                        <td class="p-3">
+                            <div class="font-bold text-white text-sm">${rawFormData.get("teacher_name")}</div>
+                            <div class="md:hidden text-[10px] text-slate-500 mt-1 uppercase leading-tight">
+                                ${tglBiasa} • <span class="text-indigo-400">${rawFormData.get("status")}</span> • ${rawFormData.get("subject")}
+                                <div class="text-slate-400 italic normal-case mt-1 border-l-2 border-slate-700 pl-2">"${rawFormData.get("reason").trim() || "-"}"</div>
+                            </div>
+                        </td>
+                        <td class="p-3 text-xs text-slate-400 hidden md:table-cell">${rawFormData.get("subject")}</td>
+                        <td class="p-3 text-center font-bold text-xs">${rawFormData.get("class_name")}</td>
+                        <td class="p-3 text-center font-mono text-purple-400 text-xs">${checkedHours.join(", ")}</td>
+                        <td class="p-3 text-xs text-slate-400 italic hidden md:table-cell max-w-[150px] truncate">${rawFormData.get("reason").trim() || "-"}</td>
+                    </tr>`;
+                
+                const newRowEkspor = `
+                    <tr>
+                        <td>${nomorUrut}</td>
+                        <td>${rawFormData.get("tanggal_input")}</td>
+                        <td>${rawFormData.get("teacher_name")}</td>
+                        <td>${rawFormData.get("status")}</td>
+                        <td>${rawFormData.get("subject")}</td>
+                        <td>${rawFormData.get("class_name")}</td>
+                        <td>${checkedHours.join(", ")}</td>
+                        <td>${rawFormData.get("reason").trim() || "-"}</td>
+                    </tr>`;
+
+                // Menyusun baris baru di paling atas tabel
+                bodyTampil.insertAdjacentHTML("afterbegin", newRowTampil);
+                bodyEkspor.insertAdjacentHTML("afterbegin", newRowEkspor);
+                
+                // Menaikkan angka counter urutan nomor
+                nomorUrut++;
+                
+                // Merapikan ulang urutan visual nomor dari atas ke bawah
+                renumberRows();
+
+                document.getElementById("formPresensi").reset();
+                document.getElementById("tanggal_input").value = new Date().toISOString().slice(0, 10);
+            })
+            .catch(err => {
+                alert("Terjadi kendala pengiriman jaringan: " + err.message);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = "Simpan ke Google Sheet";
+            });
+        });
+
+        // Fungsi penata urutan nomor visual agar baris paling baru tetap menjadi No. 1 di daftar atas
+        function renumberRows() {
+            const rows = document.querySelectorAll("#tabelBody .row-number");
+            rows.forEach((td, index) => {
+                td.innerText = index + 1;
+            });
+        }
+
+        document.getElementById("search").addEventListener("keyup", function() {
+            let v = this.value.toLowerCase();
+            document.querySelectorAll(".search-item").forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(v) ? "" : "none";
+            });
+        });
+
+        function exportExcel() {
+            let table = document.getElementById("tabel-ekspor");
+            let wb = XLSX.utils.table_to_book(table, { sheet: "Laporan Presensi" });
+            let today = new Date().toISOString().slice(0, 10);
+            XLSX.writeFile(wb, "Presensi_Guru_" + today + ".xlsx");
+        }
+    </script>
+</body>
+</html>
