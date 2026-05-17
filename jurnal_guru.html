@@ -35,14 +35,16 @@
         .profil-guru {
             margin-bottom: 15px;
             background: #334155;
-            padding: 12px 20px;
+            padding: 15px 20px;
             border-radius: 8px;
             border-left: 5px solid #3498db;
         }
+        
+        /* Susunan Grid Utama Desktop */
         .profil-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
         .form-group {
             display: flex;
@@ -55,7 +57,7 @@
         }
         .form-group input, .form-group select {
             flex: 1;
-            padding: 6px;
+            padding: 8px;
             border: 1px solid #475569;
             border-radius: 4px;
             font-size: 14px;
@@ -242,7 +244,7 @@
             text-align: left;
         }
 
-        /* PERBAIKAN TOTAL LAYOUT MENURUN DI HP AGAR RAPI (ANTI-BENTROK) */
+        /* SUSUNAN KHUSUS LAYAR HP (RESPONSIVE TOTAL) */
         @media screen and (max-width: 768px) {
             body { padding: 8px; }
             .container { padding: 12px; }
@@ -258,11 +260,26 @@
             .btn-group { flex-direction: column; }
             .btn { width: 100%; text-align: center; }
             
-            .profil-grid { grid-template-columns: 1fr; }
-            .form-group { flex-direction: column; align-items: flex-start; gap: 4px; }
-            .form-group label { width: 100%; }
+            /* MEMBUAT PROFIL GURU (NAMA, NIP, MAPEL, SEMESTER) BERURUTAN KE BAWAH DI HP */
+            .profil-grid { 
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .form-group { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                gap: 5px; 
+            }
+            .form-group label { 
+                width: 100%; 
+                font-size: 13px;
+                color: #3498db;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
 
-            /* Paksa tabel menjadi susunan blok vertikal */
+            /* Mengubah struktur baris tabel menjadi kartu vertikal */
             table, thead, tbody, th, td, tr { 
                 display: block; 
                 width: 100% !important;
@@ -281,7 +298,7 @@
             td {
                 border: none;
                 border-bottom: 1px dashed #475569;
-                padding: 6px 0 6px 0 !important; /* Reset padding samping agar text input tidak penyok */
+                padding: 6px 0 6px 0 !important;
                 text-align: left;
                 box-sizing: border-box;
                 margin-bottom: 8px;
@@ -290,10 +307,10 @@
                 border-bottom: none;
                 margin-bottom: 0;
             }
-            /* Label kiri diposisikan di atas input secara fleksibel */
+            
+            /* Penanda Judul Kolom Menurun */
             td::before {
                 display: block;
-                content: "";
                 font-weight: bold;
                 color: #3498db;
                 font-size: 12px;
@@ -301,7 +318,6 @@
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
             }
-            /* Teks penanda masing-masing bagian */
             td.col-no::before { content: "🔢 Baris Ke"; }
             td.col-hari::before { content: "📅 Hari / Tanggal"; }
             td.col-jam::before { content: "⏰ Jam Ke- (Ceklis)"; }
@@ -336,7 +352,7 @@
             .ttd-box { width: 100%; }
         }
 
-        /* FORMAT PRINT / CETAK LAPORAN */
+        /* FORMAT PRINT / CETAK LAPORAN (OTOMATIS HORIZONTAL KEMBALI) */
         @media print {
             body { padding: 0; background: #fff !important; color: #000 !important; }
             .container { box-shadow: none; padding: 0; max-width: 100%; background: #fff !important; }
@@ -360,6 +376,12 @@
             input::placeholder, textarea::placeholder { color: transparent !important; }
             .profil-guru { background: transparent !important; border: none !important; padding: 0; margin-bottom: 10px; }
             .profil-guru label { color: #000 !important; }
+            
+            /* Kembalikan tampilan profil jadi grid horizontal saat diprint */
+            .profil-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            .form-group { flex-direction: row !important; align-items: center !important; }
+            .form-group label { width: 150px !important; color: #000 !important; }
+
             .profil-guru input, .profil-guru select { border: none !important; background: transparent !important; color: #000 !important; appearance: none; -webkit-appearance: none; }
             .refleksi-container { background: transparent !important; border: 1px solid #000 !important; padding: 10px; }
             .refleksi-container textarea { background: transparent !important; border: 1px solid #000 !important; color: #000 !important; height: 55px; }
@@ -386,7 +408,7 @@
     <div class="container">
         <h1>JURNAL AGENDA MENGAJAR GURU</h1>
         <h3 id="auto_tahun_ajaran">Tahun Ajaran: -</h3>
-        <h3 id="auto_semester">Semester: -</h3>
+
         <div class="divider"></div>
 
         <div class="profil-guru">
@@ -425,12 +447,12 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Mata Pelajaran</label>
-                    <input type="text" id="mata_pelajaran" placeholder="Akan terisi otomatis" readonly style="background-color: #1e293b; color: #94a3b8;">
-                </div>
-                <div class="form-group">
                     <label>NIP</label>
                     <input type="text" id="nip" placeholder="Akan terisi otomatis setelah memilih nama" readonly style="background-color: #1e293b; color: #94a3b8;">
+                </div>
+                <div class="form-group">
+                    <label>Mata Pelajaran</label>
+                    <input type="text" id="mata_pelajaran" placeholder="Akan terisi otomatis" readonly style="background-color: #1e293b; color: #94a3b8;">
                 </div>
                 <div class="form-group">
                     <label>Semester</label>
@@ -585,7 +607,7 @@
 
         window.onload = function() {
             document.getElementById("auto_tahun_ajaran").innerText = "Tahun Ajaran: 2025/2026";
-            document.getElementById("auto_semester").innerText = "Semester Genap";
+
             document.getElementById("tgl_cetak").innerHTML = `Jakarta, ${String(new Date().getDate()).padStart(2, '0')} Mei 2026<br>Guru Mata Pelajaran`;
             tambahBarisMengajarBlank();
         };
