@@ -208,24 +208,62 @@
         .btn-print:hover { background-color: #27ae60; }
         .btn-save { background-color: #f39c12; color: white; }
         .btn-save:hover { background-color: #d35400; }
-        .btn-save:disabled { background-color: #64748b; cursor: not-allowed; }
         .btn-add { background-color: #3498db; color: white; margin-bottom: 8px; padding: 6px 14px; font-size: 13px; }
         .btn-add:hover { background-color: #2980b9; }
 
+        /* FORMAT TOMBOL PAGINATION */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin: 20px 0;
+            padding: 10px;
+            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #475569;
+        }
+        .btn-page {
+            background-color: #334155;
+            color: #e2e8f0;
+            border: 1px solid #475569;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .btn-page:hover:not(:disabled) {
+            background-color: #475569;
+            border-color: #3498db;
+        }
+        .btn-page.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+        }
+        .btn-page:disabled {
+            background-color: #1e293b;
+            color: #64748b;
+            cursor: not-allowed;
+            border-color: #334155;
+        }
+
         .col-no { width: 3%; text-align: center; }
         .col-hari { width: 11%; white-space: nowrap; }
-        .col-jam { width: 8%; text-align: center; }
-        .col-kelas { width: 6%; text-align: center; }
-        .col-pert { width: 6%; text-align: center; }
+        .col-jam { width: 5%; text-align: center; }
+        .col-kelas { width: 5%; text-align: center; }
+        .col-pert { width: 5%; text-align: center; }
         .col-tp { width: 26%; }
         .col-materi { width: 20%; }
         .col-absensi { width: 10%; }
-        .col-refleksi { width: 10%; }
+        .col-refleksi { width: 14%; }
 
         .print-text-wrap { display: none; white-space: normal; word-wrap: break-word; line-height: 1.3; font-size: 13px; text-align: left; }
         .status-loading { color: #f1c40f; font-weight: bold; font-size: 13px; display: none; margin-left: 10px; }
 
-        /* HP RESPONSIVE */
         @media screen and (max-width: 768px) {
             body { padding: 8px; }
             .container { padding: 12px; }
@@ -245,7 +283,7 @@
             td { border: none; border-bottom: 1px dashed #475569; padding: 6px 0 !important; margin-bottom: 8px; }
             td:last-child { border-bottom: none; margin-bottom: 0; }
             
-            td::before { display: block; font-weight: bold; color: #3498db; font-size: 12px; margin-bottom: 4px; text-transform: uppercase; }
+            td::before { block; font-weight: bold; color: #3498db; font-size: 12px; margin-bottom: 4px; text-transform: uppercase; }
             td.col-no::before { content: "🔢 Baris Ke"; }
             td.col-hari::before { content: "📅 Hari / Tanggal"; }
             td.col-jam::before { content: "⏰ Jam Ke- (Ceklis)"; }
@@ -263,10 +301,9 @@
         }
 
         @media print {
-            /* Desain cetak tetap standar horizontal */
             body { padding: 0; background: #fff !important; color: #000 !important; }
             .container { box-shadow: none; padding: 0; max-width: 100%; background: #fff !important; }
-            .menu-kontrol, .btn-add { display: none !important; }
+            .menu-kontrol, .btn-add, .pagination-container { display: none !important; }
             h1, h2, h3 { color: #000 !important; }
             .divider { border-top: 3px double #000 !important; }
             table { display: table !important; border: 1px solid #000 !important; width: 100% !important; }
@@ -288,7 +325,7 @@
             .ttd-container { flex-direction: row !important; justify-content: space-between !important; }
             .ttd-box { color: #000 !important; width: 280px !important; }
             .ceklis-jam-container { display: none !important; }
-            .print-jam-text { display: block !important; text-align: center; font-weight: bold; }
+            .print-jam-text { display: block !important; text-align: center;  }
         }
         .print-jam-text { display: none; }
     </style>
@@ -296,7 +333,8 @@
 <body>
 
     <div class="menu-kontrol">
-        <span style="font-weight: bold; color: #f8fafc;">SMPN 110 JAKARTA <span id="loading_status" class="status-loading">⏳ Menarik data lama...</span></span>
+        <h1><span style="font-weight: bold; color: #0a7ef3;">SMPN 110 JAKARTA</span></h1>
+        <span id="loading_status" class="status-loading">⏳ Menarik data lama...</span>
         <div class="btn-group">
             <button id="btn_simpan_sheet" class="btn btn-save" onclick="simpanKeSpreadsheet()">💾 Simpan ke Google Sheets</button>
             <button class="btn btn-print" onclick="jalankanCetak()">🖨️ Cetak / Simpan PDF</button>
@@ -308,7 +346,7 @@
         <h3 id="auto_tahun_ajaran">Tahun Ajaran: -</h3>
 
         <div class="divider"></div>
-<br><br>
+        <br><br>
         <div class="profil-guru">
             <div class="profil-grid">
                 <div class="form-group">
@@ -361,8 +399,8 @@
                 </div>
             </div>
         </div>
-<br>
-        <h2>Catatan Harian Mengajar</h2>
+        <br>
+        <h2>Catatan Harian Mengajar</h2><br>
         <button class="btn btn-add" onclick="tambahBarisMengajarBlank()">➕ Tambah Baris Kelas Kosong</button>
         
         <div class="table-responsive">
@@ -384,7 +422,9 @@
                 </tbody>
             </table>
         </div>
-<br>
+
+        <div class="pagination-container" id="pagination_controls"></div>
+        <br>
         <h2>Catatan Refleksi Bulanan Guru</h2><br><br>
         <div class="refleksi-container">
             <label><strong>1. Apa yang berjalan efektif bulan ini?</strong></label>
@@ -414,8 +454,10 @@
     </div>
 
     <script>
-        // MASUKKAN URL APP SCRIPT ANDA DI SINI
-        const PROXY_URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbyhutuTl1dHHJCbfYejQFv2NXFSEYGsq_uyUzs3WFKl4oYOUsDIqyJ-baU24UCHExpc/exec";
+        const PROXY_URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbymLQ7LQimfTnOtJarvNPu1-pE5Qoyi3UZ02LSWT94Mstoz0qcCWuVX5i9bd7uo1P3-/exec";
+
+        let halamanAktif = 1;
+        const limitBaris = 10;
 
         const databaseGuru = {
             "Sunardi, M.Pd.": { nip: "NIP_Sunardi_123", mapel: "Matematika" },
@@ -474,7 +516,7 @@
             <option value="Pengenalan Pemrograman Blok (Scratch), Antarmuka, Sprite, dan Stage">Pert. 5: Pengenalan Pemrograman Blok (Scratch) & Antarmuka</option>
             <option value="Gerakan Blok (Motion), Alur Sekuensial, dan Event Handling">Pert. 6: Gerakan Blok (Motion) & Event Handling Scratch</option>
             <option value="Struktur Kontrol Perulangan (Looping/Forever/Repeat) dan Percabangan (If-Then)">Pert. 7: Struktur Kontrol Perulangan & Percabangan IF-Then</option>
-            <option value="Proyek Mini Pemrograman: Membuat Game atau Animasi Interaktif Sederhana">Pert. 8: Proyek Mini Pembuatan Game/Animasi Kreatif Interaktif</option>
+            <option value="Proyek Mini Pemrograman: Membuat Game atau Animasi Interaktif Sederhana">Pert. 8: Proyek Mini Pemrograman: Membuat Game/Animasi</option>
             <option value="Bab 8: Perkembangan Teknologi Informasi & Komunikasi dan Dampak Sosialnya">Pert. 9: Perkembangan TIK dan Dampak Sosialnya</option>
             <option value="Bab 8: Kolaborasi di Dunia Maya, Media Sosial, dan Etika Netizen">Pert. 10: Kolaborasi Maya, Media Sosial & Etika Netizen</option>
             <option value="Bab 8: Keamanan Data Informasi Pribadi dan Hukum Privasi Dunia Digital">Pert. 11: Keamanan Informasi Data Pribadi & Hukum Privasi</option>
@@ -494,6 +536,8 @@
             <option value="">-- Pert --</option>
             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
             <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+            <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+            <option value="13">13</option><option value="14">14</option>
         `;
 
         function dapatkanTanggalHariIni() {
@@ -504,16 +548,16 @@
 
         window.onload = function() {
             document.getElementById("auto_tahun_ajaran").innerText = "Tahun Ajaran: 2025/2026";
-
             document.getElementById("tgl_cetak").innerHTML = `Jakarta, ${String(new Date().getDate()).padStart(2, '0')} Mei 2026<br>Guru Mata Pelajaran`;
             tambahBarisMengajarBlank();
         };
 
-        // FUNGSI UTAMA KETIKA NAMA GURU DIPILIH
         function aksiPilihGuru() {
             const namaTerpilih = document.getElementById("nama_guru").value;
             const tbody = document.getElementById("body-tabel-mengajar");
             tbody.innerHTML = "";
+            document.getElementById("pagination_controls").innerHTML = "";
+            halamanAktif = 1;
 
             if (namaTerpilih in databaseGuru) {
                 document.getElementById("nip").value = databaseGuru[namaTerpilih].nip;
@@ -521,7 +565,6 @@
                 document.getElementById("nama_guru_ttd").value = namaTerpilih;
                 document.getElementById("nip_guru_ttd").value = "NIP. " + databaseGuru[namaTerpilih].nip;
                 
-                // Panggil Fitur AMBIL DATA LAMA dari Google Sheets
                 loadDataLamaDariSheets(namaTerpilih);
             } else {
                 document.getElementById("nip").value = "";
@@ -532,10 +575,7 @@
             }
         }
 
-        // AJAX FETCH UNTUK MENARIK DATA BERDASARKAN NAMA GURU
         function loadDataLamaDariSheets(namaGuru) {
-            if(PROXY_URL_APPS_SCRIPT === "URL_WEB_APP_ANDA_DISINI") return;
-
             const loadingStatus = document.getElementById("loading_status");
             loadingStatus.style.display = "inline";
 
@@ -546,14 +586,17 @@
             .then(result => {
                 loadingStatus.style.display = "none";
                 const tbody = document.getElementById("body-tabel-mengajar");
+                tbody.innerHTML = "";
                 
-                if (result.status === "sukses" && result.data.length > 0) {
-                    // Masukkan data lama yang ditarik dari Sheets ke dalam tabel web
+                if (result.status === "sukses" && result.data && result.data.length > 0) {
                     result.data.forEach((item, index) => {
                         tambahBarisDenganData(index + 1, item);
                     });
+                    
+                    setTimeout(() => {
+                        beralihHalaman(1);
+                    }, 150);
                 } else {
-                    // Jika data kosong, berikan satu baris kosong baru
                     tambahBarisMengajarBlank();
                 }
             })
@@ -564,21 +607,75 @@
             });
         }
 
-        // FUNGSI MEMBUAT BARIS TABEL BERISI DATA LAMA YANG SUDAH JADI
+        function beralihHalaman(nomorHalaman) {
+            halamanAktif = nomorHalaman;
+            const barisTabel = document.querySelectorAll("#body-tabel-mengajar tr");
+            const totalBaris = barisTabel.length;
+            
+            const indeksMulai = (nomorHalaman - 1) * limitBaris;
+            const indeksSelesai = indeksMulai + limitBaris;
+
+            barisTabel.forEach((row, i) => {
+                if (i >= indeksMulai && i < indeksSelesai) {
+                    row.style.display = ""; 
+                } else {
+                    row.style.display = "none"; 
+                }
+            });
+
+            renderNavigasiHalaman(totalBaris);
+        }
+
+        function renderNavigasiHalaman(totalBaris) {
+            const containerNav = document.getElementById("pagination_controls");
+            containerNav.innerHTML = "";
+
+            const totalHalaman = Math.ceil(totalBaris / limitBaris);
+            if (totalHalaman <= 1) {
+                containerNav.style.display = "none"; 
+                return;
+            } 
+
+            containerNav.style.display = "flex"; 
+
+            const btnSebelumnya = document.createElement("button");
+            btnSebelumnya.className = "btn-page";
+            btnSebelumnya.innerText = "« Sebelumnya";
+            btnSebelumnya.disabled = halamanAktif === 1;
+            btnSebelumnya.onclick = () => beralihHalaman(halamanAktif - 1);
+            containerNav.appendChild(btnSebelumnya);
+
+            for (let idx = 1; idx <= totalHalaman; idx++) {
+                const btnAngka = document.createElement("button");
+                btnAngka.className = "btn-page" + (idx === halamanAktif ? " active" : "");
+                btnAngka.innerText = idx;
+                btnAngka.onclick = () => beralihHalaman(idx);
+                containerNav.appendChild(btnAngka);
+            }
+
+            const btnSelanjutnya = document.createElement("button");
+            btnSelanjutnya.className = "btn-page";
+            btnSelanjutnya.innerText = "Selanjutnya »";
+            btnSelanjutnya.disabled = halamanAktif === totalHalaman;
+            btnSelanjutnya.onclick = () => beralihHalaman(halamanAktif + 1);
+            containerNav.appendChild(btnSelanjutnya);
+        }
+
         function tambahBarisDenganData(noBaris, itemData) {
             const table = document.getElementById("tabel-mengajar").getElementsByTagName('tbody')[0];
             var row = table.insertRow(table.rows.length);
             
             row.innerHTML = `
                 <td class="center-input row-num col-no">${noBaris}</td>
-                <td class="col-hari"><input type="text" class="tgl" value="${itemData.tanggal}"></td>
+                <td class="col-hari"><input type="text" class="tgl" value="${itemData.tanggal || ''}"></td>
                 <td class="col-jam">
                     <div class="print-jam-text" id="print_jam_${noBaris}"></div>
                     <div class="ceklis-jam-container">
                         ${[1,2,3,4,5,6,7,8].map(j => {
-                            let checked = itemData.jam_ke.split(/[-\s,]+/).map(Number).includes(j) || itemData.jam_ke == j ? "checked" : "";
-                            if(itemData.jam_ke.includes("-")){
-                                let rentang = itemData.jam_ke.split("-").map(Number);
+                            let jam_ke_str = String(itemData.jam_ke || '');
+                            let checked = jam_ke_str.split(/[-\s,]+/).map(Number).includes(j) ? "checked" : "";
+                            if(jam_ke_str.includes("-")){
+                                let rentang = jam_ke_str.split("-").map(Number);
                                 if(j >= rentang[0] && j <= rentang[1]) checked = "checked";
                             }
                             return `<label class="jam-item"><input type="checkbox" value="${j}" ${checked}>${j}</label>`;
@@ -595,15 +692,55 @@
                     <div class="print-text-wrap class-print-materi"></div>
                     <select class="mat">${opsiDropdownMateri}</select>
                 </td>
-                <td class="col-absensi"><textarea rows="3" class="abs">${itemData.absensi}</textarea></td>
-                <td class="col-refleksi"><textarea rows="3" class="ref">${itemData.refleksi}</textarea></td>
+                <td class="col-absensi"><textarea rows="3" class="abs">${itemData.absensi || ''}</textarea></td>
+                <td class="col-refleksi"><textarea rows="3" class="ref">${itemData.refleksi || ''}</textarea></td>
             `;
 
-            // Set nilai dropdown agar sesuai data lama
-            row.querySelector(".kls").value = itemData.kelas;
-            row.querySelector(".pert").value = itemData.pertemuan_ke;
-            row.querySelector(".cp").value = itemData.cp_pembelajaran;
-            row.querySelector(".mat").value = itemData.materi_pokok;
+            // 1. KUNCI DATA DROPDOWN KELAS
+            if (itemData.kelas) {
+                row.querySelector(".kls").value = String(itemData.kelas).trim();
+            }
+            
+            // 2. KUNCI DATA DROPDOWN PERTEMUAN (LOGIKA STRATA BERLAPIS MULTI-PROTEKSI)
+            if (itemData.pertemuan_ke !== undefined && itemData.pertemuan_ke !== null) {
+                let nilaiMentah = String(itemData.pertemuan_ke).trim();
+                let angkaBersih = nilaiMentah.replace(/[^0-9]/g, ''); // Ambil digit numerik saja
+                
+                if (angkaBersih !== "") {
+                    angkaBersih = String(parseInt(angkaBersih, 10)); // Hilangkan angka 0 di depan (01 -> 1)
+                }
+
+                const selectPert = row.querySelector(".pert");
+                if (selectPert) {
+                    // Metode A: Coba pasang menggunakan angka murni bersih
+                    selectPert.value = angkaBersih;
+                    
+                    // Metode B: Jika gagal, coba gunakan nilai string mentah bawaan database
+                    if (selectPert.value === "") {
+                        selectPert.value = nilaiMentah;
+                    }
+                    
+                    // Metode C: Jika masih gagal (misal data berisi teks panjang), cari opsi via loop manual
+                    if (selectPert.value === "") {
+                        for (let opt of selectPert.options) {
+                            if (opt.value == angkaBersih || opt.text == nilaiMentah || nilaiMentah.includes(opt.value)) {
+                                selectPert.value = opt.value;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 3. KUNCI DATA DROPDOWN TUJUAN PEMBELAJARAN (TP)
+            if (itemData.cp_pembelajaran) {
+                row.querySelector(".cp").value = String(itemData.cp_pembelajaran).trim();
+            }
+            
+            // 4. KUNCI DATA DROPDOWN MATERI POKOK
+            if (itemData.materi_pokok) {
+                row.querySelector(".mat").value = String(itemData.materi_pokok).trim();
+            }
         }
 
         function tambahBarisMengajarBlank() {
@@ -634,6 +771,8 @@
                 <td class="col-absensi"><textarea rows="3" class="abs" placeholder="S: -&#10;I: -&#10;A: -"></textarea></td>
                 <td class="col-refleksi"><textarea rows="3" class="ref" placeholder="Catatan kelas..."></textarea></td>
             `;
+            
+            beralihHalaman(Math.ceil(table.rows.length / limitBaris) || 1);
         }
 
         function dapatkanFormatJamCeklis(rowElement) {
@@ -650,6 +789,9 @@
         }
 
         function jalankanCetak() {
+            const barisTabel = document.querySelectorAll("#body-tabel-mengajar tr");
+            barisTabel.forEach(row => row.style.display = "");
+
             document.querySelectorAll("#tabel-mengajar tbody tr").forEach((row) => {
                 const teksJam = dapatkanFormatJamCeklis(row);
                 const printContainer = row.querySelector(".print-jam-text");
@@ -664,6 +806,8 @@
                 if (selectMat && divPrintMateri) divPrintMateri.innerText = selectMat.value ? selectMat.value : "-";
             });
             window.print();
+
+            beralihHalaman(halamanAktif);
         }
 
         function simpanKeSpreadsheet() {
