@@ -9,7 +9,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        body { font-family: 'Segoe UI', sans-serif; padding: 15px; background-color: #0f172a; color: #e2e8f0; }
+        body { font-family: 'Segoe UI', sans-serif; padding: 15px; background-color: #0f172a; color: #e2e8f0; margin: 0; }
+        
+        /* STYLING HALAMAN LOGIN */
+        .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 90vh; }
+        .login-card { background: #1e293b; padding: 35px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; max-width: 400px; border: 1px solid #334155; }
+        .login-card h2 { color: #38bdf8; margin-bottom: 5px; text-align: center; }
+        .login-card p { text-align: center; color: #94a3b8; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        .login-group { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
+        .login-group label { font-size: 14px; color: #cbd5e1; font-weight: 600; }
+        .login-group input { padding: 10px 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #f8fafc; font-size: 15px; }
+        .login-group input:focus { outline: none; border-color: #38bdf8; }
+        .btn-login { width: 100%; padding: 11px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+        .btn-login:hover { background: #1d4ed8; }
+        .error-msg { color: #ef4444; font-size: 13px; text-align: center; margin-top: 10px; display: none; font-weight: bold; }
+
+        /* CONTAINER UTAMA APLIKASI */
         .container { max-width: 1350px; margin: 0 auto; background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
         h1, h2, h3 { text-align: center; color: #f8fafc; margin: 5px 0; }
         .divider { border-top: 3px double #475569; margin: 15px 0; }
@@ -21,7 +36,8 @@
         .profil-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .form-group { display: flex; align-items: center; }
         .form-group label { width: 150px; font-weight: bold; color: #cbd5e1; }
-        .form-group input, .form-group select { flex: 1; padding: 8px; border: 1px solid #475569; border-radius: 4px; background-color: #1e293b; color: #f8fafc; }
+        .form-group input { flex: 1; padding: 8px; border: 1px solid #475569; border-radius: 4px; background-color: #1e293b; color: #f8fafc; }
+        .form-group input[readonly] { background-color: #1e293b; color: #94a3b8; cursor: not-allowed; }
         
         table { width: 100%; border-collapse: collapse; margin: 12px 0; }
         th, td { border: 1px solid #475569; padding: 8px; font-size: 14px; vertical-align: top; }
@@ -29,9 +45,16 @@
         td input, td textarea, td select { width: 100%; background: transparent; border: 1px solid transparent; color: #e2e8f0; font-family: inherit; }
         td input:focus, td textarea:focus, td select:focus { border: 1px solid #3498db; background: #334155; outline: none; border-radius: 4px; }
         
-        .ceklis-jam-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-        .jam-item { display: flex; align-items: center; justify-content: center; font-size: 11px; background: #334155; padding: 3px 2px; border-radius: 4px; border: 1px solid #475569; }
-        
+        .ceklis-jam-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; align-items: center; justify-content: center; height: 100%; }
+        .jam-item { display: flex; align-items: center; justify-content: center; font-size: 11px; background: #334155; padding: 5px 2px; border-radius: 4px; border: 1px solid #475569; cursor: pointer; }
+        .jam-item input { width: auto; margin-right: 3px; }
+
+        /* PAGINATION STYLING */
+        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 15px 0; }
+        .btn-nav { background-color: #475569; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-nav:disabled { background-color: #1e293b; color: #64748b; cursor: not-allowed; }
+        .page-info { font-weight: bold; color: #cbd5e1; }
+
         .refleksi-container { background: #1e293b; border: 1px solid #475569; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .refleksi-container textarea { width: 100%; height: 65px; margin-top: 4px; padding: 8px; background-color: #334155; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; }
         
@@ -52,151 +75,220 @@
 
         .hide-on-print { display: block; }
 
-        /* SKEMA WARNA CETAK BERSIH */
-        .mode-cetak-bersih { background: #ffffff !important; color: #000000 !important; }
+        /* SKEMA FORMAT WARNA & TATA LETAK TABEL CETAK BERSIH */
+        .mode-cetak-bersih { background: #ffffff !important; color: #000000 !important; padding: 5px !important; }
         .mode-cetak-bersih h1, .mode-cetak-bersih h2, .mode-cetak-bersih h3 { color: #000000 !important; }
         .mode-cetak-bersih .profil-guru { background: #ffffff !important; border: none !important; border-left: none !important; padding: 10px 0; }
         .mode-cetak-bersih label { color: #000000 !important; font-size: 14px; }
-        .mode-cetak-bersih input, .mode-cetak-bersih select, .mode-cetak-bersih textarea { 
+        .mode-cetak-bersih input, .mode-cetak-bersih textarea { 
             background: #ffffff !important; color: #000000 !important; border: 1px solid #000000 !important; border-radius: 4px !important; padding: 6px !important;
         }
-        .mode-cetak-bersih table { margin-top: 20px; }
-        .mode-cetak-bersih th { background-color: #ffffff !important; color: #000000 !important; border: 1px solid #000000 !important; font-weight: bold; }
-        .mode-cetak-bersih td { border: 1px solid #000000 !important; color: #000000 !important; background: #ffffff !important; }
-        .mode-cetak-bersih .refleksi-container { background: #ffffff !important; border: none !important; padding: 0; }
+        
+        /* Modifikasi Total Format Tabel Khusus Cetak PDF */
+        .mode-cetak-bersih table { 
+            width: 99.6% !important; /* Dikecilkan sedikit agar border terluar kanan tidak terpotong kertas landscape */
+            margin-top: 15px; 
+            table-layout: fixed; 
+            border-collapse: collapse !important; 
+            box-sizing: border-box !important;
+        }
+        .mode-cetak-bersih th { background-color: #f2f2f2 !important; color: #000000 !important; border: 1px solid #000000 !important; font-weight: bold; padding: 10px 5px !important; font-size: 12px !important; text-align: center !important; vertical-align: middle !important; }
+        
+        .mode-cetak-bersih td { 
+            border: 1px solid #000000 !important; 
+            color: #000000 !important; 
+            background: #ffffff !important; 
+            word-wrap: break-word !important;
+            white-space: normal !important;
+            line-height: 1.4 !important;
+            padding: 8px 6px !important;
+            font-size: 12px !important;
+            vertical-align: top !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Merapikan Alur Potong Halaman */
+        .mode-cetak-bersih tr {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+        
+        .mode-cetak-bersih .refleksi-container { background: #ffffff !important; border: none !important; padding: 0; page-break-inside: avoid !important; break-inside: avoid !important; }
         .mode-cetak-bersih .refleksi-container textarea { background: #ffffff !important; border: 1px solid #000000 !important; color: #000000 !important; }
+        .mode-cetak-bersih .ttd-container { page-break-inside: avoid !important; break-inside: avoid !important; margin-top: 40px; }
         .mode-cetak-bersih .ttd-box { color: #000000 !important; }
         .mode-cetak-bersih .ttd-box input { color: #000000 !important; border: none !important; }
         
-        .print-text-fallback { display: none; color: #000000 !important; font-size: 14px; white-space: pre-wrap; word-wrap: break-word; }
-        .mode-cetak-bersih .print-text-fallback { display: inline-block; }
+        .print-text-fallback { display: none; color: #000000 !important; font-size: 12px; white-space: pre-wrap; word-wrap: break-word; }
+        .mode-cetak-bersih .print-text-fallback { 
+            display: inline-block; 
+            word-wrap: break-word !important;
+            white-space: normal !important;
+        }
         .mode-cetak-bersih .hide-field-on-print { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="menu-kontrol">
-        <h2 style="margin:0;"><span style="font-weight: bold; color: #38bdf8;">SMPN 110 JAKARTA</span> <span id="loading_status" class="status-loading">⏳ Menghubungkan database...</span></h2>
-        <div class="btn-group">
-            <button class="btn btn-save" onclick="eksporJurnalKeSheets()">🚀 Simpan Jurnal ke Sheets</button>
-            <button class="btn btn-pdf" onclick="cetakSemuaJurnalPDF()">📕 Cetak Isi Semua Jurnal</button>
+    <div class="login-wrapper" id="halaman-login">
+        <div class="login-card">
+            <h2>SMPN 110 JAKARTA</h2>
+            <p>Sistem Log Jurnal Agenda Mengajar Guru</p>
+            
+            <div class="login-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Contoh: guru01" autocomplete="off">
+            </div>
+            
+            <div class="login-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Masukkan password">
+            </div>
+            
+            <button class="btn-login" onclick="prosesValidasiLogin()">Masuk ke Jurnal</button>
+            <div class="error-msg" id="login-error-msg">❌ Username atau Password salah!</div>
         </div>
     </div>
 
-    <div class="container" id="area-cetak-jurnal">
-        
-        <div class="section-upload hide-on-print" id="panel-upload-materi">
-            <h3 style="color: #a5b4fc; margin-bottom: 2px;">🛠️ Area Guru Mapel: Upload Pembaharuan TP & Materi Pokok</h3>
-            <p style="margin: 0; font-size: 13px; color: #cbd5e1;">Jika database materi di aplikasi kosong, download template di bawah ini, isi data materi Anda, lalu upload kembali.</p>
-            <div class="upload-row">
-                <button class="btn btn-template" onclick="downloadTemplateExcelKosong()">1. 📥 Download Template Excel</button>
-                <div style="background: #312e81; padding: 5px 10px; border-radius: 4px; border: 1px solid #4338ca;">
-                    <label style="font-size: 13px; font-weight:bold; margin-right:5px;">2. Pilih File Excel:</label>
-                    <input type="file" id="file_excel_materi" accept=".xlsx, .xls" style="font-size: 12px; color: #cbd5e1;">
-                </div>
-                <button class="btn btn-upload" onclick="prosesUploadExcelMateri()">3. 📤 Upload Ke Google Sheets</button>
-            </div>
-        </div>
-        
-        <div class="divider hide-on-print" id="garis-pembatas"></div>
-
-        <h1>JURNAL AGENDA MENGAJAR GURU</h1>
-        <h3>Tahun Ajaran: 2025/2026</h3>
-        <div style="border-bottom: 1px solid #000000; margin: 10px 0; display: none;" id="garis-cetak-hiasan"></div>
-        
-        <div class="profil-guru">
-            <div class="profil-grid">
-                <div class="form-group">
-                    <label>Nama Guru</label>
-                    <span class="print-text-fallback" id="lbl_nama_guru"></span>
-                    <select id="nama_guru" class="hide-field-on-print" onchange="aksiPilihGuru()">
-                        </select>
-                </div>
-                <div class="form-group">
-                    <label>NIP</label>
-                    <span class="print-text-fallback" id="lbl_nip"></span>
-                    <input type="text" id="nip" class="hide-field-on-print" placeholder="Otomatis" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Mata Pelajaran</label>
-                    <span class="print-text-fallback" id="lbl_mata_pelajaran"></span>
-                    <input type="text" id="mata_pelajaran" class="hide-field-on-print" placeholder="Otomatis" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Semester</label>
-                    <span class="print-text-fallback" id="lbl_kelas_semester"></span>
-                    <select id="kelas_semester" class="hide-field-on-print">
-                        <option value="Ganjil">Ganjil</option>
-                        <option value="Genap" selected>Genap</option>
-                    </select>
-                </div>
+    <div id="halaman-utama-jurnal" style="display: none;">
+        <div class="menu-kontrol">
+            <h2 style="margin:0;"><span style="font-weight: bold; color: #38bdf8;">SMPN 110 JAKARTA</span> <span id="loading_status" class="status-loading">⏳ Menghubungkan database...</span></h2>
+            <div class="btn-group">
+                <button class="btn btn-save" onclick="eksporJurnalKeSheets()">🚀 Simpan Jurnal ke Sheets</button>
+                <button class="btn btn-pdf" onclick="cetakSemuaJurnalPDF()">📕 Cetak Isi Semua Jurnal</button>
             </div>
         </div>
 
-        <h3 style="text-align: left; margin: 20px 0 5px 0; font-weight: bold; display: none;" id="judul-catatan-harian">Catatan Harian Mengajar</h3>
-
-        <button class="btn btn-add hide-on-print" id="tombol-tambah-baris" onclick="tambahBarisMengajarBlank()">➕ Tambah Baris Kelas Kosong</button>
-        
-        <table id="tabel-mengajar">
-            <thead>
-                <tr>
-                    <th style="width:3%;">No</th>
-                    <th style="width:12%;">Hari / Tanggal</th>
-                    <th style="width:12%;">Jam Ke-</th>
-                    <th style="width:10%;">Kelas</th>
-                    <th style="width:6%;">Pert. Ke</th>
-                    <th style="width:23%;">Tujuan Pembelajaran</th>
-                    <th style="width:18%;">Materi Pokok</th>
-                    <th style="width:8%;">Absensi</th>
-                    <th style="width:8%;">Refleksi</th>
-                </tr>
-            </thead>
-            <tbody id="body-tabel-mengajar"></tbody>
-        </table>
-
-        <h2 id="judul-refleksi-bawah">Catatan Refleksi Bulanan Guru</h2>
-        <div class="refleksi-container">
-            <label><strong>1. Apa yang berjalan efektif bulan ini?</strong></label>
-            <div class="print-text-fallback" id="lbl_refleksi_1" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
-            <textarea id="refleksi_1" class="hide-field-on-print" placeholder="Isi analisis..."></textarea>
+        <div class="container" id="area-cetak-jurnal">
             
-            <label><strong>2. Apa kendala utama yang dihadapi?</strong></label>
-            <div class="print-text-fallback" id="lbl_refleksi_2" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
-            <textarea id="refleksi_2" class="hide-field-on-print" placeholder="Isi kendala..."></textarea>
-            
-            <label><strong>3. Rencana Perbaikan untuk Pertemuan Selanjutnya:</strong></label>
-            <div class="print-text-fallback" id="lbl_refleksi_3" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
-            <textarea id="refleksi_3" class="hide-field-on-print" placeholder="Isi rencana..."></textarea>
-        </div>
-
-        <div class="ttd-container">
-            <div class="ttd-box">
-                <p>Mengetahui,<br>Kepala Sekolah</p>
-                <div style="height:50px;"></div>
-                <span class="print-text-fallback" id="lbl_nama_kepsek" style="font-weight: bold; text-decoration: underline;"></span>
-                <input type="text" id="nama_kepsek" class="hide-field-on-print" value="Iis Ratna Sariningrum, S.Pd., M.M.">
-                <p style="margin:2px 0 0 0; font-size:13px;" class="hide-field-on-print">NIP. 197103211994122001</p>
-                <span class="print-text-fallback" id="lbl_nip_kepsek" style="font-size:13px; display:block;"></span>
+            <div class="section-upload hide-on-print" id="panel-upload-materi">
+                <h3 style="color: #a5b4fc; margin-bottom: 2px;">🛠️ Area Guru Mapel: Upload Pembaharuan TP & Materi Pokok</h3>
+                <p style="margin: 0; font-size: 13px; color: #cbd5e1;">Jika database materi di aplikasi kosong, download template di bawah ini, isi data materi Anda, lalu upload kembali.</p>
+                <div class="upload-row">
+                    <button class="btn btn-template" onclick="downloadTemplateExcelKosong()">1. 📥 Download Template Excel</button>
+                    <div style="background: #312e81; padding: 5px 10px; border-radius: 4px; border: 1px solid #4338ca;">
+                        <label style="font-size: 13px; font-weight:bold; margin-right:5px;">2. Pilih File Excel:</label>
+                        <input type="file" id="file_excel_materi" accept=".xlsx, .xls" style="font-size: 12px; color: #cbd5e1;">
+                    </div>
+                    <button class="btn btn-upload" onclick="prosesUploadExcelMateri()">3. 📤 Upload Ke Google Sheets</button>
+                </div>
             </div>
-            <div class="ttd-box">
-                <p>Jakarta, 21 Mei 2026<br>Guru Mata Pelajaran</p>
-                <div style="height:50px;"></div>
-                <span class="print-text-fallback" id="lbl_nama_guru_ttd" style="font-weight: bold; text-decoration: underline;"></span>
-                <input type="text" id="nama_guru_ttd" class="hide-field-on-print" placeholder="[Nama Guru]" readonly>
+            
+            <div class="divider hide-on-print" id="garis-pembatas"></div>
+
+            <h1>JURNAL AGENDA MENGAJAR GURU</h1>
+            <h3>Tahun Ajaran: 2025/2026</h3><br>
+            <div style="border-bottom: 1px solid #000000; margin: 10px 0; display: none;" id="garis-cetak-hiasan"></div>
+            
+            <div class="profil-guru">
+                <div class="profil-grid">
+                    <div class="form-group">
+                        <label>Nama Guru</label>
+                        <span class="print-text-fallback" id="lbl_nama_guru"></span>
+                        <input type="text" id="nama_guru" class="hide-field-on-print" placeholder="Otomatis" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>NIP</label>
+                        <span class="print-text-fallback" id="lbl_nip"></span>
+                        <input type="text" id="nip" class="hide-field-on-print" placeholder="Otomatis" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Mata Pelajaran</label>
+                        <span class="print-text-fallback" id="lbl_mata_pelajaran"></span>
+                        <input type="text" id="mata_pelajaran" class="hide-field-on-print" placeholder="Otomatis" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Semester</label>
+                        <span class="print-text-fallback" id="lbl_kelas_semester"></span>
+                        <input type="text" id="kelas_semester" class="hide-field-on-print" value="Genap" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; margin: 20px 0 5px 0; font-weight: bold; display: none;" id="judul-catatan-harian"></h3>
+
+            <button class="btn btn-add hide-on-print" id="tombol-tambah-baris" onclick="tambahBarisMengajarBlank()">➕ Tambah Baris Jurnal Baru</button>
+            
+            <table id="tabel-mengajar">
+                <thead>
+                    <tr>
+                        <th style="width:4%;">No</th>
+                        <th style="width:14%;">Hari / Tanggal</th>
+                        <th style="width:5%;">Jam Ke</th>
+                        <th style="width:5%;">Kelas</th>
+                        <th style="width:5%;">Pert. Ke</th>
+                        <th style="width:22%;">Tujuan Pembelajaran</th>
+                        <th style="width:22%;">Materi Pokok</th>
+                        <th style="width:9%;">Absensi</th>
+                        <th style="width:14%;">Refleksi</th>
+                    </tr>
+                </thead>
+                <tbody id="body-tabel-mengajar"></tbody>
+            </table>
+
+            <div class="pagination-container hide-on-print" id="panel-pagination">
+                <button class="btn-nav" id="btn-prev" onclick="halamanSebelumnya()">⬅️ Sblmnya</button>
+                <span class="page-info" id="info-halaman">Halaman 1 dari 1</span>
+                <button class="btn-nav" id="btn-next" onclick="halamanBerikutnya()">Selanjutnya ➡️</button>
+            </div>
+
+            <h2 id="judul-refleksi-bawah">Catatan Refleksi Bulanan Guru</h2><br>
+            <div class="refleksi-container">
+                <label><strong>1. Apa yang berjalan efektif bulan ini?</strong></label>
+                <div class="print-text-fallback" id="lbl_refleksi_1" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
+                <textarea id="refleksi_1" class="hide-field-on-print" placeholder="Isi analisis..."></textarea>
+                
+                <label><strong>2. Apa kendala utama yang dihadapi?</strong></label>
+                <div class="print-text-fallback" id="lbl_refleksi_2" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
+                <textarea id="refleksi_2" class="hide-field-on-print" placeholder="Isi kendala..."></textarea>
+                
+                <label><strong>3. Rencana Perbaikan untuk Pertemuan Selanjutnya:</strong></label>
+                <div class="print-text-fallback" id="lbl_refleksi_3" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
+                <textarea id="refleksi_3" class="hide-field-on-print" placeholder="Isi rencana..."></textarea>
+            </div>
+
+            <div class="ttd-container">
+                <div class="ttd-box">
+                    <p>Mengetahui,<br>Kepala Sekolah</p>
+                    <div style="height:50px;"></div>
+                    <span class="print-text-fallback" id="lbl_nama_kepsek" style="font-weight: bold; "></span>
+                    <input type="text" id="nama_kepsek" class="hide-field-on-print" value="Iis Ratna Sariningrum, S.Pd., M.M.">
+                    <p style="margin:2px 0 0 0; font-size:15px;" class="hide-field-on-print">NIP. 197103211994122001</p>
+                    <span class="print-text-fallback" id="lbl_nip_kepsek" style="font-size:15px; display:block;"></span>
+                </div>
+                <div class="ttd-box">
+                    <p>Jakarta, 21 Mei 2026<br>Guru Mata Pelajaran</p>
+                    <div style="height:50px;"></div>
+                    <span class="print-text-fallback" id="lbl_nama_guru_ttd" style="font-weight: bold; "></span>
+                    <input type="text" id="nama_guru_ttd" class="hide-field-on-print" placeholder="[Nama Guru]" readonly>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const URL_WEB_APP_SCRIPT = "https://script.google.com/macros/s/AKfycbz-7cZju2LVTBkIFrL73oEjjYMsh69zVUNxHtrA-3vV7539CURHZnb_eFnW8msnvdto/exec";
+        const URL_WEB_APP_SCRIPT = "https://script.google.com/macros/s/AKfycbxxnDPSveRqPLZcJdNN2XoEvZbNAhJ-wOj25E9F753CFpmR05UHvBGADtuNJy9iSWF1/exec";
 
         let databaseMateriGlobal = [];
+        let seluruhDataJurnalGuru = []; 
         
-        // DATABASE GURU
+        let halamanSekarang = 1;
+        const barisPerHalaman = 10;
+        
+        const daftarUrutanGuru = [
+            "Sunardi, M.Pd.", "Popy, S.Ag.", "Purwanto, S.Pd.", "Sri Murwani, M.Pd.",
+            "Endang Retna Ningsih, M.Pd.", "Badriah, M.Pd.", "Lelalahi, S.Pd.", "Dra. Lilin Suryani, M.M.",
+            "Endra Triyanto Hamdani, S.Kom.", "Asril Yansah, S.Pd.", "Sukiswati, S.Pd.Ing.", "Muh. Nurus Syiroj, S.Pd.",
+            "Sri Purnamawati, S.Pd.", "Suningsih, S.Pd.", "Bahrul Ulum, S.Pd.", "Siti Maimona, S.Pd.I, M.M.",
+            "Sapari, S.Pd.", "Hani Realita Alvi, S.Pd.", "Amrullah, S.Pd.I, S.Pd.", "Eny Setyowati, S.Pd.",
+            "Hasbi Nurhidayat, S.Sos.I", "Nurina Permatasari, S.Pd.", "Heru Damara, S.Pd.", "Endah Sulstyorini, M.Pd.",
+            "Riswadi, S.Pd.", "Sidiq Prakoso, S.Pd.", "Rosma Dortij, S.Th."
+        ];
+
         const databaseGuru = {
-            "Sunardi, M.Pd.": { nip: "NIP_Sunardi_123", mapel: "Matematika" },
+            "Sunardi, M.Pd.": { nip: "NIP_Sunardi_123", mapel: "Bahasa Inggris" },
             "Popy, S.Ag.": { nip: "NIP_Popy_123", mapel: "Pendidikan Agama Islam" },
-            "Purwanto, S.Pd.": { nip: "NIP_Purwanto_123", mapel: "PJOK" },
+            "Purwanto, S.Pd.": { nip: "NIP_Purwanto_123", mapel: "IPA" },
             "Sri Murwani, M.Pd.": { nip: "NIP_SriMurwani_123", mapel: "IPA" },
             "Endang Retna Ningsih, M.Pd.": { nip: "NIP_EndangRetna_123", mapel: "Bahasa Indonesia" },
             "Badriah, M.Pd.": { nip: "NIP_Badriah_123", mapel: "Matematika" },
@@ -207,7 +299,7 @@
             "Sukiswati, S.Pd.Ing.": { nip: "NIP_Sukiswati_123", mapel: "Bahasa Inggris" },
             "Muh. Nurus Syiroj, S.Pd.": { nip: "NIP_NurusSyiroj_123", mapel: "Matematika" },
             "Sri Purnamawati, S.Pd.": { nip: "NIP_SriPurnamawati_123", mapel: "Bahasa Inggris" },
-            "Sunningsih, S.Pd.": { nip: "NIP_Sunningsih_123", mapel: "IPA" },
+            "Suningsih, S.Pd.": { nip: "NIP_Sunningsih_123", mapel: "IPA" },
             "Bahrul Ulum, S.Pd.": { nip: "NIP_BahrulUlum_123", mapel: "Bahasa Indonesia" },
             "Siti Maimona, S.Pd.I, M.M.": { nip: "NIP_SitiMaimona_123", mapel: "Pendidikan Agama Islam" },
             "Sapari, S.Pd.": { nip: "NIP_Sapari_123", mapel: "IPS" },
@@ -223,7 +315,6 @@
             "Rosma Dortij, S.Th.": { nip: "NIP_RosmaDortij_123", mapel: "Pendidikan Agama Kristen" }
         };
 
-        // KELAS LENGKAP 7 A-F, 8 A-F, 9 A-F
         const opsiDropdownKelas = `
             <option value="">-- Kelas --</option>
             <optgroup label="KELAS 7">
@@ -241,18 +332,77 @@
         `;
 
         window.onload = function() {
-            inisialisasiDropdownGuru();
             ambilDataMateriDariSheets();
-            tambahBarisMengajarBlank();
+            renderTabelBerdasarkanHalaman(); 
+            
+            document.getElementById("password").addEventListener("keyup", function(event) {
+                if (event.key === "Enter") {
+                    prosesValidasiLogin();
+                }
+            });
         };
 
-        function inisialisasiDropdownGuru() {
-            const selectGuru = document.getElementById("nama_guru");
-            let opsihtml = `<option value="">-- Pilih Nama Guru --</option>`;
-            for (let nama in databaseGuru) {
-                opsihtml += `<option value="${nama}">${nama}</option>`;
+        function prosesValidasiLogin() {
+            const userIn = document.getElementById("username").value.trim().toLowerCase();
+            const passIn = document.getElementById("password").value;
+            const errorDiv = document.getElementById("login-error-msg");
+
+            if (passIn !== "gurucx") {
+                errorDiv.style.display = "block";
+                return;
             }
-            selectGuru.innerHTML = opsihtml;
+
+            if (userIn.startsWith("guru")) {
+                const nomorStr = userIn.replace("guru", "");
+                const indexGuru = parseInt(nomorStr, 10) - 1;
+
+                if (!isNaN(indexGuru) && indexGuru >= 0 && indexGuru < daftarUrutanGuru.length) {
+                    errorDiv.style.display = "none";
+                    document.getElementById("halaman-login").style.display = "none";
+                    document.getElementById("halaman-utama-jurnal").style.display = "block";
+
+                    const namaTerpilih = daftarUrutanGuru[indexGuru];
+                    document.getElementById("nama_guru").value = namaTerpilih;
+                    aksiPilihGuru(namaTerpilih); 
+                    return;
+                }
+            }
+
+            errorDiv.style.display = "block";
+        }
+
+        function formatKeTanggalIndonesia(inputTanggal) {
+            if (!inputTanggal) return "Kamis, 21 Mei 2026";
+            
+            let d;
+            if (typeof inputTanggal === 'string' && inputTanggal.includes('/')) {
+                const parts = inputTanggal.split('/');
+                if(parts.length === 3) {
+                    if(parts[0].length === 4) {
+                        d = new Date(parts[0], parts[1] - 1, parts[2]);
+                    } else {
+                        d = new Date(parts[2], parts[1] - 1, parts[0]);
+                    }
+                }
+            } 
+            
+            if (!d || isNaN(d.getTime())) {
+                d = new Date(inputTanggal);
+            }
+
+            if (isNaN(d.getTime())) {
+                return inputTanggal;
+            }
+
+            const daftarHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+            const namaHari = daftarHari[d.getDay()];
+            const tgl = d.getDate();
+            const namaBulan = daftarBulan[d.getMonth()];
+            const thn = d.getFullYear();
+
+            return `${namaHari}, ${tgl} ${namaBulan} ${thn}`;
         }
 
         function ambilDataMateriDariSheets() {
@@ -271,83 +421,179 @@
             });
         }
 
-        function downloadTemplateExcelKosong() {
-            const susunanHeader = [["Mata Pelajaran", "Kelas", "Tujuan Pembelajaran", "Materi Pokok"]];
-            susunanHeader.push(["Informatika", "9", "Peserta didik mampu memahami sistem komputer", "Perangkat Keras & Lunak"]); 
-            let wb = XLSX.utils.book_new();
-            let ws = XLSX.utils.aoa_to_sheet(susunanHeader);
-            ws['!cols'] = [{wch: 18}, {wch: 10}, {wch: 45}, {wch: 30}];
-            XLSX.utils.book_append_sheet(wb, ws, "Database_Materi");
-            XLSX.writeFile(wb, "Template_Database_Materi.xlsx");
-        }
+        function aksiPilihGuru(nama) {
+            document.getElementById("refleksi_1").value = "";
+            document.getElementById("refleksi_2").value = "";
+            document.getElementById("refleksi_3").value = "";
+            seluruhDataJurnalGuru = [];
+            halamanSekarang = 1;
 
-        function prosesUploadExcelMateri() {
-            const fileInput = document.getElementById("file_excel_materi");
-            if(fileInput.files.length === 0) { alert("Pilih file Excel terlebih dahulu!"); return; }
-            
-            const fileTerpilih = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const dataMentah = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(dataMentah, {type: 'array'});
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const barisJson = XLSX.utils.sheet_to_json(worksheet);
-                
-                let dataMateriDiformat = [];
-                barisJson.forEach(row => {
-                    let mapel = row["Mata Pelajaran"];
-                    let kelas = row["Kelas"];
-                    if(mapel && kelas) {
-                        dataMateriDiformat.push({ mapel: mapel, kelas: kelas, tp: row["Tujuan Pembelajaran"] || "", materi: row["Materi Pokok"] || "" });
-                    }
-                });
-
-                if(dataMateriDiformat.length === 0) { alert("Data kolom tidak sesuai template!"); return; }
-                if(!confirm("Ganti database lama di Sheets dengan data baru?")) return;
-
-                fetch(URL_WEB_APP_SCRIPT, {
-                    method: "POST", mode: "no-cors", headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: "payload=" + encodeURIComponent(JSON.stringify({ action: "uploadDatabaseMateri", data: dataMateriDiformat }))
-                }).then(() => {
-                    alert("📤 Database materi berhasil diperbarui!");
-                    ambilDataMateriDariSheets();
-                    fileInput.value = "";
-                }).catch(err => alert("Gagal: " + err.toString()));
-            };
-            reader.readAsArrayBuffer(fileTerpilih);
-        }
-
-        function aksiPilihGuru() {
-            const nama = document.getElementById("nama_guru").value;
             if(nama in databaseGuru) {
                 document.getElementById("nip").value = databaseGuru[nama].nip;
                 document.getElementById("mata_pelajaran").value = databaseGuru[nama].mapel;
                 document.getElementById("nama_guru_ttd").value = nama;
+                
+                ambilDataJurnalGuruDariSheets(nama);
             } else {
                 document.getElementById("nip").value = ""; 
-                document.getElementById("mata_pelajaran").value = ""; 
+                document.getElementById("mata_pelajaran").value = "";
                 document.getElementById("nama_guru_ttd").value = "";
+                renderTabelBerdasarkanHalaman();
             }
-            document.getElementById("body-tabel-mengajar").innerHTML = "";
-            tambahBarisMengajarBlank();
         }
 
-        function tambahBarisMengajarBlank() {
+        function ambilDataJurnalGuruDariSheets(namaGuru) {
+            const statusText = document.getElementById("loading_status");
+            statusText.innerText = "⏳ Memuat data jurnal dari Sheet...";
+            statusText.style.color = "#ea580c";
+
+            fetch(`${URL_WEB_APP_SCRIPT}?action=getJurnalMengajar`)
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === "sukses" && res.data) {
+                    seluruhDataJurnalGuru = res.data.filter(item => item.nama_guru === namaGuru);
+
+                    if (seluruhDataJurnalGuru.length > 0) {
+                        const lastEntry = seluruhDataJurnalGuru[seluruhDataJurnalGuru.length - 1];
+                        if(lastEntry.refleksi_efektif) document.getElementById("refleksi_1").value = lastEntry.refleksi_efektif;
+                        if(lastEntry.refleksi_kendala) document.getElementById("refleksi_2").value = lastEntry.refleksi_kendala;
+                        if(lastEntry.refleksi_rencana) document.getElementById("refleksi_3").value = lastEntry.refleksi_rencana;
+                        if(lastEntry.kelas_semester) document.getElementById("kelas_semester").value = lastEntry.kelas_semester;
+                    }
+                }
+                
+                renderTabelBerdasarkanHalaman();
+                statusText.innerText = "✅ Database Sinkron";
+                statusText.style.color = "#2ecc71";
+            })
+            .catch((err) => {
+                console.error(err);
+                renderTabelBerdasarkanHalaman();
+                statusText.innerText = "⚠️ Gagal Sinkronisasi Jurnal";
+                statusText.style.color = "#e74c3c";
+            });
+        }
+
+        function renderTabelBerdasarkanHalaman() {
             const tbody = document.getElementById("body-tabel-mengajar");
-            const noBaris = tbody.rows.length + 1;
+            tbody.innerHTML = "";
+
+            const totalData = seluruhDataJurnalGuru.length;
+            const totalHalaman = Math.ceil(totalData / barisPerHalaman) || 1;
+
+            const indexMulai = (halamanSekarang - 1) * barisPerHalaman;
+            const indexSelesai = Math.min(indexMulai + barisPerHalaman, totalData);
+
+            const dataHalamanIni = seluruhDataJurnalGuru.slice(indexMulai, indexSelesai);
+
+            if(dataHalamanIni.length === 0) {
+                buatBarisTabelElemen({ nomorNyata: 1 });
+            } else {
+                dataHalamanIni.forEach((item, index) => {
+                    const nomorAsli = indexMulai + index + 1;
+                    buatBarisTabelElemen({ item, nomorNyata: nomorAsli });
+                });
+            }
+
+            document.getElementById("info-halaman").innerText = `Halaman ${halamanSekarang} dari ${totalHalaman}`;
+            document.getElementById("btn-prev").disabled = (halamanSekarang === 1);
+            document.getElementById("btn-next").disabled = (halamanSekarang === totalHalaman);
+        }
+
+        function buatBarisTabelElemen({ item = {}, nomorNyata }) {
+            const tbody = document.getElementById("body-tabel-mengajar");
             const tr = document.createElement("tr");
+
+            let tanggalDiformat = formatKeTanggalIndonesia(item.tanggal || "2026-05-21");
+
+            let rawJam = item.jam_ke ? item.jam_ke.toString() : "";
+            if (rawJam.startsWith("'")) {
+                rawJam = rawJam.substring(1); 
+            }
+            const jamArray = rawJam.split(",").map(s => s.trim());
+
             tr.innerHTML = `
-                <td style="text-align:center; vertical-align: middle;">${noBaris}</td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-tgl"></span><input type="text" class="tgl hide-field-on-print" value="21/05/2026"></td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-jam"></span><div class="ceklis-jam-container hide-field-on-print">${[1,2,3,4,5,6,7,8].map(j => `<label class="jam-item"><input type="checkbox" class="chk-jam" value="${j}">${j}</label>`).join('')}</div></td>
+                <td style="text-align:center; vertical-align: middle;">${nomorNyata}</td>
+                <td style="vertical-align: middle;">
+                    <span class="print-text-fallback txt-tgl"></span>
+                    <input type="text" class="tgl hide-field-on-print" value="${tanggalDiformat}" onblur="this.value = formatKeTanggalIndonesia(this.value)">
+                </td>
+                <td style="vertical-align: middle; text-align: center;">
+                    <span class="print-text-fallback txt-jam" style="text-align: center; display: block; width: 100%;"></span>
+                    <div class="ceklis-jam-container hide-field-on-print">${[1,2,3,4,5,6,7,8,9].map(j => {
+                        const checked = jamArray.includes(j.toString()) ? "checked" : "";
+                        return `<label class="jam-item"><input type="checkbox" class="chk-jam" value="${j}" ${checked}>${j}</label>`;
+                    }).join('')}</div>
+                </td>
                 <td style="vertical-align: middle;"><span class="print-text-fallback txt-kls"></span><select class="kls hide-field-on-print" onchange="filterMateriSesuaiKelas(this.closest('tr'))">${opsiDropdownKelas}</select></td>
                 <td style="vertical-align: middle;"><span class="print-text-fallback txt-pert"></span><select class="pert hide-field-on-print">${Array.from({length: 16}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}</select></td>
                 <td style="vertical-align: middle;"><span class="print-text-fallback txt-cp"></span><select class="cp hide-field-on-print"><option value="">-- Pilih TP --</option></select></td>
                 <td style="vertical-align: middle;"><span class="print-text-fallback txt-mat"></span><select class="mat hide-field-on-print"><option value="">-- Pilih Materi --</option></select></td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-abs"></span><textarea class="abs hide-field-on-print" rows="2" placeholder="S/I/A"></textarea></td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-ref"></span><textarea class="ref hide-field-on-print" rows="2" placeholder="Catatan"></textarea></td>
+                <td style="vertical-align: middle;"><span class="print-text-fallback txt-abs"></span><textarea class="abs hide-field-on-print" rows="2" placeholder="S/I/A">${item.absensi || ''}</textarea></td>
+                <td style="vertical-align: middle;"><span class="print-text-fallback txt-ref"></span><textarea class="ref hide-field-on-print" rows="2" placeholder="Catatan">${item.refleksi || ''}</textarea></td>
             `;
             tbody.appendChild(tr);
+
+            tr.querySelector(".kls").value = item.kelas || "";
+            tr.querySelector(".pert").value = item.pertemuan_ke || "1";
+
+            filterMateriSesuaiKelas(tr);
+
+            setTimeout(() => {
+                if (item.cp_pembelajaran) tr.querySelector(".cp").value = item.cp_pembelajaran;
+                if (item.materi_pokok) tr.querySelector(".mat").value = item.materi_pokok;
+            }, 100);
+        }
+
+        function halamanSebelumnya() {
+            if(halamanSekarang > 1) {
+                simpanStateDataHalamanAktifKeMemory();
+                halamanSekarang--;
+                renderTabelBerdasarkanHalaman();
+            }
+        }
+
+        function halamanBerikutnya() {
+            const totalHalaman = Math.ceil(seluruhDataJurnalGuru.length / barisPerHalaman);
+            if(halamanSekarang < totalHalaman) {
+                simpanStateDataHalamanAktifKeMemory();
+                halamanSekarang++;
+                renderTabelBerdasarkanHalaman();
+            }
+        }
+
+        function tambahBarisMengajarBlank() {
+            const nomorBaru = seluruhDataJurnalGuru.length + 1;
+            seluruhDataJurnalGuru.push({
+                tanggal: formatKeTanggalIndonesia("2026-05-21"), jam_ke: "", kelas: "", pertemuan_ke: "1", cp_pembelajaran: "", materi_pokok: "", absensi: "", refleksi: ""
+            });
+            
+            halamanSekarang = Math.ceil(nomorBaru / barisPerHalaman);
+            renderTabelBerdasarkanHalaman();
+        }
+
+        function simpanStateDataHalamanAktifKeMemory() {
+            const rows = document.querySelectorAll("#body-tabel-mengajar tr");
+            const indexMulai = (halamanSekarang - 1) * barisPerHalaman;
+
+            rows.forEach((row, index) => {
+                const targetIndexGlobal = indexMulai + index;
+                if(seluruhDataJurnalGuru[targetIndexGlobal] === undefined) {
+                    seluruhDataJurnalGuru[targetIndexGlobal] = {};
+                }
+
+                let arrJam = []; 
+                row.querySelectorAll(".chk-jam:checked").forEach(c => arrJam.push(c.value));
+
+                seluruhDataJurnalGuru[targetIndexGlobal].tanggal = row.querySelector(".tgl").value;
+                seluruhDataJurnalGuru[targetIndexGlobal].jam_ke = arrJam.length > 0 ? "'" + arrJam.join(", ") : "";
+                seluruhDataJurnalGuru[targetIndexGlobal].kelas = row.querySelector(".kls").value;
+                seluruhDataJurnalGuru[targetIndexGlobal].pertemuan_ke = row.querySelector(".pert").value;
+                seluruhDataJurnalGuru[targetIndexGlobal].cp_pembelajaran = row.querySelector(".cp").value;
+                seluruhDataJurnalGuru[targetIndexGlobal].materi_pokok = row.querySelector(".mat").value;
+                seluruhDataJurnalGuru[targetIndexGlobal].absensi = row.querySelector(".abs").value;
+                seluruhDataJurnalGuru[targetIndexGlobal].refleksi = row.querySelector(".ref").value;
+            });
         }
 
         function filterMateriSesuaiKelas(rowElement) {
@@ -356,19 +602,16 @@
             const selectCP = rowElement.querySelector(".cp");
             const selectMat = rowElement.querySelector(".mat");
 
-            if(!mapel) { alert("Pilih nama guru terlebih dahulu!"); rowElement.querySelector(".kls").value = ""; return; }
+            if(!mapel || !kelasTerpilih) return;
 
-            let opsiTP = `<option value="">-- Pilih Tujuan Pembelajaran --</option>`;
-            let opsiMat = `<option value="">-- Pilih Materi Pokok --</option>`;
-
-            // Ambil karakter angka depannya saja untuk pencocokan database (misal 7A diambil 7)
+            let opsiTP = `<option value="">-- Pilih TP --</option>`;
+            let opsiMat = `<option value="">-- Pilih Materi --</option>`;
             const angkaKelasTerpilih = kelasTerpilih.replace(/\D/g, '').trim(); 
 
             const dataTersaring = databaseMateriGlobal.filter(item => {
                 const mapelSesuai = item.mapel.toLowerCase() === mapel.toLowerCase();
                 const angkaKelasDatabase = item.kelas.toString().replace(/\D/g, '').trim();
-                const kelasSesuai = (angkaKelasDatabase === angkaKelasTerpilih) || (item.kelas.toString().toLowerCase().trim() === kelasTerpilih.toLowerCase().trim());
-                return mapelSesuai && kelasSesuai;
+                return mapelSesuai && (angkaKelasDatabase === angkaKelasTerpilih);
             });
 
             if(dataTersaring.length > 0) {
@@ -376,56 +619,80 @@
                 let uniqueMats = [...new Set(dataTersaring.map(i => i.materi))];
                 uniqueTPs.forEach(tp => { if(tp) opsiTP += `<option value="${tp}">${tp}</option>`; });
                 uniqueMats.forEach(mat => { if(mat) opsiMat += `<option value="${mat}">${mat}</option>`; });
-            } else {
-                opsiTP = `<option value="">-- Tidak ada data TP Kelas ${kelasTerpilih} --</option>`;
-                opsiMat = `<option value="">-- Tidak ada data Materi Kelas ${kelasTerpilih} --</option>`;
             }
-            selectCP.innerHTML = opsiTP; selectMat.innerHTML = opsiMat;
-        }
-
-        function dapatkanFormatJam(row) {
-            let hasil = []; row.querySelectorAll(".chk-jam:checked").forEach(c => hasil.push(c.value)); return hasil.join(", ");
-        }
-
-        function dapatkanFormatJamPrint(row) {
-            let hasil = []; row.querySelectorAll(".chk-jam:checked").forEach(c => hasil.push(c.value));
-            if(hasil.length === 0) return "-";
-            if(hasil.length === 1) return hasil[0];
-            return hasil[0] + " - " + hasil[hasil.length - 1];
+            selectCP.innerHTML = opsiTP; 
+            selectMat.innerHTML = opsiMat;
         }
 
         function eksporJurnalKeSheets() {
             const nama = document.getElementById("nama_guru").value;
-            if(!nama) { alert("Pilih Nama Guru terlebih dahulu!"); return; }
+            if(!nama) { alert("Nama Guru kosong! Silakan login ulang."); return; }
 
-            const rows = document.querySelectorAll("#body-tabel-mengajar tr");
-            let dataJurnal = [];
-            rows.forEach(row => {
-                const kls = row.querySelector(".kls").value;
-                if(kls) {
-                    dataJurnal.push({
-                        tanggal: row.querySelector(".tgl").value, jam_ke: dapatkanFormatJam(row), kelas: kls,
-                        pertemuan_ke: row.querySelector(".pert").value, cp_pembelajaran: row.querySelector(".cp").value,
-                        materi_pokok: row.querySelector(".mat").value, absensi: row.querySelector(".abs").value, refleksi: row.querySelector(".ref").value
-                    });
-                }
-            });
+            simpanStateDataHalamanAktifKeMemory();
 
-            if(dataJurnal.length === 0) { alert("Masukkan minimal 1 entri baris!"); return; }
+            let dataBersihSiapKirim = seluruhDataJurnalGuru.filter(item => item.kelas || item.cp_pembelajaran);
+
+            if(dataBersihSiapKirim.length === 0) { alert("Minimal isi 1 baris data jurnal kelas!"); return; }
 
             const payload = {
-                nama_guru: nama, nip: document.getElementById("nip").value, mata_pelajaran: document.getElementById("mata_pelajaran").value,
-                kelas_semester: document.getElementById("kelas_semester").value, refleksi_efektif: document.getElementById("refleksi_1").value,
-                refleksi_kendala: document.getElementById("refleksi_2").value, refleksi_rencana: document.getElementById("refleksi_3").value, jurnal: dataJurnal
+                nama_guru: nama, 
+                nip: document.getElementById("nip").value, 
+                mata_pelajaran: document.getElementById("mata_pelajaran").value,
+                kelas_semester: document.getElementById("kelas_semester").value, 
+                refleksi_efektif: document.getElementById("refleksi_1").value,
+                refleksi_kendala: document.getElementById("refleksi_2").value, 
+                refleksi_rencana: document.getElementById("refleksi_3").value, 
+                jurnal: dataBersihSiapKirim
             };
 
             fetch(URL_WEB_APP_SCRIPT, {
                 method: "POST", mode: "no-cors", headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: "payload=" + encodeURIComponent(JSON.stringify(payload))
-            }).then(() => alert("🚀 Berhasil disimpan ke tab 'Jurnal_Mengajar'!")).catch(err => alert("Error: " + err.toString()));
+            }).then(() => {
+                alert("🚀 Semua data dari seluruh halaman berhasil disimpan ke Google Sheets!");
+                ambilDataJurnalGuruDariSheets(nama); 
+            }).catch(err => alert("Error: " + err.toString()));
+        }
+
+        function downloadTemplateExcelKosong() {
+            const susunanHeader = [["Mata Pelajaran", "Kelas", "Tujuan Pembelajaran", "Materi Pokok"]];
+            susunanHeader.push(["Informatika", "9D", "Peserta didik mampu memahami sistem komputer", "Perangkat Keras & Lunak"]); 
+            let wb = XLSX.utils.book_new();
+            let ws = XLSX.utils.aoa_to_sheet(susunanHeader);
+            XLSX.utils.book_append_sheet(wb, ws, "Database_Materi");
+            XLSX.writeFile(wb, "Template_Database_Materi.xlsx");
+        }
+
+        function prosesUploadExcelMateri() {
+            const fileInput = document.getElementById("file_excel_materi");
+            if(fileInput.files.length === 0) { alert("Pilih file Excel terlebih dahulu!"); return; }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataMentah = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(dataMentah, {type: 'array'});
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const barisJson = XLSX.utils.sheet_to_json(worksheet);
+                let dataMateriDiformat = [];
+                barisJson.forEach(row => {
+                    let mapel = row["Mata Pelajaran"];
+                    let kelas = row["Kelas"];
+                    if(mapel && kelas) {
+                        dataMateriDiformat.push({ mapel: mapel, kelas: kelas, tp: row["Tujuan Pembelajaran"] || "", materi: row["Materi Pokok"] || "" });
+                    }
+                });
+                fetch(URL_WEB_APP_SCRIPT, {
+                    method: "POST", mode: "no-cors", headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: "payload=" + encodeURIComponent(JSON.stringify({ action: "uploadDatabaseMateri", data: dataMateriDiformat }))
+                }).then(() => {
+                    alert("📤 Database materi berhasil diperbarui!");
+                    ambilDataMateriDariSheets();
+                });
+            };
+            reader.readAsArrayBuffer(fileInput.files[0]);
         }
 
         function cetakSemuaJurnalPDF() {
+            simpanStateDataHalamanAktifKeMemory();
             const namaGuru = document.getElementById("nama_guru").value || "Guru";
             const targetElement = document.getElementById("area-cetak-jurnal");
             
@@ -436,53 +703,66 @@
             document.getElementById("lbl_refleksi_1").innerText = document.getElementById("refleksi_1").value || "-";
             document.getElementById("lbl_refleksi_2").innerText = document.getElementById("refleksi_2").value || "-";
             document.getElementById("lbl_refleksi_3").innerText = document.getElementById("refleksi_3").value || "-";
-            
-            // Atur Fallback teks untuk Kepala Sekolah
             document.getElementById("lbl_nama_kepsek").innerText = document.getElementById("nama_kepsek").value;
-            document.getElementById("lbl_nip_kepsek").innerText = "NIP. 197103211994122001";
-            
             document.getElementById("lbl_nama_guru_ttd").innerText = document.getElementById("nama_guru_ttd").value || "[Nama Guru]";
 
-            const rows = document.querySelectorAll("#body-tabel-mengajar tr");
-            rows.forEach(row => {
-                row.querySelector(".txt-tgl").innerText = row.querySelector(".tgl").value || "-";
-                row.querySelector(".txt-jam").innerText = dapatkanFormatJamPrint(row);
-                row.querySelector(".txt-kls").innerText = row.querySelector(".kls").value || "-";
-                row.querySelector(".txt-pert").innerText = row.querySelector(".pert").value || "-";
-                row.querySelector(".txt-cp").innerText = row.querySelector(".cp").value || "-";
-                row.querySelector(".txt-mat").innerText = row.querySelector(".mat").value || "-";
-                row.querySelector(".txt-abs").innerText = row.querySelector(".abs").value || "-";
-                row.querySelector(".txt-ref").innerText = row.querySelector(".ref").value || "-";
+            const tbody = document.getElementById("body-tabel-mengajar");
+            tbody.innerHTML = "";
+            
+            seluruhDataJurnalGuru.forEach((item, index) => {
+                const tr = document.createElement("tr");
+                
+                let rawJam = item.jam_ke ? item.jam_ke.toString() : "";
+                if (rawJam.startsWith("'")) {
+                    rawJam = rawJam.substring(1); 
+                }
+                
+                let teksJamCetak = "-";
+                if(rawJam.trim() !== "") {
+                    teksJamCetak = "" + rawJam;
+                }
+
+                tr.innerHTML = `
+                    <td style="text-align:center; vertical-align: middle;">${index + 1}</td>
+                    <td style="vertical-align: middle; text-align: left;">${formatKeTanggalIndonesia(item.tanggal)}</td>
+                    <td style="vertical-align: middle; text-align: center; font-weight: bold;">${teksJamCetak}</td>
+                    <td style="text-align:center; vertical-align: middle;">${item.kelas || "-"}</td>
+                    <td style="text-align:center; vertical-align: middle;">${item.pertemuan_ke || "-"}</td>
+                    <td style="vertical-align: middle; text-align: left;">${item.cp_pembelajaran || "-"}</td>
+                    <td style="vertical-align: middle; text-align: left;">${item.materi_pokok || "-"}</td>
+                    <td style="vertical-align: middle; text-align: left;">${item.absensi || "-"}</td>
+                    <td style="vertical-align: middle; text-align: left;">${item.refleksi || "-"}</td>
+                `;
+                tbody.appendChild(tr);
             });
 
             document.getElementById("garis-cetak-hiasan").style.display = "block";
             document.getElementById("judul-catatan-harian").style.display = "block";
-
-            const uploadPanel = document.getElementById("panel-upload-materi");
-            const dividerLine = document.getElementById("garis-pembatas");
-            const addRowBtn = document.getElementById("tombol-tambah-baris");
-            
-            if(uploadPanel) uploadPanel.style.display = "none";
-            if(dividerLine) dividerLine.style.display = "none";
-            if(addRowBtn) addRowBtn.style.display = "none";
+            document.getElementById("panel-pagination").style.display = "none";
+            document.getElementById("panel-upload-materi").style.display = "none";
+            document.getElementById("garis-pembatas").style.display = "none";
+            document.getElementById("tombol-tambah-baris").style.display = "none";
 
             targetElement.classList.add("mode-cetak-bersih");
 
             const opsiCetak = {
-                margin: [12, 15, 12, 15],
+                margin: [15, 12, 15, 12],
                 filename: 'Jurnal_Agenda_Mengajar_' + namaGuru.replace(/[^a-zA-Z0-9]/g, "_") + '.pdf',
                 image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                html2canvas: { scale: 2, backgroundColor: '#ffffff', useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+                pagebreak: { mode: ['avoid-all'], before: '.ttd-container' }
             };
             
             html2pdf().set(opsiCetak).from(targetElement).save().then(() => {
-                if(uploadPanel) uploadPanel.style.display = "block";
-                if(dividerLine) dividerLine.style.display = "block";
-                if(addRowBtn) addRowBtn.style.display = "block";
                 document.getElementById("garis-cetak-hiasan").style.display = "none";
                 document.getElementById("judul-catatan-harian").style.display = "none";
+                document.getElementById("panel-pagination").style.display = "flex";
+                document.getElementById("panel-upload-materi").style.display = "block";
+                document.getElementById("garis-pembatas").style.display = "block";
+                document.getElementById("tombol-tambah-baris").style.display = "block";
                 targetElement.classList.remove("mode-cetak-bersih");
+                renderTabelBerdasarkanHalaman();
             });
         }
     </script>
