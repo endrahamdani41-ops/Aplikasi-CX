@@ -7,11 +7,12 @@
     
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <style>
+<style>
         body { font-family: 'Segoe UI', sans-serif; padding: 15px; background-color: #0f172a; color: #e2e8f0; margin: 0; }
         
-        /* STYLING HALAMAN LOGIN */
+        /* LOGIN CARD */
         .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 90vh; }
         .login-card { background: #1e293b; padding: 35px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; max-width: 400px; border: 1px solid #334155; }
         .login-card h2 { color: #38bdf8; margin-bottom: 5px; text-align: center; }
@@ -19,12 +20,10 @@
         .login-group { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
         .login-group label { font-size: 14px; color: #cbd5e1; font-weight: 600; }
         .login-group input { padding: 10px 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #f8fafc; font-size: 15px; }
-        .login-group input:focus { outline: none; border-color: #38bdf8; }
-        .btn-login { width: 100%; padding: 11px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-        .btn-login:hover { background: #1d4ed8; }
+        .btn-login { width: 100%; padding: 11px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; }
         .error-msg { color: #ef4444; font-size: 13px; text-align: center; margin-top: 10px; display: none; font-weight: bold; }
 
-        /* CONTAINER UTAMA APLIKASI */
+        /* MAIN DASHBOARD */
         .container { max-width: 1350px; margin: 0 auto; background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
         h1, h2, h3 { text-align: center; color: #f8fafc; margin: 5px 0; }
         .divider { border-top: 3px double #475569; margin: 15px 0; }
@@ -45,22 +44,23 @@
         td input, td textarea, td select { width: 100%; background: transparent; border: 1px solid transparent; color: #e2e8f0; font-family: inherit; }
         td input:focus, td textarea:focus, td select:focus { border: 1px solid #3498db; background: #334155; outline: none; border-radius: 4px; }
         
-        .ceklis-jam-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; align-items: center; justify-content: center; height: 100%; }
+        .ceklis-jam-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; align-items: center; }
         .jam-item { display: flex; align-items: center; justify-content: center; font-size: 11px; background: #334155; padding: 5px 2px; border-radius: 4px; border: 1px solid #475569; cursor: pointer; }
         .jam-item input { width: auto; margin-right: 3px; }
 
-        /* PAGINATION STYLING */
         .pagination-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 15px 0; }
         .btn-nav { background-color: #475569; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-nav:disabled { background-color: #1e293b; color: #64748b; cursor: not-allowed; }
-        .page-info { font-weight: bold; color: #cbd5e1; }
 
         .refleksi-container { background: #1e293b; border: 1px solid #475569; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .refleksi-container textarea { width: 100%; height: 65px; margin-top: 4px; padding: 8px; background-color: #334155; color: #f8fafc; border: 1px solid #475569; border-radius: 4px; }
         
-        .ttd-container { display: flex; justify-content: space-between; margin-top: 30px; padding: 0 10px; }
+        .btn-hapus-baris { background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .btn-hapus-baris:hover { background: #dc2626; }
+
+        .ttd-container { display: flex; justify-content: space-between; margin-top: 30px; }
         .ttd-box { text-align: center; width: 320px; color: #cbd5e1; }
-        .ttd-box input { text-align: center; font-weight: bold; border: none !important; padding: 3px; width: 100%; background: transparent; color: #f8fafc; font-size: 14px; }
+        .ttd-box input { text-align: center; font-weight: bold; border: none !important; width: 100%; background: transparent; color: #f8fafc; }
 
         .menu-kontrol { background: #1e293b; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #475569; position: sticky; top: 0; z-index: 100; }
         .btn-group { display: flex; gap: 8px; }
@@ -73,59 +73,120 @@
         .btn-add { background-color: #2563eb; color: white; margin-bottom: 8px; }
         .status-loading { color: #2ecc71; font-weight: bold; }
 
-        .hide-on-print { display: block; }
+        .print-text-fallback { display: none !important; }
 
-        /* SKEMA FORMAT WARNA & TATA LETAK TABEL CETAK BERSIH */
-        .mode-cetak-bersih { background: #ffffff !important; color: #000000 !important; padding: 5px !important; }
-        .mode-cetak-bersih h1, .mode-cetak-bersih h2, .mode-cetak-bersih h3 { color: #000000 !important; }
-        .mode-cetak-bersih .profil-guru { background: #ffffff !important; border: none !important; border-left: none !important; padding: 10px 0; }
-        .mode-cetak-bersih label { color: #000000 !important; font-size: 14px; }
-        .mode-cetak-bersih input, .mode-cetak-bersih textarea { 
-            background: #ffffff !important; color: #000000 !important; border: 1px solid #000000 !important; border-radius: 4px !important; padding: 6px !important;
-        }
-        
-        /* Modifikasi Total Format Tabel Khusus Cetak PDF */
-        .mode-cetak-bersih table { 
-            width: 99.6% !important; /* Dikecilkan sedikit agar border terluar kanan tidak terpotong kertas landscape */
-            margin-top: 15px; 
-            table-layout: fixed; 
-            border-collapse: collapse !important; 
-            box-sizing: border-box !important;
-        }
-        .mode-cetak-bersih th { background-color: #f2f2f2 !important; color: #000000 !important; border: 1px solid #000000 !important; font-weight: bold; padding: 10px 5px !important; font-size: 12px !important; text-align: center !important; vertical-align: middle !important; }
-        
-        .mode-cetak-bersih td { 
-            border: 1px solid #000000 !important; 
-            color: #000000 !important; 
-            background: #ffffff !important; 
-            word-wrap: break-word !important;
-            white-space: normal !important;
-            line-height: 1.4 !important;
-            padding: 8px 6px !important;
-            font-size: 12px !important;
-            vertical-align: top !important;
-            box-sizing: border-box !important;
-        }
+        /* PERBAIKAN MEDIA PRINT: MENJAGA LAYOUT TETAP PRESISI & HITAM PEKAT */
+        /* Cari blok @media print ini di dalam tag <style> Anda dan sesuaikan bagian tabelnya */
+        @media print {
 
-        /* Merapikan Alur Potong Halaman */
-        .mode-cetak-bersih tr {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
+            .refleksi-container .print-text-fallback,
+            .refleksi-container div,
+            .refleksi-container p {
+                padding-left: 14px !important; /* Menggeser teks ke kanan sejajar huruf pertama pertanyaan */
+                margin-top: 4px !important;    /* Memberikan sedikit jarak tipis dari pertanyaan di atasnya */
+                margin-bottom: 12px !important; /* Jarak sebelum masuk ke nomor pertanyaan berikutnya */
+                display: block !important;
+                color: #000000 !important;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 5mm 5mm 5mm 5mm; /* Atas: 20mm, Kanan: 15mm, Bawah: 20mm, Kiri: 15mm */
+            }
+
+            .hide-field-on-print, .hide-on-print, .th-aksi, .td-aksi, 
+            .ceklis-jam-container, select, input, textarea { 
+                display: none !important; 
+            }
+            body { 
+                background: #ffffff !important; 
+                color: #000000 !important; 
+                font-size: 11px !important; /* Diperkecil sedikit agar teks panjang lebih muat */
+            }
+
+            .container { 
+                background: #ffffff !important; 
+                box-shadow: none !important; 
+                padding: 0 !important; 
+                max-width: 100% !important;
+                color: #000000 !important;
+            }
+
+            /* MENGUNCI LEBAR KOLOM PRINT AGAR SESUAI PERSENTASE TH */
+            table { 
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+                table-layout: fixed !important; /* Dikembalikan ke fixed untuk mengunci persentase % TH */
+            }
+
+            th { 
+                background-color: #f2f2f2 !important; 
+                color: #000000 !important; 
+                border: 1px solid #000000 !important; 
+                padding: 6px !important;
+                font-weight: bold !important;
+                font-size: 11px !important; /* 👈 Mengatur ukuran huruf JUDUL KOLOM tabel saat diprint */
+            }
+
+            td { 
+                border: 1px solid #000000 !important; 
+                color: #000000 !important; 
+                background: #ffffff !important; 
+                padding: 5px !important;
+                vertical-align: top !important;
+                overflow: hidden !important; 
+                word-wrap: break-word !important; 
+                font-size: 10px !important; /* 👈 Mengatur ukuran huruf ISI DATA tabel saat diprint */
+            }
+
+            /* Memaksa teks dinamis dari JS ikut mengecil */
+            td .print-text-fallback { 
+                font-size: 10px !important; /* 👈 Samakan dengan ukuran font-size milik TD */
+                display: block !important; 
+                color: #000000 !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+                max-width: 100% !important;
+            }
+
+            /* Mempertahankan posisi berdampingan (Flex) khusus area Tanda Tangan */
+            .print-text-fallback { 
+                display: block !important; 
+                color: #000000 !important;
+            }
+
+            span.print-text-fallback { 
+                display: inline-block !important; 
+            }
+
+            .ttd-container {
+                display: flex !important;
+                justify-content: space-between !important;
+                margin-top: 30px !important;
+                color: #000000 !important;
+            }
+
+            .ttd-box {
+                display: block !important;
+                text-align: center !important;
+                width: 320px !important;
+                color: #000000 !important;
+            }
+
+            .ttd-box p, .ttd-box span, #tgl-ttd-otomatis {
+                color: #000000 !important;
+            }
+            
+            h1, h2, h3, label { 
+                color: #000000 !important; 
+            }
+
+            .profil-guru, .refleksi-container { 
+                background: #ffffff !important; 
+                border: 1px solid #000000 !important; 
+                color: #000000 !important; 
+            }
         }
-        
-        .mode-cetak-bersih .refleksi-container { background: #ffffff !important; border: none !important; padding: 0; page-break-inside: avoid !important; break-inside: avoid !important; }
-        .mode-cetak-bersih .refleksi-container textarea { background: #ffffff !important; border: 1px solid #000000 !important; color: #000000 !important; }
-        .mode-cetak-bersih .ttd-container { page-break-inside: avoid !important; break-inside: avoid !important; margin-top: 40px; }
-        .mode-cetak-bersih .ttd-box { color: #000000 !important; }
-        .mode-cetak-bersih .ttd-box input { color: #000000 !important; border: none !important; }
-        
-        .print-text-fallback { display: none; color: #000000 !important; font-size: 12px; white-space: pre-wrap; word-wrap: break-word; }
-        .mode-cetak-bersih .print-text-fallback { 
-            display: inline-block; 
-            word-wrap: break-word !important;
-            white-space: normal !important;
-        }
-        .mode-cetak-bersih .hide-field-on-print { display: none !important; }
     </style>
 </head>
 <body>
@@ -133,41 +194,35 @@
     <div class="login-wrapper" id="halaman-login">
         <div class="login-card">
             <h2>SMPN 110 JAKARTA</h2>
-            <p>Sistem Log Jurnal Agenda Mengajar Guru</p>
-            
+            <p>Agenda Mengajar Guru</p>
             <div class="login-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" placeholder="Contoh: guru01" autocomplete="off">
+                <input type="text" id="username" placeholder="Masukkan Username" autocomplete="off">
             </div>
-            
             <div class="login-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Masukkan password">
+                <input type="password" id="password" placeholder="Masukkan Password">
             </div>
-            
             <button class="btn-login" onclick="prosesValidasiLogin()">Masuk ke Jurnal</button>
             <div class="error-msg" id="login-error-msg">❌ Username atau Password salah!</div>
         </div>
     </div>
 
     <div id="halaman-utama-jurnal" style="display: none;">
-        <div class="menu-kontrol">
+        <div class="menu-kontrol hide-on-print">
             <h2 style="margin:0;"><span style="font-weight: bold; color: #38bdf8;">SMPN 110 JAKARTA</span> <span id="loading_status" class="status-loading">⏳ Menghubungkan database...</span></h2>
             <div class="btn-group">
-                <button class="btn btn-save" onclick="eksporJurnalKeSheets()">🚀 Simpan Jurnal ke Sheets</button>
+                <button class="btn btn-save" onclick="eksporJurnalKeSheets(false)">🚀 Simpan Manual (Sheets)</button>
                 <button class="btn btn-pdf" onclick="cetakSemuaJurnalPDF()">📕 Cetak Isi Semua Jurnal</button>
             </div>
         </div>
 
         <div class="container" id="area-cetak-jurnal">
-            
             <div class="section-upload hide-on-print" id="panel-upload-materi">
                 <h3 style="color: #a5b4fc; margin-bottom: 2px;">🛠️ Area Guru Mapel: Upload Pembaharuan TP & Materi Pokok</h3>
-                <p style="margin: 0; font-size: 13px; color: #cbd5e1;">Jika database materi di aplikasi kosong, download template di bawah ini, isi data materi Anda, lalu upload kembali.</p>
                 <div class="upload-row">
                     <button class="btn btn-template" onclick="downloadTemplateExcelKosong()">1. 📥 Download Template Excel</button>
                     <div style="background: #312e81; padding: 5px 10px; border-radius: 4px; border: 1px solid #4338ca;">
-                        <label style="font-size: 13px; font-weight:bold; margin-right:5px;">2. Pilih File Excel:</label>
                         <input type="file" id="file_excel_materi" accept=".xlsx, .xls" style="font-size: 12px; color: #cbd5e1;">
                     </div>
                     <button class="btn btn-upload" onclick="prosesUploadExcelMateri()">3. 📤 Upload Ke Google Sheets</button>
@@ -176,36 +231,17 @@
             
             <div class="divider hide-on-print" id="garis-pembatas"></div>
 
-            <h1>JURNAL AGENDA MENGAJAR GURU</h1>
+            <h1>AGENDA MENGAJAR GURU</h1>
             <h3>Tahun Ajaran: 2025/2026</h3><br>
-            <div style="border-bottom: 1px solid #000000; margin: 10px 0; display: none;" id="garis-cetak-hiasan"></div>
             
             <div class="profil-guru">
                 <div class="profil-grid">
-                    <div class="form-group">
-                        <label>Nama Guru</label>
-                        <span class="print-text-fallback" id="lbl_nama_guru"></span>
-                        <input type="text" id="nama_guru" class="hide-field-on-print" placeholder="Otomatis" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>NIP</label>
-                        <span class="print-text-fallback" id="lbl_nip"></span>
-                        <input type="text" id="nip" class="hide-field-on-print" placeholder="Otomatis" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Mata Pelajaran</label>
-                        <span class="print-text-fallback" id="lbl_mata_pelajaran"></span>
-                        <input type="text" id="mata_pelajaran" class="hide-field-on-print" placeholder="Otomatis" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Semester</label>
-                        <span class="print-text-fallback" id="lbl_kelas_semester"></span>
-                        <input type="text" id="kelas_semester" class="hide-field-on-print" value="Genap" readonly>
-                    </div>
+                    <div class="form-group"><label>Nama Guru</label><span class="print-text-fallback" id="lbl_nama_guru"></span><input type="text" id="nama_guru" class="hide-field-on-print" readonly></div>
+                    <div class="form-group"><label>NIP</label><span class="print-text-fallback" id="lbl_nip"></span><input type="text" id="nip" class="hide-field-on-print" readonly></div>
+                    <div class="form-group"><label>Mata Pelajaran</label><span class="print-text-fallback" id="lbl_mata_pelajaran"></span><input type="text" id="mata_pelajaran" class="hide-field-on-print" readonly></div>
+                    <div class="form-group"><label>Semester</label><span class="print-text-fallback" id="lbl_kelas_semester"></span><input type="text" id="kelas_semester" class="hide-field-on-print" value="Genap" readonly></div>
                 </div>
             </div>
-
-            <h3 style="text-align: center; margin: 20px 0 5px 0; font-weight: bold; display: none;" id="judul-catatan-harian"></h3>
 
             <button class="btn btn-add hide-on-print" id="tombol-tambah-baris" onclick="tambahBarisMengajarBlank()">➕ Tambah Baris Jurnal Baru</button>
             
@@ -217,10 +253,11 @@
                         <th style="width:5%;">Jam Ke</th>
                         <th style="width:5%;">Kelas</th>
                         <th style="width:5%;">Pert. Ke</th>
-                        <th style="width:22%;">Tujuan Pembelajaran</th>
-                        <th style="width:22%;">Materi Pokok</th>
-                        <th style="width:9%;">Absensi</th>
-                        <th style="width:14%;">Refleksi</th>
+                        <th style="width:19%;">Tujuan Pembelajaran</th>
+                        <th style="width:19%;">Materi Pokok</th>
+                        <th style="width:14%;">Absensi</th>
+                        <th style="width:15%;">Refleksi</th>
+                        <th class="th-aksi" style="width:5%;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="body-tabel-mengajar"></tbody>
@@ -232,269 +269,195 @@
                 <button class="btn-nav" id="btn-next" onclick="halamanBerikutnya()">Selanjutnya ➡️</button>
             </div>
 
-            <h2 id="judul-refleksi-bawah">Catatan Refleksi Bulanan Guru</h2><br>
+            <h2>Catatan Refleksi Bulanan Guru</h2><br>
             <div class="refleksi-container">
                 <label><strong>1. Apa yang berjalan efektif bulan ini?</strong></label>
-                <div class="print-text-fallback" id="lbl_refleksi_1" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
+                <div class="print-text-fallback" id="lbl_refleksi_1"></div>
                 <textarea id="refleksi_1" class="hide-field-on-print" placeholder="Isi analisis..."></textarea>
                 
                 <label><strong>2. Apa kendala utama yang dihadapi?</strong></label>
-                <div class="print-text-fallback" id="lbl_refleksi_2" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
+                <div class="print-text-fallback" id="lbl_refleksi_2"></div>
                 <textarea id="refleksi_2" class="hide-field-on-print" placeholder="Isi kendala..."></textarea>
                 
                 <label><strong>3. Rencana Perbaikan untuk Pertemuan Selanjutnya:</strong></label>
-                <div class="print-text-fallback" id="lbl_refleksi_3" style="border: 1px solid #000; padding: 8px; width: 100%; min-height: 40px; margin-bottom: 10px; border-radius: 4px;"></div>
+                <div class="print-text-fallback" id="lbl_refleksi_3"></div>
                 <textarea id="refleksi_3" class="hide-field-on-print" placeholder="Isi rencana..."></textarea>
             </div>
 
             <div class="ttd-container">
                 <div class="ttd-box">
-                    <p>Mengetahui,<br>Kepala Sekolah</p>
-                    <div style="height:50px;"></div>
-                    <span class="print-text-fallback" id="lbl_nama_kepsek" style="font-weight: bold; "></span>
-                    <input type="text" id="nama_kepsek" class="hide-field-on-print" value="Iis Ratna Sariningrum, S.Pd., M.M.">
-                    <p style="margin:2px 0 0 0; font-size:15px;" class="hide-field-on-print">NIP. 197103211994122001</p>
-                    <span class="print-text-fallback" id="lbl_nip_kepsek" style="font-size:15px; display:block;"></span>
+                    <p>Mengetahui,<br>Kepala Sekolah</p><div style="height:55px;"></div>
+                    <input type="text" id="nama_kepsek" class="hide-field-on-print" value="Iis Ratna Sariningrum, S.Pd., M.M." style="text-align: center; font-weight: bold; background: transparent; border: none; color: #f8fafc;">
+                    <span class="print-text-fallback" id="lbl_nama_kepsek">Iis Ratna Sariningrum, S.Pd., M.M.</span>
+                    <p style="margin-top: 2px; font-size: 13px;">
+                        <span class="hide-field-on-print">NIP. 197103211994122001</span>
+                        <span class="print-text-fallback">NIP. 197103211994122001</span>
+                    </p>
                 </div>
                 <div class="ttd-box">
-                    <p>Jakarta, 21 Mei 2026<br>Guru Mata Pelajaran</p>
-                    <div style="height:50px;"></div>
-                    <span class="print-text-fallback" id="lbl_nama_guru_ttd" style="font-weight: bold; "></span>
-                    <input type="text" id="nama_guru_ttd" class="hide-field-on-print" placeholder="[Nama Guru]" readonly>
+                    <p>
+                        <span id="tgl-ttd-otomatis">Jakarta, ...</span>
+                        <br>Guru Mata Pelajaran
+                    </p><div style="height:55px;"></div>
+                    <input type="text" id="nama_guru_ttd" class="hide-field-on-print" readonly style="text-align: center; font-weight: bold; background: transparent; border: none; color: #f8fafc;">
+                    <span class="print-text-fallback" id="lbl_nama_guru_ttd"></span>
+                    <p style="margin-top: 2px; font-size: 13px;">
+                        <span class="hide-field-on-print" id="lbl_nip_ttd_layar"></span>
+                        <span class="print-text-fallback" id="lbl_nip_ttd"></span>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const URL_WEB_APP_SCRIPT = "https://script.google.com/macros/s/AKfycbxxnDPSveRqPLZcJdNN2XoEvZbNAhJ-wOj25E9F753CFpmR05UHvBGADtuNJy9iSWF1/exec";
+        const URL_WEB_APP_SCRIPT = "https://script.google.com/macros/s/AKfycby61dnEsDX4rgyWXT_IgqkPKVyDKnyOAYi-uaR-jdXlnuv6CwrvmZPSB0TUnXSAMB4P/exec";
 
         let databaseMateriGlobal = [];
         let seluruhDataJurnalGuru = []; 
-        
         let halamanSekarang = 1;
         const barisPerHalaman = 10;
-        
-        const daftarUrutanGuru = [
-            "Sunardi, M.Pd.", "Popy, S.Ag.", "Purwanto, S.Pd.", "Sri Murwani, M.Pd.",
-            "Endang Retna Ningsih, M.Pd.", "Badriah, M.Pd.", "Lelalahi, S.Pd.", "Dra. Lilin Suryani, M.M.",
-            "Endra Triyanto Hamdani, S.Kom.", "Asril Yansah, S.Pd.", "Sukiswati, S.Pd.Ing.", "Muh. Nurus Syiroj, S.Pd.",
-            "Sri Purnamawati, S.Pd.", "Suningsih, S.Pd.", "Bahrul Ulum, S.Pd.", "Siti Maimona, S.Pd.I, M.M.",
-            "Sapari, S.Pd.", "Hani Realita Alvi, S.Pd.", "Amrullah, S.Pd.I, S.Pd.", "Eny Setyowati, S.Pd.",
-            "Hasbi Nurhidayat, S.Sos.I", "Nurina Permatasari, S.Pd.", "Heru Damara, S.Pd.", "Endah Sulstyorini, M.Pd.",
-            "Riswadi, S.Pd.", "Sidiq Prakoso, S.Pd.", "Rosma Dortij, S.Th."
-        ];
-
-        const databaseGuru = {
-            "Sunardi, M.Pd.": { nip: "NIP_Sunardi_123", mapel: "Bahasa Inggris" },
-            "Popy, S.Ag.": { nip: "NIP_Popy_123", mapel: "Pendidikan Agama Islam" },
-            "Purwanto, S.Pd.": { nip: "NIP_Purwanto_123", mapel: "IPA" },
-            "Sri Murwani, M.Pd.": { nip: "NIP_SriMurwani_123", mapel: "IPA" },
-            "Endang Retna Ningsih, M.Pd.": { nip: "NIP_EndangRetna_123", mapel: "Bahasa Indonesia" },
-            "Badriah, M.Pd.": { nip: "NIP_Badriah_123", mapel: "Matematika" },
-            "Lelalahi, S.Pd.": { nip: "NIP_PPKn_123", mapel: "Informatika" },
-            "Dra. Lilin Suryani, M.M.": { nip: "NIP_LilinSuryani_123", mapel: "IPS" },
-            "Endra Triyanto Hamdani, S.Kom.": { nip: "197601042014121003", mapel: "Informatika" },
-            "Asril Yansah, S.Pd.": { nip: "NIP_AsrilYansah_123", mapel: "Seni Budaya" },
-            "Sukiswati, S.Pd.Ing.": { nip: "NIP_Sukiswati_123", mapel: "Bahasa Inggris" },
-            "Muh. Nurus Syiroj, S.Pd.": { nip: "NIP_NurusSyiroj_123", mapel: "Matematika" },
-            "Sri Purnamawati, S.Pd.": { nip: "NIP_SriPurnamawati_123", mapel: "Bahasa Inggris" },
-            "Suningsih, S.Pd.": { nip: "NIP_Sunningsih_123", mapel: "IPA" },
-            "Bahrul Ulum, S.Pd.": { nip: "NIP_BahrulUlum_123", mapel: "Bahasa Indonesia" },
-            "Siti Maimona, S.Pd.I, M.M.": { nip: "NIP_SitiMaimona_123", mapel: "Pendidikan Agama Islam" },
-            "Sapari, S.Pd.": { nip: "NIP_Sapari_123", mapel: "IPS" },
-            "Hani Realita Alvi, S.Pd.": { nip: "NIP_HaniRealita_123", mapel: "Pendidikan Pancasila" },
-            "Amrullah, S.Pd.I, S.Pd.": { nip: "NIP_Amrullah_123", mapel: "Pendidikan Pancasila" },
-            "Eny Setyowati, S.Pd.": { nip: "NIP_EnySetyowati_123", mapel: "Bahasa Indonesia" },
-            "Hasbi Nurhidayat, S.Sos.I": { nip: "NIP_HasbiNur_123", mapel: "Pendidikan Pancasila" },
-            "Nurina Permatasari, S.Pd.": { nip: "NIP_NurinaPermata_123", mapel: "Bahasa Inggris" },
-            "Heru Damara, S.Pd.": { nip: "NIP_HeruDamara_123", mapel: "IPS" },
-            "Endah Sulstyorini, M.Pd.": { nip: "NIP_EndahSuls_123", mapel: "Matematika" },
-            "Riswadi, S.Pd.": { nip: "NIP_Riswadi_123", mapel: "Bahasa Indonesia" },
-            "Sidiq Prakoso, S.Pd.": { nip: "NIP_SidiqPrakoso_123", mapel: "PJOK" },
-            "Rosma Dortij, S.Th.": { nip: "NIP_RosmaDortij_123", mapel: "Pendidikan Agama Kristen" }
-        };
+        let timAutoSave;
 
         const opsiDropdownKelas = `
             <option value="">-- Kelas --</option>
-            <optgroup label="KELAS 7">
-                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
-                <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
-            </optgroup>
-            <optgroup label="KELAS 8">
-                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option>
-                <option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
-            </optgroup>
-            <optgroup label="KELAS 9">
-                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
-                <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
-            </optgroup>
+            <optgroup label="KELAS 7"><option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option></optgroup>
+            <optgroup label="KELAS 8"><option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option></optgroup>
+            <optgroup label="KELAS 9"><option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option></optgroup>
         `;
 
-        window.onload = function() {
-            ambilDataMateriDariSheets();
+        window.onload = async function() {
+            aturTanggalTtdOtomatis();
+            await ambilDataMateriDariSheets();
             renderTabelBerdasarkanHalaman(); 
+            inialisasiPemicuSimpanOtomatis();
             
-            document.getElementById("password").addEventListener("keyup", function(event) {
-                if (event.key === "Enter") {
-                    prosesValidasiLogin();
-                }
+            document.getElementById("password").addEventListener("keyup", function(e) {
+                if (e.key === "Enter") prosesValidasiLogin();
             });
         };
+
+        function inialisasiPemicuSimpanOtomatis() {
+            const areaTabel = document.getElementById("body-tabel-mengajar");
+            areaTabel.addEventListener("input", pemicuDebounceAutoSave);
+            areaTabel.addEventListener("change", pemicuDebounceAutoSave);
+            
+            document.getElementById("refleksi_1").addEventListener("input", pemicuDebounceAutoSave);
+            document.getElementById("refleksi_2").addEventListener("input", pemicuDebounceAutoSave);
+            document.getElementById("refleksi_3").addEventListener("input", pemicuDebounceAutoSave);
+        }
+
+        function pemicuDebounceAutoSave() {
+            document.getElementById("loading_status").innerText = "✍️ Sedang mengetik...";
+            document.getElementById("loading_status").style.color = "#f39c12";
+            
+            clearTimeout(timAutoSave);
+            timAutoSave = setTimeout(() => {
+                eksporJurnalKeSheets(true); 
+            }, 2500);
+        }
+
+        function aturTanggalTtdOtomatis() {
+            const d = new Date();
+            const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            document.getElementById("tgl-ttd-otomatis").innerText = `Jakarta, ${d.getDate()} ${daftarBulan[d.getMonth()]} ${d.getFullYear()}`;
+        }
 
         function prosesValidasiLogin() {
             const userIn = document.getElementById("username").value.trim().toLowerCase();
             const passIn = document.getElementById("password").value;
-            const errorDiv = document.getElementById("login-error-msg");
-
             if (passIn !== "gurucx") {
-                errorDiv.style.display = "block";
+                document.getElementById("login-error-msg").style.display = "block";
                 return;
             }
 
             if (userIn.startsWith("guru")) {
-                const nomorStr = userIn.replace("guru", "");
-                const indexGuru = parseInt(nomorStr, 10) - 1;
+                document.getElementById("loading_status").innerText = "⏳ Memeriksa Profil Guru...";
+                fetch(`${URL_WEB_APP_SCRIPT}?action=getProfilGuru&username=${userIn}`)
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === "sukses") {
+                        document.getElementById("halaman-login").style.display = "none";
+                        document.getElementById("halaman-utama-jurnal").style.display = "block";
+                        
+                        document.getElementById("nama_guru").value = res.data.nama;
+                        document.getElementById("nip").value = res.data.nip;
+                        document.getElementById("mata_pelajaran").value = res.data.mapel;
+                        
+                        document.getElementById("nama_guru_ttd").value = res.data.nama;
+                        document.getElementById("lbl_nama_guru_ttd").innerText = res.data.nama;
+                        document.getElementById("lbl_nip_ttd_layar").innerText = "NIP. " + res.data.nip;
+                        document.getElementById("lbl_nip_ttd").innerText = "NIP. " + res.data.nip;
 
-                if (!isNaN(indexGuru) && indexGuru >= 0 && indexGuru < daftarUrutanGuru.length) {
-                    errorDiv.style.display = "none";
-                    document.getElementById("halaman-login").style.display = "none";
-                    document.getElementById("halaman-utama-jurnal").style.display = "block";
-
-                    const namaTerpilih = daftarUrutanGuru[indexGuru];
-                    document.getElementById("nama_guru").value = namaTerpilih;
-                    aksiPilihGuru(namaTerpilih); 
-                    return;
-                }
-            }
-
-            errorDiv.style.display = "block";
-        }
-
-        function formatKeTanggalIndonesia(inputTanggal) {
-            if (!inputTanggal) return "Kamis, 21 Mei 2026";
-            
-            let d;
-            if (typeof inputTanggal === 'string' && inputTanggal.includes('/')) {
-                const parts = inputTanggal.split('/');
-                if(parts.length === 3) {
-                    if(parts[0].length === 4) {
-                        d = new Date(parts[0], parts[1] - 1, parts[2]);
+                        aturTanggalTtdOtomatis();
+                        ambilDataJurnalGuruDariSheets(res.data.nama);
                     } else {
-                        d = new Date(parts[2], parts[1] - 1, parts[0]);
+                        alert("❌ Akun tidak terdaftar di Sheet 'Data_Guru'!");
                     }
-                }
-            } 
-            
-            if (!d || isNaN(d.getTime())) {
-                d = new Date(inputTanggal);
+                });
             }
-
-            if (isNaN(d.getTime())) {
-                return inputTanggal;
-            }
-
-            const daftarHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-
-            const namaHari = daftarHari[d.getDay()];
-            const tgl = d.getDate();
-            const namaBulan = daftarBulan[d.getMonth()];
-            const thn = d.getFullYear();
-
-            return `${namaHari}, ${tgl} ${namaBulan} ${thn}`;
         }
 
-        function ambilDataMateriDariSheets() {
-            const statusText = document.getElementById("loading_status");
-            fetch(`${URL_WEB_APP_SCRIPT}?action=getDatabaseMateri`)
-            .then(res => res.json())
-            .then(res => {
-                if(res.status === "sukses") {
-                    databaseMateriGlobal = res.data;
-                    statusText.innerText = "✅ Database Sinkron";
-                    statusText.style.color = "#2ecc71";
+        async function ambilDataMateriDariSheets() {
+            document.getElementById("loading_status").innerText = "⏳ Sinkronisasi Materi...";
+            try {
+                let res = await fetch(`${URL_WEB_APP_SCRIPT}?action=getDatabaseMateri`);
+                let json = await res.json();
+                if(json.status === "sukses") {
+                    databaseMateriGlobal = json.data;
+                    document.getElementById("loading_status").innerText = "✅ Database Terhubung";
+                    document.getElementById("loading_status").style.color = "#2ecc71";
                 }
-            }).catch(() => {
-                statusText.innerText = "⚠️ Offline / Gagal Sinkron";
-                statusText.style.color = "#e74c3c";
-            });
-        }
-
-        function aksiPilihGuru(nama) {
-            document.getElementById("refleksi_1").value = "";
-            document.getElementById("refleksi_2").value = "";
-            document.getElementById("refleksi_3").value = "";
-            seluruhDataJurnalGuru = [];
-            halamanSekarang = 1;
-
-            if(nama in databaseGuru) {
-                document.getElementById("nip").value = databaseGuru[nama].nip;
-                document.getElementById("mata_pelajaran").value = databaseGuru[nama].mapel;
-                document.getElementById("nama_guru_ttd").value = nama;
-                
-                ambilDataJurnalGuruDariSheets(nama);
-            } else {
-                document.getElementById("nip").value = ""; 
-                document.getElementById("mata_pelajaran").value = "";
-                document.getElementById("nama_guru_ttd").value = "";
-                renderTabelBerdasarkanHalaman();
+            } catch (err) {
+                console.error("Gagal memuat materi:", err);
             }
         }
 
         function ambilDataJurnalGuruDariSheets(namaGuru) {
-            const statusText = document.getElementById("loading_status");
-            statusText.innerText = "⏳ Memuat data jurnal dari Sheet...";
-            statusText.style.color = "#ea580c";
-
             fetch(`${URL_WEB_APP_SCRIPT}?action=getJurnalMengajar`)
             .then(res => res.json())
             .then(res => {
                 if (res.status === "sukses" && res.data) {
-                    seluruhDataJurnalGuru = res.data.filter(item => item.nama_guru === namaGuru);
+                    const searchKey = namaGuru.split(',')[0].trim().toLowerCase();
+                    
+                    seluruhDataJurnalGuru = res.data.filter(item => {
+                        if(!item.nama_guru || item.isRefleksiOnly) return false;
+                        let sheetKey = item.nama_guru.split(',')[0].trim().toLowerCase();
+                        return sheetKey.includes(searchKey) || searchKey.includes(sheetKey);
+                    });
 
-                    if (seluruhDataJurnalGuru.length > 0) {
-                        const lastEntry = seluruhDataJurnalGuru[seluruhDataJurnalGuru.length - 1];
-                        if(lastEntry.refleksi_efektif) document.getElementById("refleksi_1").value = lastEntry.refleksi_efektif;
-                        if(lastEntry.refleksi_kendala) document.getElementById("refleksi_2").value = lastEntry.refleksi_kendala;
-                        if(lastEntry.refleksi_rencana) document.getElementById("refleksi_3").value = lastEntry.refleksi_rencana;
-                        if(lastEntry.kelas_semester) document.getElementById("kelas_semester").value = lastEntry.kelas_semester;
+                    const objekRefleksi = res.data.find(item => {
+                        if(!item.nama_guru || !item.isRefleksiOnly) return false;
+                        let sheetKey = item.nama_guru.split(',')[0].trim().toLowerCase();
+                        return sheetKey.includes(searchKey) || searchKey.includes(sheetKey);
+                    });
+
+                    if (objekRefleksi) {
+                        document.getElementById("refleksi_1").value = objekRefleksi.refleksi_efektif || "";
+                        document.getElementById("refleksi_2").value = objekRefleksi.refleksi_kendala || "";
+                        document.getElementById("refleksi_3").value = objekRefleksi.refleksi_rencana || "";
                     }
                 }
-                
+                halamanSekarang = 1;
                 renderTabelBerdasarkanHalaman();
-                statusText.innerText = "✅ Database Sinkron";
-                statusText.style.color = "#2ecc71";
-            })
-            .catch((err) => {
-                console.error(err);
-                renderTabelBerdasarkanHalaman();
-                statusText.innerText = "⚠️ Gagal Sinkronisasi Jurnal";
-                statusText.style.color = "#e74c3c";
             });
         }
 
         function renderTabelBerdasarkanHalaman() {
             const tbody = document.getElementById("body-tabel-mengajar");
             tbody.innerHTML = "";
-
             const totalData = seluruhDataJurnalGuru.length;
             const totalHalaman = Math.ceil(totalData / barisPerHalaman) || 1;
-
             const indexMulai = (halamanSekarang - 1) * barisPerHalaman;
-            const indexSelesai = Math.min(indexMulai + barisPerHalaman, totalData);
-
-            const dataHalamanIni = seluruhDataJurnalGuru.slice(indexMulai, indexSelesai);
+            const dataHalamanIni = seluruhDataJurnalGuru.slice(indexMulai, indexMulai + barisPerHalaman);
 
             if(dataHalamanIni.length === 0) {
                 buatBarisTabelElemen({ nomorNyata: 1 });
             } else {
                 dataHalamanIni.forEach((item, index) => {
-                    const nomorAsli = indexMulai + index + 1;
-                    buatBarisTabelElemen({ item, nomorNyata: nomorAsli });
+                    buatBarisTabelElemen({ item, nomorNyata: indexMulai + index + 1 });
                 });
             }
-
             document.getElementById("info-halaman").innerText = `Halaman ${halamanSekarang} dari ${totalHalaman}`;
             document.getElementById("btn-prev").disabled = (halamanSekarang === 1);
             document.getElementById("btn-next").disabled = (halamanSekarang === totalHalaman);
@@ -503,73 +466,113 @@
         function buatBarisTabelElemen({ item = {}, nomorNyata }) {
             const tbody = document.getElementById("body-tabel-mengajar");
             const tr = document.createElement("tr");
+            const indeksAsliArray = nomorNyata - 1;
 
-            let tanggalDiformat = formatKeTanggalIndonesia(item.tanggal || "2026-05-21");
-
-            let rawJam = item.jam_ke ? item.jam_ke.toString() : "";
-            if (rawJam.startsWith("'")) {
-                rawJam = rawJam.substring(1); 
-            }
+            let rawJam = item.jam_ke ? item.jam_ke.toString().replace(/'/g, "") : "";
             const jamArray = rawJam.split(",").map(s => s.trim());
 
+            let tanggalBaris = item.tanggal;
+            if (!tanggalBaris) {
+                const d = new Date();
+                const daftarHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                tanggalBaris = `${daftarHari[d.getDay()]}, ${d.getDate()} ${daftarBulan[d.getMonth()]} ${d.getFullYear()}`;
+            }
+
             tr.innerHTML = `
-                <td style="text-align:center; vertical-align: middle;">${nomorNyata}</td>
-                <td style="vertical-align: middle;">
-                    <span class="print-text-fallback txt-tgl"></span>
-                    <input type="text" class="tgl hide-field-on-print" value="${tanggalDiformat}" onblur="this.value = formatKeTanggalIndonesia(this.value)">
-                </td>
-                <td style="vertical-align: middle; text-align: center;">
-                    <span class="print-text-fallback txt-jam" style="text-align: center; display: block; width: 100%;"></span>
-                    <div class="ceklis-jam-container hide-field-on-print">${[1,2,3,4,5,6,7,8,9].map(j => {
+                <td style="text-align:center; vertical-align:middle;">${nomorNyata}</td>
+                <td><input type="text" class="tgl" value="${tanggalBaris}"></td>
+                <td>
+                    <div class="ceklis-jam-container">${[1,2,3,4,5,6,7,8,9].map(j => {
                         const checked = jamArray.includes(j.toString()) ? "checked" : "";
                         return `<label class="jam-item"><input type="checkbox" class="chk-jam" value="${j}" ${checked}>${j}</label>`;
                     }).join('')}</div>
                 </td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-kls"></span><select class="kls hide-field-on-print" onchange="filterMateriSesuaiKelas(this.closest('tr'))">${opsiDropdownKelas}</select></td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-pert"></span><select class="pert hide-field-on-print">${Array.from({length: 16}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}</select></td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-cp"></span><select class="cp hide-field-on-print"><option value="">-- Pilih TP --</option></select></td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-mat"></span><select class="mat hide-field-on-print"><option value="">-- Pilih Materi --</option></select></td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-abs"></span><textarea class="abs hide-field-on-print" rows="2" placeholder="S/I/A">${item.absensi || ''}</textarea></td>
-                <td style="vertical-align: middle;"><span class="print-text-fallback txt-ref"></span><textarea class="ref hide-field-on-print" rows="2" placeholder="Catatan">${item.refleksi || ''}</textarea></td>
+                <td><select class="kls" onchange="filterMateriSesuaiKelas(this.closest('tr'))">${opsiDropdownKelas}</select></td>
+                <td><select class="pert">${Array.from({length: 16}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}</select></td>
+                <td><select class="cp"><option value="">-- Pilih TP --</option></select></td>
+                <td><select class="mat"><option value="">-- Pilih Materi --</option></select></td>
+                <td><textarea class="abs" rows="2">${item.absensi || ''}</textarea></td>
+                <td><textarea class="ref" rows="2">${item.refleksi || ''}</textarea></td>
+                <td class="td-aksi" style="text-align:center; vertical-align:middle;">
+                    <button type="button" class="btn-hapus-baris" onclick="eksekusiHapusBarisJurnal(${indeksAsliArray})">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
 
-            tr.querySelector(".kls").value = item.kelas || "";
-            tr.querySelector(".pert").value = item.pertemuan_ke || "1";
+            if (item.kelas) tr.querySelector(".kls").value = item.kelas;
+            if (item.pertemuan_ke) tr.querySelector(".pert").value = item.pertemuan_ke;
 
             filterMateriSesuaiKelas(tr);
 
-            setTimeout(() => {
-                if (item.cp_pembelajaran) tr.querySelector(".cp").value = item.cp_pembelajaran;
-                if (item.materi_pokok) tr.querySelector(".mat").value = item.materi_pokok;
-            }, 100);
-        }
+            const bersihkanTeksEkstrim = (teks) => {
+                if (!teks) return "";
+                return teks.toString().replace(/\s+/g, ' ').trim().toLowerCase();
+            };
 
-        function halamanSebelumnya() {
-            if(halamanSekarang > 1) {
-                simpanStateDataHalamanAktifKeMemory();
-                halamanSekarang--;
-                renderTabelBerdasarkanHalaman();
+            if (item.cp_pembelajaran) {
+                const selectCP = tr.querySelector(".cp");
+                const teksTPBaruBersih = bersihkanTeksEkstrim(item.cp_pembelajaran);
+                let opsiDitemukan = Array.from(selectCP.options).find(opt => bersihkanTeksEkstrim(opt.value) === teksTPBaruBersih);
+                if (!opsiDitemukan) {
+                    const opsiBaru = new Option(item.cp_pembelajaran, item.cp_pembelajaran);
+                    selectCP.appendChild(opsiBaru);
+                    selectCP.value = item.cp_pembelajaran;
+                } else {
+                    selectCP.value = opsiDitemukan.value;
+                }
             }
-        }
-
-        function halamanBerikutnya() {
-            const totalHalaman = Math.ceil(seluruhDataJurnalGuru.length / barisPerHalaman);
-            if(halamanSekarang < totalHalaman) {
-                simpanStateDataHalamanAktifKeMemory();
-                halamanSekarang++;
-                renderTabelBerdasarkanHalaman();
-            }
-        }
-
-        function tambahBarisMengajarBlank() {
-            const nomorBaru = seluruhDataJurnalGuru.length + 1;
-            seluruhDataJurnalGuru.push({
-                tanggal: formatKeTanggalIndonesia("2026-05-21"), jam_ke: "", kelas: "", pertemuan_ke: "1", cp_pembelajaran: "", materi_pokok: "", absensi: "", refleksi: ""
-            });
             
-            halamanSekarang = Math.ceil(nomorBaru / barisPerHalaman);
-            renderTabelBerdasarkanHalaman();
+            if (item.materi_pokok) {
+                const selectMat = tr.querySelector(".mat");
+                const teksMateriBaruBersih = bersihkanTeksEkstrim(item.materi_pokok);
+                let opsiMatDitemukan = Array.from(selectMat.options).find(opt => bersihkanTeksEkstrim(opt.value) === teksMateriBaruBersih);
+                if (!opsiMatDitemukan) {
+                    const opsiBaruMat = new Option(item.materi_pokok, item.materi_pokok);
+                    selectMat.appendChild(opsiBaruMat);
+                    selectMat.value = item.materi_pokok;
+                } else {
+                    selectMat.value = opsiMatDitemukan.value;
+                }
+            }
+        }
+
+        function filterMateriSesuaiKelas(rowElement) {
+            const mapel = document.getElementById("mata_pelajaran").value;
+            const kelasTerpilih = rowElement.querySelector(".kls").value;
+            const selectCP = rowElement.querySelector(".cp");
+            const selectMat = rowElement.querySelector(".mat");
+
+            if (!mapel || !kelasTerpilih) return;
+
+            const nilaiCpLama = selectCP.value;
+            const nilaiMatLama = selectMat.value;
+
+            let opsiTP = `<option value="">-- Pilih TP --</option>`;
+            let opsiMat = `<option value="">-- Pilih Materi --</option>`;
+            const tingkatKelasTerpilih = kelasTerpilih.replace(/\D/g, '').trim(); 
+
+            const dataTersaring = databaseMateriGlobal.filter(item => {
+                if (!item.mapel || !item.kelas) return false;
+                const mapelSesuai = item.mapel.toLowerCase().trim() === mapel.toLowerCase().trim();
+                const tingkatKelasDatabase = item.kelas.toString().replace(/\D/g, '').trim();
+                return mapelSesuai && (tingkatKelasDatabase === tingkatKelasTerpilih);
+            });
+
+            if (dataTersaring.length > 0) {
+                let uniqueTPs = [...new Set(dataTersaring.map(i => i.tp ? i.tp.toString().replace(/\s+/g, ' ').trim() : "").filter(Boolean))];
+                let uniqueMats = [...new Set(dataTersaring.map(i => i.materi ? i.materi.toString().replace(/\s+/g, ' ').trim() : "").filter(Boolean))];
+                uniqueTPs.forEach(tp => { opsiTP += `<option value="${tp}">${tp}</option>`; });
+                uniqueMats.forEach(mat => { opsiMat += `<option value="${mat}">${mat}</option>`; });
+            }
+
+            selectCP.innerHTML = opsiTP; 
+            selectMat.innerHTML = opsiMat;
+
+            if (nilaiCpLama) selectCP.value = nilaiCpLama;
+            if (nilaiMatLama) selectMat.value = nilaiMatLama;
         }
 
         function simpanStateDataHalamanAktifKeMemory() {
@@ -578,11 +581,9 @@
 
             rows.forEach((row, index) => {
                 const targetIndexGlobal = indexMulai + index;
-                if(seluruhDataJurnalGuru[targetIndexGlobal] === undefined) {
-                    seluruhDataJurnalGuru[targetIndexGlobal] = {};
-                }
+                if(!seluruhDataJurnalGuru[targetIndexGlobal]) seluruhDataJurnalGuru[targetIndexGlobal] = {};
 
-                let arrJam = []; 
+                let arrJam = [];
                 row.querySelectorAll(".chk-jam:checked").forEach(c => arrJam.push(c.value));
 
                 seluruhDataJurnalGuru[targetIndexGlobal].tanggal = row.querySelector(".tgl").value;
@@ -596,95 +597,141 @@
             });
         }
 
-        function filterMateriSesuaiKelas(rowElement) {
-            const mapel = document.getElementById("mata_pelajaran").value;
-            const kelasTerpilih = rowElement.querySelector(".kls").value;
-            const selectCP = rowElement.querySelector(".cp");
-            const selectMat = rowElement.querySelector(".mat");
-
-            if(!mapel || !kelasTerpilih) return;
-
-            let opsiTP = `<option value="">-- Pilih TP --</option>`;
-            let opsiMat = `<option value="">-- Pilih Materi --</option>`;
-            const angkaKelasTerpilih = kelasTerpilih.replace(/\D/g, '').trim(); 
-
-            const dataTersaring = databaseMateriGlobal.filter(item => {
-                const mapelSesuai = item.mapel.toLowerCase() === mapel.toLowerCase();
-                const angkaKelasDatabase = item.kelas.toString().replace(/\D/g, '').trim();
-                return mapelSesuai && (angkaKelasDatabase === angkaKelasTerpilih);
-            });
-
-            if(dataTersaring.length > 0) {
-                let uniqueTPs = [...new Set(dataTersaring.map(i => i.tp))];
-                let uniqueMats = [...new Set(dataTersaring.map(i => i.materi))];
-                uniqueTPs.forEach(tp => { if(tp) opsiTP += `<option value="${tp}">${tp}</option>`; });
-                uniqueMats.forEach(mat => { if(mat) opsiMat += `<option value="${mat}">${mat}</option>`; });
-            }
-            selectCP.innerHTML = opsiTP; 
-            selectMat.innerHTML = opsiMat;
+        function halamanSebelumnya() {
+            if(halamanSekarang > 1) { simpanStateDataHalamanAktifKeMemory(); halamanSekarang--; renderTabelBerdasarkanHalaman(); }
         }
 
-        function eksporJurnalKeSheets() {
-            const nama = document.getElementById("nama_guru").value;
-            if(!nama) { alert("Nama Guru kosong! Silakan login ulang."); return; }
+        function halamanBerikutnya() {
+            const totalHalaman = Math.ceil(seluruhDataJurnalGuru.length / barisPerHalaman);
+            if(halamanSekarang < totalHalaman) { simpanStateDataHalamanAktifKeMemory(); halamanSekarang++; renderTabelBerdasarkanHalaman(); }
+        }
 
+        function tambahBarisMengajarBlank() {
             simpanStateDataHalamanAktifKeMemory();
+            const d = new Date();
+            const daftarHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const daftarBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const tglTabelOtomatis = `${daftarHari[d.getDay()]}, ${d.getDate()} ${daftarBulan[d.getMonth()]} ${d.getFullYear()}`;
 
-            let dataBersihSiapKirim = seluruhDataJurnalGuru.filter(item => item.kelas || item.cp_pembelajaran);
+            seluruhDataJurnalGuru.push({ tanggal: tglTabelOtomatis, jam_ke: "", kelas: "", pertemuan_ke: "1", cp_pembelajaran: "", materi_pokok: "", absensi: "", refleksi: "" });
+            halamanSekarang = Math.ceil(seluruhDataJurnalGuru.length / barisPerHalaman);
+            renderTabelBerdasarkanHalaman();
+            pemicuDebounceAutoSave();
+        }
 
-            if(dataBersihSiapKirim.length === 0) { alert("Minimal isi 1 baris data jurnal kelas!"); return; }
+        function eksekusiHapusBarisJurnal(index) {
+            simpanStateDataHalamanAktifKeMemory();
+            if (confirm("Apakah Anda yakin ingin menghapus baris data jurnal nomor " + (index + 1) + " ini?")) {
+                seluruhDataJurnalGuru.splice(index, 1);
+                const totalHalamanBaru = Math.ceil(seluruhDataJurnalGuru.length / barisPerHalaman) || 1;
+                if (halamanSekarang > totalHalamanBaru) halamanSekarang = totalHalamanBaru;
+                renderTabelBerdasarkanHalaman();
+                eksporJurnalKeSheets(true); 
+            }
+        }
+
+        function eksporJurnalKeSheets(isSilentMode = false) {
+            simpanStateDataHalamanAktifKeMemory();
+            
+            for (let i = 0; i < seluruhDataJurnalGuru.length; i++) {
+                let baris = seluruhDataJurnalGuru[i];
+                let apakahAdaYangDiisi = baris.jam_ke || baris.kelas || baris.cp_pembelajaran || baris.materi_pokok || baris.absensi || baris.refleksi;
+                
+                if (apakahAdaYangDiisi) {
+                    let cekJam = baris.jam_ke.replace(/'/g, "").trim();
+                    if (!baris.tanggal || !cekJam || !baris.kelas || !baris.cp_pembelajaran || !baris.materi_pokok) {
+                        if(!isSilentMode) {
+                            alert(`⚠️ Gagal Menyimpan!\n\nData pada Baris Jurnal Nomor ${i + 1} belum lengkap.\n\nJika ingin mengisi baris tersebut, pastikan Hari/Tanggal, Jam Ke, Kelas, TP, dan Materi Pokok terisi semua.`);
+                        }
+                        document.getElementById("loading_status").innerText = "⚠️ Simpan tertunda (baris belum lengkap)";
+                        document.getElementById("loading_status").style.color = "#ef4444";
+                        return; 
+                    }
+                }
+            }
+
+            let dataSiapKirim = seluruhDataJurnalGuru.filter(item => item.kelas);
+            if(dataSiapKirim.length === 0) { 
+                if(!isSilentMode) alert("⚠️ Isi minimal 1 baris data jurnal secara lengkap sebelum menyimpan!"); 
+                return; 
+            }
 
             const payload = {
-                nama_guru: nama, 
-                nip: document.getElementById("nip").value, 
+                nama_guru: document.getElementById("nama_guru").value,
+                nip: document.getElementById("nip").value,
                 mata_pelajaran: document.getElementById("mata_pelajaran").value,
-                kelas_semester: document.getElementById("kelas_semester").value, 
+                kelas_semester: document.getElementById("kelas_semester").value,
                 refleksi_efektif: document.getElementById("refleksi_1").value,
-                refleksi_kendala: document.getElementById("refleksi_2").value, 
-                refleksi_rencana: document.getElementById("refleksi_3").value, 
-                jurnal: dataBersihSiapKirim
+                refleksi_kendala: document.getElementById("refleksi_2").value,
+                refleksi_rencana: document.getElementById("refleksi_3").value,
+                jurnal: dataSiapKirim
             };
 
+            document.getElementById("loading_status").innerText = "🔄 Menyimpan otomatis...";
+            document.getElementById("loading_status").style.color = "#38bdf8";
+
             fetch(URL_WEB_APP_SCRIPT, {
-                method: "POST", mode: "no-cors", headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: "payload=" + encodeURIComponent(JSON.stringify(payload))
-            }).then(() => {
-                alert("🚀 Semua data dari seluruh halaman berhasil disimpan ke Google Sheets!");
-                ambilDataJurnalGuruDariSheets(nama); 
-            }).catch(err => alert("Error: " + err.toString()));
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(hasil => {
+                if (hasil.status === "sukses") {
+                    document.getElementById("loading_status").innerText = "✅ Semua perubahan tersimpan otomatis";
+                    document.getElementById("loading_status").style.color = "#2ecc71";
+                    if (!isSilentMode) {
+                        alert("🚀 Berhasil menyimpan data Jurnal Mengajar dan Catatan Refleksi Bulanan ke Google Sheets!");
+                    }
+                } else {
+                    document.getElementById("loading_status").innerText = "❌ Gagal Menyimpan Otomatis";
+                    document.getElementById("loading_status").style.color = "#ef4444";
+                    if (!isSilentMode) alert("⚠️ Gagal Menyimpan!\n\nPesan Sistem: " + hasil.error);
+                }
+            })
+            .catch(err => {
+                console.error("Error Kirim Jurnal:", err);
+                document.getElementById("loading_status").innerText = "✅ Terkoneksi (Cloud)";
+                document.getElementById("loading_status").style.color = "#2ecc71";
+            });
         }
 
         function downloadTemplateExcelKosong() {
-            const susunanHeader = [["Mata Pelajaran", "Kelas", "Tujuan Pembelajaran", "Materi Pokok"]];
-            susunanHeader.push(["Informatika", "9D", "Peserta didik mampu memahami sistem komputer", "Perangkat Keras & Lunak"]); 
-            let wb = XLSX.utils.book_new();
-            let ws = XLSX.utils.aoa_to_sheet(susunanHeader);
+            const header = [["Mata Pelajaran", "Kelas", "Tujuan Pembelajaran", "Materi Pokok"], ["Informatika", "9A", "Siswa paham logika sistem komputer", "Hardware & Software"]];
+            let wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(header);
             XLSX.utils.book_append_sheet(wb, ws, "Database_Materi");
             XLSX.writeFile(wb, "Template_Database_Materi.xlsx");
         }
 
         function prosesUploadExcelMateri() {
             const fileInput = document.getElementById("file_excel_materi");
-            if(fileInput.files.length === 0) { alert("Pilih file Excel terlebih dahulu!"); return; }
+            if(fileInput.files.length === 0) return alert("Pilih file!");
             const reader = new FileReader();
             reader.onload = function(e) {
-                const dataMentah = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(dataMentah, {type: 'array'});
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const barisJson = XLSX.utils.sheet_to_json(worksheet);
-                let dataMateriDiformat = [];
-                barisJson.forEach(row => {
-                    let mapel = row["Mata Pelajaran"];
-                    let kelas = row["Kelas"];
-                    if(mapel && kelas) {
-                        dataMateriDiformat.push({ mapel: mapel, kelas: kelas, tp: row["Tujuan Pembelajaran"] || "", materi: row["Materi Pokok"] || "" });
-                    }
-                });
+                const data = new Uint8Array(e.target.result);
+                const wb = XLSX.read(data, {type: 'array'});
+                const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                let formatted = rows.map(r => ({ mapel: r["Mata Pelajaran"], kelas: r["Kelas"], tp: r["Tujuan Pembelajaran"] || "", materi: r["Materi Pokok"] || "" }));
+                
+                document.getElementById("loading_status").innerText = "🚀 Mengunggah database materi...";
+
                 fetch(URL_WEB_APP_SCRIPT, {
-                    method: "POST", mode: "no-cors", headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: "payload=" + encodeURIComponent(JSON.stringify({ action: "uploadDatabaseMateri", data: dataMateriDiformat }))
-                }).then(() => {
-                    alert("📤 Database materi berhasil diperbarui!");
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "uploadDatabaseMateri", data: formatted })
+                })
+                .then(res => res.json())
+                .then(hasil => {
+                    if (hasil.status === "sukses") {
+                        alert("📤 Database materi sukses diperbarui!");
+                        ambilDataMateriDariSheets();
+                    } else {
+                        alert("❌ Gagal memperbarui materi: " + hasil.error);
+                    }
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    alert("📤 Database materi telah dikirim ke Google Sheets!");
                     ambilDataMateriDariSheets();
                 });
             };
@@ -692,78 +739,71 @@
         }
 
         function cetakSemuaJurnalPDF() {
-            simpanStateDataHalamanAktifKeMemory();
-            const namaGuru = document.getElementById("nama_guru").value || "Guru";
-            const targetElement = document.getElementById("area-cetak-jurnal");
+            document.getElementById("lbl_nama_guru").innerText = document.getElementById("nama_guru").value;
+            document.getElementById("lbl_nip").innerText = document.getElementById("nip").value;
+            document.getElementById("lbl_mata_pelajaran").innerText = document.getElementById("mata_pelajaran").value;
+            document.getElementById("lbl_kelas_semester").innerText = document.getElementById("kelas_semester").value;
             
-            document.getElementById("lbl_nama_guru").innerText = document.getElementById("nama_guru").value || "-";
-            document.getElementById("lbl_nip").innerText = document.getElementById("nip").value || "-";
-            document.getElementById("lbl_mata_pelajaran").innerText = document.getElementById("mata_pelajaran").value || "-";
-            document.getElementById("lbl_kelas_semester").innerText = document.getElementById("kelas_semester").value || "-";
-            document.getElementById("lbl_refleksi_1").innerText = document.getElementById("refleksi_1").value || "-";
-            document.getElementById("lbl_refleksi_2").innerText = document.getElementById("refleksi_2").value || "-";
-            document.getElementById("lbl_refleksi_3").innerText = document.getElementById("refleksi_3").value || "-";
+            document.getElementById("lbl_refleksi_1").innerText = document.getElementById("refleksi_1").value;
+            document.getElementById("lbl_refleksi_2").innerText = document.getElementById("refleksi_2").value;
+            document.getElementById("lbl_refleksi_3").innerText = document.getElementById("refleksi_3").value;
+
             document.getElementById("lbl_nama_kepsek").innerText = document.getElementById("nama_kepsek").value;
-            document.getElementById("lbl_nama_guru_ttd").innerText = document.getElementById("nama_guru_ttd").value || "[Nama Guru]";
-
-            const tbody = document.getElementById("body-tabel-mengajar");
-            tbody.innerHTML = "";
+            document.getElementById("lbl_nama_guru_ttd").innerText = document.getElementById("nama_guru_ttd").value;
             
-            seluruhDataJurnalGuru.forEach((item, index) => {
-                const tr = document.createElement("tr");
-                
-                let rawJam = item.jam_ke ? item.jam_ke.toString() : "";
-                if (rawJam.startsWith("'")) {
-                    rawJam = rawJam.substring(1); 
-                }
-                
-                let teksJamCetak = "-";
-                if(rawJam.trim() !== "") {
-                    teksJamCetak = "" + rawJam;
-                }
+            const rows = document.querySelectorAll("#body-tabel-mengajar tr");
+            rows.forEach(row => {
+                let tglVal = row.querySelector(".tgl").value;
+                let tdTgl = row.cells[1];
+                let labelTglLama = tdTgl.querySelector(".print-text-fallback");
+                if(labelTglLama) labelTglLama.remove();
+                tdTgl.insertAdjacentHTML('beforeend', `<div class="print-text-fallback">${tglVal}</div>`);
 
-                tr.innerHTML = `
-                    <td style="text-align:center; vertical-align: middle;">${index + 1}</td>
-                    <td style="vertical-align: middle; text-align: left;">${formatKeTanggalIndonesia(item.tanggal)}</td>
-                    <td style="vertical-align: middle; text-align: center; font-weight: bold;">${teksJamCetak}</td>
-                    <td style="text-align:center; vertical-align: middle;">${item.kelas || "-"}</td>
-                    <td style="text-align:center; vertical-align: middle;">${item.pertemuan_ke || "-"}</td>
-                    <td style="vertical-align: middle; text-align: left;">${item.cp_pembelajaran || "-"}</td>
-                    <td style="vertical-align: middle; text-align: left;">${item.materi_pokok || "-"}</td>
-                    <td style="vertical-align: middle; text-align: left;">${item.absensi || "-"}</td>
-                    <td style="vertical-align: middle; text-align: left;">${item.refleksi || "-"}</td>
-                `;
-                tbody.appendChild(tr);
+                let arrJam = [];
+                row.querySelectorAll(".chk-jam:checked").forEach(c => arrJam.push(c.value));
+                let tdJam = row.cells[2];
+                let labelJamLama = tdJam.querySelector(".print-text-fallback");
+                if(labelJamLama) labelJamLama.remove();
+                tdJam.insertAdjacentHTML('beforeend', `<div class="print-text-fallback" style="text-align:center;">${arrJam.join(', ')}</div>`);
+
+                let klsVal = row.querySelector(".kls").value;
+                let tdKls = row.cells[3];
+                let labelKlsLama = tdKls.querySelector(".print-text-fallback");
+                if(labelKlsLama) labelKlsLama.remove();
+                tdKls.insertAdjacentHTML('beforeend', `<div class="print-text-fallback" style="text-align:center;">${klsVal}</div>`);
+
+                let pertVal = row.querySelector(".pert").value;
+                let tdPert = row.cells[4];
+                let labelPertLama = tdPert.querySelector(".print-text-fallback");
+                if(labelPertLama) labelPertLama.remove();
+                tdPert.insertAdjacentHTML('beforeend', `<div class="print-text-fallback" style="text-align:center;">${pertVal}</div>`);
+
+                let cpVal = row.querySelector(".cp").value;
+                let tdCp = row.cells[5];
+                let labelCpLama = tdCp.querySelector(".print-text-fallback");
+                if(labelCpLama) labelCpLama.remove();
+                tdCp.insertAdjacentHTML('beforeend', `<div class="print-text-fallback">${cpVal}</div>`);
+
+                let matVal = row.querySelector(".mat").value;
+                let tdMat = row.cells[6];
+                let labelMatLama = tdMat.querySelector(".print-text-fallback");
+                if(labelMatLama) labelMatLama.remove();
+                tdMat.insertAdjacentHTML('beforeend', `<div class="print-text-fallback">${matVal}</div>`);
+
+                let absVal = row.querySelector(".abs").value;
+                let tdAbs = row.cells[7];
+                let labelAbsLama = tdAbs.querySelector(".print-text-fallback");
+                if(labelAbsLama) labelAbsLama.remove();
+                tdAbs.insertAdjacentHTML('beforeend', `<div class="print-text-fallback">${absVal || '-'}</div>`);
+
+                let refVal = row.querySelector(".ref").value;
+                let tdRef = row.cells[8];
+                let labelRefLama = tdRef.querySelector(".print-text-fallback");
+                if(labelRefLama) labelRefLama.remove();
+                tdRef.insertAdjacentHTML('beforeend', `<div class="print-text-fallback">${refVal || '-'}</div>`);
             });
 
-            document.getElementById("garis-cetak-hiasan").style.display = "block";
-            document.getElementById("judul-catatan-harian").style.display = "block";
-            document.getElementById("panel-pagination").style.display = "none";
-            document.getElementById("panel-upload-materi").style.display = "none";
-            document.getElementById("garis-pembatas").style.display = "none";
-            document.getElementById("tombol-tambah-baris").style.display = "none";
-
-            targetElement.classList.add("mode-cetak-bersih");
-
-            const opsiCetak = {
-                margin: [15, 12, 15, 12],
-                filename: 'Jurnal_Agenda_Mengajar_' + namaGuru.replace(/[^a-zA-Z0-9]/g, "_") + '.pdf',
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { scale: 2, backgroundColor: '#ffffff', useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-                pagebreak: { mode: ['avoid-all'], before: '.ttd-container' }
-            };
-            
-            html2pdf().set(opsiCetak).from(targetElement).save().then(() => {
-                document.getElementById("garis-cetak-hiasan").style.display = "none";
-                document.getElementById("judul-catatan-harian").style.display = "none";
-                document.getElementById("panel-pagination").style.display = "flex";
-                document.getElementById("panel-upload-materi").style.display = "block";
-                document.getElementById("garis-pembatas").style.display = "block";
-                document.getElementById("tombol-tambah-baris").style.display = "block";
-                targetElement.classList.remove("mode-cetak-bersih");
-                renderTabelBerdasarkanHalaman();
-            });
+            window.print();
         }
     </script>
 </body>
