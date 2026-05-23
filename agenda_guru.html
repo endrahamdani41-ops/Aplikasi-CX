@@ -11,7 +11,32 @@
 
 <style>
         body { font-family: 'Segoe UI', sans-serif; padding: 15px; background-color: #0f172a; color: #e2e8f0; margin: 0; }
-        
+/* 👇 MEMBUAT KOTAK BIRU NAVY UNTUK NOMOR 2 AGAR SERAGAM */
+        .pembungkus-upload-file {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            
+            /* Setelan Kotak (Disamakan dengan gaya tombol lainnya) */
+            background-color: #61030f;        /* Warna latar biru gelap/navy sesuai tema */
+            border: 1px solid #3b82f6;        /* Garis tepi biru tipis */
+            border-radius: 6px;               /* Sudut kotak melengkung halus */
+            padding: 6px 12px;                /* Jarak spasi di dalam kotak */
+            min-height: 35px;                 /* Menjaga tinggi kotak agar presisi dengan tombol kanan-kiri */
+            box-sizing: border-box;
+            
+            /* Setelan Teks Angka 2 */
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Sedikit penyesuaian agar teks bawaan browser "No file chosen" warnanya lebih kontras */
+        .pembungkus-upload-file input[type="file"] {
+            color: #cbd5e1;
+            font-size: 12px;
+            cursor: pointer;
+        } 
         /* LOGIN CARD */
         .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 90vh; }
         .login-card { background: #1e293b; padding: 35px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; max-width: 400px; border: 1px solid #334155; }
@@ -30,7 +55,7 @@
         
         .section-upload { background: #1e1b4b; border: 2px dashed #6366f1; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
         .upload-row { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 10px; flex-wrap: wrap; }
-        
+  
         .profil-guru { margin-bottom: 15px; background: #334155; padding: 15px 20px; border-radius: 8px; border-left: 5px solid #3498db; }
         .profil-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .form-group { display: flex; align-items: center; }
@@ -311,12 +336,15 @@
             <div class="section-upload hide-on-print" id="panel-upload-materi">
                 <h3 style="color: #a5b4fc; margin-bottom: 2px;">🛠️ Area Guru Mapel: Upload Pembaharuan TP & Materi Pokok</h3>
                 <div class="upload-row">
-                    <button class="btn btn-template" onclick="downloadTemplateExcelKosong()">1. 📥 Download Template Excel</button>
-                    <div style="background: #312e81; padding: 5px 10px; border-radius: 4px; border: 1px solid #4338ca;">
-                        <input type="file" id="file_excel_materi" accept=".xlsx, .xls" style="font-size: 12px; color: #cbd5e1;">
-                    </div>
-                    <button class="btn btn-upload" onclick="prosesUploadExcelMateri()">3. 📤 Upload Ke Google Sheets</button>
+                    <button class="btn btn-template" onclick="downloadTemplateExcelKosong()">1. 📥 Download Template</button>
+        
+                <div class="pembungkus-upload-file">
+                    <span>2.</span> 
+                     <input type="file" id="file_excel_materi" accept=".xlsx, .xls">
                 </div>
+        
+        <button class="btn btn-upload" onclick="prosesUploadExcelMateri()">3. 📤 Upload Ke Sheets</button>
+    </div>
             </div>
             
             <div class="divider hide-on-print" id="garis-pembatas"></div>
