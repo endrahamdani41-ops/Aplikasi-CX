@@ -100,9 +100,12 @@
             }
             @page {
                 size: A4 portrait;
-                margin: 5mm 5mm 5mm 5mm; /* Atas: 20mm, Kanan: 15mm, Bawah: 20mm, Kiri: 15mm */
+                margin-top: 2.5cm;    /* Menurunkan batas atas semua halaman sebesar 1.5 cm */
+                margin-bottom: 1.5cm; /* Menjaga batas bawah aman agar tidak mentok */
+                margin-left: 1cm;
+                margin-right: 1cm;
             }
-
+       
             .hide-field-on-print, .hide-on-print, .th-aksi, .td-aksi, 
             .ceklis-jam-container, select, input, textarea { 
                 display: none !important; 
@@ -212,7 +215,27 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" placeholder="Masukkan Password">
             </div>
-            <button class="btn-login" onclick="prosesValidasiLogin()">Masuk ke Jurnal</button>
+            <button class="btn-login" onclick="prosesValidasiLogin()" style="
+                width: 100%; 
+                padding: 12px; 
+                background: #2563eb; 
+                color: white; 
+                border: none; 
+                border-radius: 8px; 
+                font-weight: bold; 
+                font-size: 15px; 
+                cursor: pointer; 
+                margin-top: 15px;
+                position: relative;
+                transition: all 0.1s ease;
+                /* Efek tebal 3D di bagian bawah tombol */
+                box-shadow: 0 5px 0 #1d4ed8, 0 8px 15px rgba(0, 0, 0, 0.4);
+            " 
+            onmousedown="this.style.transform='translateY(4px)'; this.style.boxShadow='0 1px 0 #1d4ed8, 0 3px 5px rgba(0, 0, 0, 0.4)';" 
+            onmouseup="this.style.transform='none'; this.style.boxShadow='0 5px 0 #1d4ed8, 0 8px 15px rgba(0, 0, 0, 0.4)';"
+            onmouseleave="this.style.transform='none'; this.style.boxShadow='0 5px 0 #1d4ed8, 0 8px 15px rgba(0, 0, 0, 0.4)';">
+                Masuk ke Jurnal
+            </button>
             <div class="error-msg" id="login-error-msg">❌ Username atau Password salah!</div>
         </div>
     </div>
@@ -220,18 +243,67 @@
     <div id="halaman-utama-jurnal" style="display: none;">
         <div class="menu-kontrol hide-on-print">
             <h2 style="margin:0;"><span style="font-weight: bold; color: #38bdf8;">SMPN 110 JAKARTA</span> <span id="loading_status" class="status-loading">⏳ Menghubungkan database...</span></h2>
-            <div class="btn-group">
-
-
-                <button class="btn btn-pdf" onclick="eksporJurnalKeSheets(false);" title="Simpan Agenda Guru" style="background-color: #2007fc; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-floppy-disk" style="font-size: 15px;"></i>
-
-                <button class="btn btn-pdf" onclick="cetakSemuaJurnalPDF();" title="Cetak Agenda Guru" style="background-color: #fa60d48a; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-print" style="font-size: 15px;"></i>
-             
-                <button class="btn btn-logout" onclick="window.location.reload();" title="Keluar dari Aplikasi" style="background-color: #dc2626; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-right-from-bracket" style="font-size: 15px;"></i>
+       <div class="btn-group" style="display: flex; align-items: center; gap: 10px;">
+                
+                <button class="btn btn-save" onclick="eksporJurnalKeSheets(false)" style="
+                    background-color: #22c55e; 
+                    color: white; 
+                    padding: 8px 14px; 
+                    border: none; 
+                    border-radius: 6px; 
+                    cursor: pointer; 
+                    font-weight: bold; 
+                    font-size: 12px;
+                    position: relative;
+                    transition: all 0.1s ease;
+                    box-shadow: 0 4px 0 #16a34a, 0 6px 10px rgba(0, 0, 0, 0.3);
+                "
+                onmousedown="this.style.transform='translateY(3px)'; this.style.boxShadow='0 1px 0 #16a34a, 0 2px 4px rgba(0, 0, 0, 0.3)';"
+                onmouseup="this.style.transform='none'; this.style.boxShadow='0 4px 0 #22c55e, 0 6px 10px rgba(0, 0, 0, 0.3)';"
+                onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 0 #16a34a, 0 6px 10px rgba(0, 0, 0, 0.3)';">
+                    💾 
                 </button>
+                
+                <button class="btn btn-pdf" onclick="cetakSemuaJurnalPDF()" style="
+                    background-color: #eab308; 
+                    color: #0f172a; 
+                    padding: 8px 14px; 
+                    border: none; 
+                    border-radius: 6px; 
+                    cursor: pointer; 
+                    font-weight: bold; 
+                    font-size: 12px;
+                    position: relative;
+                    transition: all 0.1s ease;
+                    box-shadow: 0 4px 0 #ca8a04, 0 6px 10px rgba(0, 0, 0, 0.3);
+                "
+                onmousedown="this.style.transform='translateY(3px)'; this.style.boxShadow='0 1px 0 #ca8a04, 0 2px 4px rgba(0, 0, 0, 0.3)';"
+                onmouseup="this.style.transform='none'; this.style.boxShadow='0 4px 0 #eab308, 0 6px 10px rgba(0, 0, 0, 0.3)';"
+                onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 0 #ca8a04, 0 6px 10px rgba(0, 0, 0, 0.3)';">
+                    🖨️ 
+                </button>
+                
+                <button class="btn btn-logout" onclick="window.location.reload();" title="Keluar dari Aplikasi" style="
+                    background-color: #dc2626; 
+                    color: white; 
+                    padding: 8px 14px; 
+                    border: none; 
+                    border-radius: 6px; 
+                    cursor: pointer; 
+                    font-weight: bold;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    transition: all 0.1s ease;
+                    box-shadow: 0 4px 0 #991b1b, 0 6px 10px rgba(0, 0, 0, 0.3);
+                "
+                onmousedown="this.style.transform='translateY(3px)'; this.style.boxShadow='0 1px 0 #991b1b, 0 2px 4px rgba(0, 0, 0, 0.3)';"
+                onmouseup="this.style.transform='none'; this.style.boxShadow='0 4px 0 #dc2626, 0 6px 10px rgba(0, 0, 0, 0.3)';"
+                onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 0 #991b1b, 0 6px 10px rgba(0, 0, 0, 0.3)';">
+                    <i class="fa-solid fa-right-from-bracket" style="font-size: 14px;"></i>&nbsp;
+                </button>
+
             </div>
         </div>
 
@@ -261,7 +333,26 @@
                 </div>
             </div>
 
-            <button class="btn btn-add hide-on-print" id="tombol-tambah-baris" onclick="tambahBarisMengajarBlank()">➕ Tambah Baris Jurnal Baru</button>
+            <button class="btn btn-add hide-on-print" id="tombol-tambah-baris" onclick="tambahBarisMengajarBlank()" style="
+                background-color: #2563eb; 
+                color: white; 
+                border: none; 
+                border-radius: 6px; 
+                font-weight: bold; 
+                font-size: 12px; 
+                padding: 10px 14px; 
+                margin-bottom: 15px; 
+                cursor: pointer;
+                position: relative;
+                transition: all 0.1s ease;
+                /* Efek tebal 3D di bagian bawah tombol */
+                box-shadow: 0 4px 0 #1d4ed8, 0 6px 10px rgba(0, 0, 0, 0.3);
+            "
+            onmousedown="this.style.transform='translateY(3px)'; this.style.boxShadow='0 1px 0 #1d4ed8, 0 2px 4px rgba(0, 0, 0, 0.3)';"
+            onmouseup="this.style.transform='none'; this.style.boxShadow='0 4px 0 #1d4ed8, 0 6px 10px rgba(0, 0, 0, 0.3)';"
+            onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 0 #1d4ed8, 0 6px 10px rgba(0, 0, 0, 0.3)';">
+                ➕ Tambah Baris Jurnal Baru
+            </button>
             
             <table id="tabel-mengajar">
                 <thead>
