@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informasi Kelulusan SMPN 110 Jakarta</title>
+    <style>
+        /* Variabel Warna */
+        :root {
+            --bg-body: #f4f7f6;
+            --bg-container: #ffffff;
+            --text-main: #333333;
+            --text-muted: #718096;
+            --text-heading: #1a365d;
+            --text-sub: #4a5568;
+            --border-color: #e2e8f0;
+            --input-border: #cbd5e0;
+            --btn-bg: #3182ce;
+            --btn-hover: #2b6cb0;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-container: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #a0aec0;
+            --text-heading: #63b3ed;
+            --text-sub: #cbd5e0;
+            --border-color: #2d3748;
+            --input-border: #4a5568;
+            --btn-bg: #4299e1;
+            --btn-hover: #3182ce;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: var(--bg-container);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-toggle:hover { background: rgba(0, 0, 0, 0.05); }
+        [data-theme="dark"] .theme-toggle:hover { background: rgba(255, 255, 255, 0.1); }
+
+        .header img { max-width: 100px; margin-bottom: 15px; }
+        .header h1 { font-size: 24px; color: var(--text-heading); margin-bottom: 5px; }
+        .header h2 { font-size: 18px; color: var(--text-sub); margin-bottom: 20px; font-weight: 400; }
+        hr { border: 0; height: 1px; background: var(--border-color); margin: 20px 0; }
+
+        /* Timer Section */
+        #countdown-section { padding: 20px 0; }
+        .timer-display { display: flex; justify-content: center; gap: 15px; margin: 25px 0; }
+        .timer-box { background: var(--border-color); padding: 10px 15px; border-radius: 6px; min-width: 70px; }
+        .timer-box span { display: block; font-size: 28px; font-weight: 700; color: var(--btn-bg); }
+        .timer-box label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
+
+        /* Main Section */
+        #main-content { display: none; }
+        .form-group { margin-bottom: 20px; text-align: center; }
+        
+        input[type="text"] {
+            width: 100%; padding: 12px; border: 1px solid var(--input-border);
+            border-radius: 6px; font-size: 16px; background: var(--bg-container); 
+            color: var(--text-main); text-align: center;
+        }
+        
+        .search-btn {
+            background-color: var(--btn-bg); color: white; border: none; padding: 12px 20px;
+            font-size: 16px; font-weight: 600; border-radius: 6px; cursor: pointer; width: 100%;
+        }
+        .search-btn:hover { background-color: var(--btn-hover); }
+
+        /* Result Box */
+        .result-box { margin-top: 25px; padding: 20px; border-radius: 6px; display: none; }
+        .lulus { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        [data-theme="dark"] .lulus { background-color: #1c4532; color: #9ae6b4; border: 1px solid #22543d; }
+        .not-found { background-color: #feebc8; color: #744210; border: 1px solid #fbd38d; }
+        [data-theme="dark"] .not-found { background-color: #5d3b0e; color: #fbd38d; border: 1px solid #744210; }
+
+        .footer { margin-top: 30px; font-size: 12px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ubah Tema">🌓</button>
+
+    <div class="header">
+        <img src="https://drive.google.com/thumbnail?id=1WMmyrMkee7zOCPV6aacRJrfqnKtrBc6a&sz=w300"
+  class="w-24 mx-auto mb-4"
+  alt="Logo SMPN 110 Jakarta">
+        <h1>SMP NEGERI 110 JAKARTA</h1>
+        <h2 id="page-subtitle">Pengumuman Kelulusan Siswa Kelas IX</h2>
+    </div>
+
+    <hr>
+
+    <div id="countdown-section">
+        <p>Mohon bersabar, pengumuman kelulusan akan dibuka dalam:</p>
+        <div class="timer-display">
+            <div class="timer-box"><span id="hari">00</span><label>Hari</label></div>
+            <div class="timer-box"><span id="jam">00</span><label>Jam</label></div>
+            <div class="timer-box"><span id="menit">00</span><label>Menit</label></div>
+            <div class="timer-box"><span id="detik">00</span><label>Detik</label></div>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted);" id="target-date-text"></p>
+    </div>
+
+    <div id="main-content">
+        <div class="form-group">
+            <input type="text" id="nisnInput" placeholder="Masukkan NIS" autocomplete="off">
+        </div>
+        <button class="search-btn" onclick="cekKelulusan()">Cek Status Kelulusan</button>
+        <div id="result" class="result-box"></div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 SMPN 110 Jakarta</p>
+    </div>
+</div>
+
+<script>
+    // 1. SET JADWAL BUKA PENGUMUMAN
+    const waktuBuka = new Date("June 5, 2026 16:00:00").getTime();
+    document.getElementById("target-date-text").innerText = "Jadwal rilis: " + new Date(waktuBuka).toLocaleString('id-ID', {dateStyle: 'long', timeStyle: 'short'}) + " WIB";
+
+    // 2. DATABASE UTAMA SELURUH SISWA (Rata Tengah Kotak Pencarian Aktif)
+    const dataSiswa = {
+        "12442": { nama: "ABDUL HAKIM", status: "LULUS" },
+        "12586": { nama: "ALI JABBAR FIRDAUS", status: "LULUS" },
+        "12479": { nama: "ALIF NUR RAHMAT", status: "LULUS" },
+        "12625": { nama: "ANINDYA DZAKIYAH RAFIFAH", status: "LULUS" },
+        "12448": { nama: "ARI GILANG ROMADHON", status: "LULUS" },
+        "12513": { nama: "ATHAYA AZMI PRAYATA", status: "LULUS" },
+        "12449": { nama: "AZALEA MEISYAHIRA", status: "LULUS" },
+        "12484": { nama: "BELLICIA LIVIANA NAFEEZA", status: "LULUS" },
+        "13100": { nama: "DAVE LIANO CHANIA", status: "LULUS" },
+        "12517": { nama: "DAVINA SYAHIRA MAHARANI", status: "LULUS" },
+        "12518": { nama: "DEFA SEKAR ARUM", status: "LULUS" },
+        "12451": { nama: "DICNA VIOLA RAMADHANI", status: "LULUS" },
+        "12634": { nama: "FATIMAH AZZAHRA", status: "LULUS" },
+        "12637": { nama: "IDRAKI PUTRA ARIANTO", status: "LULUS" },
+        "12564": { nama: "KAMILA AININDYA PUTRI", status: "LULUS" },
+        "12598": { nama: "KAMILA NURHADIYATI", status: "LULUS" },
+        "12565": { nama: "KAYLA DIANDRA NAJMATUNISSA", status: "LULUS" },
+        "12638": { nama: "KENZO LAURENZI TONVI", status: "LULUS" },
+        "12458": { nama: "M. FIZLY ARAHMAN", status: "LULUS" },
+        "12495": { nama: "MUHAMMAD ATSILKA ALGHANI DONALD", status: "LULUS" },
+        "12497": { nama: "MUHAMMAD FADLI DHARMAWANSYAH", status: "LULUS" },
+        "12462": { nama: "MUHAMMAD JAZULI AZIZY", status: "LULUS" },
+        "12643": { nama: "MUHAMMAD RAFA ADITYA", status: "LULUS" },
+        "12533": { nama: "NAYCILLA AISYAH PURNOMO", status: "LULUS" },
+        "12576": { nama: "QANNZA FAIRUZA AZKIA", status: "LULUS" },
+        "12579": { nama: "RALFA NATHAN AL PARIZI", status: "LULUS" },
+        "12538": { nama: "RATU GABBY APRILIA", status: "LULUS" },
+        "12503": { nama: "RAVQY PUTRA SUGIYANTO", status: "LULUS" },
+        "12469": { nama: "RIDWAN OKTOFABIAN", status: "LULUS" },
+        "12615": { nama: "RISKIYAH MAHARANI PUTRI", status: "LULUS" },
+        "12508": { nama: "SYAHLA ANINDYA CAROLLINE", status: "LULUS" },
+        "12473": { nama: "SYALUNA NURI QOLBI", status: "LULUS" },
+        "12544": { nama: "TEGAR MAULANA", status: "LULUS" },
+        "12509": { nama: "TENGKU PASHA AL-VIAN", status: "LULUS" },
+        "12510": { nama: "TRI RAHAYU RAHMAWATI", status: "LULUS" },
+        "12511": { nama: "ZAIDAN RIZKIANTO", status: "LULUS" },
+        "12478": { nama: "AGUS RAMADHAN", status: "LULUS" },
+        "12585": { nama: "ALDI PUTRA DJIPTO", status: "LULUS" },
+        "12622": { nama: "ALIFAH NUR'AINI", status: "LULUS" },
+        "12624": { nama: "ALMIRA HASANATUL HAYYAH", status: "LULUS" },
+        "12587": { nama: "ALVIN ADITYA SAPUTRA", status: "LULUS" },
+        "12555": { nama: "AXEL ZHAFRAN", status: "LULUS" },
+        "12556": { nama: "AZIZUL HAFIDZ", status: "LULUS" },
+        "12514": { nama: "AZRIL ADITYA SAPUTRA", status: "LULUS" },
+        "12629": { nama: "CARISSA LAREIN", status: "LULUS" },
+        "12485": { nama: "CHAIRUNNISA SAFITRI", status: "LULUS" },
+        "12486": { nama: "CLARA LASMAULI MUTIARA TINAMBUNAN", status: "LULUS" },
+        "12557": { nama: "DAVINA PUTRI UTARI", status: "LULUS" },
+        "12591": { nama: "DINDA ZAKKIYAH PRAKASTIWI", status: "LULUS" },
+        "12521": { nama: "FAIRUZ AZRIEL FACHLEVI", status: "LULUS" },
+        "12594": { nama: "FIRYA IZZATI", status: "LULUS" },
+        "12664": { nama: "GHIFARY ANIBAYSYAH LEVI", status: "LULUS" },
+        "12596": { nama: "GRIMEZA AZIZAH ALDYAMIRU", status: "LULUS" },
+        "12490": { nama: "ILHAM DWI NUR LATIF", status: "LULUS" },
+        "12600": { nama: "KHANSAA DHILA", status: "LULUS" },
+        "12567": { nama: "MALIKA SYAHIRA AGFA", status: "LULUS" },
+        "12666": { nama: "MARVIN SA'DAN WIEKY WIBOWO", status: "LULUS" },
+        "12604": { nama: "MEISSA QURRATUL AINI", status: "LULUS" },
+        "12496": { nama: "MUHAMMAD AYYUBI SAFARAZ", status: "LULUS" },
+        "12532": { nama: "MUHAMMAD JAUHAR AL-KAHFI", status: "LULUS" },
+        "12573": { nama: "MUHIMAH ASMAN", status: "LULUS" },
+        "12574": { nama: "OCKTAVIA RIYADI PUTRI", status: "LULUS" },
+        "12536": { nama: "RADITYA RAGA HERLAMBANG", status: "LULUS" },
+        "12578": { nama: "RAFFA ADHITYA", status: "LULUS" },
+        "12649": { nama: "RAFFIANSYAH LUBIS", status: "LULUS" },
+        "12651": { nama: "RATHU ZALVARAYNA ALVINA", status: "LULUS" },
+        "12540": { nama: "REZA ANANDA PUTRA", status: "LULUS" },
+        "12470": { nama: "SAFA ANNISA", status: "LULUS" },
+        "12475": { nama: "YASMIN NURZAHRA", status: "LULUS" },
+        "12655": { nama: "ZAKI SATRIA ROSADI", status: "LULUS" },
+        "12477": { nama: "ZHAFIRAH AQILAH RANIYAH", status: "LULUS" },
+        "12583": { nama: "ZHEVANA PUTRI DENIAR", status: "LULUS" },
+        "12620": { nama: "AKRAM MAULIDIN", status: "LULUS" },
+        "12621": { nama: "ALDRY GHOFARDAN", status: "LULUS" },
+        "12444": { nama: "ALEXANDER AGUNG", status: "LULUS" },
+        "12480": { nama: "ALVIN MOHAMMAD KHASAFANY", status: "LULUS" },
+        "12481": { nama: "ALVIN RAMA PRAYOGA ADISUCIPTA", status: "LULUS" },
+        "12588": { nama: "ANINDIA NAHDATUL AKMAL", status: "LULUS" },
+        "12516": { nama: "BINTANG ANDROMEDA", status: "LULUS" },
+        "12628": { nama: "CALLYSTA PERDANA CAHYA ANUGRAH", status: "LULUS" },
+        "12631": { nama: "DESWITA PUTRI RACHMADIANI", status: "LULUS" },
+        "12487": { nama: "DIANA PERMATA PUTRI", status: "LULUS" },
+        "12519": { nama: "DIANA SRI RAHAYU", status: "LULUS" },
+        "12523": { nama: "FIANDRA ANINDYA HENRYANI", status: "LULUS" },
+        "12489": { nama: "GHIFARI PRATAMA", status: "LULUS" },
+        "12595": { nama: "GHUSTI FITRAH MARDIANSYAH", status: "LULUS" },
+        "12455": { nama: "GUSTI AYU NIGIE SHABRINA PUTRI", status: "LULUS" },
+        "12665": { nama: "IQLIMA AURELIA EL RASYID", status: "LULUS" },
+        "12597": { nama: "IRZHA FIRMANTO", status: "LULUS" },
+        "12566": { nama: "KEISYHA CAHAYA PUTRI PRATAMA", status: "LULUS" },
+        "12599": { nama: "KENNY HILMI ALMANNAN", status: "LULUS" },
+        "12526": { nama: "KEYLA NATASYA ARDIKA", status: "LULUS" },
+        "12601": { nama: "LENTIK OLIVIA", status: "LULUS" },
+        "12640": { nama: "LINTANG WAHYU ANGGORO", status: "LULUS" },
+        "12494": { nama: "LIONEL EVAN RAFSANJANI", status: "LULUS" },
+        "12527": { nama: "MARITZA ARETHA RAJNI BASKORO", status: "LULUS" },
+        "12528": { nama: "MICHAILA ZIVARA LUBAY", status: "LULUS" },
+        "12463": { nama: "MUHAMAD PANJI AKRAM SYAH", status: "LULUS" },
+        "12464": { nama: "MUHAMMAD SOFIAN", status: "LULUS" },
+        "12498": { nama: "MUJAMMIL AKBAR", status: "LULUS" },
+        "12645": { nama: "NABILA NURKHALIFAH", status: "LULUS" },
+        "12646": { nama: "NAJAT IHSAN HABIBAH", status: "LULUS" },
+        "12534": { nama: "NESSA NADRA", status: "LULUS" },
+        "12465": { nama: "NIZAM HADZAMI MAZSAID", status: "LULUS" },
+        "12535": { nama: "NUR QOLBI QAULAN KARIMA", status: "LULUS" },
+        "12580": { nama: "REIFA HAMID AL AZIZ", status: "LULUS" },
+        "12582": { nama: "ZEEVANYA DEVEGA CHANDRA", status: "LULUS" },
+        "12584": { nama: "AGIS PRADITA", status: "LULUS" },
+        "12626": { nama: "ANNISA KHAIRANI", status: "LULUS" },
+        "12483": { nama: "AZURA CHILLA", status: "LULUS" },
+        "12878": { nama: "DZAIDAN MANSIZ", status: "LULUS" },
+        "12633": { nama: "FATHAN PUTRA KURNIA HAKIM", status: "LULUS" },
+        "12522": { nama: "FATHIR ALI", status: "LULUS" },
+        "12524": { nama: "HAFIZAH KHAYYIRAH LUBNA", status: "LULUS" },
+        "12525": { nama: "HANIF JULIAN YUSUF", status: "LULUS" },
+        "12456": { nama: "HARLAN PADLIANSYAH", status: "LULUS" },
+        "12639": { nama: "KIRANNA RIZKYA ANANDA", status: "LULUS" },
+        "12493": { nama: "LATIVA HELMI", status: "LULUS" },
+        "12459": { nama: "MAHESSA AYU KIRANI", status: "LULUS" },
+        "12460": { nama: "MARISA AZZAHRA", status: "LULUS" },
+        "12461": { nama: "MICHAEL FARUKH NASYHAN", status: "LULUS" },
+        "12641": { nama: "MUHAMMAD FAIRUZ AL WAHIB", status: "LULUS" },
+        "12570": { nama: "MUHAMMAD FAKHRI", status: "LULUS" },
+        "12531": { nama: "MUHAMMAD GAHTAN", status: "LULUS" },
+        "12607": { nama: "MUHAMMAD HAFIDZ", status: "LULUS" },
+        "12571": { nama: "MUHAMMAD JAGA NUR ARDIYAALLAH", status: "LULUS" },
+        "12609": { nama: "MUHAMMAD RAFI AZHAR", status: "LULUS" },
+        "12647": { nama: "NAJMI FILLAYLI", status: "LULUS" },
+        "12648": { nama: "NAYLA RAHMATUL AZZA", status: "LULUS" },
+        "12466": { nama: "PUTRI CALLYSTA SALSABILLA", status: "LULUS" },
+        "12612": { nama: "PUTRI LAILA", status: "LULUS" },
+        "12613": { nama: "RAFA AL-FAIZ", status: "LULUS" },
+        "12502": { nama: "RAFA BAEHAQI", status: "LULUS" },
+        "12577": { nama: "RAFA FAUZAN KAMIL", status: "LULUS" },
+        "12537": { nama: "RAFAEL JULIANTO", status: "LULUS" },
+        "12650": { nama: "RASYA NURALI HADI", status: "LULUS" },
+        "12468": { nama: "REISYAH TRI RAFUDIN", status: "LULUS" },
+        "12539": { nama: "RESHA ELVITA", status: "LULUS" },
+        "12504": { nama: "SACHI PUTRI STEFANY", status: "LULUS" },
+        "12654": { nama: "SASKIA NAMIRA ZAHRA", status: "LULUS" },
+        "12617": { nama: "VIRLY AINUN NURRAHMA", status: "LULUS" },
+        "12443": { nama: "ABDUL MUHAMMAD RAMADHANI", status: "LULUS" },
+        "12548": { nama: "ABDUL RAZZAQ AL HAMID", status: "LULUS" },
+        "12549": { nama: "AHMAD FAHRI MUSDAR CANIAGO", status: "LULUS" },
+        "12512": { nama: "AIRIN SHAFIRA ARIFIN", status: "LULUS" },
+        "12550": { nama: "ALFAJRI NUR RAMADHAN", status: "LULUS" },
+        "12445": { nama: "ALIEF SYAHPUTRA", status: "LULUS" },
+        "12627": { nama: "AQUILA NUR VIDI", status: "LULUS" },
+        "12589": { nama: "ATHA NAOMIRA CARISSA", status: "LULUS" },
+        "12450": { nama: "CHICO ALVARO PHUNG", status: "LULUS" },
+        "12590": { nama: "DECHA AYU NOVIOLA DASRIL", status: "LULUS" },
+        "12558": { nama: "DELICIA RIFDAH ANDITY", status: "LULUS" },
+        "12488": { nama: "ELFATH MUHAMMAD RABBANI", status: "LULUS" },
+        "12520": { nama: "FAHRI WINATA", status: "LULUS" },
+        "12560": { nama: "HAFIZAH ALFIANI", status: "LULUS" },
+        "12635": { nama: "HAFIZH FATHIN AVERO", status: "LULUS" },
+        "12636": { nama: "HAIQAL HAMZAH", status: "LULUS" },
+        "12563": { nama: "KAFFAH ZULYANTO", status: "LULUS" },
+        "12603": { nama: "MARISYA DWI ANGGRAINI", status: "LULUS" },
+        "12529": { nama: "MUHAMAD IRZAM ADIANSYAH", status: "LULUS" },
+        "12608": { nama: "MUHAMMAD PUTRA WIJAYA", status: "LULUS" },
+        "12572": { nama: "MUHAMMAD RAFA IRAWAN", status: "LULUS" },
+        "12575": { nama: "PUTRI ANNORA CASTELIN", status: "LULUS" },
+        "12500": { nama: "PUTY RIZKYNA HERMALIA", status: "LULUS" },
+        "12501": { nama: "RADEN ALFIYAH KHANSA", status: "LULUS" },
+        "12614": { nama: "RISKHA SAMILATI", status: "LULUS" },
+        "12542": { nama: "SAHLA MAULIDA SAFFANAH", status: "LULUS" },
+        "12653": { nama: "SALSABILA ALSAFA", status: "LULUS" },
+        "12471": { nama: "SEMY ARDI WIRANATA", status: "LULUS" },
+        "12505": { nama: "SHAFEEQAH", status: "LULUS" },
+        "12506": { nama: "SHERLY DWI THIRTA PUTRI", status: "LULUS" },
+        "12543": { nama: "SHIRA FITRI NURAINI INDRIANTO", status: "LULUS" },
+        "12616": { nama: "VIRGY ANINDYA REDHA", status: "LULUS" },
+        "12546": { nama: "WINDA ANISA PUTRI", status: "LULUS" },
+        "12619": { nama: "YUDHISTIRA PRAYOGA", status: "LULUS" },
+        "12547": { nama: "ZAKY WILDAN KHUSAENI", status: "LULUS" },
+        "12551": { nama: "ALIF DARY ARDHANA", status: "LULUS" },
+        "12623": { nama: "ALKA NEARRA TAWASALNA", status: "LULUS" },
+        "12482": { nama: "AMANDA SEPTIA", status: "LULUS" },
+        "12552": { nama: "ANGGITA KHAIRUNNISA", status: "LULUS" },
+        "12446": { nama: "ANNISA GHASSANI", status: "LULUS" },
+        "12553": { nama: "ANUGRAH ANINDYA ROSIDIN", status: "LULUS" },
+        "12447": { nama: "ARAUFA TIARA", status: "LULUS" },
+        "12554": { nama: "AULIA SAFIRA RAMADHANI", status: "LULUS" },
+        "12515": { nama: "BILQIS NURUL QOLBI AL HAKIM", status: "LULUS" },
+        "12559": { nama: "DEVI ANGGRAENI", status: "LULUS" },
+        "12452": { nama: "DIMAS FAHRI", status: "LULUS" },
+        "12453": { nama: "DZHUHRI KHAIRULAZAM", status: "LULUS" },
+        "12632": { nama: "EL JABBAR GIBRAN WIBOWO", status: "LULUS" },
+        "12592": { nama: "FARIS ANWAR SOFIAN", status: "LULUS" },
+        "12593": { nama: "FAYA RISTANIASIH", status: "LULUS" },
+        "12562": { nama: "INTAN ALTHAFUNNISA", status: "LULUS" },
+        "12491": { nama: "KAFA ARVI MUAZAROH", status: "LULUS" },
+        "12492": { nama: "KEYLA FAIRUZ MAZIDAH", status: "LULUS" },
+        "12602": { nama: "LIVIANA MARSHA", status: "LULUS" },
+        "12568": { nama: "MIKHAELLA NUR KAMILAH", status: "LULUS" },
+        "12569": { nama: "MUHAMMAD AKHMAL RAMADHAN", status: "LULUS" },
+        "12605": { nama: "MUHAMMAD AZKHA SURYA RAMADHAN", status: "LULUS" },
+        "12530": { nama: "MUHAMMAD DAFFA AFIPUTRA", status: "LULUS" },
+        "12642": { nama: "MUHAMMAD NUR IHSAN", status: "LULUS" },
+        "12610": { nama: "MUHAMMAD SYAROF RIZQULLOH", status: "LULUS" },
+        "12644": { nama: "MUTIARA AZAHRA", status: "LULUS" },
+        "12611": { nama: "NADIN VINA VIRMANDA", status: "LULUS" },
+        "12499": { nama: "PANDYA RESWARA PUTRA IRAWAN", status: "LULUS" },
+        "12467": { nama: "PUTRI PUJIASTUTI", status: "LULUS" },
+        "12652": { nama: "RIZKY AKBAR RAFA PUTRA", status: "LULUS" },
+        "12541": { nama: "RYUKI RIFQI HARTANTO", status: "LULUS" },
+        "12472": { nama: "SHAFA NOVIYANTI", status: "LULUS" },
+        "12507": { nama: "SHEZA DESTIARA HANDOKO", status: "LULUS" },
+        "12474": { nama: "VICKA WARDAH FEBRIANA", status: "LULUS" },
+        "12618": { nama: "WAHYU MARTINO", status: "LULUS" },
+        "12581": { nama: "YOGA PRAMESTA HAIKAL PUTRA", status: "LULUS" }
+    };
+
+    // 3. LOGIKA TIMER HITUNG MUNDUR
+    const hitungMundur = setInterval(function() {
+        const sekarang = new Date().getTime();
+        const selisih = waktuBuka - sekarang;
+
+        const hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
+        const jam = Math.floor((selisih % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const menit = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
+        const detik = Math.floor((selisih % (1000 * 60)) / 1000);
+
+        document.getElementById("hari").innerText = hari < 10 ? "0" + hari : hari;
+        document.getElementById("jam").innerText = jam < 10 ? "0" + jam : jam;
+        document.getElementById("menit").innerText = menit < 10 ? "0" + menit : menit;
+        document.getElementById("detik").innerText = detik < 10 ? "0" + detik : detik;
+
+        if (selisih < 0) {
+            clearInterval(hitungMundur);
+            document.getElementById("countdown-section").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+            document.getElementById("page-subtitle").innerText = "Aplikasi Cek Kelulusan Mandiri";
+        }
+    }, 1000);
+
+    // 4. LOGIKA TOMBOL PENCARIAN STATUS
+    function cekKelulusan() {
+        const input = document.getElementById("nisnInput").value.trim();
+        const resultBox = document.getElementById("result");
+
+        if (input === "") {
+            alert("Silakan masukkan Nomor NIS terlebih dahulu!");
+            return;
+        }
+
+        if (dataSiswa[input]) {
+            const siswa = dataSiswa[input];
+            resultBox.className = "result-box lulus";
+            resultBox.innerHTML = `<h3>Selamat!</h3><p><b>${siswa.nama}</b> dinyatakan <b>LULUS</b> dari SMPN 110 Jakarta.</p>`;
+        } else {
+            resultBox.className = "result-box not-found";
+            resultBox.innerHTML = `<h3>Data Tidak Ditemukan</h3><p>Nomor NIS <b>${input}</b> tidak terdaftar di sistem kelulusan.</p>`;
+        }
+        resultBox.style.display = "block";
+    }
+
+    // 5. TOGGLE TEKSTUR TEMA (DARK/LIGHT)
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute("data-theme");
+        if (currentTheme === "dark") {
+            document.documentElement.setAttribute("data-theme", "light");
+            localStorage.setItem("theme", "light");
+        } else {
+            document.documentElement.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+        }
+    }
+
+    const savedTheme = localStorage.getItem("theme");
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (savedTheme === "dark" || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+        document.documentElement.setAttribute("data-theme", "light");
+    }
+</script>
+
+</body>
+</html>
