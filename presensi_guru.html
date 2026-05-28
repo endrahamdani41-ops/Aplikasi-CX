@@ -10,7 +10,10 @@
     <style>
         body { background: #0f172a; color: #e2e8f0; font-family: sans-serif; overflow-x: hidden; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* Warna ungu serasi saat Checkbox Jam dan Kelas aktif dipilih */
         .check-item input:checked + span { background-color: #8b5cf6; border-color: #8b5cf6; color: white; }
+        
         input, select, textarea { font-size: 16px !important; }
     </style>
 </head>
@@ -34,10 +37,20 @@
                     </h3>
                     
                     <form id="formPresensi" class="space-y-4">
-                        <div>
-                            <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Tanggal</label>
-                            <input type="date" id="tanggal_input" name="tanggal_input" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="col-span-2">
+                                <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Tanggal</label>
+                                <input type="date" id="tanggal_input" name="tanggal_input" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Status</label>
+                                <select name="status" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white">
+                                    <option value="">-- Alasan --</option>
+                                    <option>Sakit</option><option>Izin</option><option>Alpha</option>
+                                </select>
+                            </div>
                         </div>
+
                         <div>
                             <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Nama Guru</label>
                             <select name="teacher_name" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
@@ -53,23 +66,7 @@
                                 <option>Riswadi, S.Pd.</option><option>Sidiq Prakoso, S.Pd.</option>
                             </select>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Status</label>
-                                <select name="status" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white">
-                                    <option>Sakit</option><option>Izin</option><option>Alpha</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Kelas</label>
-                                <select name="class_name" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
-                                    <option value="">Pilih</option>
-                                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>7E</option><option>7F</option>
-                                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option><option>8E</option><option>8F</option>
-                                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option>
-                                </select>
-                            </div>
-                        </div>
+
                         <div>
                             <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Mata Pelajaran</label>
                             <select name="subject" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white" required>
@@ -80,6 +77,37 @@
                                 <option>Seni Budaya</option><option>BK</option>
                             </select>
                         </div>
+
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Pilih Kelas (Bisa Pilih Lebih dari Satu)</label>
+                            <div class="space-y-2 mt-1 bg-slate-900/50 p-2.5 rounded-xl border border-slate-800">
+                                <div class="grid grid-cols-6 gap-1.5">
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7A" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">7A</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7B" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">7B</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7C" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">7C</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7D" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">7D</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7E" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">7E</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7F" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">7F</span></label>
+                                </div>
+                                <div class="grid grid-cols-6 gap-1.5">
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8A" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">8A</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8B" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">8B</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8C" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">8C</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8D" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">8D</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8E" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">8E</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8F" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">8F</span></label>
+                                </div>
+                                <div class="grid grid-cols-6 gap-1.5">
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9A" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">9A</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9B" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">9B</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9C" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">9C</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9D" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">9D</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9E" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">9E</span></label>
+                                    <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9F" class="hidden"><span class="block text-center py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">9F</span></label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div>
                             <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Jam Ke</label>
                             <div class="grid grid-cols-4 gap-2 mt-1">
@@ -93,12 +121,13 @@
                                 <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="8" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">8</span></label>
                                 <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="9" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700 text-xs font-bold text-slate-400">9</span></label>
                             </div>
-                            </div>
                         </div>
+
                         <div>
                             <label class="text-[10px] text-slate-500 font-bold ml-1 uppercase">Keterangan / Alasan</label>
                             <textarea name="reason" class="w-full mt-1 p-3 rounded-xl bg-slate-800 border border-slate-700 outline-none text-white text-sm" placeholder="Alasan ketidakhadiran..."></textarea>
                         </div>
+                        
                         <button type="submit" id="btnSimpan" class="w-full bg-indigo-600 hover:bg-indigo-500 p-4 rounded-xl font-bold uppercase tracking-widest active:scale-95 transition-all shadow-lg flex justify-center items-center gap-2">
                             <span>Simpan ke Google Sheet</span>
                         </button>
@@ -158,6 +187,18 @@
             btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Memproses...`;
 
+            // Mengambil seluruh nilai kelas yang dicentang
+            let checkedClasses = [];
+            document.querySelectorAll("input[name='class_checkbox']:checked").forEach(cb => checkedClasses.push(cb.value));
+
+            if (checkedClasses.length === 0) {
+                alert("Pilih minimal satu kelas!");
+                btn.disabled = false;
+                btn.innerHTML = "Simpan ke Google Sheet";
+                return;
+            }
+
+            // Mengambil nilai Jam Pelajaran dari checkbox terpilih
             let checkedHours = [];
             document.querySelectorAll("input[name='hour_check']:checked").forEach(cb => checkedHours.push(cb.value));
             
@@ -169,12 +210,13 @@
             }
 
             const rawFormData = new FormData(this);
+            const classesString = checkedClasses.join(", "); // Menggabungkan kelas terpilih dengan koma
             
             const secureData = new URLSearchParams();
             secureData.append("tanggal_input", rawFormData.get("tanggal_input"));
             secureData.append("teacher_name", rawFormData.get("teacher_name"));
             secureData.append("status", rawFormData.get("status"));
-            secureData.append("class_name", rawFormData.get("class_name"));
+            secureData.append("class_name", classesString); 
             secureData.append("subject", rawFormData.get("subject"));
             secureData.append("class_hour", checkedHours.join(", "));
             secureData.append("reason", rawFormData.get("reason").trim() || "-");
@@ -190,7 +232,6 @@
                 
                 const bodyTampil = document.getElementById("tabelBody");
                 const bodyEkspor = document.getElementById("tabelEksporBody");
-                
                 const tglBiasa = rawFormData.get("tanggal_input").split("-").reverse().join("/");
 
                 const newRowTampil = `
@@ -204,9 +245,9 @@
                             </div>
                         </td>
                         <td class="p-3 text-xs text-slate-400 hidden md:table-cell">${rawFormData.get("subject")}</td>
-                        <td class="p-3 text-center font-bold text-xs">${rawFormData.get("class_name")}</td>
+                        <td class="p-3 text-center font-bold text-xs text-blue-400">${classesString}</td>
                         <td class="p-3 text-center font-mono text-purple-400 text-xs">${checkedHours.join(", ")}</td>
-                        <td class="p-3 text-xs text-slate-400 italic hidden md:table-cell max-w-[150px] truncate">${rawFormData.get("reason").trim() || "-"}</td>
+                        <td class="p-3 text-xs text-slate-400 italic hidden md:table-cell whitespace-normal break-words min-w-[150px]">${rawFormData.get("reason").trim() || "-"}</td>
                     </tr>`;
                 
                 const newRowEkspor = `
@@ -216,21 +257,18 @@
                         <td>${rawFormData.get("teacher_name")}</td>
                         <td>${rawFormData.get("status")}</td>
                         <td>${rawFormData.get("subject")}</td>
-                        <td>${rawFormData.get("class_name")}</td>
+                        <td>${classesString}</td>
                         <td>${checkedHours.join(", ")}</td>
                         <td>${rawFormData.get("reason").trim() || "-"}</td>
                     </tr>`;
 
-                // Menyusun baris baru di paling atas tabel
                 bodyTampil.insertAdjacentHTML("afterbegin", newRowTampil);
                 bodyEkspor.insertAdjacentHTML("afterbegin", newRowEkspor);
                 
-                // Menaikkan angka counter urutan nomor
                 nomorUrut++;
-                
-                // Merapikan ulang urutan visual nomor dari atas ke bawah
                 renumberRows();
 
+                // Reset form & kembalikan default tanggal hari ini
                 document.getElementById("formPresensi").reset();
                 document.getElementById("tanggal_input").value = new Date().toISOString().slice(0, 10);
             })
@@ -243,12 +281,9 @@
             });
         });
 
-        // Fungsi penata urutan nomor visual agar baris paling baru tetap menjadi No. 1 di daftar atas
         function renumberRows() {
             const rows = document.querySelectorAll("#tabelBody .row-number");
-            rows.forEach((td, index) => {
-                td.innerText = index + 1;
-            });
+            rows.forEach((td, index) => { td.innerText = index + 1; });
         }
 
         document.getElementById("search").addEventListener("keyup", function() {
