@@ -42,114 +42,113 @@
 </head>
 <body class="bg-gray-50 dark:bg-dark-bg text-neutral dark:text-dark-text font-sans min-h-screen flex flex-col justify-between transition-colors duration-300">
     
-    <div class="w-full flex-grow">
-        <header class="bg-primary dark:bg-neutral shadow-md relative">
-            <div class="container mx-auto px-4 py-6">
-                <div class="flex items-center gap-4">
-                    <div>
-                        <h2 class="text-[clamp(1.2rem,3vw,1.8rem)] font-bold text-white">TES KEMAMPUAN AKADEMIK 2026</h2>
-                        <p class="text-white/80 dark:text-white/70">SMP NEGERI 110 - DKI JAKARTA</p>
-                    </div>
+    <header class="bg-primary dark:bg-neutral shadow-md relative w-full z-10">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center gap-4">
+                <div>
+                    <h2 class="text-[clamp(1.2rem,3vw,1.8rem)] font-bold text-white">TES KEMAMPUAN AKADEMIK 2026</h2>
+                    <p class="text-white/80 dark:text-white/70">SMP NEGERI 110 - DKI JAKARTA</p>
                 </div>
-
-                <button id="toggleTheme" class="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 dark:bg-dark-card/40 dark:hover:bg-dark-card/70 transition-all">
-                    <i class="fa fa-moon-o dark:hidden text-white text-lg"></i>
-                    <i class="fa fa-sun-o hidden dark:inline text-yellow-300 text-lg"></i>
-                </button>
-            </div>
-        </header>
-
-        <main class="container mx-auto px-4 py-8 max-w-2xl">
-            <div id="searchCard" class="bg-white dark:bg-dark-card rounded-2xl shadow-lg p-6 mb-8 border border-gray-100 dark:border-dark-border">
-                <h2 class="text-xl font-semibold text-center mb-6">Cek Hasil Nilai TKA Murid</h2>
-                
-                <div class="flex items-center bg-gray-50 dark:bg-dark-bg border-2 border-gray-200 dark:border-dark-border rounded-xl p-1.5 focus-within:border-primary dark:focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-                    <input 
-                        type="text" 
-                        id="nisnInput" 
-                        placeholder="Masukkan NISN Anda" 
-                        class="w-full pl-4 pr-2 py-3 bg-transparent outline-none text-lg font-medium tracking-wide"
-                        maxlength="10"
-                    >
-                    <button id="btnCek" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50 flex items-center justify-center whitespace-nowrap h-full" disabled>
-                        <i class="fa fa-search mr-1.5" id="iconCek"></i> <span id="textCek">Cek</span>
-                    </button>
-                </div>
-             </div>
-
-            <div id="backButtonContainer" class="hidden mb-4 animate-fade-in">
-                <button id="btnKembali" class="flex items-center gap-2 text-primary dark:text-white font-medium hover:underline transition-all">
-                    <i class="fa fa-arrow-left"></i> Cari NISN Lain
-                </button>
             </div>
 
-            <div id="hasilContainer" class="hidden transition-all duration-300">
-                <div class="bg-white dark:bg-dark-card rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-dark-border">
-                    <div class="bg-gradient-to-r from-primary to-secondary p-4 text-white">
-                        <h3 class="text-lg font-bold">DATA HASIL UJIAN</h3>
-                    </div>
+            <button id="toggleTheme" class="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 dark:bg-dark-card/40 dark:hover:bg-dark-card/70 transition-all">
+                <i class="fa fa-moon-o dark:hidden text-white text-lg"></i>
+                <i class="fa fa-sun-o hidden dark:inline text-yellow-300 text-lg"></i>
+            </button>
+        </div>
+    </header>
 
-                    <div class="p-5 border-b border-gray-100 dark:border-dark-border">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">Nomor Peserta</p>
-                                <p id="noPeserta" class="font-semibold">-</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 dark:text-gray-400">NISN</p>
-                                <p id="nisnOutput" class="font-semibold">-</p>
-                            </div>
-                            <div class="md:col-span-2">
-                                <p class="text-gray-500 dark:text-gray-400">Nama Lengkap</p>
-                                <p id="namaOutput" class="font-bold text-xl text-primary dark:text-primary/80">-</p>
-                            </div>
-                            <div class="md:col-span-2">
-                                <p class="text-gray-500 dark:text-gray-400">Tempat, Tanggal Lahir</p>
-                                <p id="ttlOutput" class="">-</p>
-                            </div>
+    <main class="container mx-auto px-4 py-8 max-w-2xl flex-grow flex flex-col justify-center">
+        
+        <div id="searchCard" class="bg-white dark:bg-dark-card rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-dark-border transition-all">
+            <h2 class="text-xl font-semibold text-center mb-6">Cek Hasil Nilai TKA Murid</h2>
+            
+            <div class="flex items-stretch bg-gray-50 dark:bg-dark-bg border-2 border-gray-200 dark:border-dark-border rounded-xl p-1 h-14 focus-within:border-primary dark:focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                <input 
+                    type="text" 
+                    id="nisnInput" 
+                    placeholder="Masukkan NISN" 
+                    class="w-full pl-4 pr-2 bg-transparent outline-none text-lg font-medium tracking-wide flex-grow"
+                    maxlength="10"
+                >
+                <button id="btnCek" class="bg-primary text-white px-6 rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50 flex items-center justify-center whitespace-nowrap" disabled>
+                    <i class="fa fa-search mr-1.5" id="iconCek"></i> <span id="textCek">Cek</span>
+                </button>
+            </div>
+         </div>
+
+        <div id="backButtonContainer" class="hidden mb-4 animate-fade-in">
+            <button id="btnKembali" class="flex items-center gap-2 text-primary dark:text-white font-medium hover:underline transition-all">
+                <i class="fa fa-arrow-left"></i> Cari NISN Lain
+            </button>
+        </div>
+
+        <div id="hasilContainer" class="hidden transition-all duration-300">
+            <div class="bg-white dark:bg-dark-card rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-dark-border">
+                <div class="bg-gradient-to-r from-primary to-secondary p-4 text-white">
+                    <h3 class="text-lg font-bold">DATA HASIL UJIAN</h3>
+                </div>
+
+                <div class="p-5 border-b border-gray-100 dark:border-dark-border">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400">Nomor Peserta</p>
+                            <p id="noPeserta" class="font-semibold">-</p>
                         </div>
-                    </div>
-
-                    <div class="p-5">
-                        <h4 class="font-semibold mb-3">Nilai Mata Pelajaran</h4>
-                        <div class="space-y-4">
-                            <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <p class="font-medium">Matematika</p>
-                                        <p id="ketMat" class="text-sm text-gray-600 dark:text-gray-400">-</p>
-                                    </div>
-                                    <div id="nilaiMat" class="text-2xl font-bold text-primary dark:text-primary/80">-</div>
-                                </div>
-                                <div class="w-full bg-gray-200 dark:bg-dark-border rounded-full h-2.5 mt-2">
-                                    <div id="barMat" class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                                </div>
-                            </div>
-
-                            <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <p class="font-medium">Bahasa Indonesia</p>
-                                        <p id="ketInd" class="text-sm text-gray-600 dark:text-gray-400">-</p>
-                                    </div>
-                                    <div id="nilaiInd" class="text-2xl font-bold text-secondary dark:text-secondary/80">-</div>
-                                </div>
-                                <div class="w-full bg-gray-200 dark:bg-dark-border rounded-full h-2.5 mt-2">
-                                    <div id="barInd" class="bg-secondary h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                                </div>
-                            </div>
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400">NISN</p>
+                            <p id="nisnOutput" class="font-semibold">-</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-gray-500 dark:text-gray-400">Nama Lengkap</p>
+                            <p id="namaOutput" class="font-bold text-xl text-primary dark:text-primary/80">-</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-gray-500 dark:text-gray-400">Tempat, Tanggal Lahir</p>
+                            <p id="ttlOutput" class="">-</p>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="pesanError" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl p-6 text-center mt-6">
-                <i class="fa fa-exclamation-circle text-red-500 text-4xl mb-3"></i>
-                <h3 class="text-lg font-semibold text-red-700 dark:text-red-300" id="errorTitle">Data Tidak Ditemukan</h3>
-                <p class="text-red-600 dark:text-red-400" id="errorDesc">NISN tidak terdaftar. Periksa kembali penulisan nomor Anda.</p>
+                <div class="p-5">
+                    <h4 class="font-semibold mb-3">Nilai Mata Pelajaran</h4>
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-medium">Matematika</p>
+                                    <p id="ketMat" class="text-sm text-gray-600 dark:text-gray-400">-</p>
+                                </div>
+                                <div id="nilaiMat" class="text-2xl font-bold text-primary dark:text-primary/80">-</div>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-dark-border rounded-full h-2.5 mt-2">
+                                <div id="barMat" class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-medium">Bahasa Indonesia</p>
+                                    <p id="ketInd" class="text-sm text-gray-600 dark:text-gray-400">-</p>
+                                </div>
+                                <div id="nilaiInd" class="text-2xl font-bold text-secondary dark:text-secondary/80">-</div>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-dark-border rounded-full h-2.5 mt-2">
+                                <div id="barInd" class="bg-secondary h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <div id="pesanError" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl p-6 text-center mt-6">
+            <i class="fa fa-exclamation-circle text-red-500 text-4xl mb-3"></i>
+            <h3 class="text-lg font-semibold text-red-700 dark:text-red-300" id="errorTitle">Data Tidak Ditemukan</h3>
+            <p class="text-red-600 dark:text-red-400" id="errorDesc">NISN tidak terdaftar. Periksa kembali penulisan nomor Anda.</p>
+        </div>
+    </main>
 
     <footer class="bg-neutral dark:bg-black py-4 w-full">
         <div class="container mx-auto px-4 text-center text-xs text-gray-400">
@@ -171,7 +170,6 @@
         // ========================================================
         // KONEKSI KE APPS SCRIPT WEB API GOOGLE SHEETS
         // ========================================================
-        // Gantilah isi string di bawah ini dengan tautan milik Anda yang aktif
         const API_URL = "https://script.google.com/macros/s/AKfycbx8hO4x8agCrzVFcc1v2bBBoIe9xGMTEecwKmqqzMvPHgY_UiAVf8Rm2Y0E5lvPx0av/exec";
 
         const searchCard = document.getElementById('searchCard');
@@ -204,7 +202,6 @@
                 const data = await response.json();
 
                 if (data.status === "success") {
-                    // Sembunyikan kotak pencarian & tampilkan hasil
                     searchCard.classList.add('hidden');
                     backButtonContainer.classList.remove('hidden');
 
@@ -254,7 +251,6 @@
             pesanError.classList.add('animate-fade-in');
         }
 
-        // Kembali ke menu cari
         btnKembali.addEventListener('click', () => {
             hasilContainer.classList.add('hidden');
             backButtonContainer.classList.add('hidden');
