@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Sekolah</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <style>
+        /* BACKGROUND BATIK */
+        body {
+            background:
+            linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)),
+            url('https://png.pngtree.com/background/20210717/original/pngtree-green-leaves-gradient-background-picture-image_1447832.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: repeat;
+        }
+
+        /* DARK MODE */
+        body.dark {
+            background:
+            linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+            url('https://png.pngtree.com/background/20210717/original/pngtree-green-leaves-gradient-background-picture-image_1447832.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .menu-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 50px auto;
+        }
+
+        /* LOGO TANPA LINGKARAN */
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: none;
+            border: none;
+            box-shadow: none;
+            z-index: 2;
+        }
+
+        /* HILANGKAN EFEK KOTAK */
+        .center-circle img {
+            width: 90px;
+            height: auto;
+            mix-blend-mode: multiply;
+        }
+
+        .menu-item {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 20px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+        }
+
+        body.dark .menu-item {
+            background-color: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        }
+
+        .menu-item:hover {
+            background-color: #1d4ed8;
+            transform: scale(1.1);
+        }
+
+        body.dark .menu-item:hover {
+            background-color: #2563eb;
+        }
+
+        .menu-item span {
+            font-size: 10px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        /* POSISI */
+        .item-1 { top: 20px; left: 50%; margin-left: -35px; }
+        .item-2 { top: 100px; right: 40px; }
+        .item-3 { bottom: 100px; right: 40px; }
+        .item-4 { bottom: 20px; left: 50%; margin-left: -35px; }
+        .item-5 { bottom: 100px; left: 40px; }
+        .item-6 { top: 100px; left: 40px; }
+
+        /* ANIMASI */
+        .move-to-center {
+            top: 50% !important;
+            left: 50% !important;
+            margin: 0 !important;
+            transform: translate(-50%, -50%) scale(0.4) !important;
+            opacity: 0 !important;
+        }
+
+        /* TOMBOL DARK */
+        .toggle-dark {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #111;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            z-index: 999;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen">
+
+<button class="toggle-dark" onclick="toggleDark()">🌙 Dark</button>
+
+<div class="menu-container">
+
+    <!-- LOGO -->
+    <div class="center-circle">
+        <img src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo Sekolah">
+    </div>
+
+    <!-- MENU -->
+    <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" class="menu-item item-1" onclick="gerakKeTengah(this, event)">
+        <i class="fa fa-book"></i>
+        <span>Agenda</span>
+    </a>
+
+    <div class="menu-item item-2" onclick="gerakKeTengah(this)">
+        <i class="fa fa-users"></i>
+        <span>Siswa</span>
+    </div>
+
+    <div class="menu-item item-3" onclick="gerakKeTengah(this)">
+        <i class="fa fa-calendar"></i>
+        <span>Jadwal</span>
+    </div>
+
+    <div class="menu-item item-4" onclick="gerakKeTengah(this)">
+        <i class="fa fa-newspaper-o"></i>
+        <span>Pengumuman</span>
+    </div>
+
+    <div class="menu-item item-5" onclick="gerakKeTengah(this)">
+        <i class="fa fa-file-text"></i>
+        <span>Nilai</span>
+    </div>
+
+    <div class="menu-item item-6" onclick="gerakKeTengah(this)">
+        <i class="fa fa-cog"></i>
+        <span>Pengaturan</span>
+    </div>
+
+</div>
+
+<script>
+function gerakKeTengah(elemen, event) {
+    const isAkademik = elemen.classList.contains('item-1');
+
+    elemen.classList.add('move-to-center');
+
+    setTimeout(() => {
+        elemen.classList.remove('move-to-center');
+    }, 800);
+
+    if (!isAkademik && event) {
+        event.preventDefault();
+    }
+}
+</script>
+
+<script>
+function toggleDark() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
+
+if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+}
+</script>
+
+</body>
+</html>
