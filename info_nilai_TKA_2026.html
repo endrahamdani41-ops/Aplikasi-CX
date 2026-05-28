@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Nilai Tes Kemampuan Akademik 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        neutral: '#1D2129',
+                        light: '#F2F3F5',
+                        dark: {
+                            bg: '#121212',
+                            card: '#1E1E1E',
+                            text: '#E0E0E0',
+                            border: '#333333'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-dark-bg text-neutral dark:text-dark-text font-sans min-h-screen transition-colors duration-300">
+    <header class="bg-primary dark:bg-neutral shadow-md relative">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-white/20 dark:bg-dark-card/50 rounded-lg">
+                    <i class="fa fa-graduation-cap text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-[clamp(1.2rem,3vw,1.8rem)] font-bold text-white">TES KEMAMPUAN AKADEMIK 2026</h1>
+                    <p class="text-white/80 dark:text-white/70">SMP NEGERI 110 - DKI JAKARTA</p>
+                </div>
+            </div>
+            <div class="mt-2 text-sm text-white/70 dark:text-white/60">
+                <p>NPSN: 20102527 | Kepala Sekolah: Iis Ratna Sariningrum, S.Pd., M.M.</p>
+            </div>
+            
+            <button id="toggleTheme" class="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 dark:bg-dark-card/40 dark:hover:bg-dark-card/70 transition-all">
+                <i class="fa fa-moon-o dark:hidden text-white text-lg"></i>
+                <i class="fa fa-sun-o hidden dark:inline text-yellow-300 text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 max-w-2xl">
+        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-lg p-6 mb-8 border border-gray-100 dark:border-dark-border">
+            <h2 class="text-xl font-semibold text-center mb-4">Cek Hasil Nilai Siswa</h2>
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="nisnInput" 
+                    placeholder="Masukkan Nomor NISN Anda..." 
+                    class="w-full px-5 py-3 border-2 border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg rounded-xl focus:border-primary dark:focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-lg font-medium"
+                    maxlength="10"
+                >
+                <button id="btnCek" class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50" disabled>
+                    <i class="fa fa-search mr-1" id="iconCek"></i> <span id="textCek">Cek</span>
+                </button>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">Data diambil langsung secara aman dari database Google Sheets.</p>
+        </div>
+
+        <div id="hasilContainer" class="hidden transition-all duration-300">
+            <div class="bg-white dark:bg-dark-card rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-dark-border">
+                <div class="bg-gradient-to-r from-primary to-secondary p-4 text-white">
+                    <h3 class="text-lg font-bold">DATA HASIL UJIAN</h3>
+                </div>
+
+                <div class="p-5 border-b border-gray-100 dark:border-dark-border">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400">Nomor Peserta</p>
+                            <p id="noPeserta" class="font-semibold">-</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400">NISN</p>
+                            <p id="nisnOutput" class="font-semibold">-</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-gray-500 dark:text-gray-400">Nama Lengkap</p>
+                            <p id="namaOutput" class="font-bold text-xl text-primary dark:text-primary/80">-</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <p class="text-gray-500 dark:text-gray-400">Tempat, Tanggal Lahir</p>
+                            <p id="ttlOutput" class="">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5">
+                    <h4 class="font-semibold mb-3">Nilai Mata Pelajaran</h4>
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-medium">Matematika</p>
+                                    <p id="ketMat" class="text-sm text-gray-600 dark:text-gray-400">-</p>
+                                </div>
+                                <div id="nilaiMat" class="text-2xl font-bold text-primary dark:text-primary/80">-</div>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-dark-border rounded-full h-2.5 mt-2">
+                                <div id="barMat" class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-gray-50 dark:bg-dark-bg border border-gray-100 dark:border-dark-border">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-medium">Bahasa Indonesia</p>
+                                    <p id="ketInd" class="text-sm text-gray-600 dark:text-gray-400">-</p>
+                                </div>
+                                <div id="nilaiInd" class="text-2xl font-bold text-secondary dark:text-secondary/80">-</div>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-dark-border rounded-full h-2.5 mt-2">
+                                <div id="barInd" class="bg-secondary h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="pesanError" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl p-6 text-center mt-6">
+            <i class="fa fa-exclamation-circle text-red-500 text-4xl mb-3"></i>
+            <h3 class="text-lg font-semibold text-red-700 dark:text-red-300" id="errorTitle">Data Tidak Ditemukan</h3>
+            <p class="text-red-600 dark:text-red-400" id="errorDesc">NISN tidak terdaftar. Periksa kembali penulisan nomor Anda.</p>
+        </div>
+    </main>
+
+    <footer class="bg-neutral dark:bg-black py-6 mt-12">
+        <div class="container mx-auto px-4 text-center text-sm text-gray-400">
+ 
+            <p class="mt-1">© 2026 - SMPN 110 Jakarta</p>
+        </div>
+    </footer>
+
+    <script>
+        // Konfigurasi Tema (Dark Mode)
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        document.getElementById('toggleTheme').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // ========================================================
+        // KONEKSI KE APPS SCRIPT WEB API GOOGLE SHEETS
+        // ========================================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbxtonWWeeb-b8Xvp6RHMHfqbMcIELNZuSmYQhB_H40AWJGdcD5MsTXT9wNWZS9T3kQ8/exec";
+
+        const nisnInput = document.getElementById('nisnInput');
+        const btnCek = document.getElementById('btnCek');
+        const iconCek = document.getElementById('iconCek');
+        const textCek = document.getElementById('textCek');
+        const hasilContainer = document.getElementById('hasilContainer');
+        const pesanError = document.getElementById('pesanError');
+
+        // Mengaktifkan tombol jika input diisi
+        nisnInput.addEventListener('input', () => {
+            btnCek.disabled = nisnInput.value.trim().length === 0;
+        });
+
+        async function cekNilai() {
+            const nisnCari = nisnInput.value.trim();
+            if (!nisnCari) return;
+
+            // Reset Tampilan & Jalankan Mode Loading
+            hasilContainer.classList.add('hidden');
+            pesanError.classList.add('hidden');
+            btnCek.disabled = true;
+            textCek.textContent = "Memuat...";
+            iconCek.className = "fa fa-spinner fa-spin mr-1";
+
+            try {
+                // Tembak data ke Web App GAS secara asinkronus (Fetch API)
+                const response = await fetch(`${API_URL}?nisn=${encodeURIComponent(nisnCari)}`);
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    // Isi data siswa ke HTML
+                    document.getElementById('noPeserta').textContent = data.no_peserta;
+                    document.getElementById('nisnOutput').textContent = data.nisn;
+                    document.getElementById('namaOutput').textContent = data.nama;
+                    document.getElementById('ttlOutput').textContent = data.ttl;
+
+                    // Mengisi Nilai dan Keterangan
+                    document.getElementById('nilaiMat').textContent = data.matematika.toFixed(2);
+                    document.getElementById('ketMat').textContent = data.ket_mat;
+                    document.getElementById('barMat').style.width = '0%';
+
+                    document.getElementById('nilaiInd').textContent = data.indonesia.toFixed(2);
+                    document.getElementById('ketInd').textContent = data.ket_ind;
+                    document.getElementById('barInd').style.width = '0%';
+
+                    // Munculkan Container Hasil
+                    hasilContainer.classList.remove('hidden');
+                    hasilContainer.classList.add('animate-fade-in');
+
+                    // Jalankan animasi progress bar
+                    setTimeout(() => {
+                        document.getElementById('barMat').style.width = `${data.matematika}%`;
+                        document.getElementById('barInd').style.width = `${data.indonesia}%`;
+                    }, 50);
+
+                } else if (data.status === "not_found") {
+                    showError("Data Tidak Ditemukan", "NISN yang Anda masukkan tidak terdaftar pada sistem kami. Silakan hubungi admin sekolah.");
+                } else {
+                    showError("Sistem Error", "Terjadi kesalahan internal pada database cloud.");
+                }
+            } catch (error) {
+                console.error(error);
+                showError("Gagal Terhubung", "Periksa koneksi internet Anda atau pastikan URL Apps Script sudah benar.");
+            } finally {
+                // Matikan Mode Loading
+                btnCek.disabled = false;
+                textCek.textContent = "Cek";
+                iconCek.className = "fa fa-search mr-1";
+            }
+        }
+
+        function showError(title, desc) {
+            document.getElementById('errorTitle').textContent = title;
+            document.getElementById('errorDesc').textContent = desc;
+            pesanError.classList.remove('hidden');
+            pesanError.classList.add('animate-fade-in');
+        }
+
+        // Event Trigger Klik dan Enter
+        btnCek.addEventListener('click', cekNilai);
+        nisnInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') cekNilai();
+        });
+    </script>
+</body>
+</html>
