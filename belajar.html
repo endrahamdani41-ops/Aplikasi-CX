@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Belajar & Mengajar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        dark: '#1D2129',
+                        light: '#F2F3F5',
+                        danger: '#F53F3F',
+                        // Warna khusus mode gelap
+                        darkBg: '#121212',
+                        darkCard: '#1E1E1E',
+                        darkText: '#E0E0E0',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .line-clamp-2 {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            /* ANIMASI KEDIP UNTUK LOGO */
+            @keyframes kedip {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.3; }
+            }
+            .animasi-kedip {
+                animation: kedip 2.0s infinite ease-in-out;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 text-dark dark:bg-darkBg dark:text-darkText min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Navbar -->
+    <header class="bg-primary text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="text-2xl">
+                    <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+                </div>
+                <h1 class="text-lg md:text-xl font-bold">Ruang Belajar</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Tombol Ganti Mode -->
+                <button id="toggleMode" class="text-xl hover:text-secondary transition-colors" title="Ganti Mode Terang/Gelap">
+                    <i class="fa fa-moon-o dark:hidden" aria-hidden="true"></i>
+                    <i class="fa fa-sun-o hidden dark:inline" aria-hidden="true"></i>
+                </button>
+
+                <nav class="hidden md:flex items-center gap-6">
+                    <a href="#beranda" class="hover:text-secondary transition-colors font-medium">Beranda</a>
+                    <a href="#modul" class="hover:text-secondary transition-colors font-medium">Modul</a>
+                    <a href="#ppt" class="hover:text-secondary transition-colors font-medium">Materi PPT</a>
+                    <a href="#video" class="hover:text-secondary transition-colors font-medium">Video Pembelajaran</a>
+                    <a href="#lainnya" class="hover:text-secondary transition-colors font-medium">Lainnya</a>
+                </nav>
+                <button class="md:hidden text-xl" id="menuToggle">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu Mobile -->
+        <div id="mobileMenu" class="hidden md:hidden bg-primary/95 px-4 py-2 shadow-lg">
+            <div class="flex flex-col gap-2 py-2">
+                <a href="#beranda" class="py-2 hover:text-secondary transition-colors">Beranda</a>
+                <a href="#modul" class="py-2 hover:text-secondary transition-colors">Modul</a>
+                <a href="#ppt" class="py-2 hover:text-secondary transition-colors">Materi PPT</a>
+                <a href="#video" class="py-2 hover:text-secondary transition-colors">Video Pembelajaran</a>
+                <a href="#lainnya" class="py-2 hover:text-secondary transition-colors">Lainnya</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+
+        <!-- Beranda - LOGO DENGAN ANIMASI KEDIP -->
+        <section id="beranda" class="mb-12">
+            <div class="bg-white dark:bg-darkCard rounded-3xl shadow-md p-10 md:p-14 border border-gray-50 dark:border-gray-800 relative overflow-hidden transition-colors duration-300">
+                <!-- Elemen dekoratif -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 dark:bg-primary/10 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-secondary/5 dark:bg-secondary/10 rounded-full blur-2xl"></div>
+
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <!-- Teks Sambutan -->
+                    <div class="md:w-2/3">
+                        <h2 class="text-[clamp(2rem,4vw,2.2rem)] font-extrabold text-primary leading-tight mb-4">
+                            Selamat Datang di Ruang Belajar
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 text-lg md:text-xl leading-relaxed">
+                            Platform ini disiapkan khusus sebagai wadah berbagi materi pembelajaran. Di sini Anda dapat mengakses berbagai modul, materi presentasi, video pembelajaran, dan bahan ajar lainnya yang akan terus diperbarui.
+                        </p>
+                    </div>
+
+                    <!-- Logo Sekolah - DITAMBAHKAN CLASS ANIMASI-KEDIP -->
+                    <div class="md:w-1/3 flex justify-center">
+                        <img 
+                            src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" 
+                            alt="Logo Sekolah" 
+                            class="w-full max-w-[200px] h-auto object-contain animasi-kedip"
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODUL -->
+        <section id="modul" class="mb-16 scroll-mt-16">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-2 h-8 bg-primary rounded-full"></div>
+                <h2 class="text-2xl font-bold text-dark dark:text-white">Modul Pembelajaran</h2>
+            </div>
+
+            <!-- Tombol Tambah -->
+            <div class="mb-6 max-w-[200px]">
+                <div onclick="bukaForm('modul')" class="border-2 border-dashed border-primary/40 dark:border-primary/60 rounded-xl flex flex-col items-center justify-center p-4 text-primary/60 dark:text-primary/80 hover:border-primary hover:text-primary transition-colors cursor-pointer">
+                    <i class="fa fa-plus-circle text-2xl mb-1" aria-hidden="true"></i>
+                    <p class="font-medium text-sm">Tambah Modul Baru</p>
+                </div>
+            </div>
+
+            <div id="daftarModul" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+        <!-- PPT -->
+        <section id="ppt" class="mb-16 scroll-mt-16">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-2 h-8 bg-secondary rounded-full"></div>
+                <h2 class="text-2xl font-bold text-dark dark:text-white">Materi Presentasi (PPT)</h2>
+            </div>
+
+            <!-- Tombol Tambah -->
+            <div class="mb-6 max-w-[200px]">
+                <div onclick="bukaForm('ppt')" class="border-2 border-dashed border-secondary/40 dark:border-secondary/60 rounded-xl flex flex-col items-center justify-center p-4 text-secondary/60 dark:text-secondary/80 hover:border-secondary hover:text-secondary transition-colors cursor-pointer">
+                    <i class="fa fa-plus-circle text-2xl mb-1" aria-hidden="true"></i>
+                    <p class="font-medium text-sm">Tambah Materi PPT</p>
+                </div>
+            </div>
+
+            <div id="daftarPpt" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+        <!-- VIDEO -->
+        <section id="video" class="mb-16 scroll-mt-16">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-2 h-8 bg-red-500 rounded-full"></div>
+                <h2 class="text-2xl font-bold text-dark dark:text-white">Video Pembelajaran</h2>
+            </div>
+
+            <!-- Tombol Tambah -->
+            <div class="mb-6 max-w-[200px]">
+                <div onclick="bukaForm('video')" class="border-2 border-dashed border-red-400/40 dark:border-red-500/60 rounded-xl flex flex-col items-center justify-center p-4 text-red-500/60 dark:text-red-400/80 hover:border-red-500 hover:text-red-500 transition-colors cursor-pointer">
+                    <i class="fa fa-plus-circle text-2xl mb-1" aria-hidden="true"></i>
+                    <p class="font-medium text-sm">Tambah Video Baru</p>
+                </div>
+            </div>
+
+            <div id="daftarVideo" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            </div>
+        </section>
+
+        <!-- LAINNYA - Tampilan 4 Kolom -->
+        <section id="lainnya" class="scroll-mt-16">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-2 h-8 bg-purple-500 rounded-full"></div>
+                <h2 class="text-2xl font-bold text-dark dark:text-white">Materi Lainnya</h2>
+            </div>
+            <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 md:p-8 transition-colors duration-300">
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Bagian ini dapat Anda gunakan untuk mengunggah tugas, referensi bacaan, lembar kerja, atau materi pendukung lainnya.</p>
+                
+                <!-- Kartu Kategori -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center mb-8">
+                    <div id="btnReferensi" onclick="tampilkanTombol('referensi')" class="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors cursor-pointer">
+                        <i class="fa fa-book text-2xl text-purple-600 dark:text-purple-400 mb-2" aria-hidden="true"></i>
+                        <p class="font-medium text-dark dark:text-white">Referensi</p>
+                    </div>
+                    <div id="btnTugas" onclick="tampilkanTombol('tugas')" class="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors cursor-pointer">
+                        <i class="fa fa-pencil-square-o text-2xl text-purple-600 dark:text-purple-400 mb-2" aria-hidden="true"></i>
+                        <p class="font-medium text-dark dark:text-white">Tugas</p>
+                    </div>
+                    <div id="btnKuis" onclick="tampilkanTombol('kuis')" class="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors cursor-pointer">
+                        <i class="fa fa-question-circle text-2xl text-purple-600 dark:text-purple-400 mb-2" aria-hidden="true"></i>
+                        <p class="font-medium text-dark dark:text-white">Kuis</p>
+                    </div>
+                    <div id="btnArsip" onclick="tampilkanTombol('arsip')" class="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors cursor-pointer">
+                        <i class="fa fa-folder-open-o text-2xl text-purple-600 dark:text-purple-400 mb-2" aria-hidden="true"></i>
+                        <p class="font-medium text-dark dark:text-white">Arsip</p>
+                    </div>
+                </div>
+
+                <!-- Tombol Tambah Materi Baru -->
+                <div id="kotakTambah" class="hidden border-2 border-dashed border-purple-400/40 dark:border-purple-500/60 rounded-lg p-6 text-center text-purple-500/60 dark:text-purple-400/80 hover:border-purple-500 hover:text-purple-500 transition-colors cursor-pointer mb-8" onclick="bukaForm('lainnya')">
+                    <i class="fa fa-plus-circle text-3xl mb-2" aria-hidden="true"></i>
+                    <p class="font-medium" id="judulTambah">Tambah Materi Baru</p>
+                </div>
+
+                <!-- DAFTAR MATERI: 4 KOLOM -->
+                <div id="daftarLainnya" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
+                
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark dark:bg-black text-white/70 mt-16 py-6 transition-colors duration-300">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2026 Ruang Belajar - Platform Pembelajaran Interaktif</p>
+        </div>
+    </footer>
+
+    <!-- MODAL FORM TAMBAH -->
+    <div id="modalForm" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white dark:bg-darkCard rounded-2xl shadow-xl w-full max-w-md p-6 mx-4 transform transition-all transition-colors duration-300">
+            <h3 id="judulModal" class="text-xl font-bold mb-4 text-dark dark:text-white"></h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama / Judul Materi</label>
+                    <input type="text" id="inputJudul" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-dark dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Masukkan judul...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Singkat</label>
+                    <textarea id="inputDeskripsi" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-dark dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" rows="3" placeholder="Ceritakan sedikit tentang materi ini..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tautan / Link File</label>
+                    <input type="text" id="inputLink" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-dark dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="https://... atau lokasi file">
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6 justify-end">
+                <button onclick="tutupForm()" class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Batal</button>
+                <button onclick="simpanData()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        let jenisAktif = '';
+        let kategoriAktif = '';
+
+        // Kunci penyimpanan
+        const STORAGE_KEYS = {
+            modul: 'data_modul',
+            ppt: 'data_ppt',
+            video: 'data_video',
+            lainnya: 'data_lainnya'
+        };
+
+        // Toggle Mode Gelap/Terang
+        const toggleMode = document.getElementById('toggleMode');
+        const html = document.documentElement;
+
+        // Cek preferensi awal
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        toggleMode.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // Toggle Menu Mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        menuToggle.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+        // Tutup menu saat link diklik
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // Gulir halus
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({behavior: 'smooth'});
+            });
+        });
+
+        // Fungsi: Tampilkan tombol tambah sesuai kategori
+        function tampilkanTombol(kategori) {
+            kategoriAktif = kategori;
+            const kotak = document.getElementById('kotakTambah');
+            const judul = document.getElementById('judulTambah');
+            
+            const teks = {
+                referensi: 'Tambah Referensi Baru',
+                tugas: 'Tambah Tugas Baru',
+                kuis: 'Tambah Kuis Baru',
+                arsip: 'Tambah Arsip Baru'
+            };
+            judul.innerText = teks[kategori];
+            kotak.classList.remove('hidden');
+
+            // Efek sorot
+            document.querySelectorAll('#lainnya > div > div').forEach(el => el.classList.remove('ring-2', 'ring-purple-500'));
+            event.currentTarget.classList.add('ring-2', 'ring-purple-500');
+        }
+
+        // Buka Form
+        function bukaForm(jenis) {
+            jenisAktif = jenis;
+            const judul = {
+                modul: 'Tambah Modul Baru',
+                ppt: 'Tambah Materi PPT',
+                video: 'Tambah Video Pembelajaran',
+                lainnya: `Tambah ${kategoriAktif.charAt(0).toUpperCase() + kategoriAktif.slice(1)} Baru`
+            };
+            document.getElementById('judulModal').innerText = judul[jenis];
+            document.getElementById('modalForm').classList.remove('hidden');
+            // Kosongkan input
+            document.getElementById('inputJudul').value = '';
+            document.getElementById('inputDeskripsi').value = '';
+            document.getElementById('inputLink').value = '';
+        }
+
+        // Tutup Form
+        function tutupForm() {
+            document.getElementById('modalForm').classList.add('hidden');
+            jenisAktif = '';
+        }
+
+        // Fungsi Hapus Kartu & Hapus dari Storage
+        function hapusKartu(elemen, id, jenis) {
+            if (confirm('Yakin ingin menghapus materi ini?')) {
+                elemen.closest('.relative').remove();
+                hapusDariStorage(jenis, id);
+            }
+        }
+
+        // --- FUNGSI PENYIMPANAN KE LOCAL STORAGE ---
+        function simpanKeStorage(jenis, data) {
+            let dataLama = ambilDariStorage(jenis);
+            dataLama.push(data);
+            localStorage.setItem(STORAGE_KEYS[jenis], JSON.stringify(dataLama));
+        }
+
+        function ambilDariStorage(jenis) {
+            return JSON.parse(localStorage.getItem(STORAGE_KEYS[jenis])) || [];
+        }
+
+        function hapusDariStorage(jenis, id) {
+            let data = ambilDariStorage(jenis);
+            data = data.filter(item => item.id !== id);
+            localStorage.setItem(STORAGE_KEYS[jenis], JSON.stringify(data));
+            tampilkanSemuaData(); // Muat ulang tampilan
+        }
+
+        // --- RENDER DATA KE LAYAR ---
+        function renderData(jenis, data) {
+            let kontainer = document.getElementById(`daftar${jenis.charAt(0).toUpperCase() + jenis.slice(1)}`);
+            let kartuHTML = '';
+
+            if (jenis === 'modul') {
+                data.forEach(item => {
+                    kartuHTML += `
+                    <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-800 overflow-hidden group relative transition-colors duration-300">
+                        <div class="h-3 bg-blue-500"></div>
+                        <button onclick="hapusKartu(this, '${item.id}', 'modul')" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 text-danger hover:bg-danger hover:text-white transition-colors flex items-center justify-center z-10">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
+                        <div class="p-5">
+                            <div class="text-3xl text-primary mb-3"><i class="fa fa-file-pdf-o"></i></div>
+                            <h3 class="font-bold text-lg mb-2 text-dark dark:text-white">${item.judul}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">${item.deskripsi}</p>
+                            <a href="${item.link}" target="_blank" class="inline-flex items-center text-primary font-medium group-hover:underline">Buka Materi <i class="fa fa-arrow-right ml-2"></i></a>
+                        </div>
+                    </div>`;
+                });
+            }
+
+            if (jenis === 'ppt') {
+                data.forEach(item => {
+                    kartuHTML += `
+                    <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-800 overflow-hidden group relative transition-colors duration-300">
+                        <div class="h-3 bg-teal-400"></div>
+                        <button onclick="hapusKartu(this, '${item.id}', 'ppt')" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 text-danger hover:bg-danger hover:text-white transition-colors flex items-center justify-center z-10">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
+                        <div class="p-5">
+                            <div class="text-3xl text-secondary mb-3"><i class="fa fa-file-powerpoint-o"></i></div>
+                            <h3 class="font-bold text-lg mb-2 text-dark dark:text-white">${item.judul}</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">${item.deskripsi}</p>
+                            <a href="${item.link}" target="_blank" class="inline-flex items-center text-secondary font-medium group-hover:underline">Lihat Presentasi <i class="fa fa-arrow-right ml-2"></i></a>
+                        </div>
+                    </div>`;
+                });
+            }
+
+            if (jenis === 'video') {
+                data.forEach(item => {
+                    kartuHTML += `
+                    <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-800 overflow-hidden relative group transition-colors duration-300">
+                        <button onclick="hapusKartu(this, '${item.id}', 'video')" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 text-danger hover:bg-danger hover:text-white transition-colors flex items-center justify-center z-20">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
+                        <a href="${item.link}" target="_blank" class="block relative z-10">
+                            <div class="relative">
+                                <img src="https://picsum.photos/id/1015/600/340" alt="Thumbnail Video" class="w-full h-48 object-cover">
+                                <div class="absolute inset-0 bg-black/30 flex items-center justify-center pointer-events-none">
+                                    <button class="w-16 h-16 rounded-full bg-white/80 text-red-500 flex items-center justify-center text-2xl">
+                                        <i class="fa fa-play" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-bold text-lg mb-1 text-dark dark:text-white">${item.judul}</h3>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2">${item.deskripsi}</p>
+                            </div>
+                        </a>
+                    </div>`;
+                });
+            }
+
+            if (jenis === 'lainnya') {
+                data.forEach(item => {
+                    kartuHTML += `
+                    <div class="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors relative group">
+                        <button onclick="hapusKartu(this, '${item.id}', 'lainnya')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 text-danger hover:bg-danger hover:text-white transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 z-10">
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </button>
+                        <span class="text-[10px] font-semibold uppercase inline-block bg-purple-600 text-white px-2 py-0.5 rounded mb-2">${item.kategori}</span>
+                        <h4 class="font-bold text-purple-700 dark:text-purple-300 mb-1">${item.judul}</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">${item.deskripsi}</p>
+                        <a href="${item.link}" target="_blank" class="text-sm text-purple-600 dark:text-purple-400 hover:underline">Buka File</a>
+                    </div>`;
+                });
+            }
+
+            kontainer.innerHTML = kartuHTML;
+        }
+
+        // Simpan Data Baru
+        function simpanData() {
+            const judul = document.getElementById('inputJudul').value;
+            const deskripsi = document.getElementById('inputDeskripsi').value;
+            const link = document.getElementById('inputLink').value || '#';
+
+            if (!judul) return alert('Judul tidak boleh kosong!');
+
+            // Buat ID unik
+            const dataBaru = {
+                id: Date.now().toString(),
+                judul: judul,
+                deskripsi: deskripsi,
+                link: link,
+                kategori: kategoriAktif || ''
+            };
+
+            simpanKeStorage(jenisAktif, dataBaru);
+            tampilkanSemuaData(); // Segera tampilkan
+            tutupForm();
+        }
+
+        // Ambil & Tampilkan SEMUA data saat halaman dibuka
+        function tampilkanSemuaData() {
+            Object.keys(STORAGE_KEYS).forEach(jenis => {
+                const data = ambilDariStorage(jenis);
+                renderData(jenis, data);
+            });
+        }
+
+        // Jalankan saat halaman selesai dimuat
+        document.addEventListener('DOMContentLoaded', tampilkanSemuaData);
+
+        // Tutup modal klik luar
+        document.getElementById('modalForm').addEventListener('click', function(e) {
+            if (e.target === this) tutupForm();
+        });
+    </script>
+
+</body>
+</html>
