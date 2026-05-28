@@ -60,21 +60,28 @@
         </header>
 
         <main class="container mx-auto px-4 py-8 max-w-2xl">
-            <div class="bg-white dark:bg-dark-card rounded-2xl shadow-lg p-6 mb-8 border border-gray-100 dark:border-dark-border">
-                <h2 class="text-xl font-semibold text-center mb-4">Cek Hasil Nilai Siswa</h2>
-                <div class="relative">
+            <div id="searchCard" class="bg-white dark:bg-dark-card rounded-2xl shadow-lg p-6 mb-8 border border-gray-100 dark:border-dark-border">
+                <h2 class="text-xl font-semibold text-center mb-6">Cek Hasil Nilai TKA Murid</h2>
+                
+                <div class="flex items-center bg-gray-50 dark:bg-dark-bg border-2 border-gray-200 dark:border-dark-border rounded-xl p-1.5 focus-within:border-primary dark:focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
                     <input 
                         type="text" 
                         id="nisnInput" 
                         placeholder="Masukkan NISN Anda" 
-                        class="w-full px-5 py-3 border-2 border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-bg rounded-xl focus:border-primary dark:focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-lg font-medium"
+                        class="w-full pl-4 pr-2 py-3 bg-transparent outline-none text-lg font-medium tracking-wide"
                         maxlength="10"
                     >
-                    <button id="btnCek" class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50" disabled>
-                        <i class="fa fa-search mr-1" id="iconCek"></i> <span id="textCek">Cek</span>
+                    <button id="btnCek" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-all font-medium disabled:opacity-50 flex items-center justify-center whitespace-nowrap h-full" disabled>
+                        <i class="fa fa-search mr-1.5" id="iconCek"></i> <span id="textCek">Cek</span>
                     </button>
                 </div>
              </div>
+
+            <div id="backButtonContainer" class="hidden mb-4 animate-fade-in">
+                <button id="btnKembali" class="flex items-center gap-2 text-primary dark:text-white font-medium hover:underline transition-all">
+                    <i class="fa fa-arrow-left"></i> Cari NISN Lain
+                </button>
+            </div>
 
             <div id="hasilContainer" class="hidden transition-all duration-300">
                 <div class="bg-white dark:bg-dark-card rounded-2xl shadow-lg overflow-hidden border border-gray-100 dark:border-dark-border">
@@ -151,7 +158,6 @@
     </footer>
 
     <script>
-        // Konfigurasi Tema (Dark Mode)
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -165,8 +171,12 @@
         // ========================================================
         // KONEKSI KE APPS SCRIPT WEB API GOOGLE SHEETS
         // ========================================================
+        // Gantilah isi string di bawah ini dengan tautan milik Anda yang aktif
         const API_URL = "https://script.google.com/macros/s/AKfycbx8hO4x8agCrzVFcc1v2bBBoIe9xGMTEecwKmqqzMvPHgY_UiAVf8Rm2Y0E5lvPx0av/exec";
 
+        const searchCard = document.getElementById('searchCard');
+        const backButtonContainer = document.getElementById('backButtonContainer');
+        const btnKembali = document.getElementById('btnKembali');
         const nisnInput = document.getElementById('nisnInput');
         const btnCek = document.getElementById('btnCek');
         const iconCek = document.getElementById('iconCek');
@@ -174,7 +184,6 @@
         const hasilContainer = document.getElementById('hasilContainer');
         const pesanError = document.getElementById('pesanError');
 
-        // Mengaktifkan tombol jika input diisi
         nisnInput.addEventListener('input', () => {
             btnCek.disabled = nisnInput.value.trim().length === 0;
         });
@@ -183,26 +192,27 @@
             const nisnCari = nisnInput.value.trim();
             if (!nisnCari) return;
 
-            // Reset Tampilan & Jalankan Mode Loading
             hasilContainer.classList.add('hidden');
             pesanError.classList.add('hidden');
+            backButtonContainer.classList.add('hidden');
             btnCek.disabled = true;
             textCek.textContent = "Memuat...";
             iconCek.className = "fa fa-spinner fa-spin mr-1";
 
             try {
-                // Tembak data ke Web App GAS secara asinkronus (Fetch API)
                 const response = await fetch(`${API_URL}?nisn=${encodeURIComponent(nisnCari)}`);
                 const data = await response.json();
 
                 if (data.status === "success") {
-                    // Isi data siswa ke HTML
+                    // Sembunyikan kotak pencarian & tampilkan hasil
+                    searchCard.classList.add('hidden');
+                    backButtonContainer.classList.remove('hidden');
+
                     document.getElementById('noPeserta').textContent = data.no_peserta;
                     document.getElementById('nisnOutput').textContent = data.nisn;
                     document.getElementById('namaOutput').textContent = data.nama;
                     document.getElementById('ttlOutput').textContent = data.ttl;
 
-                    // Mengisi Nilai dan Keterangan
                     document.getElementById('nilaiMat').textContent = data.matematika.toFixed(2);
                     document.getElementById('ketMat').textContent = data.ket_mat;
                     document.getElementById('barMat').style.width = '0%';
@@ -211,26 +221,26 @@
                     document.getElementById('ketInd').textContent = data.ket_ind;
                     document.getElementById('barInd').style.width = '0%';
 
-                    // Munculkan Container Hasil
                     hasilContainer.classList.remove('hidden');
                     hasilContainer.classList.add('animate-fade-in');
 
-                    // Jalankan animasi progress bar
                     setTimeout(() => {
                         document.getElementById('barMat').style.width = `${data.matematika}%`;
                         document.getElementById('barInd').style.width = `${data.indonesia}%`;
                     }, 50);
 
                 } else if (data.status === "not_found") {
+                    searchCard.classList.remove('hidden');
                     showError("Data Tidak Ditemukan", "NISN yang Anda masukkan tidak terdaftar pada sistem kami. Silakan hubungi admin sekolah.");
                 } else {
+                    searchCard.classList.remove('hidden');
                     showError("Sistem Error", "Terjadi kesalahan internal pada database cloud.");
                 }
             } catch (error) {
                 console.error(error);
+                searchCard.classList.remove('hidden');
                 showError("Gagal Terhubung", "Periksa koneksi internet Anda atau pastikan URL Apps Script sudah benar.");
             } finally {
-                // Matikan Mode Loading
                 btnCek.disabled = false;
                 textCek.textContent = "Cek";
                 iconCek.className = "fa fa-search mr-1";
@@ -244,7 +254,17 @@
             pesanError.classList.add('animate-fade-in');
         }
 
-        // Event Trigger Klik dan Enter
+        // Kembali ke menu cari
+        btnKembali.addEventListener('click', () => {
+            hasilContainer.classList.add('hidden');
+            backButtonContainer.classList.add('hidden');
+            pesanError.classList.add('hidden');
+            searchCard.classList.remove('hidden');
+            nisnInput.value = "";
+            btnCek.disabled = true;
+            nisnInput.focus();
+        });
+
         btnCek.addEventListener('click', cekNilai);
         nisnInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') cekNilai();
