@@ -219,7 +219,7 @@
 <body>
 
     <!-- Tombol Ubah Mode -->
-    <button id="toggleMode">🌙 Mode Gelap</button>
+    <button id="toggleMode">🌙</button>
 
     <div class="menu-container">
         <!-- Lingkaran Pusat + Teks Melingkar DI DALAMNYA + Logo -->
@@ -282,7 +282,7 @@
         const tombolMode = document.getElementById("toggleMode");
         tombolMode.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            tombolMode.innerHTML = document.body.classList.contains('dark-mode') ? '☀️ Mode Terang' : '🌙 Mode Gelap';
+            tombolMode.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
         });
     </script>
 </body>
