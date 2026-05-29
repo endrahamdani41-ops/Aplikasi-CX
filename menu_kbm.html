@@ -3,62 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Sekolah</title>
-
+    <title>Menu Sekolah - SMP NEGERI 110 JAKARTA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
     <style>
-        /* BACKGROUND BATIK */
+        /* === LATAR BELAKANG MODE TERANG === */
         body {
-            background:
-            linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)),
-            url('https://png.pngtree.com/background/20210717/original/pngtree-green-leaves-gradient-background-picture-image_1447832.jpg');
+            background-image: url('https://png.pngtree.com/background/20210717/original/pngtree-green-leaves-gradient-background-picture-image_1447832.jpg');
             background-size: cover;
             background-position: center;
-            background-repeat: repeat;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.4s ease !important;
+            background-color: #2c5f2d;
+            position: relative;
         }
 
-        /* DARK MODE */
-        body.dark {
-            background:
-            linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-            url('https://png.pngtree.com/background/20210717/original/pngtree-green-leaves-gradient-background-picture-image_1447832.jpg');
-            background-size: cover;
-            background-position: center;
+        /* Lapisan gelap samar */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.05);
+            z-index: 0;
+            transition: all 0.4s ease;
         }
 
+        /* === WADAH MENU === */
         .menu-container {
             position: relative;
-            width: 400px;
-            height: 400px;
-            margin: 50px auto;
+            width: 420px;
+            height: 420px;
+            margin: 0 auto;
+            z-index: 2;
         }
 
-        /* LOGO TANPA LINGKARAN */
+        /* === LINGKARAN PUSAT (PUTIH) - UKURAN 130px === */
         .center-circle {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: none;
-            border: none;
-            box-shadow: none;
-            z-index: 2;
+            width: 130px;
+            height: 130px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.15), 
+                inset 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease !important;
+            animation: berdenyut 3s infinite alternate ease-in-out;
+        }
+        @keyframes berdenyut {
+            from { box-shadow: 0 10px 25px rgba(0,0,0,0.15), 0 0 15px rgba(255,255,255,0.5); }
+            to { box-shadow: 0 10px 25px rgba(0,0,0,0.15), 0 0 25px rgba(255,255,255,0.8); }
         }
 
-        /* HILANGKAN EFEK KOTAK */
+        /* === WADAH TEKS MELINGKAR - 100% DI DALAM ===
+           Ukuran: 100px (JAUH LEBIH KECIL dari lingkaran 130px)
+           Posisi: Pas di tengah, aman dari pinggir */
+        .text-circle {
+            position: absolute;
+            width: 100px;  
+            height: 100px; 
+            border-radius: 50%;
+            animation: putarTeks 12s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Pastikan tidak ada yang keluar */
+            overflow: hidden;
+        }
+        @keyframes putarTeks {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* === HURUF TEKS === */
+        .char {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform-origin: center 50px; /* Setengah dari ukuran wadah teks (100/2=50) */
+            font-size: 8px; 
+            font-weight: bold;
+            color: #1a5fb4;
+            text-align: center;
+            width: 10px;
+            height: 10px;
+            line-height: 10px;
+            white-space: nowrap;
+        }
+
+        /* === LOGO DI TENGAH === */
         .center-circle img {
-            width: 90px;
-            height: auto;
-            mix-blend-mode: multiply;
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            z-index: 20; /* Paling atas, menutupi tengah tulisan */
+            position: relative;
         }
 
+        /* === IKON MENU === */
         .menu-item {
             position: absolute;
-            width: 70px;
-            height: 70px;
-            background-color: #2563eb;
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(145deg, #2563eb, #1d4ed8);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -67,133 +130,160 @@
             justify-content: center;
             text-decoration: none;
             font-size: 20px;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            box-shadow: 
+                0 8px 15px rgba(37, 99, 235, 0.25), 
+                inset 0 -2px 5px rgba(0, 0, 0, 0.12), 
+                inset 0 2px 5px rgba(255, 255, 255, 0.35);
+            z-index: 5;
         }
-
-        body.dark .menu-item {
-            background-color: #1d4ed8;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-        }
-
         .menu-item:hover {
-            background-color: #1d4ed8;
-            transform: scale(1.1);
+            background: linear-gradient(145deg, #3b82f6, #2563eb);
+            transform: translateY(-8px) scale(1.08);
+            box-shadow: 
+                0 15px 20px rgba(37, 99, 235, 0.3), 
+                0 0 18px rgba(59, 130, 246, 0.6), 
+                inset 0 -2px 5px rgba(0, 0, 0, 0.12), 
+                inset 0 2px 5px rgba(255, 255, 255, 0.35);
         }
-
-        body.dark .menu-item:hover {
-            background-color: #2563eb;
-        }
-
         .menu-item span {
-            font-size: 10px;
-            margin-top: 4px;
-            text-align: center;
+            font-size: 9px;
+            margin-top: 3px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.15);
         }
 
-        /* POSISI */
-        .item-1 { top: 20px; left: 50%; margin-left: -35px; }
+        /* === POSISI IKON === */
+        .item-1 { top: 20px; left: 50%; margin-left: -36px; }
         .item-2 { top: 100px; right: 40px; }
         .item-3 { bottom: 100px; right: 40px; }
-        .item-4 { bottom: 20px; left: 50%; margin-left: -35px; }
+        .item-4 { bottom: 20px; left: 50%; margin-left: -36px; }
         .item-5 { bottom: 100px; left: 40px; }
         .item-6 { top: 100px; left: 40px; }
 
-        /* ANIMASI */
+        /* === ANIMASI KLIK === */
         .move-to-center {
             top: 50% !important;
             left: 50% !important;
             margin: 0 !important;
-            transform: translate(-50%, -50%) scale(0.4) !important;
+            transform: translate(-50%, -50%) scale(0.3) rotate(10deg) !important;
             opacity: 0 !important;
+            filter: blur(2px);
         }
 
-        /* TOMBOL DARK */
-        .toggle-dark {
+        /* === TOMBOL MODE === */
+        #toggleMode {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #111;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            z-index: 999;
+            top: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #222;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
             cursor: pointer;
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
+        #toggleMode:hover { background: rgba(255, 255, 255, 0.4); }
+
+        /* ====================================== */
+        /* 🔥 MODE GELAP - LATAR TETAP TAMPIL 🔥 */
+        /* ====================================== */
+        body.dark-mode::before { background-color: rgba(10, 20, 40, 0.75); }
+        body.dark-mode .center-circle {
+            background: #e2e8f0 !important;
+            border-color: #94a3b8 !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 -4px 8px rgba(0,0,0,0.15), inset 0 4px 8px rgba(255,255,255,0.5) !important;
+        }
+        body.dark-mode .char { color: #0f3460; } /* Warna teks saat gelap */
+        body.dark-mode .menu-item {
+            background: linear-gradient(145deg, #1e3a8a, #1e40af) !important;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4), inset 0 -2px 5px rgba(0,0,0,0.2), inset 0 2px 5px rgba(255,255,255,0.15) !important;
+        }
+        body.dark-mode .menu-item:hover {
+            background: linear-gradient(145deg, #2563eb, #1d4ed8) !important;
+            box-shadow: 0 15px 20px rgba(0,0,0,0.5), 0 0 18px rgba(59,130,246,0.3) !important;
+        }
+        body.dark-mode #toggleMode {
+            background: rgba(40, 50, 70, 0.6) !important;
+            color: #f8fafc !important;
+            border: 1px solid rgba(100,110,130,0.3) !important;
+        }
+        body.dark-mode #toggleMode:hover { background: rgba(60,70,90,0.7) !important; }
     </style>
 </head>
+<body>
 
-<body class="flex items-center justify-center min-h-screen">
+    <!-- Tombol Ubah Mode -->
+    <button id="toggleMode">🌙 Mode Gelap</button>
 
-<button class="toggle-dark" onclick="toggleDark()">🌙 Dark</button>
+    <div class="menu-container">
+        <!-- Lingkaran Pusat + Teks Melingkar DI DALAMNYA + Logo -->
+        <div class="center-circle">
+            <div class="text-circle" id="textCircle"></div> <!-- Teks ADA DI SINI, DI DALAM LINGKARAN PUTIH -->
+            <img src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110 Jakarta">
+        </div>
 
-<div class="menu-container">
-
-    <!-- LOGO -->
-    <div class="center-circle">
-        <img src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo Sekolah">
+        <!-- Menu Ikon -->
+        <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" class="menu-item item-1" onclick="gerakKeTengah(this, event)">
+            <i class="fa fa-book"></i><span>Agenda</span>
+        </a>
+        <div class="menu-item item-2" onclick="gerakKeTengah(this)">
+            <i class="fa fa-users"></i><span>Siswa</span>
+        </div>
+        <div class="menu-item item-3" onclick="gerakKeTengah(this)">
+            <i class="fa fa-calendar"></i><span>Jadwal</span>
+        </div>
+        <div class="menu-item item-4" onclick="gerakKeTengah(this)">
+            <i class="fa fa-newspaper-o"></i><span>Pengumuman</span>
+        </div>
+        <div class="menu-item item-5" onclick="gerakKeTengah(this)">
+            <i class="fa fa-file-text"></i><span>Nilai</span>
+        </div>
+        <div class="menu-item item-6" onclick="gerakKeTengah(this)">
+            <i class="fa fa-cog"></i><span>Pengaturan</span>
+        </div>
     </div>
 
-    <!-- MENU -->
-    <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" class="menu-item item-1" onclick="gerakKeTengah(this, event)">
-        <i class="fa fa-book"></i>
-        <span>Agenda</span>
-    </a>
+    <script>
+        // === TEKS MELINGKAR BERJALAN - 100% DI DALAM LINGKARAN PUTIH ===
+        const teks = "SMP NEGERI 110 JAKARTA  •  ";
+        const wadah = document.getElementById("textCircle");
+        const jumlahHuruf = teks.length;
+        const sudutPerHuruf = 360 / jumlahHuruf;
+        const radius = 50; // Jarak dari tengah = PAS DI DALAM, TIDAK KELUAR (setengah dari 100px)
 
-    <div class="menu-item item-2" onclick="gerakKeTengah(this)">
-        <i class="fa fa-users"></i>
-        <span>Siswa</span>
-    </div>
+        // Buat setiap huruf dan posisikan melingkar
+        for (let i = 0; i < jumlahHuruf; i++) {
+            const huruf = document.createElement("div");
+            huruf.className = "char";
+            huruf.innerText = teks[i];
+            const sudut = i * sudutPerHuruf;
+            // Posisi matematis presisi agar pas melingkar di dalam
+            const x = Math.sin(sudut * Math.PI / 180) * radius;
+            const y = -Math.cos(sudut * Math.PI / 180) * radius;
+            huruf.style.transform = `translate(${x}px, ${y}px) rotate(${sudut}deg)`;
+            wadah.appendChild(huruf);
+        }
 
-    <div class="menu-item item-3" onclick="gerakKeTengah(this)">
-        <i class="fa fa-calendar"></i>
-        <span>Jadwal</span>
-    </div>
+        // === FUNGSI MENU ===
+        function gerakKeTengah(elemen, event) {
+            const isAgenda = elemen.classList.contains('item-1');
+            elemen.classList.add('move-to-center');
+            setTimeout(() => elemen.classList.remove('move-to-center'), 800);
+            if (!isAgenda && event) event.preventDefault();
+        }
 
-    <div class="menu-item item-4" onclick="gerakKeTengah(this)">
-        <i class="fa fa-newspaper-o"></i>
-        <span>Pengumuman</span>
-    </div>
-
-    <div class="menu-item item-5" onclick="gerakKeTengah(this)">
-        <i class="fa fa-file-text"></i>
-        <span>Nilai</span>
-    </div>
-
-    <div class="menu-item item-6" onclick="gerakKeTengah(this)">
-        <i class="fa fa-cog"></i>
-        <span>Pengaturan</span>
-    </div>
-
-</div>
-
-<script>
-function gerakKeTengah(elemen, event) {
-    const isAkademik = elemen.classList.contains('item-1');
-
-    elemen.classList.add('move-to-center');
-
-    setTimeout(() => {
-        elemen.classList.remove('move-to-center');
-    }, 800);
-
-    if (!isAkademik && event) {
-        event.preventDefault();
-    }
-}
-</script>
-
-<script>
-function toggleDark() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
-}
-
-if (localStorage.getItem("darkMode") === "true") {
-    document.body.classList.add("dark");
-}
-</script>
-
+        // === TOMBOL MODE ===
+        const tombolMode = document.getElementById("toggleMode");
+        tombolMode.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            tombolMode.innerHTML = document.body.classList.contains('dark-mode') ? '☀️ Mode Terang' : '🌙 Mode Gelap';
+        });
+    </script>
 </body>
 </html>
