@@ -2,126 +2,130 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Sekolah - SMP NEGERI 110 JAKARTA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Menu Sekolah 3D - SMP NEGERI 110 JAKARTA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
-        /* === LATAR BELAKANG MODE TERANG === */
-        body {
-            background-image: url('https://png.pngtree.com/background/20210717/original/pngtree-green-leaves-gradient-background-picture-image_1447832.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            transition: all 0.4s ease !important;
-            background-color: #2c5f2d;
-            position: relative;
+        /* === RESET & FIX VIEWPORT HP === */
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            overflow: hidden !important;
         }
 
-        /* Lapisan gelap samar */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0, 0, 0, 0.05);
-            z-index: 0;
+        body {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #2c5f2d; /* Fallback warna default */
+            position: relative;
+            transition: background 0.5s ease, background-image 0.5s ease;
+        }
+
+        /* === FIXED OVERLAY === */
+        .bg-overlay-fixed {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            z-index: 1;
+            pointer-events: none;
             transition: all 0.4s ease;
+            backdrop-filter: brightness(0.95);
+            -webkit-backdrop-filter: brightness(0.95);
+        }
+
+        body.dark-mode .bg-overlay-fixed { 
+            backdrop-filter: brightness(0.3) contrast(1.1) saturate(0.8) !important;
+            -webkit-backdrop-filter: brightness(0.3) contrast(1.1) saturate(0.8) !important;
+            background-color: rgba(10, 15, 30, 0.4) !important;
         }
 
         /* === WADAH MENU === */
         .menu-container {
             position: relative;
-            width: 420px;
-            height: 420px;
+            width: 380px;
+            height: 380px;
             margin: 0 auto;
             z-index: 2;
         }
 
-        /* === LINGKARAN PUSAT (PUTIH) - UKURAN 130px === */
+        /* === LINGKARAN PUSAT 3D === */
         .center-circle {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 130px;
             height: 130px;
-            background: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
-            border: 3px solid rgba(255, 255, 255, 0.9);
+            border: 4px solid #ffffff;
             box-shadow: 
-                0 10px 25px rgba(0, 0, 0, 0.15), 
-                inset 0 10px 25px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s ease !important;
-            animation: berdenyut 3s infinite alternate ease-in-out;
-        }
-        @keyframes berdenyut {
-            from { box-shadow: 0 10px 25px rgba(0,0,0,0.15), 0 0 15px rgba(255,255,255,0.5); }
-            to { box-shadow: 0 10px 25px rgba(0,0,0,0.15), 0 0 25px rgba(255,255,255,0.8); }
+                0 15px 35px rgba(0, 0, 0, 0.3), 
+                inset 0 -8px 12px rgba(0, 0, 0, 0.15), 
+                inset 0 8px 12px rgba(255, 255, 255, 0.9);
         }
 
-        /* === WADAH TEKS MELINGKAR - 100% DI DALAM ===
-           Ukuran: 100px (JAUH LEBIH KECIL dari lingkaran 130px)
-           Posisi: Pas di tengah, aman dari pinggir */
+        /* === WADAH TEKS MELINGKAR === */
         .text-circle {
             position: absolute;
-            width: 100px;  
-            height: 100px; 
+            width: 115px;  
+            height: 115px; 
             border-radius: 50%;
-            animation: putarTeks 12s linear infinite;
-            top: 50%;
-            left: 50%;
+            animation: putarTeks 20s linear infinite;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            /* Pastikan tidak ada yang keluar */
-            overflow: hidden;
         }
         @keyframes putarTeks {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* === HURUF TEKS === */
         .char {
             position: absolute;
-            top: 0;
-            left: 50%;
-            transform-origin: center 50px; /* Setengah dari ukuran wadah teks (100/2=50) */
-            font-size: 8px; 
-            font-weight: bold;
-            color: #1a5fb4;
+            top: 0; left: 50%;
+            transform-origin: 50% 57.5px; 
+            font-size: 8.5px; 
+            font-weight: 800;
+            color: #1e40af;
             text-align: center;
             width: 10px;
-            height: 10px;
-            line-height: 10px;
-            white-space: nowrap;
+            margin-left: -5px;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
         }
 
-        /* === LOGO DI TENGAH - DIBESARKAN MENDEKATI LINGKARAN === */
-        .center-circle img {
-            width: 90px; /* ⬅️ Diperbesar dari 60px jadi 90px, mendekati lingkaran 130px */
-            height: 90px; /* ⬅️ Diperbesar juga */
+        /* === LOGO BERKEDIP === */
+        .logo-sekolah {
+            width: 75px; 
+            height: 75px; 
             object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-            z-index: 20; /* Paling atas, menutupi tengah tulisan */
-            position: relative;
+            z-index: 25; 
+            display: block !important;
+            animation: kedipGlow 2.5s infinite alternate ease-in-out !important;
+        }
+        @keyframes kedipGlow {
+            0% { opacity: 0.5; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)) scale(0.96); }
+            100% { opacity: 1; filter: drop-shadow(0 8px 16px rgba(30, 64, 175, 0.6)) scale(1.03); }
         }
 
-        /* === IKON MENU === */
+        /* === STRUKTUR TOMBOL TOMBOL 3D === */
         .menu-item {
             position: absolute;
-            width: 72px;
-            height: 72px;
-            background: linear-gradient(145deg, #2563eb, #1d4ed8);
+            width: 74px;
+            height: 74px;
             color: white;
             border-radius: 50%;
             display: flex;
@@ -131,158 +135,267 @@
             text-decoration: none;
             font-size: 20px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            box-shadow: 
-                0 8px 15px rgba(37, 99, 235, 0.25), 
-                inset 0 -2px 5px rgba(0, 0, 0, 0.12), 
-                inset 0 2px 5px rgba(255, 255, 255, 0.35);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
             z-index: 5;
         }
-        .menu-item:hover {
-            background: linear-gradient(145deg, #3b82f6, #2563eb);
-            transform: translateY(-8px) scale(1.08);
-            box-shadow: 
-                0 15px 20px rgba(37, 99, 235, 0.3), 
-                0 0 18px rgba(59, 130, 246, 0.6), 
-                inset 0 -2px 5px rgba(0, 0, 0, 0.12), 
-                inset 0 2px 5px rgba(255, 255, 255, 0.35);
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 4px; left: 15%;
+            width: 70%; height: 35%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 50px / 20px;
         }
+
         .menu-item span {
             font-size: 9px;
-            margin-top: 3px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+            margin-top: 2px;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
-        /* === POSISI IKON === */
-        .item-1 { top: 20px; left: 50%; margin-left: -36px; }
-        .item-2 { top: 100px; right: 40px; }
-        .item-3 { bottom: 100px; right: 40px; }
-        .item-4 { bottom: 20px; left: 50%; margin-left: -36px; }
-        .item-5 { bottom: 100px; left: 40px; }
-        .item-6 { top: 100px; left: 40px; }
+        /* === POSISI GRID BULAT === */
+        .item-1 { top: 0px; left: 50%; margin-left: -37px; }
+        .item-2 { top: 85px; right: 15px; }
+        .item-3 { bottom: 85px; right: 15px; }
+        .item-4 { bottom: 0px; left: 50%; margin-left: -37px; }
+        .item-5 { bottom: 85px; left: 15px; }
+        .item-6 { top: 85px; left: 15px; }
 
-        /* === ANIMASI KLIK === */
+        /* === WARNA TOMBOL === */
+        .item-1 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: 2px solid #60a5fa; box-shadow: 0 8px 15px rgba(29,78,216,0.4), 0 4px 0 #1e3a8a; }
+        .item-2 { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); border: 2px solid #fb923c; box-shadow: 0 8px 15px rgba(194,65,12,0.4), 0 4px 0 #7c2d12; }
+        .item-3 { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); border: 2px solid #4ade80; box-shadow: 0 8px 15px rgba(21,128,61,0.4), 0 4px 0 #14532d; }
+        .item-4 { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border: 2px solid #f87171; box-shadow: 0 8px 15px rgba(185,28,28,0.4), 0 4px 0 #7f1d1d; }
+        .item-5 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); border: 2px solid #c084fc; box-shadow: 0 8px 15px rgba(126,34,206,0.4), 0 4px 0 #581c87; }
+        .item-6 { background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); border: 2px solid #2dd4bf; box-shadow: 0 8px 15px rgba(15,118,110,0.4), 0 4px 0 #115e59; }
+
+        /* === ANIMASI KLIK KE TENGAH === */
         .move-to-center {
-            top: 50% !important;
-            left: 50% !important;
+            top: 50% !important; left: 50% !important;
             margin: 0 !important;
-            transform: translate(-50%, -50%) scale(0.3) rotate(10deg) !important;
+            transform: translate(-50%, -50%) scale(0.1) rotate(45deg) !important;
             opacity: 0 !important;
-            filter: blur(2px);
+            box-shadow: none !important;
         }
 
-        /* === TOMBOL MODE === */
+        /* === TOMBOL GLOBAL TEMA === */
         #toggleMode {
             position: fixed;
             top: 20px; right: 20px;
             background: rgba(255, 255, 255, 0.2);
-            color: #222;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 8px 16px;
-            border-radius: 20px;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 14px;
+            border-radius: 50%;
             cursor: pointer;
             backdrop-filter: blur(10px);
             z-index: 999;
-            transition: all 0.3s ease;
-            font-weight: 500;
         }
-        #toggleMode:hover { background: rgba(255, 255, 255, 0.4); }
 
-        /* ====================================== */
-        /* 🔥 MODE GELAP - LATAR TETAP TAMPIL 🔥 */
-        /* ====================================== */
-        body.dark-mode::before { background-color: rgba(10, 20, 40, 0.75); }
+        /* === PANEL DIALOG PENGATURAN === */
+        .settings-panel {
+            position: fixed;
+            bottom: -350px; left: 50%;
+            transform: translateX(-50%);
+            width: 90%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: bottom 0.4s ease;
+        }
+        .settings-panel.open { bottom: 0; }
+
         body.dark-mode .center-circle {
-            background: #e2e8f0 !important;
-            border-color: #94a3b8 !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 -4px 8px rgba(0,0,0,0.15), inset 0 4px 8px rgba(255,255,255,0.5) !important;
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%) !important;
+            border-color: #475569 !important;
         }
-        body.dark-mode .char { color: #0f3460; } /* Warna teks saat gelap */
-        body.dark-mode .menu-item {
-            background: linear-gradient(145deg, #1e3a8a, #1e40af) !important;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.4), inset 0 -2px 5px rgba(0,0,0,0.2), inset 0 2px 5px rgba(255,255,255,0.15) !important;
-        }
-        body.dark-mode .menu-item:hover {
-            background: linear-gradient(145deg, #2563eb, #1d4ed8) !important;
-            box-shadow: 0 15px 20px rgba(0,0,0,0.5), 0 0 18px rgba(59,130,246,0.3) !important;
-        }
-        body.dark-mode #toggleMode {
-            background: rgba(40, 50, 70, 0.6) !important;
-            color: #f8fafc !important;
-            border: 1px solid rgba(100,110,130,0.3) !important;
-        }
-        body.dark-mode #toggleMode:hover { background: rgba(60,70,90,0.7) !important; }
+        body.dark-mode .char { color: #f8fafc; text-shadow: 1px 1px 0px rgba(0,0,0,0.6); }
     </style>
 </head>
-<body>
+<body class="dark-mode">
 
-    <!-- Tombol Ubah Mode -->
+    <div class="bg-overlay-fixed"></div>
+
     <button id="toggleMode">🌙</button>
 
     <div class="menu-container">
-        <!-- Lingkaran Pusat + Teks Melingkar DI DALAMNYA + Logo -->
         <div class="center-circle">
-            <div class="text-circle" id="textCircle"></div> <!-- Teks ADA DI SINI, DI DALAM LINGKARAN PUTIH -->
-            <img src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110 Jakarta">
+            <div class="text-circle" id="textCircle"></div>
+            <img class="logo-sekolah" src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110 Jakarta">
         </div>
 
-        <!-- Menu Ikon -->
         <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" class="menu-item item-1" onclick="gerakKeTengah(this, event)">
             <i class="fa fa-book"></i><span>Agenda</span>
         </a>
-        <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/E-Izin.html" class="menu-item item-2" onclick="gerakKeTengah(this)">
+        <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/E-Izin.html" class="menu-item item-2" onclick="gerakKeTengah(this, event)">
             <i class="fa fa-users"></i><span>Siswa</span>
         </a>
-        <div class="menu-item item-3" onclick="gerakKeTengah(this)">
+        <div class="menu-item item-3" onclick="gerakKeTengah(this, event)">
             <i class="fa fa-calendar"></i><span>Jadwal</span>
         </div>
-        <div class="menu-item item-4" onclick="gerakKeTengah(this)">
+        <div class="menu-item item-4" onclick="gerakKeTengah(this, event)">
             <i class="fa fa-newspaper-o"></i><span>Pengumuman</span>
         </div>
-        <div class="menu-item item-5" onclick="gerakKeTengah(this)">
+        <div class="menu-item item-5" onclick="gerakKeTengah(this, event)">
             <i class="fa fa-file-text"></i><span>Nilai</span>
         </div>
-        <div class="menu-item item-6" onclick="gerakKeTengah(this)">
+        
+        <div class="menu-item item-6" id="btnPengaturan">
             <i class="fa fa-cog"></i><span>Pengaturan</span>
         </div>
     </div>
 
+    <div class="settings-panel" id="panelPengaturan">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-gray-800"><i class="fa fa-paint-brush mr-2 text-teal-600"></i>Ganti Background</h3>
+            <button id="btnTutupPanel" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-600 mb-2">Pilih Warna Solid:</label>
+            <div class="flex items-center gap-3">
+                <input type="color" id="colorPicker" value="#2c5f2d" class="w-12 h-10 border rounded cursor-pointer bg-transparent">
+                <span class="text-xs text-gray-500">Klik untuk spektrum warna custom</span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-gray-600 mb-1">Gunakan Gambar Internet (URL):</label>
+            <input type="text" id="bgUrlInput" placeholder="https://link-gambar.com/gambar.jpg" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:border-teal-500 text-black">
+        </div>
+
+        <button id="btnTerapkanBg" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-all shadow-md">
+            Terapkan Perubahan
+        </button>
+    </div>
+
     <script>
-        // === TEKS MELINGKAR BERJALAN - 100% DI DALAM LINGKARAN PUTIH ===
-        const teks = "SMP NEGERI 110 JAKARTA  •  ";
+        // === CONFIGURASI DEFAULT (Jika memori kosong) ===
+        const DEFAULT_BG_IMAGE = "https://i.ibb.co.com/nsM7N5cq/pexels-photo-1226302.jpg";
+        const DEFAULT_BG_COLOR = "#2c5f2d";
+
+        // === AUTO-LOAD MEMORI SAAT DI BUKA ===
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedType = localStorage.getItem('bgType');
+            const savedValue = localStorage.getItem('bgValue');
+            const savedMode = localStorage.getItem('darkMode');
+
+            // 1. Muat pengaturan background
+            if (savedType === 'image' && savedValue) {
+                document.body.style.backgroundImage = `url('${savedValue}')`;
+                bgUrlInput.value = savedValue;
+            } else if (savedType === 'color' && savedValue) {
+                document.body.style.backgroundImage = "none";
+                document.body.style.backgroundColor = savedValue;
+                colorPicker.value = savedValue;
+            } else {
+                // Jika baru pertama dibuka & memori kosong, set gambar daun default Anda
+                document.body.style.backgroundImage = `url('${DEFAULT_BG_IMAGE}')`;
+            }
+
+            // 2. Muat pengaturan mode malam/siang
+            if (savedMode === 'false') {
+                document.body.classList.remove('dark-mode');
+                document.getElementById("toggleMode").innerHTML = '🌙';
+            } else {
+                document.body.classList.add('dark-mode');
+                document.getElementById("toggleMode").innerHTML = '☀️';
+            }
+        });
+
+        // === TEKS MELINGKAR ===
+        const teks = "SMP NEGERI 110 JAKARTA TAHUN 2026  ";
         const wadah = document.getElementById("textCircle");
         const jumlahHuruf = teks.length;
         const sudutPerHuruf = 360 / jumlahHuruf;
-        const radius = 50; // Jarak dari tengah = PAS DI DALAM, TIDAK KELUAR (setengah dari 100px)
 
-        // Buat setiap huruf dan posisikan melingkar
         for (let i = 0; i < jumlahHuruf; i++) {
             const huruf = document.createElement("div");
             huruf.className = "char";
             huruf.innerText = teks[i];
             const sudut = i * sudutPerHuruf;
-            // Posisi matematis presisi agar pas melingkar di dalam
-            const x = Math.sin(sudut * Math.PI / 180) * radius;
-            const y = -Math.cos(sudut * Math.PI / 180) * radius;
-            huruf.style.transform = `translate(${x}px, ${y}px) rotate(${sudut}deg)`;
+            huruf.style.transform = `rotate(${sudut}deg)`;
             wadah.appendChild(huruf);
         }
 
-        // === FUNGSI MENU ===
         function gerakKeTengah(elemen, event) {
-            const isAgenda = elemen.classList.contains('item-1');
+            if (event) event.preventDefault(); 
             elemen.classList.add('move-to-center');
-            setTimeout(() => elemen.classList.remove('move-to-center'), 800);
-            if (!isAgenda && event) event.preventDefault();
+            const targetUrl = elemen.getAttribute('href');
+            setTimeout(() => {
+                if (targetUrl) { window.location.href = targetUrl; } 
+                else { elemen.classList.remove('move-to-center'); }
+            }, 800);
         }
 
-        // === TOMBOL MODE ===
+        // === KONTROL PANEL PENGATURAN ===
+        const btnPengaturan = document.getElementById('btnPengaturan');
+        const panelPengaturan = document.getElementById('panelPengaturan');
+        const btnTutupPanel = document.getElementById('btnTutupPanel');
+        const colorPicker = document.getElementById('colorPicker');
+        const bgUrlInput = document.getElementById('bgUrlInput');
+        const btnTerapkanBg = document.getElementById('btnTerapkanBg');
+
+        btnPengaturan.addEventListener('click', () => { panelPengaturan.classList.add('open'); });
+        btnTutupPanel.addEventListener('click', () => { panelPengaturan.classList.remove('open'); });
+
+        // === PROSES SIMPAN OTOMATIS KE LOCALSTORAGE ===
+        btnTerapkanBg.addEventListener('click', async () => {
+            let urlGambar = bgUrlInput.value.trim();
+            const warnaDipilih = colorPicker.value;
+
+            if (urlGambar !== "") {
+                if (urlGambar.includes("ibb.co") && !urlGambar.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
+                    btnTerapkanBg.innerText = "Memproses Gambar...";
+                    btnTerapkanBg.disabled = true;
+                    
+                    try {
+                        const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(urlGambar);
+                        const response = await fetch(proxyUrl);
+                        const data = await response.json();
+                        
+                        const match = data.contents.match(/<meta property="og:image" content="(.*?)"/);
+                        if (match && match[1]) {
+                            urlGambar = match[1];
+                        }
+                    } catch (error) {
+                        console.log("Parsing gagal, menggunakan link apa adanya.");
+                    }
+                    
+                    btnTerapkanBg.innerText = "Terapkan Perubahan";
+                    btnTerapkanBg.disabled = false;
+                }
+
+                document.body.style.backgroundImage = `url('${urlGambar}')`;
+                
+                // Simpan data gambar ke dalam memori HP
+                localStorage.setItem('bgType', 'image');
+                localStorage.setItem('bgValue', urlGambar);
+            } else {
+                document.body.style.backgroundImage = "none";
+                document.body.style.backgroundColor = warnaDipilih;
+                
+                // Simpan data warna ke dalam memori HP
+                localStorage.setItem('bgType', 'color');
+                localStorage.setItem('bgValue', warnaDipilih);
+            }
+            panelPengaturan.classList.remove('open');
+        });
+
+        // === INTERAKSI & MENYIMPAN TEMA MALAM/SIANG ===
         const tombolMode = document.getElementById("toggleMode");
         tombolMode.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            tombolMode.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            const isDark = document.body.classList.contains('dark-mode');
+            tombolMode.innerHTML = isDark ? '☀️' : '🌙';
+            
+            // Simpan status tema ke memori HP
+            localStorage.setItem('darkMode', isDark);
         });
     </script>
 </body>
