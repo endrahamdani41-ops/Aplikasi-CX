@@ -25,7 +25,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: #2c5f2d; /* Fallback warna default */
+            background-color: #2c5f2d;
             position: relative;
             transition: background 0.5s ease, background-image 0.5s ease;
         }
@@ -135,7 +135,7 @@
             text-decoration: none;
             font-size: 20px;
             cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, box-shadow 0.3s ease !important;
             z-index: 5;
         }
 
@@ -171,12 +171,10 @@
         .item-5 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); border: 2px solid #c084fc; box-shadow: 0 8px 15px rgba(126,34,206,0.4), 0 4px 0 #581c87; }
         .item-6 { background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); border: 2px solid #2dd4bf; box-shadow: 0 8px 15px rgba(15,118,110,0.4), 0 4px 0 #115e59; }
 
-        /* === ANIMASI KLIK KE TENGAH === */
+        /* === PERBAIKAN ANIMASI KLIK (Hanya mengecil sedikit sebagai feedback, tidak hilang) === */
         .move-to-center {
-            top: 50% !important; left: 50% !important;
-            margin: 0 !important;
-            transform: translate(-50%, -50%) scale(0.1) rotate(45deg) !important;
-            opacity: 0 !important;
+            transform: scale(0.85) !important;
+            opacity: 0.7 !important;
             box-shadow: none !important;
         }
 
@@ -229,10 +227,10 @@
             <img class="logo-sekolah" src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110 Jakarta">
         </div>
 
-        <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" class="menu-item item-1" onclick="gerakKeTengah(this, event)">
+        <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" class="menu-item item-1" onclick="return gerakKeTengah(this, event)">
             <i class="fa fa-book"></i><span>Agenda</span>
         </a>
-        <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/E-Izin.html" class="menu-item item-2" onclick="gerakKeTengah(this, event)">
+        <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/E-Izin.html" class="menu-item item-2" onclick="return gerakKeTengah(this, event)">
             <i class="fa fa-users"></i><span>Siswa</span>
         </a>
         <div class="menu-item item-3" onclick="gerakKeTengah(this, event)">
@@ -275,17 +273,13 @@
     </div>
 
     <script>
-        // === CONFIGURASI DEFAULT (Jika memori kosong) ===
         const DEFAULT_BG_IMAGE = "https://i.ibb.co.com/nsM7N5cq/pexels-photo-1226302.jpg";
-        const DEFAULT_BG_COLOR = "#2c5f2d";
 
-        // === AUTO-LOAD MEMORI SAAT DI BUKA ===
         window.addEventListener('DOMContentLoaded', () => {
             const savedType = localStorage.getItem('bgType');
             const savedValue = localStorage.getItem('bgValue');
             const savedMode = localStorage.getItem('darkMode');
 
-            // 1. Muat pengaturan background
             if (savedType === 'image' && savedValue) {
                 document.body.style.backgroundImage = `url('${savedValue}')`;
                 bgUrlInput.value = savedValue;
@@ -294,11 +288,9 @@
                 document.body.style.backgroundColor = savedValue;
                 colorPicker.value = savedValue;
             } else {
-                // Jika baru pertama dibuka & memori kosong, set gambar daun default Anda
                 document.body.style.backgroundImage = `url('${DEFAULT_BG_IMAGE}')`;
             }
 
-            // 2. Muat pengaturan mode malam/siang
             if (savedMode === 'false') {
                 document.body.classList.remove('dark-mode');
                 document.getElementById("toggleMode").innerHTML = '🌙';
@@ -323,14 +315,25 @@
             wadah.appendChild(huruf);
         }
 
+        // === LOGIKA BARU: TOMBOL MEMBAL GAYA 3D ===
         function gerakKeTengah(elemen, event) {
             if (event) event.preventDefault(); 
+            
+            // Tambahkan efek animasi membal (scale down dikit)
             elemen.classList.add('move-to-center');
             const targetUrl = elemen.getAttribute('href');
+            
             setTimeout(() => {
-                if (targetUrl) { window.location.href = targetUrl; } 
-                else { elemen.classList.remove('move-to-center'); }
-            }, 800);
+                if (targetUrl) { 
+                    window.location.href = targetUrl; 
+                    // Kembalikan ukuran jika user menekan tombol 'kembali' di browser nanti
+                    setTimeout(() => { elemen.classList.remove('move-to-center'); }, 1000);
+                } else { 
+                    elemen.classList.remove('move-to-center'); 
+                }
+            }, 300); // Delay singkat untuk kepuasan efek visual sentuhan (hanya 0.3 detik)
+            
+            return false;
         }
 
         // === KONTROL PANEL PENGATURAN ===
@@ -344,7 +347,6 @@
         btnPengaturan.addEventListener('click', () => { panelPengaturan.classList.add('open'); });
         btnTutupPanel.addEventListener('click', () => { panelPengaturan.classList.remove('open'); });
 
-        // === PROSES SIMPAN OTOMATIS KE LOCALSTORAGE ===
         btnTerapkanBg.addEventListener('click', async () => {
             let urlGambar = bgUrlInput.value.trim();
             const warnaDipilih = colorPicker.value;
@@ -364,7 +366,7 @@
                             urlGambar = match[1];
                         }
                     } catch (error) {
-                        console.log("Parsing gagal, menggunakan link apa adanya.");
+                        console.log("Parsing gagal.");
                     }
                     
                     btnTerapkanBg.innerText = "Terapkan Perubahan";
@@ -372,29 +374,22 @@
                 }
 
                 document.body.style.backgroundImage = `url('${urlGambar}')`;
-                
-                // Simpan data gambar ke dalam memori HP
                 localStorage.setItem('bgType', 'image');
                 localStorage.setItem('bgValue', urlGambar);
             } else {
                 document.body.style.backgroundImage = "none";
                 document.body.style.backgroundColor = warnaDipilih;
-                
-                // Simpan data warna ke dalam memori HP
                 localStorage.setItem('bgType', 'color');
                 localStorage.setItem('bgValue', warnaDipilih);
             }
             panelPengaturan.classList.remove('open');
         });
 
-        // === INTERAKSI & MENYIMPAN TEMA MALAM/SIANG ===
         const tombolMode = document.getElementById("toggleMode");
         tombolMode.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
             tombolMode.innerHTML = isDark ? '☀️' : '🌙';
-            
-            // Simpan status tema ke memori HP
             localStorage.setItem('darkMode', isDark);
         });
     </script>
