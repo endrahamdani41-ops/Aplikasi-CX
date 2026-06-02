@@ -79,15 +79,16 @@
                 inset 0 8px 12px rgba(255, 255, 255, 0.9);
         }
 
-        /* === WADAH TEKS MELINGKAR === */
+        /* === WADAH TEKS MELINGKAR - TAMPIL SEMPURNA === */
         .text-circle {
             position: absolute;
-            width: 115px;  
-            height: 115px; 
+            width: 110px;
+            height: 110px; 
             border-radius: 50%;
             animation: putarTeks 20s linear infinite;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
+            overflow: visible; 
         }
         @keyframes putarTeks {
             from { transform: translate(-50%, -50%) rotate(0deg); }
@@ -97,24 +98,29 @@
         .char {
             position: absolute;
             top: 0; left: 50%;
-            transform-origin: 50% 57.5px; 
+            transform-origin: center 55px;
             font-size: 8.5px; 
             font-weight: 800;
             color: #1e40af;
             text-align: center;
-            width: 10px;
-            margin-left: -5px;
+            width: 12px;
+            margin-left: -6px;
             text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+            display: block !important;
+            opacity: 1 !important;
+            line-height: 1;
         }
 
-        /* === LOGO BERKEDIP === */
+        /* === LOGO BERKEDIP - BESAR === */
         .logo-sekolah {
-            width: 75px; 
-            height: 75px; 
+            width: 88px;
+            height: 88px; 
             object-fit: contain;
-            z-index: 25; 
+            z-index: 25;
             display: block !important;
             animation: kedipGlow 2.5s infinite alternate ease-in-out !important;
+            /* Titik pusat tujuan: tepat di tengah logo ini */
+            position: relative;
         }
         @keyframes kedipGlow {
             0% { opacity: 0.5; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)) scale(0.96); }
@@ -135,8 +141,10 @@
             text-decoration: none;
             font-size: 20px;
             cursor: pointer;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, box-shadow 0.3s ease !important;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 5;
+            transform-origin: center center;
+            /* ✅ POSISI RATA SEMPURNA SEPERTI AWAL */
         }
 
         .menu-item::before {
@@ -153,9 +161,10 @@
             margin-top: 2px;
             font-weight: 700;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            pointer-events: none;
         }
 
-        /* === POSISI GRID BULAT === */
+        /* ✅ POSISI RATA PERSIS ASLI */
         .item-1 { top: 0px; left: 50%; margin-left: -37px; }
         .item-2 { top: 85px; right: 15px; }
         .item-3 { bottom: 85px; right: 15px; }
@@ -171,11 +180,32 @@
         .item-5 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); border: 2px solid #c084fc; box-shadow: 0 8px 15px rgba(126,34,206,0.4), 0 4px 0 #581c87; }
         .item-6 { background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); border: 2px solid #2dd4bf; box-shadow: 0 8px 15px rgba(15,118,110,0.4), 0 4px 0 #115e59; }
 
-        /* === PERBAIKAN ANIMASI KLIK (Hanya mengecil sedikit sebagai feedback, tidak hilang) === */
+        /* === ANIMASI: MASUK KE DALAM LOGO BESAR === */
         .move-to-center {
-            transform: scale(0.85) !important;
-            opacity: 0.7 !important;
-            box-shadow: none !important;
+            animation: masukKeDalamLogo 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            z-index: 30 !important; /* Supaya ikon lewat di atas logo saat masuk */
+        }
+
+        @keyframes masukKeDalamLogo {
+            0% { 
+                transform: translate(0, 0) scale(1); /* Posisi awal asli */
+                opacity: 1;
+            }
+            40% { 
+                /* Bergerak lurus ke tengah, mengecil sampai masuk ke dalam logo besar */
+                transform: translate(-50%, -50%) scale(0); 
+                opacity: 0; /* Hilang saat sudah di dalam logo */
+            }
+            60% { 
+                /* Diam sebentar di dalam logo */
+                transform: translate(-50%, -50%) scale(0); 
+                opacity: 0;
+            }
+            100% { 
+                /* Kembali keluar membesar ke posisi asal */
+                transform: translate(0, 0) scale(1); 
+                opacity: 1;
+            }
         }
 
         /* === TOMBOL GLOBAL TEMA === */
@@ -219,12 +249,13 @@
 
     <div class="bg-overlay-fixed"></div>
 
-    <button id="toggleMode">🌙</button>
+    <button id="toggleMode">☀️</button>
 
     <div class="menu-container">
         <div class="center-circle">
             <div class="text-circle" id="textCircle"></div>
-            <img class="logo-sekolah" src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110 Jakarta">
+            <!-- Logo Tujuan -->
+            <img class="logo-sekolah" id="logoTujuan" src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110 Jakarta">
         </div>
 
         <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" class="menu-item item-1" onclick="return gerakKeTengah(this, event)">
@@ -300,39 +331,44 @@
             }
         });
 
-        // === TEKS MELINGKAR ===
+        // === TEKS MELINGKAR - TAMPIL SEMPURNA ===
         const teks = "SMP NEGERI 110 JAKARTA TAHUN 2026  ";
         const wadah = document.getElementById("textCircle");
         const jumlahHuruf = teks.length;
         const sudutPerHuruf = 360 / jumlahHuruf;
+        const radius = 55;
+
+        wadah.innerHTML = ''; // Bersihkan dulu
 
         for (let i = 0; i < jumlahHuruf; i++) {
             const huruf = document.createElement("div");
             huruf.className = "char";
             huruf.innerText = teks[i];
             const sudut = i * sudutPerHuruf;
-            huruf.style.transform = `rotate(${sudut}deg)`;
+            
+            const x = Math.sin(sudut * Math.PI / 180) * radius;
+            const y = -Math.cos(sudut * Math.PI / 180) * radius;
+            
+            huruf.style.transform = `translate(${x}px, ${y}px) rotate(${sudut}deg)`;
             wadah.appendChild(huruf);
         }
 
-        // === LOGIKA BARU: TOMBOL MEMBAL GAYA 3D ===
+        // === LOGIKA UTAMA: MASUK KE DALAM LOGO BESAR -> KELUAR LAGI -> PINDAH ===
         function gerakKeTengah(elemen, event) {
             if (event) event.preventDefault(); 
             
-            // Tambahkan efek animasi membal (scale down dikit)
+            // Jalankan animasi masuk ke dalam logo
             elemen.classList.add('move-to-center');
-            const targetUrl = elemen.getAttribute('href');
             
+            // Tunggu sampai animasi selesai penuh
+            const targetUrl = elemen.getAttribute('href');
             setTimeout(() => {
+                elemen.classList.remove('move-to-center'); // Bersihkan efek
                 if (targetUrl) { 
                     window.location.href = targetUrl; 
-                    // Kembalikan ukuran jika user menekan tombol 'kembali' di browser nanti
-                    setTimeout(() => { elemen.classList.remove('move-to-center'); }, 1000);
-                } else { 
-                    elemen.classList.remove('move-to-center'); 
                 }
-            }, 300); // Delay singkat untuk kepuasan efek visual sentuhan (hanya 0.3 detik)
-            
+            }, 1200); 
+
             return false;
         }
 
@@ -344,8 +380,8 @@
         const bgUrlInput = document.getElementById('bgUrlInput');
         const btnTerapkanBg = document.getElementById('btnTerapkanBg');
 
-        btnPengaturan.addEventListener('click', () => { panelPengaturan.classList.add('open'); });
-        btnTutupPanel.addEventListener('click', () => { panelPengaturan.classList.remove('open'); });
+        btnPengaturan.addEventListener('click', () => { gerakKeTengah(btnPengaturan, null); panelPengaturan.classList.add('open'); });
+        btnTutupPanel.addEventListener('click', () => { panelPengaturan.classList.remove('open'); btnPengaturan.classList.remove('move-to-center'); });
 
         btnTerapkanBg.addEventListener('click', async () => {
             let urlGambar = bgUrlInput.value.trim();
@@ -383,6 +419,7 @@
                 localStorage.setItem('bgValue', warnaDipilih);
             }
             panelPengaturan.classList.remove('open');
+            btnPengaturan.classList.remove('move-to-center');
         });
 
         const tombolMode = document.getElementById("toggleMode");
