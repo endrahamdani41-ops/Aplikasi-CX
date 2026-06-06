@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Guru - E-Rapor Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { 
+            background-color: #050505; 
+            color: white; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
+        .dashboard-card { 
+            background-color: #0a0a0a; 
+            border: 1px solid #141414; 
+        }
+        /* Menghilangkan panah atas bawah pada input type number */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col justify-between">
+
+    <div>
+        <header class="flex justify-between items-center max-w-[95%] mx-auto mb-6 border-b border-gray-950 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-purple-600/10 rounded-xl flex items-center justify-center border border-purple-500/20">
+                    <i class="fas fa-shield-halved text-purple-500 text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-black italic tracking-tighter uppercase">E-RAPOR <span class="text-purple-500">DIGITAL</span></h2>
+                    <p class="text-gray-600 text-[8px] font-bold tracking-widest">SMPN 110 JAKARTA</p>
+                </div>
+            </div>
+            <button onclick="logout()" class="flex items-center gap-2 text-gray-500 hover:text-red-400 transition text-xs font-black uppercase tracking-wider">
+                <i class="fas fa-right-from-bracket text-xs"></i> Keluar
+            </button>
+        </header>
+
+        <div class="dashboard-card w-full max-w-[95%] p-8 rounded-[2rem] mx-auto mb-8 flex justify-between items-center shadow-2xl relative overflow-hidden">
+            <div>
+                <p class="text-gray-500 text-xs font-semibold mb-1">Selamat Datang,</p>
+                <h1 id="profilNama" class="text-xl md:text-2xl font-black uppercase tracking-tight mb-4 text-white">MEMUAT NAMA GURU...</h1>
+                <div class="flex flex-wrap gap-2 text-[10px] font-black tracking-wider uppercase">
+                    <span id="profilMapel" class="bg-purple-950/20 border border-purple-500/20 text-purple-400 px-4 py-1.5 rounded-xl italic">MAPEL</span>
+                    <span id="profilKelas" class="bg-blue-950/20 border border-blue-500/20 text-blue-400 px-4 py-1.5 rounded-xl">KELAS</span>
+                    <span id="profilNip" class="bg-zinc-900 border border-zinc-800 text-zinc-400 px-4 py-1.5 rounded-xl font-mono">NIP</span>
+                </div>
+            </div>
+            <div class="w-16 h-16 bg-purple-600/10 rounded-full border border-purple-500/20 flex items-center justify-center hidden sm:flex shadow-inner">
+                <i class="fas fa-user-tie text-2xl text-purple-500"></i>
+            </div>
+        </div>
+
+        <main class="w-full max-w-[95%] mx-auto">
+            
+            <section id="menuUtama" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="bukaHalamanInputNilai()" class="dashboard-card p-8 rounded-[1.8rem] hover:border-purple-500/30 cursor-pointer transition transform active:scale-98 group">
+                    <div class="w-11 h-11 bg-purple-600/10 rounded-xl flex items-center justify-center border border-purple-500/10 group-hover:bg-purple-600 transition mb-6">
+                        <i class="fas fa-pen-to-square text-lg text-purple-500 group-hover:text-white"></i>
+                    </div>
+                    <h3 class="text-md font-black text-white mb-2 uppercase tracking-tight">Input Nilai Siswa</h3>
+                    <p class="text-gray-500 text-xs leading-relaxed">Kelola nilai Ulangan Harian dan Asesmen Sumatif Tengah Semester.</p>
+                </div>
+
+                <div class="dashboard-card p-8 rounded-[1.8rem] opacity-40 cursor-not-allowed">
+                    <div class="w-11 h-11 bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800 mb-6">
+                        <i class="fas fa-file-pdf text-lg text-zinc-600"></i>
+                    </div>
+                    <h3 class="text-md font-black text-zinc-500 mb-2 uppercase tracking-tight">Cetak Rapor</h3>
+                    <p class="text-gray-600 text-xs leading-relaxed">Fitur cetak laporan hasil belajar semester belum dibuka.</p>
+                </div>
+
+                <div class="dashboard-card p-8 rounded-[1.8rem] opacity-40 cursor-not-allowed">
+                    <div class="w-11 h-11 bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800 mb-6">
+                        <i class="fas fa-database text-lg text-zinc-600"></i>
+                    </div>
+                    <h3 class="text-md font-black text-zinc-500 mb-2 uppercase tracking-tight">Data Siswa</h3>
+                    <p class="text-gray-600 text-xs leading-relaxed">Melihat daftar identitas dan entitas pokok siswa aktif.</p>
+                </div>
+            </section>
+
+            <section id="halamanInputNilai" class="hidden dashboard-card p-8 rounded-[2rem] shadow-2xl">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-950 pb-6 mb-6 gap-4">
+                    <div>
+                        <div class="flex items-center gap-2.5 mb-1">
+                            <i class="fas fa-table-list text-purple-500 text-lg"></i>
+                            <h2 class="text-lg font-black uppercase tracking-tight">Tabel Input Nilai</h2>
+                        </div>
+                        <p class="text-gray-600 text-[10px] font-black tracking-widest uppercase">Mata Pelajaran: <span id="textMapel" class="text-purple-400 italic">...</span> | Kelas: <span id="textKelas" class="text-blue-400">...</span></p>
+                    </div>
+                </div>
+
+                <form id="formNilai" onsubmit="return simpanDataKeSheet(event)">
+                    <div class="overflow-x-auto rounded-xl border border-zinc-800 bg-[#060606] mb-6 shadow-md">
+                        <table class="w-full text-left border-collapse whitespace-nowrap">
+                            <thead>
+                                <tr class="bg-zinc-900/50 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-zinc-800">
+                                    <th class="py-4 px-5 text-center w-16 border-r border-zinc-800">No</th>
+                                    <th class="py-4 px-6 w-36 border-r border-zinc-800">NIS Siswa</th>
+                                    <th class="py-4 px-6 border-r border-zinc-800">Nama Lengkap</th>
+                                    <th class="py-4 px-6 text-center w-28 border-r border-zinc-800">UH 1</th>
+                                    <th class="py-4 px-6 text-center w-28 border-r border-zinc-800">UH 2</th>
+                                    <th class="py-4 px-6 text-center w-28">ASTS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bodyTabelSiswa" class="divide-y divide-zinc-800 text-xs font-semibold"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-end gap-3 text-xs font-bold uppercase tracking-wider">
+                        <button type="button" onclick="kembaliKeMenu()" class="px-5 py-3.5 bg-zinc-950 border border-zinc-900 hover:text-white text-zinc-500 rounded-xl transition">
+                            Kembali
+                        </button>
+                        <button type="submit" class="px-6 py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-black rounded-xl transition shadow-xl shadow-purple-900/10 italic flex items-center gap-2">
+                            <i class="fas fa-cloud-arrow-up text-xs"></i> Simpan Semua Data
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <footer class="text-center text-gray-700 text-[10px] font-bold uppercase tracking-widest mt-12">
+        &copy; 2026 SMPN 110 JAKARTA. All Rights Reserved.
+    </footer>
+
+    <script>
+        // ⚠️ PASTIKAN URL WEB APP GOOGLE APPS SCRIPT ANDA SUDAH BENAR
+        const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbxZM-yf9mCxsX7q1EXI7fO3CSABDeQPOsMCm2Cwmdw7zaGHGEgBFZGQU4VDRnlah15_/exec"; 
+
+        var MAPEL_GURU = "";
+        var KELAS_GURU = "";
+
+        window.onload = function() {
+            if (localStorage.getItem("nama_guru")) {
+                MAPEL_GURU = localStorage.getItem("mapel_guru");
+                
+                let waliKelasRaw = localStorage.getItem("wali_kelas") || ""; 
+                KELAS_GURU = waliKelasRaw.replace("Wali Kelas: ", "").trim();
+
+                // Sinkronisasi data ke kartu profil
+                document.getElementById("profilNama").innerText = localStorage.getItem("nama_guru");
+                document.getElementById("profilMapel").innerText = MAPEL_GURU;
+                document.getElementById("profilKelas").innerText = "Kelas: " + KELAS_GURU;
+                document.getElementById("profilNip").innerText = "NIP: " + localStorage.getItem("nip_guru");
+
+                // Sinkronisasi info sub-tabel
+                document.getElementById("textMapel").innerText = MAPEL_GURU.toUpperCase();
+                document.getElementById("textKelas").innerText = KELAS_GURU.toUpperCase();
+
+            } else {
+                window.location.href = "login.html"; 
+            }
+        }
+
+        function bukaHalamanInputNilai() {
+            document.getElementById("menuUtama").className = "hidden";
+            document.getElementById("halamanInputNilai").className = "block dashboard-card p-8 rounded-[2rem] shadow-2xl";
+            
+            // Panggil database siswa dari cloud
+            muatNilaiSiswaDariCloud();
+        }
+
+        function kembaliKeMenu() {
+            document.getElementById("menuUtama").className = "grid grid-cols-1 md:grid-cols-3 gap-6";
+            document.getElementById("halamanInputNilai").className = "hidden";
+        }
+
+        // =====================================================================
+        // AMBIL DATA SISWA DARI GOOGLE SHEETS & RENDER DENGAN BORDER
+        // =====================================================================
+        async function muatNilaiSiswaDariCloud() {
+            const bodyTabel = document.getElementById("bodyTabelSiswa");
+            
+            bodyTabel.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center py-10 text-gray-500 font-bold uppercase tracking-wider">
+                        <i class="fas fa-sync-alt animate-spin text-purple-500 mr-2"></i> Mengunduh Data Murid & Nilai dari Google Sheets...
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch(URL_WEB_APP, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify({
+                        aksi: "ambil_nilai",
+                        mapel: MAPEL_GURU,
+                        kelas: KELAS_GURU
+                    })
+                });
+
+                const hasil = await response.json();
+
+                if (hasil.success) {
+                    const dataSiswaDariCloud = hasil.data; 
+
+                    if (!dataSiswaDariCloud || dataSiswaDariCloud.length === 0) {
+                        bodyTabel.innerHTML = `
+                            <tr>
+                                <td colspan="6" class="text-center py-10 text-red-400 font-bold uppercase tracking-wider">
+                                    ⚠️ Murid untuk Kelas "${KELAS_GURU}" pada Mapel "${MAPEL_GURU}" tidak ditemukan di tab Data_Murid.
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+
+                    bodyTabel.innerHTML = "";
+
+                    // Looping pembuatan baris dengan border vertikal (border-r)
+                    dataSiswaDariCloud.forEach((siswa, index) => {
+                        let nomorUrut = String(index + 1).padStart(2, '0');
+
+                        let barisHtmlSiswa = `
+                            <tr class="baris-siswa hover:bg-zinc-900/30 transition-colors border-b border-zinc-800">
+                                <td class="py-4 px-5 text-center text-gray-500 font-mono border-r border-zinc-800">${nomorUrut}</td>
+                                <td class="py-4 px-6 border-r border-zinc-800">
+                                    <span class="nis-siswa bg-zinc-950 border border-zinc-800 text-gray-400 font-mono px-3 py-1.5 rounded-lg text-[11px]">${siswa.nis}</span>
+                                </td>
+                                <td class="py-4 px-6 text-gray-200 text-sm font-bold nama-siswa border-r border-zinc-800">${siswa.nama}</td>
+                                <td class="py-2 px-6 border-r border-zinc-800"><input type="number" min="0" max="100" value="${siswa.uh1}" class="input-uh1 w-20 mx-auto block bg-zinc-950 border border-zinc-900 focus:border-purple-600 text-center py-2 rounded-xl outline-none font-bold text-white transition"></td>
+                                <td class="py-2 px-6 border-r border-zinc-800"><input type="number" min="0" max="100" value="${siswa.uh2}" class="input-uh2 w-20 mx-auto block bg-zinc-950 border border-zinc-900 focus:border-purple-600 text-center py-2 rounded-xl outline-none font-bold text-white transition"></td>
+                                <td class="py-2 px-6"><input type="number" min="0" max="100" value="${siswa.asts}" class="input-asts w-20 mx-auto block bg-zinc-950 border border-zinc-900 focus:border-purple-600 text-center py-2 rounded-xl outline-none font-bold text-white transition"></td>
+                            </tr>
+                        `;
+                        bodyTabel.insertAdjacentHTML("beforeend", barisHtmlSiswa);
+                    });
+
+                } else {
+                    bodyTabel.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-red-500 font-bold uppercase tracking-wider">❌ Error Server: ${hasil.message}</td></tr>`;
+                }
+            } catch (error) {
+                console.error("Gagal melakukan penarikan data murid:", error);
+                bodyTabel.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-10 text-red-500 font-bold uppercase tracking-wider">
+                            ❌ Gagal terhubung ke Server Cloud. Periksa koneksi internet atau script deploy Anda.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // =====================================================================
+        // SIMPAN / RE-UPDATE DATA NILAI KE GOOGLE SHEETS
+        // =====================================================================
+        async function simpanDataKeSheet(event) {
+            event.preventDefault();
+
+            const tombolSimpan = event.submitter;
+            const teksAsliTombol = tombolSimpan.innerHTML;
+
+            tompanSimpanDisabling(tombolSimpan, true);
+
+            const semuaBarisSiswa = document.querySelectorAll(".baris-siswa");
+            const payloadArraySiswa = [];
+
+            semuaBarisSiswa.forEach(row => {
+                const nis = row.querySelector(".nis-siswa").innerText.trim();
+                const nama = row.querySelector(".nama-siswa").innerText.trim();
+                const uh1 = row.querySelector(".input-uh1").value || 0;
+                const uh2 = row.querySelector(".input-uh2").value || 0;
+                const asts = row.querySelector(".input-asts").value || 0;
+
+                payloadArraySiswa.push({
+                    nis: nis,
+                    nama: nama,
+                    mapel: MAPEL_GURU,
+                    kelas: KELAS_GURU,
+                    uh1: Number(uh1),
+                    uh2: Number(uh2),
+                    asts: Number(asts)
+                });
+            });
+
+            try {
+                const response = await fetch(URL_WEB_APP, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify({
+                        aksi: "simpan_nilai",
+                        nilai_siswa: payloadArraySiswa
+                    })
+                });
+
+                const hasil = await response.json();
+
+                if (hasil.success) {
+                    alert("✅ " + hasil.message);
+                    kembaliKeMenu();
+                } else {
+                    alert("❌ Gagal menyimpan: " + hasil.message);
+                }
+
+            } catch (error) {
+                alert("⚠️ Kendala Server Cloud: Gagal menghubungkan data.");
+                console.error(error);
+            } finally {
+                tompanSimpanDisabling(tombolSimpan, false, teksAsliTombol);
+            }
+        }
+
+        function tompanSimpanDisabling(btn, status, text = "") {
+            btn.disabled = status;
+            if (status) {
+                btn.innerHTML = `<i class="fas fa-sync-alt animate-spin"></i> PROSES SIMPAN...`;
+            } else {
+                btn.innerHTML = text;
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html"; 
+        }
+    </script>
+</body>
+</html>
