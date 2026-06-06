@@ -35,14 +35,16 @@
             
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                 <button id="btnSimpan" onclick="simpanSemuaNilaiKeCloud()" disabled class="bg-purple-600 hover:bg-purple-700 disabled:bg-zinc-900 disabled:text-zinc-700 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider italic flex items-center gap-2 transition opacity-50 disabled:opacity-100 disabled:border disabled:border-zinc-800 shadow-lg shadow-purple-900/10">
-                    <i class="fas fa-cloud-upload-alt"></i>
+                    <i class="fas fa-cloud-upload-alt"></i> Simpan Nilai ke Cloud
                 </button>
 
                 <button id="btnMenuWali" onclick="window.location.href='cetak_rapor.html'" class="hidden bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-white px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider italic flex items-center gap-2 transition">
-                    <i class="fas fa-print text-purple-500"></i>
+                    <i class="fas fa-print text-purple-500"></i> Cetak Rapor Kelas
                 </button>
 
-
+                <button onclick="logoutGuru()" class="bg-red-950/40 hover:bg-red-900/40 text-red-400 border border-red-900/30 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider italic flex items-center gap-2 transition ml-auto sm:ml-0">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </button>
             </div>
         </header>
 
@@ -290,7 +292,7 @@
             });
 
             btnSimpan.disabled = true;
-            btnSimpan.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+            btnSimpan.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Memproses...`;
             tampilkanPesanStatus("Sedang mengunggah data nilai siswa ke database cloud, mohon tunggu...", "proses");
 
             try {
@@ -317,7 +319,7 @@
                 tampilkanPesanStatus("Gagal terkoneksi ke server! Periksa koneksi internet Anda.", "gagal");
             } finally {
                 btnSimpan.disabled = false;
-                btnSimpan.innerHTML = `<i class="fas fa-cloud-upload-alt"></i>`;
+                btnSimpan.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Simpan Nilai ke Cloud`;
             }
         }
 
@@ -337,6 +339,7 @@
             }
         }
 
+        // Shortcut keyboard 'Ctrl + S' untuk mempermudah guru menyimpan data nilai
         document.addEventListener("keydown", function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
