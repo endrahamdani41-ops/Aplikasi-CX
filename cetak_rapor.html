@@ -45,13 +45,14 @@
                 border-color: #000000 !important;
             }
             td { border-color: #000000 !important; color: black !important; }
-            .text-purple-400, .text-blue-400, .text-green-400 { color: black !important; }
+            .text-purple-400, .text-blue-400, .text-green-400, .text-zinc-400 { color: black !important; }
         }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 flex flex-col justify-between">
 
     <div class="print-area w-full max-w-[95%] mx-auto">
+        <!-- NAVBAR UTAMA (TIDAK IKUT DICETAK) -->
         <header class="no-print flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-gray-950 pb-4">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 bg-purple-600/10 rounded-xl flex items-center justify-center border border-purple-500/20">
@@ -63,6 +64,7 @@
                 </div>
             </div>
             
+            <!-- SELECTION DROPDOWN (URUT ALFABET A-Z) -->
             <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                 <select id="pilihSiswa" onchange="muatRaporSiswaPilihan()" class="bg-zinc-900 border border-zinc-800 text-xs font-bold rounded-xl px-4 py-2.5 outline-none text-white focus:border-purple-600 max-w-xs cursor-pointer">
                     <option value="">-- PILIH NAMA SISWA --</option>
@@ -71,37 +73,46 @@
                 <button onclick="window.location.href='dashboard_guru.html'" class="text-gray-500 hover:text-white transition text-xs font-black uppercase tracking-wider px-2">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </button>
-                <button onclick="window.print()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider italic flex items-center gap-2 transition shadow-lg shadow-purple-900/20">
+                <button onclick="eksekusiCetak()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider italic flex items-center gap-2 transition shadow-lg shadow-purple-900/20">
                     <i class="fas fa-print text-xs"></i> Cetak Rapor
                 </button>
             </div>
         </header>
 
+        <!-- KONTEN HALAMAN UTAMA RAPOR -->
         <div id="kontenRapor" class="hidden">
-            <div class="text-center mb-6 border-b-2 border-zinc-800 pb-4 print:border-black">
+            <div class="text-center mb-6">
                 <h1 class="text-xl font-black uppercase tracking-tight text-white print:text-black">LAPORAN HASIL ASESMEN CAPAIAN PEMBELAJARAN</h1>
-                <p class="text-xs font-bold text-gray-500 tracking-widest uppercase mt-1 print:text-black">SMP NEGERI 110 JAKARTA</p>
+                <p class="text-xs font-bold text-gray-500 tracking-widest uppercase mt-1 print:text-black mb-8">SMP NEGERI 110 JAKARTA</p>
                 
-                <div class="grid grid-cols-2 gap-x-8 gap-y-2 mt-6 text-left text-xs font-semibold max-w-3xl mx-auto border border-zinc-900 print:border-none p-4 rounded-2xl">
-                    <div class="flex justify-between border-b border-zinc-900/40 py-1">
-                        <span class="text-gray-500 print:text-black">Nama Peserta Didik</span>
-                        <span id="lblNama" class="text-white print:text-black font-bold uppercase">-</span>
-                    </div>
-                    <div class="flex justify-between border-b border-zinc-900/40 py-1">
-                        <span class="text-gray-500 print:text-black">Kelas</span>
-                        <span id="lblKelas" class="text-blue-400 print:text-black font-bold">-</span>
-                    </div>
-                    <div class="flex justify-between border-b border-zinc-900/40 py-1">
-                        <span class="text-gray-500 print:text-black">Nomor Induk Siswa (NIS)</span>
-                        <span id="lblNis" class="text-gray-400 print:text-black font-mono">-</span>
-                    </div>
-                    <div class="flex justify-between border-b border-zinc-900/40 py-1">
-                        <span class="text-gray-500 print:text-black">Wali Kelas</span>
-                        <span id="lblWali" class="text-white print:text-black">-</span>
-                    </div>
+                <!-- IDENTITAS SISWA (RATA KIRI SEJAJAR DENGAN TABEL NILAI) -->
+                <div class="w-full mb-6 text-left text-xs font-semibold">
+                    <table class="w-full sm:w-auto min-w-[50%] border-none text-gray-300 print:text-black">
+                        <tr class="border-none">
+                            <td class="py-1 pr-4 font-normal text-gray-500 print:text-black border-none w-44">Nama Peserta Didik</td>
+                            <td class="py-1 px-2 border-none">:</td>
+                            <td id="lblNama" class="py-1 font-bold text-white print:text-black uppercase border-none">-</td>
+                        </tr>
+                        <tr class="border-none">
+                            <td class="py-1 pr-4 font-normal text-gray-500 print:text-black border-none">Kelas</td>
+                            <td class="py-1 px-2 border-none">:</td>
+                            <td id="lblKelas" class="py-1 font-bold text-blue-400 print:text-black border-none">-</td>
+                        </tr>
+                        <tr class="border-none">
+                            <td class="py-1 pr-4 font-normal text-gray-500 print:text-black border-none">Nomor Induk Siswa (NIS)</td>
+                            <td class="py-1 px-2 border-none">:</td>
+                            <td id="lblNis" class="py-1 font-mono text-gray-400 print:text-black border-none">-</td>
+                        </tr>
+                        <tr class="border-none">
+                            <td class="py-1 pr-4 font-normal text-gray-500 print:text-black border-none">Wali Kelas</td>
+                            <td class="py-1 px-2 border-none">:</td>
+                            <td id="lblWali" class="py-1 text-white print:text-black border-none">-</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
 
+            <!-- TABEL NILAI SEMUA MAPEL -->
             <main>
                 <div class="overflow-x-auto rounded-2xl border border-zinc-800 print:border-black bg-[#060606] print:bg-transparent shadow-2xl">
                     <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -109,6 +120,7 @@
                             <tr class="bg-zinc-900/60 print:bg-gray-100 text-gray-400 print:text-black uppercase text-[10px] font-black tracking-widest border-b border-zinc-800 print:border-black">
                                 <th class="py-4 px-5 text-center w-16 border-r border-zinc-800 print:border-black">No</th>
                                 <th class="py-4 px-6 border-r border-zinc-800 print:border-black">Mata Pelajaran</th>
+                                <th class="py-4 px-6 text-center w-20 border-r border-zinc-800 print:border-black">KKM</th>
                                 <th class="py-4 px-6 text-center w-24 border-r border-zinc-800 print:border-black">UH 1</th>
                                 <th class="py-4 px-6 text-center w-24 border-r border-zinc-800 print:border-black">UH 2</th>
                                 <th class="py-4 px-6 text-center w-24 border-r border-zinc-800 print:border-black">ASTS</th>
@@ -117,10 +129,12 @@
                             </tr>
                         </thead>
                         <tbody id="bodyTabelRapor" class="divide-y divide-zinc-800 print:divide-black text-xs font-semibold">
-                            </tbody>
+                            <!-- Di-render otomatis via JavaScript -->
+                        </tbody>
                     </table>
                 </div>
 
+                <!-- LEMBAR TANDA TANGAN -->
                 <div class="mt-16 grid grid-cols-3 text-center text-xs font-serif hidden print:grid">
                     <div>
                         <p class="mb-14">Mengetahui,<br>Orang Tua/Wali Murid</p>
@@ -140,12 +154,14 @@
             </main>
         </div>
 
+        <!-- LAYAR PANDUAN AWAL -->
         <div id="layarPanduan" class="text-center py-20 text-gray-500 font-bold uppercase tracking-wider">
             <i class="fas fa-arrow-pointer animate-bounce text-purple-500 text-2xl mb-4"></i><br>
             Silakan pilih Nama Siswa di menubar atas untuk menampilkan rekap nilai semua mapel
         </div>
     </div>
 
+    <!-- FOOTER HALAMAN (TIDAK IKUT DICETAK) -->
     <footer class="no-print text-center text-gray-700 text-[10px] font-bold uppercase tracking-widest mt-12">
         &copy; 2026 SMPN 110 JAKARTA. All Rights Reserved.
     </footer>
@@ -196,22 +212,18 @@
                 if (hasil.success) {
                     MASTER_DATA_NILAI = hasil.data;
 
-                    // Mengambil list nama siswa unik (Tanpa Duplikat)
                     let mapSiswaUnik = {};
                     MASTER_DATA_NILAI.forEach(item => {
                         mapSiswaUnik[item.nis] = item.nama;
                     });
 
-                    // Konversi objek ke dalam bentuk Array agar bisa di-sort
                     let arraySiswaUnik = [];
                     for (let nis in mapSiswaUnik) {
                         arraySiswaUnik.push({ nis: nis, nama: mapSiswaUnik[nis] });
                     }
                     
-                    // PROSES AKSI SORTING ALFABETIS NAMA GURU (A KE Z)
                     arraySiswaUnik.sort((a, b) => a.nama.localeCompare(b.nama));
 
-                    // Masukkan data ter-sort ke element option HTML
                     selectSiswa.innerHTML = `<option value="">-- PILIH NAMA SISWA --</option>`;
                     arraySiswaUnik.forEach(siswa => {
                         selectSiswa.innerHTML += `<option value="${siswa.nis}">${siswa.nama} [${siswa.nis}]</option>`;
@@ -240,10 +252,8 @@
             document.getElementById("layarPanduan").className = "hidden";
             document.getElementById("kontenRapor").className = "block";
 
-            // Saring data berdasarkan NIS siswa terpilih
             let barisNilaiSiswa = MASTER_DATA_NILAI.filter(item => item.nis === nisTerpilih);
 
-            // PROSES SORTING MATA PELAJARAN (A KE Z)
             barisNilaiSiswa.sort((a, b) => (a.mapel || '').localeCompare(b.mapel || ''));
 
             if(barisNilaiSiswa.length > 0) {
@@ -254,7 +264,7 @@
             bodyTabel.innerHTML = "";
 
             if (barisNilaiSiswa.length === 0) {
-                bodyTabel.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-red-400">Belum ada nilai mapel apa pun yang dimasukkan untuk siswa ini.</td></tr>`;
+                bodyTabel.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-red-400">Belum ada nilai mapel apa pun yang dimasukkan untuk siswa ini.</td></tr>`;
                 return;
             }
 
@@ -268,7 +278,7 @@
                 let deskripsi = "";
                 if (akhir >= 88) {
                     deskripsi = "Sangat baik dalam memahami materi dan menuntaskan tujuan pembelajaran.";
-                } else if (akhir >= 75) {
+                } else if (akhir >= 82) { 
                     deskripsi = "Berhasil mencapai kriteria ketuntasan dengan pemahaman yang baik.";
                 } else {
                     deskripsi = "Perlu bimbingan intensif dan remedial untuk area kompetensi dasar mata pelajaran.";
@@ -278,6 +288,7 @@
                     <tr class="hover:bg-zinc-900/20 print:hover:bg-transparent">
                         <td class="py-4 px-5 text-center text-gray-500 font-mono border-r border-zinc-800 print:border-black">${no}</td>
                         <td class="py-4 px-6 font-bold border-r border-zinc-800 print:border-black text-gray-200 print:text-black uppercase text-[11px] tracking-tight">${mapelSiswa.mapel}</td>
+                        <td class="py-4 px-6 text-center text-zinc-400 font-mono border-r border-zinc-800 print:border-black">82</td>
                         <td class="py-4 px-6 text-center border-r border-zinc-800 print:border-black">${uh1}</td>
                         <td class="py-4 px-6 text-center border-r border-zinc-800 print:border-black">${uh2}</td>
                         <td class="py-4 px-6 text-center border-r border-zinc-800 print:border-black">${asts}</td>
@@ -287,6 +298,17 @@
                 `;
                 bodyTabel.insertAdjacentHTML("beforeend", html);
             });
+        }
+
+        // 3. FUNGSI BARU FIXING LOGIK TOMBOL CETAK RAPOR
+        function eksekusiCetak() {
+            const pilihSiswa = document.getElementById("pilihSiswa").value;
+            if (!pilihSiswa) {
+                alert("Peringatan: Silakan pilih salah satu nama siswa terlebih dahulu sebelum mencetak!");
+                return;
+            }
+            // Trigger fungsi print bawaan sistem operasi / browser
+            window.print();
         }
     </script>
 </body>
