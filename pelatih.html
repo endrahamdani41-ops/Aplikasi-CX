@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Nilai Ekskul - Pelatih</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif;}
+
+        /* 🔹 MODE GELAP - DASAR HALAMAN 🔹 */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        /* 🔹 HEADER 🔹 */
+        .header {
+            background-color: #1565c0;
+            color: #ffffff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nama-sekolah {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .ikon-simpan {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #ffffff;
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+        .ikon-simpan:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .konten {padding: 25px;}
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .keterangan {
+            background: #273746;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #aed6f1;
+            border: 1px solid #34495e;
+        }
+        
+        /* 🔹 BAGIAN FILTER 🔹 */
+        .filter-wilayah {
+            background: #2c2c2c;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            border: 1px solid #444;
+        }
+        .filter-wilayah label {
+            font-weight: bold;
+            color: #ecf0f1;
+            margin-right: 5px;
+        }
+        .filter-wilayah select {
+            padding: 8px 12px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #3a3a3a;
+            color: #ffffff;
+        }
+        .filter-wilayah select:focus {
+            outline: none;
+            border-color: #1565c0;
+        }
+        
+        /* 🔹 TABEL 🔹 */
+        table {width: 100%; border-collapse: collapse; margin-top: 0;}
+        
+        /* 🔹 SELURUH ISI TABEL RATA TENGAH 🔹 */
+        table th, table td {
+            padding: 10px;
+            text-align: center; /* <--- RATA TENGAH SESUAI PERMINTAAN */
+            vertical-align: middle; /* <--- TULISAN DI TENGAH TINGGI SEL */
+            border-bottom: 1px solid #444;
+            font-size: 14px;
+        }
+        table th {
+            background-color: #1976d2;
+            color: #ffffff;
+            font-weight: normal;
+        }
+        table tr {
+            background-color: #1e1e1e;
+        }
+        table tr:hover {
+            background-color: #292929;
+        }
+        
+        /* 🔹 INPUT & SELECT DI DALAM TABEL 🔹 */
+        td select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #3a3a3a;
+            color: #ffffff;
+            text-align: center; /* <--- PILIHAN JUGA RATA TENGAH */
+            text-align-last: center;
+        }
+        td select:disabled {
+            background-color: #282828;
+            color: #7f8c8d;
+            cursor: not-allowed;
+            border-color: #444;
+        }
+        td select:focus {
+            outline: none;
+            border-color: #1565c0;
+        }
+
+        /* Kolom yang TIDAK BISA DIUBAH (Terkunci) */
+        .kolom-terkunci {
+            background-color: #282828;
+            color: #bdbdbd;
+            font-weight: 500;
+        }
+        
+        .pesan-kosong {text-align:center; color:#95a5a6; padding:20px;}
+        .pesan-error {text-align:center; color:#e74c3c; padding:20px;}
+    </style>
+    <!-- Tambahkan ikon simpan dari Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 🔹 HEADER 🔹 -->
+        <div class="header">
+            <div class="nama-sekolah">SMPN 110 Jakarta</div>
+            <button class="ikon-simpan" onclick="simpanSemuaData()" title="Simpan Perubahan Nilai">
+                <i class="fas fa-save"></i>
+            </button>
+        </div>
+
+        <div class="konten">
+            <h1>Data Nilai Ekstrakurikuler - Pelatih</h1><br>
+
+            <div class="keterangan">
+                ℹ️ <strong>Petunjuk:</strong> Gunakan filter untuk memilih Kelas atau Ekskul yang anda asuh. Hanya isi kolom <strong>Nilai (A/B/C)</strong>. Data lain sudah ditetapkan dan tidak dapat diubah.
+            </div>
+<br>
+            <!-- 🔹 FILTER KELAS & EKSKUL 🔹 -->
+            <div class="filter-wilayah">
+                <div>
+                    <label for="filterKelas">Filter Kelas:</label>
+                    <select id="filterKelas" onchange="terapkanFilter()">
+                        <option value="SEMUA">-- Semua Kelas --</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filterEkskul">Filter Ekskul:</label>
+                    <select id="filterEkskul" onchange="terapkanFilter()">
+                        <option value="SEMUA">-- Semua Ekskul --</option>
+                        <option value="Silat">Silat</option>
+                        <option value="Taekwondo">Taekwondo</option>
+                        <option value="Paskib">Paskib</option>
+                        <option value="Futsal">Futsal</option>
+                        <option value="Tari">Tari</option>
+                        <option value="Tahsin">Tahsin</option>
+                        <option value="Drumband">Drumband</option>
+                        <option value="PMR">PMR</option>
+                        <option value="Pramuka">Pramuka</option>
+                    </select>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIS</th>
+                        <th>Nama Murid</th>
+                        <th>L/P</th>
+                        <th>Kelas</th>
+                        <th>Nama Ekskul</th>
+                        <th>Nilai</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelData">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 👇 PASTIKAN URL SAMA DENGAN YANG DI KESISWAAN 👇
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztkIfYH8rFWQhZ-o_rKVFkGkJHMhL8CCvDXWzv5NdB-h4HDnTuB5lxfPHgJrA4AzId/exec";
+        let dataAsli = [];      // Menyimpan SEMUA data asli
+        let daftarKelas = [];   // Menyimpan daftar nama kelas unik
+
+        function muatData() {
+            const tbody = document.getElementById('tabelData');
+            tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">Memuat data...</td></tr>';
+
+            fetch(SCRIPT_URL)
+                .then(res => res.json())
+                .then(data => {
+                    dataAsli = data;
+                    tbody.innerHTML = '';
+
+                    if (data.length <= 1) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">📭 Belum ada data murid</td></tr>';
+                        return;
+                    }
+
+                    // 🔽 AMBIL DAFTAR KELAS UNTUK FILTER 🔽
+                    daftarKelas = [];
+                    for (let i = 1; i < data.length; i++) {
+                        const kelas = data[i][4];
+                        if (kelas && !daftarKelas.includes(kelas)) {
+                            daftarKelas.push(kelas);
+                        }
+                    }
+                    daftarKelas.sort();
+                    isiPilihanFilterKelas();
+
+                    // Tampilkan data
+                    tampilkanDataSesuaiFilter();
+                })
+                .catch(err => {
+                    tbody.innerHTML = '<tr><td colspan="7" class="pesan-error">❌ Gagal memuat data. Cek URL & Izin!</td></tr>';
+                    console.error(err);
+                });
+        }
+
+        // Masukkan daftar kelas ke kotak pilihan filter
+        function isiPilihanFilterKelas() {
+            const selectFilter = document.getElementById('filterKelas');
+            selectFilter.innerHTML = '<option value="SEMUA">-- Semua Kelas --</option>';
+            daftarKelas.forEach(kelas => {
+                const opt = document.createElement('option');
+                opt.value = kelas;
+                opt.textContent = kelas;
+                selectFilter.appendChild(opt);
+            });
+        }
+
+        // Fungsi saat filter diubah
+        function terapkanFilter() {
+            tampilkanDataSesuaiFilter();
+        }
+
+        // Menampilkan data HANYA yang sudah punya ekskul
+        function tampilkanDataSesuaiFilter() {
+            const tbody = document.getElementById('tabelData');
+            tbody.innerHTML = '';
+
+            const filterKelas = document.getElementById('filterKelas').value;
+            const filterEkskul = document.getElementById('filterEkskul').value;
+            let adaData = false;
+
+            for (let i = 1; i < dataAsli.length; i++) {
+                const d = dataAsli[i];
+                const kelasData = d[4];
+                const ekskulData = d[5] || ""; // Ambil data ekskul
+
+                // 🔍 LOGIKA FILTER: HANYA TAMPILKAN YANG SUDAH DIPILIH EKSKULNYA
+                let cocokKelas = (filterKelas === "SEMUA" || kelasData === filterKelas);
+                let cocokEkskul = (filterEkskul === "SEMUA" || ekskulData === filterEkskul);
+                let sudahAdaEkskul = (ekskulData !== ""); // Wajib ada nama ekskul
+
+                if (cocokKelas && cocokEkskul && sudahAdaEkskul) {
+                    adaData = true;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="kolom-terkunci">${d[0] || ''}</td>
+                        <td class="kolom-terkunci">${d[1] || ''}</td>
+                        <td class="kolom-terkunci">${d[2] || ''}</td>
+                        <td class="kolom-terkunci">${d[3] || ''}</td>
+                        <td class="kolom-terkunci">${d[4] || ''}</td>
+                        
+                        <!-- Kolom Ekskul TERKUNCI (Tidak bisa diubah) -->
+                        <td class="kolom-terkunci">
+                            <select disabled>
+                                <option value="" ${ekskulData == "" ? 'selected' : ''}>-- Tidak Ikut --</option>
+                                <option value="Silat" ${ekskulData == 'Silat' ? 'selected' : ''}>Silat</option>
+                                <option value="Taekwondo" ${ekskulData == 'Taekwondo' ? 'selected' : ''}>Taekwondo</option>
+                                <option value="Paskib" ${ekskulData == 'Paskib' ? 'selected' : ''}>Paskib</option>
+                                <option value="Futsal" ${ekskulData == 'Futsal' ? 'selected' : ''}>Futsal</option>
+                                <option value="Tari" ${ekskulData == 'Tari' ? 'selected' : ''}>Tari</option>
+                                <option value="Tahsin" ${ekskulData == 'Tahsin' ? 'selected' : ''}>Tahsin</option>
+                                <option value="Drumband" ${ekskulData == 'Drumband' ? 'selected' : ''}>Drumband</option>
+                                <option value="PMR" ${ekskulData == 'PMR' ? 'selected' : ''}>PMR</option>
+                                <option value="Pramuka" ${ekskulData == 'Pramuka' ? 'selected' : ''}>Pramuka</option>
+                            </select>
+                        </td>
+
+                        <!-- Kolom Nilai: BISA DIUBAH (A/B/C) -->
+                        <td>
+                            <select id="nilai_${i}">
+                                <option value="" ${d[6] == "" ? 'selected' : ''}>-- Pilih Nilai --</option>
+                                <option value="A" ${d[6] == 'A' ? 'selected' : ''}>A</option>
+                                <option value="B" ${d[6] == 'B' ? 'selected' : ''}>B</option>
+                                <option value="C" ${d[6] == 'C' ? 'selected' : ''}>C</option>
+                            </select>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            }
+
+            if (!adaData) {
+                tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">📭 Tidak ada murid yang terdaftar di ekskul ini / sesuai filter</td></tr>';
+            }
+        }
+
+        // 🔥 FUNGSI SIMPAN: HANYA PERBARUI KOLOM NILAI
+        function simpanSemuaData() {
+            if (dataAsli.length <= 1) {
+                alert("Tidak ada data untuk disimpan!");
+                return;
+            }
+
+            let dataBaru = [];
+            dataBaru.push(dataAsli[0]); // Judul kolom
+
+            // Baca SEMUA data, ambil perubahan NILAI saja
+            for (let i = 1; i < dataAsli.length; i++) {
+                // Ambil data lama (aman dan tidak berubah)
+                const no = dataAsli[i][0];
+                const nis = dataAsli[i][1];
+                const nama = dataAsli[i][2];
+                const lp = dataAsli[i][3];
+                const kelas = dataAsli[i][4];
+                const ekskul = dataAsli[i][5]; // Tetap sama, tidak diubah pelatih
+
+                // Ambil NILAI BARU jika baris sedang ditampilkan, jika tidak pakai nilai lama
+                let nilaiBaru = dataAsli[i][6] || "";
+                const elemenNilai = document.getElementById(`nilai_${i}`);
+                if (elemenNilai) {
+                    nilaiBaru = elemenNilai.value;
+                }
+
+                // Susun ulang data
+                dataBaru.push([
+                    no, nis, nama, lp, kelas, ekskul, nilaiBaru
+                ]);
+            }
+
+            // Kirim ke Database
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    perintah: "timpa_data",
+                    data: dataBaru
+                })
+            })
+            .then(res => res.json())
+            .then(hasil => {
+                if (hasil.status === "sukses") {
+                    alert("✅ BERHASIL! Nilai berhasil disimpan.");
+                    // Simpan posisi filter
+                    const filterKelasSekarang = document.getElementById('filterKelas').value;
+                    const filterEkskulSekarang = document.getElementById('filterEkskul').value;
+                    muatData();
+                    // Kembalikan filter
+                    setTimeout(() => {
+                        document.getElementById('filterKelas').value = filterKelasSekarang;
+                        document.getElementById('filterEkskul').value = filterEkskulSekarang;
+                        terapkanFilter();
+                    }, 500);
+                } else {
+                    alert("❌ Gagal: " + hasil.error);
+                }
+            })
+            .catch(err => {
+                alert("❌ Koneksi gagal! Pastikan URL & Izin benar.");
+            });
+        }
+
+        // Jalankan saat buka halaman
+        muatData();
+    </script>
+</body>
+</html>
