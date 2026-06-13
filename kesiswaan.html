@@ -40,21 +40,17 @@
             display: flex;
             gap: 8px;
         }
-        .ikon-tombol {
+        .tombol {
             background: rgba(255, 255, 255, 0.15);
             border: none;
             color: #ffffff;
-            font-size: 20px;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             transition: background 0.3s;
         }
-        .ikon-tombol:hover {
+        .tombol:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
@@ -107,7 +103,7 @@
         }
         
         /* 🔹 TABEL - TAMPILAN LAYAR NORMAL 🔹 */
-        table {width: 100%; border-collapse: collapse; margin-top: 0; line-height: 1.5; /* Jarak normal di layar */}
+        table {width: 100%; border-collapse: collapse; margin-top: 0; line-height: 1.5;}
         
         /* 🔹 SELURUH ISI TABEL RATA TENGAH 🔹 */
         table th, table td {
@@ -169,14 +165,14 @@
 
         /* 🔹 BAGIAN TANDA TANGAN 🔹 */
         .tanda-tangan {
-            display: none; /* Tersembunyi di layar */
+            display: none;
             margin-top: 40px;
-            text-align: right; /* Posisi blok di pojok kanan */
+            text-align: right;
             padding-right: 50px;
         }
         .tanda-tangan .isi-ttd {
-            display: inline-block; /* Agar lebarnya hanya sesuai teks */
-            text-align: center; /* Isi tulisan rata tengah */
+            display: inline-block;
+            text-align: center;
         }
         .tanda-tangan p {
             margin: 5px 0;
@@ -189,7 +185,7 @@
         /* ========================================== */
         @media print {
             @page {
-                size: F4;
+                size: A4;
                 margin: 1cm;
             }
             body {
@@ -206,29 +202,20 @@
                 max-width: 100% !important;
                 width: 100% !important;
             }
-            /* ✅ HEADER DISembunyikan SEPENUHNYA SAAT CETAK */
-            .header {
-                display: none !important;
-            }
-            /* Sembunyikan elemen lain yang tidak perlu */
-            .keterangan, .filter-wilayah {
-                display: none !important;
-            }
-            .konten {
-                padding: 0 !important;
-            }
+            .header {display: none !important;}
+            .keterangan, .filter-wilayah {display: none !important;}
+            .konten {padding: 0 !important;}
             h1 {
                 color: #000000 !important;
                 margin-bottom: 5px !important;
                 font-size: 16pt !important;
                 text-align: center !important;
             }
-            /* JUDUL KELAS SAAT CETAK */
             .judul-kelas-cetak {
                 text-align: center;
                 font-size: 14pt;
                 font-weight: bold;
-                margin-bottom: 18px;
+                margin-bottom: 20px;
                 text-decoration: underline;
                 display: block !important;
             }
@@ -241,78 +228,38 @@
             table th, table td {
                 border: 1px solid #000 !important;
                 color: #000000 !important;
-                padding: 3px 3px !important; /* Padding rapat saat cetak */
+                padding: 4px 3px !important;
                 font-size: 11pt !important;
                 background: transparent !important;
                 text-align: center !important;
                 vertical-align: middle !important;
             }
-            table th {
-                background-color: #f0f0f0 !important;
-                font-weight: bold !important;
-            }
-            tr {
-                background-color: #ffffff !important;
-            }
-            .kolom-tetap {
-                background-color: #f9f9f9 !important;
-                color: #333 !important;
-            }
-            /* Ubah SELECT menjadi TEKS biasa saat cetak */
-            td select {
-                display: none !important;
-            }
-            /* Tampilkan nilai teks cetak, SEMBUNYIKAN tampilan layar */
-            .cetak-nilai {
-                display: block !important;
-                color: #000 !important;
-            }
-            .tampilan-layar {
-                display: none !important;
-            }
-            /* Sembunyikan baris yang tidak sesuai kelas saat dicetak */
-            .baris-data {
-                display: none !important;
-            }
-            .baris-tampil {
-                display: table-row !important;
-            }
-            /* ✅ TAMPILKAN TANDA TANGAN SAAT CETAK */
-            .tanda-tangan {
-                display: block !important;
-            }
+            table th {background-color: #f0f0f0 !important; font-weight: bold !important;}
+            tr {background-color: #ffffff !important;}
+            .kolom-tetap {background-color: #f9f9f9 !important; color: #333 !important;}
+            td select {display: none !important;}
+            .cetak-nilai {display: block !important; color: #000 !important;}
+            .tampilan-layar {display: none !important;}
+            .baris-data {display: none !important;}
+            .baris-tampil {display: table-row !important;}
+            .tanda-tangan {display: block !important;}
         }
-        /* Secara default: tampilan cetak disembunyikan, tampilan layar ditampilkan */
-        .cetak-nilai {
-            display: none;
-        }
-        .judul-kelas-cetak {
-            display: none;
-        }
+        .cetak-nilai {display: none;}
+        .judul-kelas-cetak {display: none;}
     </style>
-    <!-- Tambahkan ikon simpan & cetak dari Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <!-- 🔹 HEADER 🔹 -->
         <div class="header">
             <div class="nama-sekolah">SMPN 110 Jakarta</div>
             <div class="tombol-aksi">
-                <!-- TOMBOL CETAK -->
-                <button class="ikon-tombol" onclick="cetakPerKelas()" title="Cetak Data Sesuai Kelas">
-                    <i class="fas fa-print"></i>
-                </button>
-                <button class="ikon-tombol" onclick="simpanSemuaData()" title="Simpan Perubahan">
-                    <i class="fas fa-save"></i>
-                </button>
+                <button class="tombol" onclick="cetakPerKelas()" title="Cetak Data Sesuai Kelas">🖨️ Cetak</button>
+                <button class="tombol" onclick="simpanSemuaData()" title="Simpan Perubahan">💾 Simpan</button>
             </div>
         </div>
 
         <div class="konten">
             <h1>Data Nilai Ekstrakurikuler</h1>
-            
-            <!-- ELEMEN JUDUL KELAS KHUSUS CETAK -->
             <div class="judul-kelas-cetak" id="judulKelasCetak"></div>
 
             <br>
@@ -320,7 +267,6 @@
                 ℹ️ <strong>Petunjuk:</strong> Gunakan filter untuk memilih Kelas atau Ekskul. Isi kolom <strong>Nama Ekskul</strong> hanya untuk murid yang mengikuti kegiatan. Kolom <strong>Nilai</strong> dikosongkan.
             </div>
 <br>
-            <!-- 🔹 FILTER KELAS & EKSKUL 🔹 -->
             <div class="filter-wilayah">
                 <div>
                     <label for="filterKelas">Filter Kelas:</label>
@@ -362,12 +308,11 @@
                 </tbody>
             </table>
 
-            <!-- ✅ BAGIAN TANDA TANGAN DI BAWAH TABEL -->
             <div class="tanda-tangan" id="tandaTangan">
                 <div class="isi-ttd">
                     <p>Jakarta, <span id="tanggalSekarang"></span></p>
                     <p>Wakil Kesiswaan</p>
-                    <br><br><br> <!-- 3 baris jarak -->
+                    <br><br><br>
                     <p><strong>Sri Murwani, M.Pd.</strong></p>
                     <p>NIP. 19780210 200212 2 003</p>
                 </div>
@@ -377,14 +322,12 @@
     </div>
 
     <script>
-        // 👇 PASTIKAN URL SUDAH BENAR 👇
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztkIfYH8rFWQhZ-o_rKVFkGkJHMhL8CCvDXWzv5NdB-h4HDnTuB5lxfPHgJrA4AzId/exec";
-        let dataAsli = [];      // Menyimpan SEMUA data asli
-        let daftarKelas = [];   // Menyimpan daftar nama kelas unik
+        // 👇 GANTI URL DI BAWAH INI DENGAN URL MILIKMU SENDIRI 👇
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXb5rD91nJbrawXhpV8-BdaVJGhOaVPUum9ThQI8dyUVSyNwMZm5srZTtHzbjphR_N/exec";
+        let dataAsli = [];
+        let daftarKelas = [];
 
-        // 🔽 FUNGSI UNTUK MENGAMBIL TANGGAL HARI INI OTOMATIS 🔽
         function ambilTanggalSekarang() {
-            const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
             const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
             const sekarang = new Date();
             const tanggal = sekarang.getDate();
@@ -408,7 +351,6 @@
                         return;
                     }
 
-                    // 🔽 AMBIL DAFTAR KELAS UNTUK FILTER 🔽
                     daftarKelas = [];
                     for (let i = 1; i < data.length; i++) {
                         const kelas = data[i][4];
@@ -418,7 +360,6 @@
                     }
                     daftarKelas.sort();
                     isiPilihanFilterKelas();
-
                     tampilkanDataSesuaiFilter();
                 })
                 .catch(err => {
@@ -465,10 +406,8 @@
                 if (cocokKelas && cocokEkskul) {
                     adaData = true;
                     const tr = document.createElement('tr');
-                    // Tambahkan class khusus untuk filter cetak
                     tr.className = 'baris-data baris-' + kelasData.replace(/\s/g, ''); 
                     
-                    // Tentukan teks yang akan ditampilkan saat cetak
                     let teksEkskulCetak = ekskulData || "-- Tidak Ikut --";
                     let teksNilaiCetak = d[6] || "Belum diisi";
 
@@ -507,18 +446,13 @@
             }
         }
 
-        // Fungsi memperbarui teks tampilan cetak saat user mengubah pilihan
         function updateCetakText(id, nilai) {
             const teksTampil = nilai || "-- Tidak Ikut --";
             document.getElementById(`cetak_ekskul_${id}`).textContent = teksTampil;
         }
 
-        // 🔥 FUNGSI SIMPAN
         function simpanSemuaData() {
-            if (dataAsli.length <= 1) {
-                alert("Tidak ada data untuk disimpan!");
-                return;
-            }
+            if (dataAsli.length <= 1) {alert("Tidak ada data untuk disimpan!"); return;}
 
             let dataBaru = [];
             dataBaru.push(dataAsli[0]);
@@ -526,15 +460,9 @@
             for (let i = 1; i < dataAsli.length; i++) {
                 let ekskulTerpilih = dataAsli[i][5];
                 const elemenSelect = document.getElementById(`ekskul_${i}`);
-                if (elemenSelect) {
-                    ekskulTerpilih = elemenSelect.value;
-                }
+                if (elemenSelect) ekskulTerpilih = elemenSelect.value;
                 const nilaiLama = dataAsli[i][6] || "";
-
-                dataBaru.push([
-                    dataAsli[i][0], dataAsli[i][1], dataAsli[i][2], dataAsli[i][3], 
-                    dataAsli[i][4], ekskulTerpilih, nilaiLama
-                ]);
+                dataBaru.push([dataAsli[i][0], dataAsli[i][1], dataAsli[i][2], dataAsli[i][3], dataAsli[i][4], ekskulTerpilih, nilaiLama]);
             }
 
             fetch(SCRIPT_URL, {
@@ -546,61 +474,37 @@
             .then(hasil => {
                 if (hasil.status === "sukses") {
                     alert("✅ BERHASIL! Data disimpan.");
-                    const filterKelasSekarang = document.getElementById('filterKelas').value;
-                    const filterEkskulSekarang = document.getElementById('filterEkskul').value;
+                    const fK = document.getElementById('filterKelas').value;
+                    const fE = document.getElementById('filterEkskul').value;
                     muatData();
-                    setTimeout(() => {
-                        document.getElementById('filterKelas').value = filterKelasSekarang;
-                        document.getElementById('filterEkskul').value = filterEkskulSekarang;
-                    }, 500);
-                } else {
-                    alert("❌ Gagal: " + hasil.error);
-                }
+                    setTimeout(() => {document.getElementById('filterKelas').value = fK; document.getElementById('filterEkskul').value = fE;}, 500);
+                } else {alert("❌ Gagal: " + hasil.error);}
             })
-            .catch(err => {
-                alert("❌ Koneksi gagal! Pastikan URL & Izin benar.");
-            });
+            .catch(err => {alert("❌ Koneksi gagal! Cek URL & Izin.");});
         }
 
-        // 🖨️ FUNGSI CETAK KHUSUS PER KELAS
         function cetakPerKelas() {
             const kelasDipilih = document.getElementById('filterKelas').value;
             const elemenJudul = document.getElementById('judulKelasCetak');
+            if (kelasDipilih === "SEMUA") {alert("⚠️ Pilih Kelas dulu!"); return;}
 
-            // Cek jika belum memilih kelas
-            if (kelasDipilih === "SEMUA") {
-                alert("⚠️ Silakan pilih salah satu KELAS terlebih dahulu dari filter di atas sebelum mencetak!");
-                return;
-            }
-
-            // Tampilkan Judul Kelas saat cetak
             elemenJudul.textContent = `Kelas ${kelasDipilih}`;
-            
-            // Tampilkan hanya baris kelas yang dipilih saat mode cetak
             const semuaBaris = document.querySelectorAll('.baris-data');
-            semuaBaris.forEach(baris => {
-                baris.classList.remove('baris-tampil');
-            });
-            const barisAktif = document.querySelectorAll('.baris-' + kelasDipilih.replace(/\s/g, ''));
-            barisAktif.forEach(baris => {
-                baris.classList.add('baris-tampil');
-            });
+            semuaBaris.forEach(b => b.classList.remove('baris-tampil'));
+            document.querySelectorAll('.baris-' + kelasDipilih.replace(/\s/g, '')).forEach(b => b.classList.add('baris-tampil'));
 
-            // Jalankan perintah cetak browser
             window.print();
 
-            // Kembalikan tampilan seperti semula setelah cetak selesai
             setTimeout(() => {
                 elemenJudul.textContent = "";
-                semuaBaris.forEach(baris => {
-                    baris.classList.add('baris-tampil');
-                });
+                semuaBaris.forEach(b => b.classList.add('baris-tampil'));
             }, 1000);
         }
 
-        // Jalankan saat buka halaman
-        muatData();
-        ambilTanggalSekarang(); // Panggil fungsi tanggal otomatis
+        window.onload = function() {
+            muatData();
+            ambilTanggalSekarang();
+        }
     </script>
 </body>
 </html>
