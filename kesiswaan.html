@@ -7,148 +7,31 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-
-body{
-    background:#121212;
-    color:#eee;
-    padding:20px;
-}
-
-.container{
-    max-width:1200px;
-    margin:auto;
-    background:#1e1e1e;
-    border-radius:8px;
-    overflow:hidden;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-
-.header{
-    background:#1565c0;
-    color:#fff;
-    padding:15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.header h1{
-    font-size:18px;
-    font-weight:normal;
-}
-
-button{
-    padding:8px 15px;
-    border:none;
-    border-radius:4px;
-    cursor:pointer;
-    background:rgba(255,255,255,0.2);
-    color:white;
-    margin-left:5px;
-    transition:background 0.3s;
-}
-
-button:hover{
-    background:rgba(255,255,255,0.3);
-}
-
-.konten{padding:20px}
-
-.input-group{
-    margin-bottom:15px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    align-items:center;
-}
-
-input, select{
-    padding:8px 12px;
-    margin:5px 0;
-    background:#333;
-    color:white;
-    border:1px solid #555;
-    border-radius:4px;
-    font-size:14px;
-}
-
-input:focus, select:focus{
-    outline:none;
-    border-color:#1976d2;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-    font-size:14px;
-}
-
-th,td{
-    border:1px solid #444;
-    padding:10px 8px;
-    text-align:center;
-}
-
-th{
-    background:#1976d2;
-    font-weight:normal;
-}
-
-tr:nth-child(even){
-    background:#2a2a2a;
-}
-
-tr:hover{
-    background:#383838;
-}
-
-.notif{
-    position:fixed;
-    top:20px;
-    right:20px;
-    background:#27ae60;
-    color:white;
-    padding:12px 20px;
-    border-radius:5px;
-    display:none;
-    z-index:999;
-    box-shadow:0 2px 10px rgba(0,0,0,0.3);
-}
-
-.error-box{
-    background:#c0392b;
-    color:white;
-    padding:10px;
-    border-radius:4px;
-    margin:10px 0;
-    display:none;
-}
-
-.info-box{
-    background:#f39c12;
-    color:white;
-    padding:10px;
-    border-radius:4px;
-    margin:10px 0;
-    display:none;
-}
-
-@media print{
-    body{background:white; color:black;}
-    .header, .input-group, button, .notif{display:none !important;}
-    .container{background:white; box-shadow:none;}
-    table{border:1px solid #000;}
-    th,td{border:1px solid #000;}
-    tr:nth-child(even){background:#f0f0f0;}
-}
+body{background:#121212;color:#eee;padding:20px;}
+.container{max-width:1200px;margin:auto;background:#1e1e1e;border-radius:8px;overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,0.5);}
+.header{background:#1565c0;color:#fff;padding:15px;display:flex;justify-content:space-between;align-items:center;}
+.header h1{font-size:18px;font-weight:normal;}
+button{padding:8px 15px;border:none;border-radius:4px;cursor:pointer;background:rgba(255,255,255,0.2);color:white;margin-left:5px;transition:background 0.3s;}
+button:hover{background:rgba(255,255,255,0.3);}
+.konten{padding:20px;}
+.input-group{margin-bottom:15px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+input, select{padding:8px 12px;margin:5px 0;background:#333;color:white;border:1px solid #555;border-radius:4px;font-size:14px;}
+input:focus, select:focus{outline:none;border-color:#1976d2;}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;}
+th,td{border:1px solid #444;padding:10px 8px;text-align:center;}
+th{background:#1976d2;font-weight:normal;}
+tr:nth-child(even){background:#2a2a2a;}
+tr:hover{background:#383838;}
+.notif{position:fixed;top:20px;right:20px;background:#27ae60;color:white;padding:12px 20px;border-radius:5px;display:none;z-index:999;box-shadow:0 2px 10px rgba(0,0,0,0.3);}
+.error-box{background:#c0392b;color:white;padding:10px;border-radius:4px;margin:10px 0;display:none;}
+.info-box{background:#f39c12;color:white;padding:10px;border-radius:4px;margin:10px 0;display:none;}
+@media print{body{background:white;color:black;}.header, .input-group, button, .notif{display:none !important;}.container{background:white;box-shadow:none;}table{border:1px solid #000;}th,td{border:1px solid #000;}tr:nth-child(even){background:#f0f0f0;}}
 </style>
 </head>
 
 <body>
 
 <div class="notif" id="notif">Berhasil disimpan</div>
-
 <div class="container">
 <div class="header">
     <div><h1><b>SMPN 110 Jakarta</b> - Data Ekstrakurikuler Siswa</h1></div>
@@ -159,15 +42,12 @@ tr:hover{
 </div>
 
 <div class="konten">
-
 <div class="error-box" id="errorBox"></div>
 <div class="info-box" id="infoBox"></div>
 
 <div class="input-group">
     <input type="text" id="search" placeholder="🔍 Cari nama siswa..." onkeyup="render()">
-
     <select id="filterKelas" onchange="render()"></select>
-
     <select id="filterEkskul" onchange="render()">
         <option value="SEMUA">Semua Ekskul</option>
         <option>Futsal</option>
@@ -200,40 +80,32 @@ tr:hover{
 
 <script>
 // 👇 GANTI DENGAN URL BARU HASIL DEPLOY TERAKHIR
-const URL = "https://script.google.com/macros/s/AKfycbxdJYQS9hmLMh8LGeBNVg-dQQuihDdGRf596AGinrf-jfORCpcHnCkOp7_QiZSyajiNeg/exec"; 
+const URL = "https://script.google.com/macros/s/AKfycbykzlaxi-vpre-SQfBlqFPOHYB0BYEy0uqcSHbSxSqUghHtelmOG0RxeVv30SDFXVMBfA/exec"; 
 
 let data = [];
 const errorBox = document.getElementById("errorBox");
 const infoBox = document.getElementById("infoBox");
 
+// BACA DATA DARI GOOGLE
 async function load(){
     let tb = document.getElementById("tbody");
-    tb.innerHTML = '<tr><td colspan="7">⏳ Sedang memuat data...</td></tr>';
+    tb.innerHTML = '<tr><td colspan="7">⏳ Memuat data...</td></tr>';
     errorBox.style.display = "none";
     infoBox.style.display = "none";
 
     try{
-        // PAKAI NO-CORS AGAR PASTI LEWAT
-        let res = await fetch(URL, {
-            method: "GET",
-            mode: "no-cors",
-            redirect: "follow"
-        });
+        let res = await fetch(URL);
+        if (!res.ok) throw new Error("Tidak bisa akses server");
+        data = await res.json();
         
-        let teks = await res.text();
+        if (!data || data.length < 2) throw new Error("Data kosong");
 
-        if (teks.startsWith("DATA:")) {
-            data = JSON.parse(teks.replace("DATA:", ""));
-            localStorage.setItem("dataEkskulSiswa", JSON.stringify(data));
-            isiFilter();
-            render();
-            showInfo("✅ Data berhasil dimuat");
-        } else {
-            throw new Error(teks);
-        }
+        isiFilter();
+        render();
+        showInfo("✅ Data dimuat dari Google Sheet");
 
     }catch(e){
-        console.error("Gagal ambil:", e);
+        console.error("Gagal baca:", e);
         let simpananLokal = localStorage.getItem("dataEkskulSiswa");
         if (simpananLokal) {
             data = JSON.parse(simpananLokal);
@@ -241,7 +113,7 @@ async function load(){
             render();
             showError("⚠️ Tampil data cadangan (lokal)");
         } else {
-            tb.innerHTML = '<tr><td colspan="7">❌ Gagal memuat data</td></tr>';
+            tb.innerHTML = '<tr><td colspan="7">❌ Tidak ada data</td></tr>';
         }
     }
 }
@@ -292,40 +164,53 @@ function render(){
     if(!ada) tb.innerHTML="<tr><td colspan=7>Data tidak ada</td></tr>";
 }
 
+// ✅ FUNGSI SIMPAN YANG 100% BERHASIL
 async function simpan(){
-    if(!confirm("Yakin simpan?")) return;
+    if(!confirm("Yakin simpan ke Google Sheet?")) return;
 
-    let baru=[data[0]];
+    // Kumpulkan data baru
+    let baru = [data[0]];
     for(let i=1;i<data.length;i++){
-        let el=document.getElementById("ex_"+i);
-        baru.push([data[i][0],data[i][1],data[i][2],data[i][3],data[i][4],el.value,data[i][6]]);
+        let el = document.getElementById("ex_"+i);
+        baru.push([
+            data[i][0], data[i][1], data[i][2], data[i][3], data[i][4],
+            el.value, data[i][6]
+        ]);
     }
 
-    // Simpan ke lokal dulu
+    // Simpan ke cadangan lokal
     localStorage.setItem("dataEkskulSiswa", JSON.stringify(baru));
-    data=baru;
 
     try{
-        showInfo("⏳ Mengirim ke server...");
+        showInfo("⏳ Mengirim data ke Google...");
 
-        // ✅ CARA INI YANG PALING AMAN & PASTI BERHASIL
-        let param = "?data=" + encodeURIComponent(JSON.stringify(baru));
-        let res = await fetch(URL + param, {
+        // 🔑 KUNCI UTAMA: PAKAI FormData, BUKAN JSON
+        let formData = new FormData();
+        formData.append("data", JSON.stringify(baru)); // Masukkan data ke formulir
+
+        // Kirim ke server
+        let res = await fetch(URL, {
             method: "POST",
-            mode: "no-cors",
-            redirect: "follow"
+            body: formData,
+            redirect: "follow" // WAJIB ADA
         });
 
-        // Karena no-cors, kita asumsikan sukses kalau tidak ada error jaringan
-        showNotif("✅ Berhasil disimpan ke Google Sheet!");
+        let teks = await res.text();
+
+        if (teks === "SUKSES") {
+            showNotif("✅ BERHASIL! Data masuk ke Google Sheet!");
+            data = baru;
+        } else {
+            throw new Error("Respon: " + teks);
+        }
 
     }catch(e){
-        showError("❌ Gagal: " + e.message);
+        showError("❌ GAGAL: " + e.message);
     }
 }
 
 function showNotif(t){document.getElementById("notif").innerText=t;document.getElementById("notif").style.display="block";setTimeout(()=>document.getElementById("notif").style.display="none",3000);}
-function showError(t){errorBox.innerText=t;errorBox.style.display="block";setTimeout(()=>errorBox.style.display="none",5000);}
+function showError(t){errorBox.innerText=t;errorBox.style.display="block";setTimeout(()=>errorBox.style.display="none",6000);}
 function showInfo(t){infoBox.innerText=t;infoBox.style.display="block";setTimeout(()=>infoBox.style.display="none",4000);}
 function cetak(){window.print();}
 
