@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Nilai Ekskul - Wali Kelas</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif;}
+
+        /* 🔹 MODE GELAP - DASAR HALAMAN 🔹 */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        /* 🔹 HEADER 🔹 */
+        .header {
+            background-color: #2E7D32;
+            color: #ffffff;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .nama-sekolah {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .info-kelas {
+            background: rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .tombol-aksi {
+            display: flex;
+            gap: 8px;
+        }
+        .tombol {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #ffffff;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .tombol:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .konten {padding: 25px;}
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .keterangan {
+            background: #273746;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #aed6f1;
+            border: 1px solid #34495e;
+        }
+        
+        /* 🔹 TABEL - TAMPILAN LAYAR NORMAL 🔹 */
+        table {width: 100%; border-collapse: collapse; margin-top: 0; line-height: 1.5;}
+        
+        /* 🔹 SELURUH ISI TABEL RATA TENGAH 🔹 */
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+            border-bottom: 1px solid #444;
+            font-size: 14px;
+        }
+        table th {
+            background-color: #388E3C;
+            color: #ffffff;
+            font-weight: normal;
+        }
+        table tr {
+            background-color: #1e1e1e;
+        }
+        table tr:hover {
+            background-color: #292929;
+        }
+        
+        /* 🔹 INPUT & SELECT DI DALAM TABEL 🔹 */
+        td select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #3a3a3a;
+            color: #ffffff;
+            text-align: center;
+            text-align-last: center;
+        }
+        td select:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+
+        /* 🔹 WARNA MERAH TULISAN -- TIDAK IKUT -- 🔹 */
+        td select option.tidak-ikut {
+            color: #ff2222 !important;
+            font-weight: bold !important;
+            background-color: #2a2a2a !important;
+        }
+
+        /* Kolom yang tidak bisa diubah (tetap) */
+        .kolom-tetap {
+            background-color: #282828;
+            color: #bdbdbd;
+        }
+        /* Kolom Nilai untuk Walas (Bisa diisi) */
+        td input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #3a3a3a;
+            color: #ffffff;
+            text-align: center;
+        }
+        td input:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+        
+        .pesan-kosong {text-align:center; color:#95a5a6; padding:20px;}
+        .pesan-error {text-align:center; color:#e74c3c; padding:20px;}
+
+        /* 🔹 BAGIAN TANDA TANGAN 🔹 */
+        .tanda-tangan {
+            display: none;
+            margin-top: 40px;
+            text-align: right;
+            padding-right: 50px;
+        }
+        .tanda-tangan .isi-ttd {
+            display: inline-block;
+            text-align: center;
+        }
+        .tanda-tangan p {
+            margin: 5px 0;
+            font-size: 12pt;
+        }
+
+
+        /* ========================================== */
+        /* 🔹 STYLE KHUSUS CETAK 🔹 */
+        /* ========================================== */
+        @media print {
+            @page {
+                size: A4;
+                margin: 1cm;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .container {
+                background: #ffffff !important;
+                box-shadow: none !important;
+                border: none !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .header {display: none !important;}
+            .keterangan {display: none !important;}
+            .konten {padding: 0 !important;}
+            h1 {
+                color: #000000 !important;
+                margin-bottom: 5px !important;
+                font-size: 16pt !important;
+                text-align: center !important;
+            }
+            .judul-kelas-cetak {
+                text-align: center;
+                font-size: 14pt;
+                font-weight: bold;
+                margin-bottom: 20px;
+                text-decoration: underline;
+                display: block !important;
+            }
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                border: 1px solid #000 !important;
+                line-height: 1 !important;
+            }
+            table th, table td {
+                border: 1px solid #000 !important;
+                color: #000000 !important;
+                padding: 4px 3px !important;
+                font-size: 11pt !important;
+                background: transparent !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+            }
+            table th {background-color: #f0f0f0 !important; font-weight: bold !important;}
+            tr {background-color: #ffffff !important;}
+            .kolom-tetap {background-color: #f9f9f9 !important; color: #333 !important;}
+            td select, td input {display: none !important;}
+            .cetak-nilai {display: block !important; color: #000 !important;}
+            .tanda-tangan {display: block !important;}
+        }
+        .cetak-nilai {display: none;}
+        .judul-kelas-cetak {display: none;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="nama-sekolah">SMPN 110 Jakarta</div>
+            <div class="info-kelas" id="infoKelas">KELAS: -</div>
+            <div class="tombol-aksi">
+                <button class="tombol" onclick="window.print()" title="Cetak Data Kelas Ini">🖨️ Cetak</button>
+                <button class="tombol" onclick="simpanPerubahan()" title="Simpan Perubahan Nilai">💾 Simpan</button>
+            </div>
+        </div>
+
+        <div class="konten">
+            <h1>Data Nilai Ekstrakurikuler</h1>
+            <div class="judul-kelas-cetak" id="judulKelasCetak"></div>
+
+            <br>
+            <div class="keterangan">
+                ℹ️ <strong>Wali Kelas:</strong> Isi kolom <strong>Nilai</strong> sesuai hasil penilaian. Kolom <strong>Nama Ekskul</strong> sudah diisi oleh Kesiswaan, tidak perlu diubah.
+            </div>
+<br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIS</th>
+                        <th>Nama Murid</th>
+                        <th>L/P</th>
+                        <th>Nama Ekskul</th>
+                        <th>Nilai</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelData">
+                    <tr><td colspan="6" class="pesan-kosong">Memuat data...</td></tr>
+                </tbody>
+            </table>
+
+            <div class="tanda-tangan" id="tandaTangan">
+                <div class="isi-ttd">
+                    <p>Jakarta, <span id="tanggalSekarang"></span></p>
+                    <p>Wali Kelas <span id="namaKelasTtd"></span></p>
+                    <br><br><br>
+                    <p><strong>( _________________________ )</strong></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 👇 WAJIB DIUBAH: ISI NAMA KELAS YANG DIWALI KAN DI SINI 👇
+        const KELAS_SAYA = "7A"; 
+        // Contoh: "7A", "8B", "9C" — Sesuai persis dengan di Sheet
+
+        // 👇 GANTI DENGAN URL ANDA SENDIRI 👇
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4qrC_FEULPsNtad5hFvBDiGOcMh_YrExv3j57_VFDLHt4iYHaZWAUVzJaoC_i1Ooe/exec";
+        let dataAsli = [];
+
+        function ambilTanggalSekarang() {
+            const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const sekarang = new Date();
+            const tanggal = sekarang.getDate();
+            const namaBulan = bulan[sekarang.getMonth()];
+            const tahun = sekarang.getFullYear();
+            document.getElementById('tanggalSekarang').textContent = tanggal + " " + namaBulan + " " + tahun;
+            document.getElementById('infoKelas').textContent = "KELAS: " + KELAS_SAYA;
+            document.getElementById('judulKelasCetak').textContent = "Kelas " + KELAS_SAYA;
+            document.getElementById('namaKelasTtd').textContent = KELAS_SAYA;
+        }
+
+        function muatData() {
+            const tbody = document.getElementById('tabelData');
+            tbody.innerHTML = '<tr><td colspan="6" class="pesan-kosong">Memuat data...</td></tr>';
+
+            fetch(SCRIPT_URL)
+                .then(res => res.json())
+                .then(data => {
+                    dataAsli = data;
+                    tampilkanDataKelasSaya();
+                })
+                .catch(err => {
+                    tbody.innerHTML = '<tr><td colspan="6" class="pesan-error">❌ Gagal memuat data. Cek URL & Izin!</td></tr>';
+                    console.error(err);
+                });
+        }
+
+        function tampilkanDataKelasSaya() {
+            const tbody = document.getElementById('tabelData');
+            tbody.innerHTML = '';
+            let adaData = false;
+
+            if (dataAsli.length <= 1) {
+                tbody.innerHTML = '<tr><td colspan="6" class="pesan-kosong">📭 Belum ada data murid</td></tr>';
+                return;
+            }
+
+            for (let i = 1; i < dataAsli.length; i++) {
+                const d = dataAsli[i];
+                const kelasData = d[4];
+
+                // HANYA TAMPILKAN DATA SESUAI KELAS YANG DIATAS
+                if (kelasData === KELAS_SAYA) {
+                    adaData = true;
+                    const tr = document.createElement('tr');
+                    
+                    let teksEkskul = d[5] || "-- Tidak Ikut --";
+                    let nilaiIsi = d[6] || "";
+
+                    tr.innerHTML = `
+                        <td class="kolom-tetap">${d[0] || ''}</td>
+                        <td class="kolom-tetap">${d[1] || ''}</td>
+                        <td class="kolom-tetap" style="text-align:left; padding-left:8px;">${d[2] || ''}</td>
+                        <td class="kolom-tetap">${d[3] || ''}</td>
+                        <td class="kolom-tetap">
+                            ${teksEkskul}
+                            <span class="cetak-nilai">${teksEkskul}</span>
+                        </td>
+                        <td>
+                            <input type="text" id="nilai_${i}" value="${nilaiIsi}" placeholder="Isi Nilai" maxlength="3">
+                            <span class="cetak-nilai">${nilaiIsi || 'Belum diisi'}</span>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            }
+
+            if (!adaData) {
+                tbody.innerHTML = `<tr><td colspan="6" class="pesan-error">⚠️ Data untuk kelas <b>${KELAS_SAYA}</b> tidak ditemukan!</td></tr>`;
+            }
+        }
+
+        function simpanPerubahan() {
+            if (dataAsli.length <= 1) {alert("Tidak ada data untuk disimpan!"); return;}
+
+            let dataBaru = [];
+            dataBaru.push(dataAsli[0]); // Ambil judul kolom
+
+            for (let i = 1; i < dataAsli.length; i++) {
+                // Ambil data asli
+                const d = dataAsli[i];
+                let nilaiBaru = d[6];
+
+                // Jika ini murid kelas saya, ambil nilai baru yang diinput
+                if (d[4] === KELAS_SAYA) {
+                    const inputNilai = document.getElementById(`nilai_${i}`);
+                    if (inputNilai) nilaiBaru = inputNilai.value.trim();
+                }
+
+                // Susun ulang data: [No, NIS, Nama, LP, Kelas, Ekskul, Nilai]
+                dataBaru.push([d[0], d[1], d[2], d[3], d[4], d[5], nilaiBaru]);
+            }
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ perintah: "timpa_data", data: dataBaru })
+            })
+            .then(res => res.json())
+            .then(hasil => {
+                if (hasil.status === "sukses") {
+                    alert("✅ BERHASIL! Nilai kelas " + KELAS_SAYA + " tersimpan.");
+                    muatData();
+                } else {
+                    alert("❌ Gagal: " + hasil.error);
+                }
+            })
+            .catch(err => {
+                alert("❌ Koneksi gagal! Cek kembali pengaturan.");
+            });
+        }
+
+        window.onload = function() {
+            ambilTanggalSekarang();
+            muatData();
+        }
+    </script>
+</body>
+</html>

@@ -8,11 +8,25 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#121212;color:#eee;padding:20px;}
-.container{max-width:1200px;margin:auto;background:#1e1e1e;border-radius:8px;overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,0,0.5);}
+.container{max-width:1200px;margin:auto;background:#1e1e1e;border-radius:8px;overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,0.5);}
 .header{background:#1565c0;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;}
 .header h1{font-size:17px;font-weight:normal;}
-button{padding:7px 14px;border:none;border-radius:4px;cursor:pointer;background:rgba(255,255,255,0.2);color:white;margin-left:5px;transition:background 0.3s;}
-button:hover{background:rgba(255,255,255,0.3);}
+button{padding:7px 14px;border:none;border-radius:4px;cursor:pointer;color:white;margin-left:5px;transition:background 0.3s;}
+
+/* ✅ WARNA TOMBOL CETAK COKLAT */
+.btn-cetak {
+    background-color: #8B4513;
+}
+.btn-cetak:hover {
+    background-color: #A0522D;
+}
+.btn-simpan {
+    background-color: #2e7d32;
+}
+.btn-simpan:hover {
+    background-color: #388e3c;
+}
+
 .konten{padding:15px;}
 .input-group{margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 input, select{padding:7px 10px;margin:4px 0;background:#333;color:white;border:1px solid #555;border-radius:4px;font-size:13px;}
@@ -40,19 +54,19 @@ tr:hover{background:#383838;}
     .judul-cetak h1{font-size:14px;font-weight:bold;}
     .judul-cetak h3{font-size:12px;font-weight:bold;margin-top:2px;}
 
-    table{width:100%;border:1px solid #000;font-size:9px !important;table-layout:fixed;}
-    th,td{border:1px solid #000;padding:3px 2px !important;overflow:hidden;text-overflow:ellipsis;}
+    table{width:100%;border:1px solid #000;font-size:12px !important;table-layout:fixed;}
+    th,td{border:2px solid #000;padding:3px 3px !important;overflow:hidden;text-overflow:ellipsis;}
     
     /* Atur lebar kolom agar pas semua */
     th:nth-child(1), td:nth-child(1) { width: 4%; }  /* No */
     th:nth-child(2), td:nth-child(2) { width: 7%; }  /* NIS */
-    th:nth-child(3), td:nth-child(3) { width: 20%; text-align:left !important; } /* Nama */
-    th:nth-child(4), td:nth-child(4) { width: 5%; }  /* JK */
+    th:nth-child(3), td:nth-child(3) { width: 27%; text-align:left !important; } /* Nama */
+    th:nth-child(4), td:nth-child(4) { width: 4%; }  /* JK */
     th:nth-child(5), td:nth-child(5) { width: 6%; }  /* Kelas */
-    th:nth-child(6), td:nth-child(6) { width: 14%; } /* Ekskul 1 */
-    th:nth-child(7), td:nth-child(7) { width: 6%; }  /* Nilai 1 */
-    th:nth-child(8), td:nth-child(8) { width: 14%; } /* Ekskul 2 */
-    th:nth-child(9), td:nth-child(9) { width: 6%; }  /* Nilai 2 */
+    th:nth-child(6), td:nth-child(6) { width: 12%; } /* Ekskul 1 */
+    th:nth-child(7), td:nth-child(7) { width: 5%; }  /* Nilai 1 */
+    th:nth-child(8), td:nth-child(8) { width: 12%; } /* Ekskul 2 */
+    th:nth-child(9), td:nth-child(9) { width: 5%; }  /* Nilai 2 */
 
     tr:nth-child(even){background:#f0f0f0;}
 
@@ -78,7 +92,6 @@ tr:hover{background:#383838;}
 }
 </style>
 </head>
-
 <body>
 
 <div class="notif" id="notif">Berhasil disimpan</div>
@@ -86,8 +99,8 @@ tr:hover{background:#383838;}
 <div class="header">
     <div><h1><b>SMPN 110 Jakarta</b> - Data Ekstrakurikuler Murid</h1></div>
     <div>
-        <button onclick="cetak()">🖨️ Cetak</button>
-        <button onclick="simpan()">💾 Simpan</button>
+        <button class="btn-cetak" onclick="cetak()">🖨️ Cetak</button>
+        <button class="btn-simpan" onclick="simpan()">💾 Simpan</button>
     </div>
 </div>
 
@@ -114,6 +127,9 @@ tr:hover{background:#383838;}
         <option>PMR</option>
         <option>Tari</option>
         <option>Silat</option>
+        <option>Taekwondo</option>
+        <option>Tahsin</option>
+        <option>Drumband</option>
         <option value="">Tidak Ikut</option>
     </select>
 </div>
@@ -137,7 +153,7 @@ tr:hover{background:#383838;}
 
 <!-- Bagian ini MUNCUL SAAT DICETAK -->
 <div class="tanda-tangan" id="tandaTangan" style="display:none;">
-    <div class="isi-ttd">
+    <div class="isi-ttd"><br>
         <p>Jakarta, <span id="tanggalHariIni"></span></p>
         <p>Wakil Kesiswaan,</p>
         <br><br><br>
@@ -165,11 +181,14 @@ async function load(){
     infoBox.style.display = "none";
 
     try{
-        let res = await fetch(URL);
+        let res = await fetch(URL, {cache: "no-store"});
         if (!res.ok) throw new Error("Tidak bisa akses server");
         data = await res.json();
         
         if (!data || data.length < 2) throw new Error("Data kosong");
+
+        // ✅ Pastikan setiap baris punya panjang kolom yang sama
+        data = data.map(baris => { while(baris.length < 9) baris.push(""); return baris; });
 
         isiFilter();
         render();
@@ -199,19 +218,37 @@ function isiFilter(){
     });
 }
 
+function bersihkanTeks(teks) {
+    return (teks || "").toString().trim().toLowerCase();
+}
+
 function render(){
     let tb=document.getElementById("tbody");tb.innerHTML="";
     let fK=document.getElementById("filterKelas").value;
-    let fE=document.getElementById("filterEkskul").value;
-    let cari=document.getElementById("search").value.toLowerCase();
+    let fE=bersihkanTeks(document.getElementById("filterEkskul").value);
+    let cari=bersihkanTeks(document.getElementById("search").value);
+    
     let ada=false;
+    let nomorUrut = 1; // ✅ NOMOR URUT DIULANG DARI 1 SETIAP FILTER BERUBAH
 
     for(let i=1;i<data.length;i++){
         let d=data[i];
-        // Filter: Cari di ekskul 1 ATAU ekskul 2
+        
+        // Filter: Kelas
         if(fK!="SEMUA" && d[4]!=fK) continue;
-        if(fE!="SEMUA" && !( (d[5] && d[5].includes(fE)) || (d[7] && d[7].includes(fE)) )) continue;
-        if(cari && !d[2].toLowerCase().includes(cari)) continue;
+        
+        // Filter: Ekskul (Cocokkan meski beda huruf)
+        let cocokEkskul = true;
+        if(fE!="semua") {
+            let e1 = bersihkanTeks(d[5]);
+            let e2 = bersihkanTeks(d[7]);
+            cocokEkskul = (e1 === fE || e2 === fE);
+        }
+        if(!cocokEkskul) continue;
+
+        // Filter: Pencarian Nama
+        if(cari && !bersihkanTeks(d[2]).includes(cari)) continue;
+
         ada=true;
 
         // ✅ LOGIKA WARNA MERAH: JIKA KEDUA EKSKUL KOSONG / TIDAK IKUT
@@ -219,12 +256,12 @@ function render(){
         let ekskul2 = d[7] || "";
         let kelasWarna = "";
         if( (ekskul1 === "" || ekskul1 === "Tidak Ikut") && (ekskul2 === "" || ekskul2 === "Tidak Ikut") ) {
-            kelasWarna = "nama-merah"; // Tambah kelas CSS
+            kelasWarna = "nama-merah";
         }
 
         let tr=document.createElement("tr");
         tr.innerHTML=`
-        <td>${d[0]||"-"}</td>
+        <td>${nomorUrut++}</td> <!-- ✅ NOMOR URUT BERJALAN 1,2,3... -->
         <td>${d[1]||"-"}</td>
         <td class="${kelasWarna}" style="text-align:left">${d[2]||"-"}</td>
         <td>${d[3]||"-"}</td>
@@ -241,6 +278,9 @@ function render(){
                 <option ${d[5]=="PMR"?"selected":""}>PMR</option>
                 <option ${d[5]=="Tari"?"selected":""}>Tari</option>
                 <option ${d[5]=="Silat"?"selected":""}>Silat</option>
+                <option ${d[5]=="Taekwondo"?"selected":""}>Taekwondo</option>
+                <option ${d[5]=="Tahsin"?"selected":""}>Tahsin</option>
+                <option ${d[5]=="Drumband"?"selected":""}>Drumband</option>
             </select>
         </td>
         
@@ -252,7 +292,6 @@ function render(){
                 <option value="A" ${d[6]=="A"?"selected":""}>A</option>
                 <option value="B" ${d[6]=="B"?"selected":""}>B</option>
                 <option value="C" ${d[6]=="C"?"selected":""}>C</option>
-
             </select>
         </td>
 
@@ -267,6 +306,9 @@ function render(){
                 <option ${d[7]=="PMR"?"selected":""}>PMR</option>
                 <option ${d[7]=="Tari"?"selected":""}>Tari</option>
                 <option ${d[7]=="Silat"?"selected":""}>Silat</option>
+                <option ${d[7]=="Taekwondo"?"selected":""}>Taekwondo</option>
+                <option ${d[7]=="Tahsin"?"selected":""}>Tahsin</option>
+                <option ${d[7]=="Drumband"?"selected":""}>Drumband</option>
             </select>
         </td>
         
@@ -278,7 +320,6 @@ function render(){
                 <option value="A" ${d[8]=="A"?"selected":""}>A</option>
                 <option value="B" ${d[8]=="B"?"selected":""}>B</option>
                 <option value="C" ${d[8]=="C"?"selected":""}>C</option>
- 
             </select>
         </td>
         `;
