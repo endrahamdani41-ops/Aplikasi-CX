@@ -9,23 +9,85 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#121212;color:#eee;padding:20px;}
 .container{max-width:1200px;margin:auto;background:#1e1e1e;border-radius:8px;overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,0.5);}
-.header{background:#1565c0;color:#fff;padding:15px;display:flex;justify-content:space-between;align-items:center;}
-.header h1{font-size:18px;font-weight:normal;}
-button{padding:8px 15px;border:none;border-radius:4px;cursor:pointer;background:rgba(255,255,255,0.2);color:white;margin-left:5px;transition:background 0.3s;}
+.header{background:#1565c0;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;}
+.header h1{font-size:17px;font-weight:normal;}
+button{padding:7px 14px;border:none;border-radius:4px;cursor:pointer;background:rgba(255,255,255,0.2);color:white;margin-left:5px;transition:background 0.3s;}
 button:hover{background:rgba(255,255,255,0.3);}
-.konten{padding:20px;}
-.input-group{margin-bottom:15px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-input, select{padding:8px 12px;margin:5px 0;background:#333;color:white;border:1px solid #555;border-radius:4px;font-size:14px;}
+.konten{padding:15px;}
+.input-group{margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+input, select{padding:7px 10px;margin:4px 0;background:#333;color:white;border:1px solid #555;border-radius:4px;font-size:13px;}
 input:focus, select:focus{outline:none;border-color:#1976d2;}
-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;}
-th,td{border:1px solid #444;padding:10px 8px;text-align:center;}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px;}
+th,td{border:1px solid #444;padding:7px 5px;text-align:center;}
 th{background:#1976d2;font-weight:normal;}
 tr:nth-child(even){background:#2a2a2a;}
 tr:hover{background:#383838;}
-.notif{position:fixed;top:20px;right:20px;background:#27ae60;color:white;padding:12px 20px;border-radius:5px;display:none;z-index:999;box-shadow:0 2px 10px rgba(0,0,0,0.3);}
-.error-box{background:#c0392b;color:white;padding:10px;border-radius:4px;margin:10px 0;display:none;}
-.info-box{background:#f39c12;color:white;padding:10px;border-radius:4px;margin:10px 0;display:none;}
-@media print{body{background:white;color:black;}.header, .input-group, button, .notif{display:none !important;}.container{background:white;box-shadow:none;}table{border:1px solid #000;}th,td{border:1px solid #000;}tr:nth-child(even){background:#f0f0f0;}}
+.notif{position:fixed;top:20px;right:20px;background:#27ae60;color:white;padding:10px 16px;border-radius:4px;display:none;z-index:999;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.error-box{background:#c0392b;color:white;padding:8px;border-radius:4px;margin:8px 0;display:none;}
+.info-box{background:#f39c12;color:white;padding:8px;border-radius:4px;margin:8px 0;display:none;}
+
+/* ==== STYLE KHUSUS CETAK - DIATUR PAS 1 LEMBAR ==== */
+@media print{
+    @page {
+        size: A4;
+        margin: 12mm; /* Margin kertas pas */
+    }
+    body{
+        background:white !important;
+        color:black !important;
+        padding:0 !important;
+        font-size:11px !important; /* Ukuran font pas */
+    }
+    .header, .input-group, button, .notif, .error-box, .info-box{display:none !important;}
+    .container{background:white;box-shadow:none;max-width:100%;}
+    
+    /* Judul Cetak */
+    .judul-cetak{text-align:center;margin-bottom:10px;line-height:1.4;}
+    .judul-cetak h1{font-size:14px;font-weight:bold;}
+    .judul-cetak h3{font-size:12px;font-weight:bold;margin-top:2px;}
+
+    table{
+        width:100%;
+        border:1px solid #000;
+        font-size:10px !important; /* Ukuran tabel kecil agar muat */
+        table-layout:fixed; /* Lebar kolom tetap */
+    }
+    th,td{
+        border:1px solid #000;
+        padding:4px 2px !important;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+    /* Atur lebar kolom agar pas */
+    th:nth-child(1), td:nth-child(1) { width: 5%; }  /* No */
+    th:nth-child(2), td:nth-child(2) { width: 8%; }  /* NIS */
+    th:nth-child(3), td:nth-child(3) { width: 28%; text-align:left !important; } /* Nama */
+    th:nth-child(4), td:nth-child(4) { width: 7%; }  /* JK */
+    th:nth-child(5), td:nth-child(5) { width: 8%; }  /* Kelas */
+    th:nth-child(6), td:nth-child(6) { width: 25%; } /* Ekskul */
+    th:nth-child(7), td:nth-child(7) { width: 7%; }  /* Nilai */
+
+    tr:nth-child(even){background:#f0f0f0;}
+
+    /* ✅ PENTING: SEMBUNYIKAN KOTAK DROPDOWN SAAT CETAK, TAMPILKAN TEKS SAJA */
+    td select { display: none !important; }
+    td .teks-ekskul { display: inline !important; font-weight:normal; }
+
+    /* Tanda Tangan: Kanan + Rata Tengah */
+    .tanda-tangan{
+        margin-top:15px;
+        text-align:right;
+    }
+    .tanda-tangan .isi-ttd{
+        display:inline-block;
+        text-align:center;
+        font-size:11px;
+    }
+    .tanda-tangan p{margin:3px 0;}
+}
+
+/* ✅ Di layar biasa, teks nama ekskul disembunyikan, tampilkan dropdown saja */
+.teks-ekskul { display: none; }
 </style>
 </head>
 
@@ -34,10 +96,10 @@ tr:hover{background:#383838;}
 <div class="notif" id="notif">Berhasil disimpan</div>
 <div class="container">
 <div class="header">
-    <div><h1><b>SMPN 110 Jakarta</b> - Data Ekstrakurikuler Siswa</h1></div>
+    <div><h1><b>SMPN 110 Jakarta</b> - Data Ekstrakurikuler Murid</h1></div>
     <div>
         <button onclick="cetak()">🖨️ Cetak</button>
-        <button onclick="simpan()">💾 Simpan Perubahan</button>
+        <button onclick="simpan()">💾 Simpan</button>
     </div>
 </div>
 
@@ -45,9 +107,17 @@ tr:hover{background:#383838;}
 <div class="error-box" id="errorBox"></div>
 <div class="info-box" id="infoBox"></div>
 
+<!-- Bagian ini MUNCUL SAAT DICETAK -->
+<div class="judul-cetak" id="judulCetak" style="display:none;">
+    <h1>SMPN 110 JAKARTA</h1>
+    <h3>EKSTRAKURIKULER KELAS <span id="namaKelasCetak"></span></h3>
+</div>
+<br>
 <div class="input-group">
-    <input type="text" id="search" placeholder="🔍 Cari nama siswa..." onkeyup="render()">
-    <select id="filterKelas" onchange="render()"></select>
+    <input type="text" id="search" placeholder="🔍 Cari nama murid..." onkeyup="render()">
+    <select id="filterKelas" onchange="render()">
+        <option value="SEMUA">Semua Kelas</option>
+    </select>
     <select id="filterEkskul" onchange="render()">
         <option value="SEMUA">Semua Ekskul</option>
         <option>Futsal</option>
@@ -75,11 +145,22 @@ tr:hover{background:#383838;}
 <tbody id="tbody"></tbody>
 </table>
 
+<!-- Bagian ini MUNCUL SAAT DICETAK -->
+<div class="tanda-tangan" id="tandaTangan" style="display:none;">
+    <div class="isi-ttd">
+        <p>Jakarta, <span id="tanggalHariIni"></span></p>
+        <p>Wakil Kesiswaan,</p>
+        <br><br><br>
+        <p><b>Sri Murwani, M.Pd.</b></p>
+        <p>NIP. ...........................................</p>
+    </div>
+</div>
+
 </div>
 </div>
 
 <script>
-// 👇 GANTI DENGAN URL BARU HASIL DEPLOY TERAKHIR
+// ✅ URL SUDAH DIISI DENGAN YANG BARU
 const URL = "https://script.google.com/macros/s/AKfycbykzlaxi-vpre-SQfBlqFPOHYB0BYEy0uqcSHbSxSqUghHtelmOG0RxeVv30SDFXVMBfA/exec"; 
 
 let data = [];
@@ -89,7 +170,7 @@ const infoBox = document.getElementById("infoBox");
 // BACA DATA DARI GOOGLE
 async function load(){
     let tb = document.getElementById("tbody");
-    tb.innerHTML = '<tr><td colspan="7">⏳ Memuat data...</td></tr>';
+    tb.innerHTML = '<tr><td colspan="7">⏳ Sedang memuat data...</td></tr>';
     errorBox.style.display = "none";
     infoBox.style.display = "none";
 
@@ -149,14 +230,20 @@ function render(){
         <td style="text-align:left">${d[2]||"-"}</td>
         <td>${d[3]||"-"}</td>
         <td>${d[4]||"-"}</td>
-        <td><select id="ex_${i}"><option value="" ${!d[5]?"selected":""}>Tidak Ikut</option>
-        <option ${d[5]=="Futsal"?"selected":""}>Futsal</option>
-        <option ${d[5]=="Paskib"?"selected":""}>Paskib</option>
-        <option ${d[5]=="Pramuka"?"selected":""}>Pramuka</option>
-        <option ${d[5]=="PMR"?"selected":""}>PMR</option>
-        <option ${d[5]=="Tari"?"selected":""}>Tari</option>
-        <option ${d[5]=="Silat"?"selected":""}>Silat</option>
-        </select></td>
+        <td>
+            <!-- Teks untuk cetak -->
+            <span class="teks-ekskul">${d[5]||"Tidak Ikut"}</span>
+            <!-- Dropdown untuk di layar -->
+            <select id="ex_${i}">
+                <option value="" ${!d[5]?"selected":""}>Tidak Ikut</option>
+                <option ${d[5]=="Futsal"?"selected":""}>Futsal</option>
+                <option ${d[5]=="Paskib"?"selected":""}>Paskib</option>
+                <option ${d[5]=="Pramuka"?"selected":""}>Pramuka</option>
+                <option ${d[5]=="PMR"?"selected":""}>PMR</option>
+                <option ${d[5]=="Tari"?"selected":""}>Tari</option>
+                <option ${d[5]=="Silat"?"selected":""}>Silat</option>
+            </select>
+        </td>
         <td>${d[6]||"-"}</td>
         `;
         tb.appendChild(tr);
@@ -209,10 +296,35 @@ async function simpan(){
     }
 }
 
+// ✅ FUNGSI CETAK SESUAI PERMINTAAN
+function cetak(){
+    // Ambil nama kelas yang sedang difilter
+    let kelasTerpilih = document.getElementById("filterKelas").value;
+    document.getElementById("namaKelasCetak").textContent = (kelasTerpilih !== "SEMUA") ? kelasTerpilih : "Semua Kelas";
+
+    // Buat format tanggal hari ini: Jakarta, 14 Juni 2026
+    const hari = new Date();
+    const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const tglCetak = hari.getDate() + " " + namaBulan[hari.getMonth()] + " " + hari.getFullYear();
+    document.getElementById("tanggalHariIni").textContent = tglCetak;
+
+    // Tampilkan elemen khusus cetak
+    document.getElementById("judulCetak").style.display = "block";
+    document.getElementById("tandaTangan").style.display = "block";
+
+    // Jalankan perintah cetak browser
+    window.print();
+
+    // Sembunyikan kembali setelah cetak selesai
+    setTimeout(() => {
+        document.getElementById("judulCetak").style.display = "none";
+        document.getElementById("tandaTangan").style.display = "none";
+    }, 1000);
+}
+
 function showNotif(t){document.getElementById("notif").innerText=t;document.getElementById("notif").style.display="block";setTimeout(()=>document.getElementById("notif").style.display="none",3000);}
 function showError(t){errorBox.innerText=t;errorBox.style.display="block";setTimeout(()=>errorBox.style.display="none",6000);}
 function showInfo(t){infoBox.innerText=t;infoBox.style.display="block";setTimeout(()=>infoBox.style.display="none",4000);}
-function cetak(){window.print();}
 
 document.addEventListener("DOMContentLoaded", load);
 </script>
