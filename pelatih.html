@@ -107,8 +107,8 @@
         /* 🔹 SELURUH ISI TABEL RATA TENGAH 🔹 */
         table th, table td {
             padding: 10px;
-            text-align: center; /* <--- RATA TENGAH SESUAI PERMINTAAN */
-            vertical-align: middle; /* <--- TULISAN DI TENGAH TINGGI SEL */
+            text-align: center;
+            vertical-align: middle;
             border-bottom: 1px solid #444;
             font-size: 14px;
         }
@@ -133,7 +133,7 @@
             font-size: 14px;
             background-color: #3a3a3a;
             color: #ffffff;
-            text-align: center; /* <--- PILIHAN JUGA RATA TENGAH */
+            text-align: center;
             text-align-last: center;
         }
         td select:disabled {
@@ -154,10 +154,17 @@
             font-weight: 500;
         }
         
+        /* Warna merah untuk murid yang tidak ikut sama sekali */
+        .nama-merah {
+            color: #ff4444 !important;
+            font-weight: bold;
+        }
+
         .pesan-kosong {text-align:center; color:#95a5a6; padding:20px;}
         .pesan-error {text-align:center; color:#e74c3c; padding:20px;}
+        .pesan-info {text-align:center; color:#3498db; padding:10px; margin-bottom:10px;}
     </style>
-    <!-- Tambahkan ikon simpan dari Font Awesome -->
+    <!-- Ikon simpan -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -174,7 +181,7 @@
             <h1>Data Nilai Ekstrakurikuler - Pelatih</h1><br>
 
             <div class="keterangan">
-                ℹ️ <strong>Petunjuk:</strong> Gunakan filter untuk memilih Kelas atau Ekskul yang anda asuh. Hanya isi kolom <strong>Nilai (A/B/C)</strong>. Data lain sudah ditetapkan dan tidak dapat diubah.
+                ℹ️ <strong>Petunjuk:</strong> Pilih Ekskul yang anda asuh. Jika murid ikut 2 ekskul, namanya akan muncul di masing-masing daftar ekskul tersebut. Isi Nilai lalu Simpan.
             </div>
 <br>
             <!-- 🔹 FILTER KELAS & EKSKUL 🔹 -->
@@ -186,21 +193,24 @@
                     </select>
                 </div>
                 <div>
-                    <label for="filterEkskul">Filter Ekskul:</label>
+                    <label for="filterEkskul">Pilih Ekskul:</label>
                     <select id="filterEkskul" onchange="terapkanFilter()">
                         <option value="SEMUA">-- Semua Ekskul --</option>
+                        <option value="Futsal">Futsal</option>
+                        <option value="Paskib">Paskib</option>
+                        <option value="Pramuka">Pramuka</option>
+                        <option value="PMR">PMR</option>
+                        <option value="Tari">Tari</option>
                         <option value="Silat">Silat</option>
                         <option value="Taekwondo">Taekwondo</option>
-                        <option value="Paskib">Paskib</option>
-                        <option value="Futsal">Futsal</option>
-                        <option value="Tari">Tari</option>
                         <option value="Tahsin">Tahsin</option>
                         <option value="Drumband">Drumband</option>
-                        <option value="PMR">PMR</option>
-                        <option value="Pramuka">Pramuka</option>
+                        <option value="">-- Tidak Ikut --</option>
                     </select>
                 </div>
             </div>
+
+            <div id="statusInfo" class="pesan-info" style="display:none;"></div>
 
             <table>
                 <thead>
@@ -221,30 +231,53 @@
     </div>
 
     <script>
-        // 👇 PASTIKAN URL SAMA DENGAN YANG DI KESISWAAN 👇
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXb5rD91nJbrawXhpV8-BdaVJGhOaVPUum9ThQI8dyUVSyNwMZm5srZTtHzbjphR_N/exec";
-        let dataAsli = [];      // Menyimpan SEMUA data asli
+        // 👇 URL SKRIP TERBARU 👇
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxhaxVjXOWFZVU9Y3pWYSbKN1SAcn8VrUfxJ9DWTKrHIzFOPyOEKl3uqdO74pDNAMH36A/exec";
+        let dataAsli = [];      // Menyimpan SEMUA data asli [No, NIS, Nama, JK, Kelas, Ekskul1, Nilai1, Ekskul2, Nilai2]
         let daftarKelas = [];   // Menyimpan daftar nama kelas unik
+
+        // 🔧 FUNGSI BANTU: Samakan teks agar cocok meski beda huruf besar/kecil atau spasi
+        function bersihkanTeks(teks) {
+            return (teks || "").toString().trim().toLowerCase();
+        }
+
+        function tampilkanStatus(pesan) {
+            const el = document.getElementById('statusInfo');
+            el.style.display = 'pesan-info';
+            el.textContent = pesan;
+        }
 
         function muatData() {
             const tbody = document.getElementById('tabelData');
-            tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">Memuat data...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">🔄 Memuat data dari Google Sheet...</td></tr>';
+            tampilkanStatus('Sedang menghubungkan ke server...');
 
-            fetch(SCRIPT_URL)
-                .then(res => res.json())
+            fetch(SCRIPT_URL, {method: 'GET', cache: 'no-store'})
+                .then(res => {
+                    if (!res.ok) throw new Error("Server tidak merespon");
+                    return res.json();
+                })
                 .then(data => {
-                    dataAsli = data;
+                    tampilkanStatus('✅ Data berhasil dimuat');
+                    
+                    // ✅ Pastikan data array lengkap, isi kolom kosong agar aman dibaca
+                    dataAsli = data.map(baris => {
+                        while (baris.length < 9) baris.push("");
+                        return baris;
+                    });
+                    
                     tbody.innerHTML = '';
 
-                    if (data.length <= 1) {
-                        tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">📭 Belum ada data murid</td></tr>';
+                    if (dataAsli.length <= 1) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">📭 BELUM ADA DATA MURID di Google Sheet</td></tr>';
+                        tampilkanStatus('⚠️ Google Sheet kosong / belum diisi');
                         return;
                     }
 
                     // 🔽 AMBIL DAFTAR KELAS UNTUK FILTER 🔽
                     daftarKelas = [];
-                    for (let i = 1; i < data.length; i++) {
-                        const kelas = data[i][4];
+                    for (let i = 1; i < dataAsli.length; i++) {
+                        const kelas = dataAsli[i][4] || "";
                         if (kelas && !daftarKelas.includes(kelas)) {
                             daftarKelas.push(kelas);
                         }
@@ -256,7 +289,15 @@
                     tampilkanDataSesuaiFilter();
                 })
                 .catch(err => {
-                    tbody.innerHTML = '<tr><td colspan="7" class="pesan-error">❌ Gagal memuat data. Cek URL & Izin!</td></tr>';
+                    tampilkanStatus('❌ GAGAL TERHUBUNG: Cek Izin / Deploy Ulang Script');
+                    tbody.innerHTML = `
+                    <tr><td colspan="7" class="pesan-error">
+                        ❌ Gagal memuat data<br>
+                        <small>Penyebab umum: <br>
+                        1. Google Script belum di-DEPLOY ulang<br>
+                        2. Izin akses belum diset ke "Siapapun yang punya link"<br>
+                        3. Ada kesalahan kode di Google Script</small>
+                    </td></tr>`;
                     console.error(err);
                 });
         }
@@ -278,58 +319,97 @@
             tampilkanDataSesuaiFilter();
         }
 
-        // Menampilkan data HANYA yang sudah punya ekskul
+        // Menampilkan data: PISAHKAN BARIS JIKA IKUT 2 EKSKUL
         function tampilkanDataSesuaiFilter() {
             const tbody = document.getElementById('tabelData');
             tbody.innerHTML = '';
 
             const filterKelas = document.getElementById('filterKelas').value;
             const filterEkskul = document.getElementById('filterEkskul').value;
+            const filterEkskulBersih = bersihkanTeks(filterEkskul); // ✅ Teks dibersihkan
+            let nomorUrut = 1; // Penomoran ulang di tampilan
             let adaData = false;
 
             for (let i = 1; i < dataAsli.length; i++) {
                 const d = dataAsli[i];
-                const kelasData = d[4];
-                const ekskulData = d[5] || ""; // Ambil data ekskul
+                const kelasData = d[4] || "";
+                const ekskul1 = d[5] || ""; // Kolom F
+                const nilai1 = d[6] || "";  // Kolom G
+                const ekskul2 = d[7] || ""; // Kolom H
+                const nilai2 = d[8] || "";  // Kolom I
 
-                // 🔍 LOGIKA FILTER: HANYA TAMPILKAN YANG SUDAH DIPILIH EKSKULNYA
-                let cocokKelas = (filterKelas === "SEMUA" || kelasData === filterKelas);
-                let cocokEkskul = (filterEkskul === "SEMUA" || ekskulData === filterEkskul);
-                let sudahAdaEkskul = (ekskulData !== ""); // Wajib ada nama ekskul
+                // ✅ LOGIKA WARNA MERAH: Jika kedua ekskul kosong / tidak ikut
+                let kelasWarna = "";
+                if( (ekskul1 === "" || ekskul1 === "Tidak Ikut") && (ekskul2 === "" || ekskul2 === "Tidak Ikut") ) {
+                    kelasWarna = "nama-merah";
+                }
 
-                if (cocokKelas && cocokEkskul && sudahAdaEkskul) {
+                // --- PROSES EKSKUL PERTAMA ---
+                const ekskul1Bersih = bersihkanTeks(ekskul1);
+                let cocok1 = (filterKelas === "SEMUA" || kelasData === filterKelas) && 
+                             (filterEkskul === "SEMUA" || ekskul1Bersih === filterEkskulBersih) && 
+                             ekskul1 !== "";
+
+                if (cocok1) {
                     adaData = true;
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="kolom-terkunci">${d[0] || ''}</td>
+                        <td class="kolom-terkunci">${nomorUrut++}</td>
                         <td class="kolom-terkunci">${d[1] || ''}</td>
-                        <td class="kolom-terkunci">${d[2] || ''}</td>
+                        <td class="kolom-terkunci ${kelasWarna}" style="text-align:left">${d[2] || ''}</td>
                         <td class="kolom-terkunci">${d[3] || ''}</td>
                         <td class="kolom-terkunci">${d[4] || ''}</td>
                         
                         <!-- Kolom Ekskul TERKUNCI (Tidak bisa diubah) -->
                         <td class="kolom-terkunci">
                             <select disabled>
-                                <option value="" ${ekskulData == "" ? 'selected' : ''}>-- Tidak Ikut --</option>
-                                <option value="Silat" ${ekskulData == 'Silat' ? 'selected' : ''}>Silat</option>
-                                <option value="Taekwondo" ${ekskulData == 'Taekwondo' ? 'selected' : ''}>Taekwondo</option>
-                                <option value="Paskib" ${ekskulData == 'Paskib' ? 'selected' : ''}>Paskib</option>
-                                <option value="Futsal" ${ekskulData == 'Futsal' ? 'selected' : ''}>Futsal</option>
-                                <option value="Tari" ${ekskulData == 'Tari' ? 'selected' : ''}>Tari</option>
-                                <option value="Tahsin" ${ekskulData == 'Tahsin' ? 'selected' : ''}>Tahsin</option>
-                                <option value="Drumband" ${ekskulData == 'Drumband' ? 'selected' : ''}>Drumband</option>
-                                <option value="PMR" ${ekskulData == 'PMR' ? 'selected' : ''}>PMR</option>
-                                <option value="Pramuka" ${ekskulData == 'Pramuka' ? 'selected' : ''}>Pramuka</option>
+                                <option value="${ekskul1}" selected>${ekskul1}</option>
                             </select>
                         </td>
 
-                        <!-- Kolom Nilai: BISA DIUBAH (A/B/C) -->
+                        <!-- Kolom Nilai 1: BISA DIUBAH (Pilihan A/B/C) -->
                         <td>
-                            <select id="nilai_${i}">
-                                <option value="" ${d[6] == "" ? 'selected' : ''}>-- Pilih Nilai --</option>
-                                <option value="A" ${d[6] == 'A' ? 'selected' : ''}>A</option>
-                                <option value="B" ${d[6] == 'B' ? 'selected' : ''}>B</option>
-                                <option value="C" ${d[6] == 'C' ? 'selected' : ''}>C</option>
+                            <select id="nilai_${i}_1">
+                                <option value="" ${nilai1 == "" ? 'selected' : ''}>-</option>
+                                <option value="A" ${nilai1 == 'A' ? 'selected' : ''}>A</option>
+                                <option value="B" ${nilai1 == 'B' ? 'selected' : ''}>B</option>
+                                <option value="C" ${nilai1 == 'C' ? 'selected' : ''}>C</option>
+                            </select>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                // --- PROSES EKSKUL KEDUA ---
+                const ekskul2Bersih = bersihkanTeks(ekskul2);
+                let cocok2 = (filterKelas === "SEMUA" || kelasData === filterKelas) && 
+                             (filterEkskul === "SEMUA" || ekskul2Bersih === filterEkskulBersih) && 
+                             ekskul2 !== "";
+
+                if (cocok2) {
+                    adaData = true;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="kolom-terkunci">${nomorUrut++}</td>
+                        <td class="kolom-terkunci">${d[1] || ''}</td>
+                        <td class="kolom-terkunci ${kelasWarna}" style="text-align:left">${d[2] || ''}</td>
+                        <td class="kolom-terkunci">${d[3] || ''}</td>
+                        <td class="kolom-terkunci">${d[4] || ''}</td>
+                        
+                        <!-- Kolom Ekskul TERKUNCI (Tidak bisa diubah) -->
+                        <td class="kolom-terkunci">
+                            <select disabled>
+                                <option value="${ekskul2}" selected>${ekskul2}</option>
+                            </select>
+                        </td>
+
+                        <!-- Kolom Nilai 2: BISA DIUBAH (Pilihan A/B/C) -->
+                        <td>
+                            <select id="nilai_${i}_2">
+                                <option value="" ${nilai2 == "" ? 'selected' : ''}>-</option>
+                                <option value="A" ${nilai2 == 'A' ? 'selected' : ''}>A</option>
+                                <option value="B" ${nilai2 == 'B' ? 'selected' : ''}>B</option>
+                                <option value="C" ${nilai2 == 'C' ? 'selected' : ''}>C</option>
                             </select>
                         </td>
                     `;
@@ -337,12 +417,12 @@
                 }
             }
 
-            if (!adaData) {
-                tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">📭 Tidak ada murid yang terdaftar di ekskul ini / sesuai filter</td></tr>';
+            if (!adaData && dataAsli.length > 1) {
+                tbody.innerHTML = '<tr><td colspan="7" class="pesan-kosong">📭 Tidak ada murid yang terdaftar di ekskul / kelas ini</td></tr>';
             }
         }
 
-        // 🔥 FUNGSI SIMPAN: HANYA PERBARUI KOLOM NILAI
+        // 🔥 FUNGSI SIMPAN: Perbarui nilai sesuai kolomnya
         function simpanSemuaData() {
             if (dataAsli.length <= 1) {
                 alert("Tidak ada data untuk disimpan!");
@@ -352,58 +432,57 @@
             let dataBaru = [];
             dataBaru.push(dataAsli[0]); // Judul kolom
 
-            // Baca SEMUA data, ambil perubahan NILAI saja
+            // Baca SEMUA data asli, ambil perubahan nilai jika ada
             for (let i = 1; i < dataAsli.length; i++) {
-                // Ambil data lama (aman dan tidak berubah)
-                const no = dataAsli[i][0];
-                const nis = dataAsli[i][1];
-                const nama = dataAsli[i][2];
-                const lp = dataAsli[i][3];
-                const kelas = dataAsli[i][4];
-                const ekskul = dataAsli[i][5]; // Tetap sama, tidak diubah pelatih
+                const d = dataAsli[i];
+                
+                // Ambil nilai baru jika baris tersebut ditampilkan/diedit
+                let n1 = d[6] || ""; // Nilai 1 lama
+                let n2 = d[8] || ""; // Nilai 2 lama
 
-                // Ambil NILAI BARU jika baris sedang ditampilkan, jika tidak pakai nilai lama
-                let nilaiBaru = dataAsli[i][6] || "";
-                const elemenNilai = document.getElementById(`nilai_${i}`);
-                if (elemenNilai) {
-                    nilaiBaru = elemenNilai.value;
-                }
+                const el1 = document.getElementById(`nilai_${i}_1`);
+                const el2 = document.getElementById(`nilai_${i}_2`);
+                
+                if(el1) n1 = el1.value; // Ganti jika ada perubahan
+                if(el2) n2 = el2.value; // Ganti jika ada perubahan
 
-                // Susun ulang data
+                // ✅ Pastikan panjang kolom selalu 9, tidak kurang
                 dataBaru.push([
-                    no, nis, nama, lp, kelas, ekskul, nilaiBaru
+                    d[0] || "", d[1] || "", d[2] || "", d[3] || "", d[4] || "", // Data identitas (tetap)
+                    d[5] || "", n1,                                               // Ekskul1 (tetap), Nilai1 (baru)
+                    d[7] || "", n2                                                // Ekskul2 (tetap), Nilai2 (baru)
                 ]);
             }
 
-            // Kirim ke Database
+            // ✅ KIRIM DENGAN FORM DATA (CARA INI DITERIMA GOOGLE)
+            const formData = new FormData();
+            formData.append("data", JSON.stringify(dataBaru));
+
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    perintah: "timpa_data",
-                    data: dataBaru
-                })
+                body: formData,
+                redirect: "follow"
             })
-            .then(res => res.json())
+            .then(res => res.text())
             .then(hasil => {
-                if (hasil.status === "sukses") {
-                    alert("✅ BERHASIL! Nilai berhasil disimpan.");
-                    // Simpan posisi filter
-                    const filterKelasSekarang = document.getElementById('filterKelas').value;
-                    const filterEkskulSekarang = document.getElementById('filterEkskul').value;
+                if (hasil === "SUKSES") {
+                    alert("✅ BERHASIL! Nilai berhasil disimpan ke Google Sheet.");
+                    // Simpan posisi filter agar tidak berubah setelah simpan
+                    const fK = document.getElementById('filterKelas').value;
+                    const fE = document.getElementById('filterEkskul').value;
                     muatData();
-                    // Kembalikan filter
+                    // Kembalikan pilihan filter
                     setTimeout(() => {
-                        document.getElementById('filterKelas').value = filterKelasSekarang;
-                        document.getElementById('filterEkskul').value = filterEkskulSekarang;
-                        terapkanFilter();
+                        document.getElementById('filterKelas').value = fK;
+                        document.getElementById('filterEkskul').value = fE;
                     }, 500);
                 } else {
-                    alert("❌ Gagal: " + hasil.error);
+                    alert("❌ Gagal: " + hasil);
                 }
             })
             .catch(err => {
-                alert("❌ Koneksi gagal! Pastikan URL & Izin benar.");
+                alert("❌ Koneksi gagal! Cek kembali URL Script.");
+                console.error(err);
             });
         }
 
