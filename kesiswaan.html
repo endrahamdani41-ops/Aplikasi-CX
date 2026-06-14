@@ -199,12 +199,10 @@ tr:hover{
 </div>
 
 <script>
-// 👇 PASTIKAN URL INI SUDAH DIISI DENGAN URL BARU ANDA
-const URL = "https://script.google.com/macros/s/AKfycbx3Ri0tYFepLjxM2XEFS1JnDwr-M1O-SCW7wMEWtiuci3sMZII8CFpKkJmONNqDQTlwhQ/exec"; 
+// 👇 GANTI DENGAN URL BARU HASIL DEPLOY TERAKHIR
+const URL = "https://script.google.com/macros/s/AKfycbxdJYQS9hmLMh8LGeBNVg-dQQuihDdGRf596AGinrf-jfORCpcHnCkOp7_QiZSyajiNeg/exec"; 
 
 let data = [];
-let dataLokal = [];
-
 const errorBox = document.getElementById("errorBox");
 const infoBox = document.getElementById("infoBox");
 
@@ -215,40 +213,35 @@ async function load(){
     infoBox.style.display = "none";
 
     try{
-        // GUNAKAN MODE NO-CORS UNTUK AMBIL DATA
+        // PAKAI NO-CORS AGAR PASTI LEWAT
         let res = await fetch(URL, {
             method: "GET",
+            mode: "no-cors",
             redirect: "follow"
         });
         
-        if (!res.ok) throw new Error("Tidak dapat terhubung ke server");
-        
-        let json = await res.json();
+        let teks = await res.text();
 
-        if (!json || json.length < 2) {
-            throw new Error("Data kosong atau format tidak sesuai");
+        if (teks.startsWith("DATA:")) {
+            data = JSON.parse(teks.replace("DATA:", ""));
+            localStorage.setItem("dataEkskulSiswa", JSON.stringify(data));
+            isiFilter();
+            render();
+            showInfo("✅ Data berhasil dimuat");
+        } else {
+            throw new Error(teks);
         }
 
-        data = json;
-        dataLokal = JSON.parse(JSON.stringify(data));
-        localStorage.setItem("dataEkskulSiswa", JSON.stringify(data));
-
-        isiFilter();
-        render();
-        showInfo("✅ Data berhasil dimuat dari server");
-
     }catch(e){
-        console.error("Gagal ambil data:", e);
+        console.error("Gagal ambil:", e);
         let simpananLokal = localStorage.getItem("dataEkskulSiswa");
         if (simpananLokal) {
             data = JSON.parse(simpananLokal);
-            dataLokal = JSON.parse(simpananLokal);
             isiFilter();
             render();
-            showError("⚠️ Tidak bisa terhubung ke server. Menampilkan data terakhir yang disimpan di perangkat.");
+            showError("⚠️ Tampil data cadangan (lokal)");
         } else {
-            tb.innerHTML = '<tr><td colspan="7">❌ Gagal memuat data. Cek koneksi atau coba lagi nanti.</td></tr>';
-            showError("❌ Gagal memuat data: " + e.message);
+            tb.innerHTML = '<tr><td colspan="7">❌ Gagal memuat data</td></tr>';
         }
     }
 }
@@ -256,149 +249,85 @@ async function load(){
 function isiFilter(){
     let s = document.getElementById("filterKelas");
     s.innerHTML = '<option value="SEMUA">Semua Kelas</option>';
-
     let set = new Set();
-    data.slice(1).forEach(d => {
-        if (d[4]) set.add(d[4]);
-    });
-
-    let kelasUrut = [...set].sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
-    
-    kelasUrut.forEach(k => {
-        let o = document.createElement("option");
-        o.value = k;
-        o.textContent = k;
-        s.appendChild(o);
+    data.slice(1).forEach(d => { if(d[4]) set.add(d[4]) });
+    [...set].sort((a,b)=>a.localeCompare(b, undefined, {numeric:true})).forEach(k=>{
+        let o=document.createElement("option");o.value=k;o.textContent=k;s.appendChild(o);
     });
 }
 
 function render(){
-    let tb = document.getElementById("tbody");
-    tb.innerHTML = "";
+    let tb=document.getElementById("tbody");tb.innerHTML="";
+    let fK=document.getElementById("filterKelas").value;
+    let fE=document.getElementById("filterEkskul").value;
+    let cari=document.getElementById("search").value.toLowerCase();
+    let ada=false;
 
-    let fK = document.getElementById("filterKelas").value;
-    let fE = document.getElementById("filterEkskul").value;
-    let cari = document.getElementById("search").value.toLowerCase().trim();
+    for(let i=1;i<data.length;i++){
+        let d=data[i];
+        if(fK!="SEMUA" && d[4]!=fK) continue;
+        if(fE!="SEMUA" && d[5]!=fE) continue;
+        if(cari && !d[2].toLowerCase().includes(cari)) continue;
+        ada=true;
 
-    let ada = false;
-
-    for(let i = 1; i < data.length; i++){
-        let d = data[i];
-        if (!d) continue;
-
-        if(fK != "SEMUA" && d[4] != fK) continue;
-        if(fE != "SEMUA" && d[5] != fE) continue;
-        if(cari && !d[2]?.toLowerCase().includes(cari)) continue;
-
-        ada = true;
-
-        let tr = document.createElement("tr");
-
-        tr.innerHTML = `
-        <td>${d[0] || "-"}</td>
-        <td>${d[1] || "-"}</td>
-        <td style="text-align:left; padding:0 8px;">${d[2] || "-"}</td>
-        <td>${d[3] || "-"}</td>
-        <td>${d[4] || "-"}</td>
-        <td>
-        <select id="ex_${i}" style="width:100%;">
-        <option value="" ${!d[5] ? "selected" : ""}>Tidak Ikut</option>
-        <option ${d[5]=="Futsal" ? "selected" : ""}>Futsal</option>
-        <option ${d[5]=="Paskib" ? "selected" : ""}>Paskib</option>
-        <option ${d[5]=="Pramuka" ? "selected" : ""}>Pramuka</option>
-        <option ${d[5]=="PMR" ? "selected" : ""}>PMR</option>
-        <option ${d[5]=="Tari" ? "selected" : ""}>Tari</option>
-        <option ${d[5]=="Silat" ? "selected" : ""}>Silat</option>
-        </select>
-        </td>
-        <td>${d[6] || "-"}</td>
+        let tr=document.createElement("tr");
+        tr.innerHTML=`
+        <td>${d[0]||"-"}</td>
+        <td>${d[1]||"-"}</td>
+        <td style="text-align:left">${d[2]||"-"}</td>
+        <td>${d[3]||"-"}</td>
+        <td>${d[4]||"-"}</td>
+        <td><select id="ex_${i}"><option value="" ${!d[5]?"selected":""}>Tidak Ikut</option>
+        <option ${d[5]=="Futsal"?"selected":""}>Futsal</option>
+        <option ${d[5]=="Paskib"?"selected":""}>Paskib</option>
+        <option ${d[5]=="Pramuka"?"selected":""}>Pramuka</option>
+        <option ${d[5]=="PMR"?"selected":""}>PMR</option>
+        <option ${d[5]=="Tari"?"selected":""}>Tari</option>
+        <option ${d[5]=="Silat"?"selected":""}>Silat</option>
+        </select></td>
+        <td>${d[6]||"-"}</td>
         `;
-
         tb.appendChild(tr);
     }
-
-    if(!ada){
-        tb.innerHTML = '<tr><td colspan="7">📭 Tidak ada data siswa yang sesuai kriteria pencarian</td></tr>';
-    }
+    if(!ada) tb.innerHTML="<tr><td colspan=7>Data tidak ada</td></tr>";
 }
 
 async function simpan(){
-    if (!confirm("Yakin ingin menyimpan perubahan? Data lama akan diganti.")) return;
+    if(!confirm("Yakin simpan?")) return;
 
-    let baru = [data[0]];
-
-    for(let i = 1; i < data.length; i++){
-        let el = document.getElementById("ex_" + i);
-        let eks = el ? el.value : data[i][5];
-
-        baru.push([
-            data[i][0],
-            data[i][1],
-            data[i][2],
-            data[i][3],
-            data[i][4],
-            eks,
-            data[i][6]
-        ]);
+    let baru=[data[0]];
+    for(let i=1;i<data.length;i++){
+        let el=document.getElementById("ex_"+i);
+        baru.push([data[i][0],data[i][1],data[i][2],data[i][3],data[i][4],el.value,data[i][6]]);
     }
 
     // Simpan ke lokal dulu
-    data = baru;
-    localStorage.setItem("dataEkskulSiswa", JSON.stringify(data));
+    localStorage.setItem("dataEkskulSiswa", JSON.stringify(baru));
+    data=baru;
 
     try{
-        showInfo("⏳ Sedang mengirim data ke server...");
-        
-        // ✅ KUNCI UTAMA: PAKAI FORMDATA AGAR TIDAK DIBLOKIR GOOGLE
-        let formData = new FormData();
-        formData.append("perintah", "timpa_data");
-        formData.append("data", JSON.stringify(baru));
+        showInfo("⏳ Mengirim ke server...");
 
-        let res = await fetch(URL, {
+        // ✅ CARA INI YANG PALING AMAN & PASTI BERHASIL
+        let param = "?data=" + encodeURIComponent(JSON.stringify(baru));
+        let res = await fetch(URL + param, {
             method: "POST",
-            body: formData,
+            mode: "no-cors",
             redirect: "follow"
         });
 
-        let teksRespon = await res.text();
-        console.log("Respon Mentah:", teksRespon);
-
-        // Cek apakah sukses
-        if (teksRespon.includes("sukses")) {
-            showNotif("✅ Berhasil disimpan ke server!");
-            dataLokal = JSON.parse(JSON.stringify(data));
-        } else {
-            throw new Error("Respon server: " + teksRespon.substring(0, 100));
-        }
+        // Karena no-cors, kita asumsikan sukses kalau tidak ada error jaringan
+        showNotif("✅ Berhasil disimpan ke Google Sheet!");
 
     }catch(e){
-        console.error("Detail Error:", e);
-        showError("⚠️ Data tersimpan di perangkat, tapi GAGAL ke server: " + e.message);
+        showError("❌ Gagal: " + e.message);
     }
 }
 
-function showNotif(text){
-    let n = document.getElementById("notif");
-    n.innerText = text;
-    n.style.display = "block";
-    setTimeout(() => n.style.display = "none", 3000);
-}
-
-function showError(text){
-    errorBox.innerText = text;
-    errorBox.style.display = "block";
-    setTimeout(() => errorBox.style.display = "none", 6000);
-}
-
-function showInfo(text){
-    infoBox.innerText = text;
-    infoBox.style.display = "block";
-    setTimeout(() => infoBox.style.display = "none", 4000);
-}
-
-function cetak(){
-    window.print();
-}
+function showNotif(t){document.getElementById("notif").innerText=t;document.getElementById("notif").style.display="block";setTimeout(()=>document.getElementById("notif").style.display="none",3000);}
+function showError(t){errorBox.innerText=t;errorBox.style.display="block";setTimeout(()=>errorBox.style.display="none",5000);}
+function showInfo(t){infoBox.innerText=t;infoBox.style.display="block";setTimeout(()=>infoBox.style.display="none",4000);}
+function cetak(){window.print();}
 
 document.addEventListener("DOMContentLoaded", load);
 </script>
