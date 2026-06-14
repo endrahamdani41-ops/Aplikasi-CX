@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kesiswaan Ekskul</title>
+<title>Kesiswaan Ekskul - SMPN 110 Jakarta</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
@@ -200,7 +200,7 @@ tr:hover{
 
 <script>
 // 👇 GANTI URL INI DENGAN URL BARU DARI GOOGLE APPS SCRIPT
-const URL = "https://script.google.com/macros/s/AKfycbxWEULpQyz6D8EMrTiUQ5fCol2RlVxwcsALQkzaETqRzoGKsOG_P4gu7DX0ffAfHFyseQ/exec"; 
+const URL = "https://script.google.com/macros/s/AKfycbyWaQusQTpeoK9Ic_hxr2mJUKyyOnS2u2bN_O92aXzgtLRH8CH3x7LZ6HNMBqEcbFAznA/exec"; 
 
 let data = [];
 let dataLokal = [];
@@ -341,35 +341,42 @@ async function simpan(){
         ]);
     }
 
+    // Simpan ke lokal dulu
     data = baru;
     localStorage.setItem("dataEkskulSiswa", JSON.stringify(data));
 
     try{
         showInfo("⏳ Sedang mengirim data ke server...");
         
+        // ⚠️ Pengaturan ini KUNCI agar berfungsi di GitHub Pages
         let res = await fetch(URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ perintah: "timpa_data", data: baru }),
-            redirect: "follow"
+            redirect: "follow" // <-- WAJIB ADA
         });
 
-        if (!res.ok) throw new Error("Respon server tidak valid");
-
-        let hasil = await res.json();
+        // Cek respon dari Google
+        let teksRespon = await res.text();
+        let hasil;
+        try {
+            hasil = JSON.parse(teksRespon);
+        } catch (err) {
+            throw new Error("Respon server tidak valid: " + teksRespon.substring(0,50));
+        }
 
         if(hasil.status == "sukses"){
             showNotif("✅ Berhasil disimpan ke server!");
             dataLokal = JSON.parse(JSON.stringify(data));
         }else{
-            throw new Error(hasil.pesan || "Gagal disimpan");
+            throw new Error(hasil.pesan || "Gagal disimpan ke sheet");
         }
 
     }catch(e){
-        console.error("Gagal simpan:", e);
-        showError("⚠️ Data tersimpan di perangkat, tapi GAGAL dikirim ke server: " + e.message);
+        console.error("Detail Error:", e);
+        showError("⚠️ Data tersimpan di HP/Komputer, tapi GAGAL ke server: " + e.message);
     }
 }
 
@@ -383,7 +390,7 @@ function showNotif(text){
 function showError(text){
     errorBox.innerText = text;
     errorBox.style.display = "block";
-    setTimeout(() => errorBox.style.display = "none", 5000);
+    setTimeout(() => errorBox.style.display = "none", 6000);
 }
 
 function showInfo(text){
@@ -396,6 +403,7 @@ function cetak(){
     window.print();
 }
 
+// Jalankan saat halaman siap
 document.addEventListener("DOMContentLoaded", load);
 </script>
 
