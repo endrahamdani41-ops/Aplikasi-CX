@@ -199,8 +199,8 @@ tr:hover{
 </div>
 
 <script>
-// 👇 GANTI URL INI DENGAN URL BARU DARI GOOGLE APPS SCRIPT
-const URL = "https://script.google.com/macros/s/AKfycbxY5sqRa-OLrnslu1LHZtBm3UMyk2vizi1hFbRjPvZ7kCqBhcLWiFSiRekOfkjgUiSL3A/exec"; 
+// 👇 PASTIKAN URL INI SUDAH DIISI DENGAN URL BARU ANDA
+const URL = "https://script.google.com/macros/s/AKfycbx3Ri0tYFepLjxM2XEFS1JnDwr-M1O-SCW7wMEWtiuci3sMZII8CFpKkJmONNqDQTlwhQ/exec"; 
 
 let data = [];
 let dataLokal = [];
@@ -215,6 +215,7 @@ async function load(){
     infoBox.style.display = "none";
 
     try{
+        // GUNAKAN MODE NO-CORS UNTUK AMBIL DATA
         let res = await fetch(URL, {
             method: "GET",
             redirect: "follow"
@@ -348,35 +349,31 @@ async function simpan(){
     try{
         showInfo("⏳ Sedang mengirim data ke server...");
         
-        // ⚠️ Pengaturan ini KUNCI agar berfungsi di GitHub Pages
+        // ✅ KUNCI UTAMA: PAKAI FORMDATA AGAR TIDAK DIBLOKIR GOOGLE
+        let formData = new FormData();
+        formData.append("perintah", "timpa_data");
+        formData.append("data", JSON.stringify(baru));
+
         let res = await fetch(URL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ perintah: "timpa_data", data: baru }),
-            redirect: "follow" // <-- WAJIB ADA
+            body: formData,
+            redirect: "follow"
         });
 
-        // Cek respon dari Google
         let teksRespon = await res.text();
-        let hasil;
-        try {
-            hasil = JSON.parse(teksRespon);
-        } catch (err) {
-            throw new Error("Respon server tidak valid: " + teksRespon.substring(0,50));
-        }
+        console.log("Respon Mentah:", teksRespon);
 
-        if(hasil.status == "sukses"){
+        // Cek apakah sukses
+        if (teksRespon.includes("sukses")) {
             showNotif("✅ Berhasil disimpan ke server!");
             dataLokal = JSON.parse(JSON.stringify(data));
-        }else{
-            throw new Error(hasil.pesan || "Gagal disimpan ke sheet");
+        } else {
+            throw new Error("Respon server: " + teksRespon.substring(0, 100));
         }
 
     }catch(e){
         console.error("Detail Error:", e);
-        showError("⚠️ Data tersimpan di HP/Komputer, tapi GAGAL ke server: " + e.message);
+        showError("⚠️ Data tersimpan di perangkat, tapi GAGAL ke server: " + e.message);
     }
 }
 
@@ -403,7 +400,6 @@ function cetak(){
     window.print();
 }
 
-// Jalankan saat halaman siap
 document.addEventListener("DOMContentLoaded", load);
 </script>
 
