@@ -8,7 +8,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#121212;color:#eee;padding:20px;}
-.container{max-width:1200px;margin:auto;background:#1e1e1e;border-radius:8px;overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,0.5);}
+.container{max-width:1200px;margin:auto;background:#1e1e1e;border-radius:8px;overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,0,0.5);}
 .header{background:#1565c0;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;}
 .header h1{font-size:17px;font-weight:normal;}
 button{padding:7px 14px;border:none;border-radius:4px;cursor:pointer;background:rgba(255,255,255,0.2);color:white;margin-left:5px;transition:background 0.3s;}
@@ -18,7 +18,7 @@ button:hover{background:rgba(255,255,255,0.3);}
 input, select{padding:7px 10px;margin:4px 0;background:#333;color:white;border:1px solid #555;border-radius:4px;font-size:13px;}
 input:focus, select:focus{outline:none;border-color:#1976d2;}
 table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px;}
-th,td{border:1px solid #444;padding:7px 5px;text-align:center;}
+th,td{border:1px solid #444;padding:7px 5px;text-align:center;vertical-align:middle;}
 th{background:#1976d2;font-weight:normal;}
 tr:nth-child(even){background:#2a2a2a;}
 tr:hover{background:#383838;}
@@ -30,64 +30,52 @@ tr:hover{background:#383838;}
 @media print{
     @page {
         size: A4;
-        margin: 12mm; /* Margin kertas pas */
+        margin: 10mm;
     }
-    body{
-        background:white !important;
-        color:black !important;
-        padding:0 !important;
-        font-size:11px !important; /* Ukuran font pas */
-    }
+    body{background:white !important;color:black !important;padding:0 !important;font-size:10px !important;}
     .header, .input-group, button, .notif, .error-box, .info-box{display:none !important;}
     .container{background:white;box-shadow:none;max-width:100%;}
     
-    /* Judul Cetak */
     .judul-cetak{text-align:center;margin-bottom:10px;line-height:1.4;}
     .judul-cetak h1{font-size:14px;font-weight:bold;}
     .judul-cetak h3{font-size:12px;font-weight:bold;margin-top:2px;}
 
-    table{
-        width:100%;
-        border:1px solid #000;
-        font-size:10px !important; /* Ukuran tabel kecil agar muat */
-        table-layout:fixed; /* Lebar kolom tetap */
-    }
-    th,td{
-        border:1px solid #000;
-        padding:4px 2px !important;
-        overflow:hidden;
-        text-overflow:ellipsis;
-    }
-    /* Atur lebar kolom agar pas */
-    th:nth-child(1), td:nth-child(1) { width: 5%; }  /* No */
-    th:nth-child(2), td:nth-child(2) { width: 8%; }  /* NIS */
-    th:nth-child(3), td:nth-child(3) { width: 28%; text-align:left !important; } /* Nama */
-    th:nth-child(4), td:nth-child(4) { width: 7%; }  /* JK */
-    th:nth-child(5), td:nth-child(5) { width: 8%; }  /* Kelas */
-    th:nth-child(6), td:nth-child(6) { width: 25%; } /* Ekskul */
-    th:nth-child(7), td:nth-child(7) { width: 7%; }  /* Nilai */
+    table{width:100%;border:1px solid #000;font-size:9px !important;table-layout:fixed;}
+    th,td{border:1px solid #000;padding:3px 2px !important;overflow:hidden;text-overflow:ellipsis;}
+    
+    /* Atur lebar kolom agar pas semua */
+    th:nth-child(1), td:nth-child(1) { width: 4%; }  /* No */
+    th:nth-child(2), td:nth-child(2) { width: 7%; }  /* NIS */
+    th:nth-child(3), td:nth-child(3) { width: 20%; text-align:left !important; } /* Nama */
+    th:nth-child(4), td:nth-child(4) { width: 5%; }  /* JK */
+    th:nth-child(5), td:nth-child(5) { width: 6%; }  /* Kelas */
+    th:nth-child(6), td:nth-child(6) { width: 14%; } /* Ekskul 1 */
+    th:nth-child(7), td:nth-child(7) { width: 6%; }  /* Nilai 1 */
+    th:nth-child(8), td:nth-child(8) { width: 14%; } /* Ekskul 2 */
+    th:nth-child(9), td:nth-child(9) { width: 6%; }  /* Nilai 2 */
 
     tr:nth-child(even){background:#f0f0f0;}
 
-    /* ✅ PENTING: SEMBUNYIKAN KOTAK DROPDOWN SAAT CETAK, TAMPILKAN TEKS SAJA */
+    /* ✅ SAAT CETAK: SEMBUNYIKAN KOTAK PILIHAN, TAMPILKAN TEKS SAJA */
     td select { display: none !important; }
-    td .teks-ekskul { display: inline !important; font-weight:normal; }
+    td .teks { display: inline !important; font-weight:normal; }
 
-    /* Tanda Tangan: Kanan + Rata Tengah */
-    .tanda-tangan{
-        margin-top:15px;
-        text-align:right;
-    }
-    .tanda-tangan .isi-ttd{
-        display:inline-block;
-        text-align:center;
-        font-size:11px;
-    }
+    /* ✅ Warna merah tetap muncul saat dicetak */
+    .nama-merah { color: red !important; font-weight: bold; }
+
+    .tanda-tangan{margin-top:15px;text-align:right;}
+    .tanda-tangan .isi-ttd{display:inline-block;text-align:center;font-size:10px;}
     .tanda-tangan p{margin:3px 0;}
 }
 
-/* ✅ Di layar biasa, teks nama ekskul disembunyikan, tampilkan dropdown saja */
-.teks-ekskul { display: none; }
+/* ✅ DI LAYAR: Tampilan teks disembunyikan */
+.teks { display: none; }
+
+/* ✅ KELAS WARNA MERAH UNTUK NAMA JIKA TIDAK IKUT EKSKUL */
+.nama-merah {
+    color: #ff4444 !important;
+    font-weight: bold;
+}
 </style>
 </head>
 
@@ -136,10 +124,12 @@ tr:hover{background:#383838;}
 <th>No</th>
 <th>NIS</th>
 <th>Nama Lengkap</th>
-<th>Jenis Kelamin</th>
+<th>JK</th>
 <th>Kelas</th>
-<th>Ekstrakurikuler</th>
-<th>Nilai</th>
+<th>Ekskul 1</th>
+<th>Nilai 1</th>
+<th>Ekskul 2</th>
+<th>Nilai 2</th>
 </tr>
 </thead>
 <tbody id="tbody"></tbody>
@@ -161,7 +151,7 @@ tr:hover{background:#383838;}
 
 <script>
 // ✅ URL SUDAH DIISI DENGAN YANG BARU
-const URL = "https://script.google.com/macros/s/AKfycbykzlaxi-vpre-SQfBlqFPOHYB0BYEy0uqcSHbSxSqUghHtelmOG0RxeVv30SDFXVMBfA/exec"; 
+const URL = "https://script.google.com/macros/s/AKfycbxhaxVjXOWFZVU9Y3pWYSbKN1SAcn8VrUfxJ9DWTKrHIzFOPyOEKl3uqdO74pDNAMH36A/exec"; 
 
 let data = [];
 const errorBox = document.getElementById("errorBox");
@@ -170,7 +160,7 @@ const infoBox = document.getElementById("infoBox");
 // BACA DATA DARI GOOGLE
 async function load(){
     let tb = document.getElementById("tbody");
-    tb.innerHTML = '<tr><td colspan="7">⏳ Sedang memuat data...</td></tr>';
+    tb.innerHTML = '<tr><td colspan="9">⏳ Sedang memuat data...</td></tr>';
     errorBox.style.display = "none";
     infoBox.style.display = "none";
 
@@ -194,7 +184,7 @@ async function load(){
             render();
             showError("⚠️ Tampil data cadangan (lokal)");
         } else {
-            tb.innerHTML = '<tr><td colspan="7">❌ Tidak ada data</td></tr>';
+            tb.innerHTML = '<tr><td colspan="9">❌ Tidak ada data</td></tr>';
         }
     }
 }
@@ -218,23 +208,32 @@ function render(){
 
     for(let i=1;i<data.length;i++){
         let d=data[i];
+        // Filter: Cari di ekskul 1 ATAU ekskul 2
         if(fK!="SEMUA" && d[4]!=fK) continue;
-        if(fE!="SEMUA" && d[5]!=fE) continue;
+        if(fE!="SEMUA" && !( (d[5] && d[5].includes(fE)) || (d[7] && d[7].includes(fE)) )) continue;
         if(cari && !d[2].toLowerCase().includes(cari)) continue;
         ada=true;
+
+        // ✅ LOGIKA WARNA MERAH: JIKA KEDUA EKSKUL KOSONG / TIDAK IKUT
+        let ekskul1 = d[5] || "";
+        let ekskul2 = d[7] || "";
+        let kelasWarna = "";
+        if( (ekskul1 === "" || ekskul1 === "Tidak Ikut") && (ekskul2 === "" || ekskul2 === "Tidak Ikut") ) {
+            kelasWarna = "nama-merah"; // Tambah kelas CSS
+        }
 
         let tr=document.createElement("tr");
         tr.innerHTML=`
         <td>${d[0]||"-"}</td>
         <td>${d[1]||"-"}</td>
-        <td style="text-align:left">${d[2]||"-"}</td>
+        <td class="${kelasWarna}" style="text-align:left">${d[2]||"-"}</td>
         <td>${d[3]||"-"}</td>
         <td>${d[4]||"-"}</td>
+        
+        <!-- EKSKUL 1 -->
         <td>
-            <!-- Teks untuk cetak -->
-            <span class="teks-ekskul">${d[5]||"Tidak Ikut"}</span>
-            <!-- Dropdown untuk di layar -->
-            <select id="ex_${i}">
+            <span class="teks">${d[5]||"Tidak Ikut"}</span>
+            <select id="ex1_${i}">
                 <option value="" ${!d[5]?"selected":""}>Tidak Ikut</option>
                 <option ${d[5]=="Futsal"?"selected":""}>Futsal</option>
                 <option ${d[5]=="Paskib"?"selected":""}>Paskib</option>
@@ -244,24 +243,64 @@ function render(){
                 <option ${d[5]=="Silat"?"selected":""}>Silat</option>
             </select>
         </td>
-        <td>${d[6]||"-"}</td>
+        
+        <!-- NILAI 1 -->
+        <td>
+            <span class="teks">${d[6]||"-"}</span>
+            <select id="nil1_${i}">
+                <option value="" ${!d[6]?"selected":""}>-</option>
+                <option value="A" ${d[6]=="A"?"selected":""}>A</option>
+                <option value="B" ${d[6]=="B"?"selected":""}>B</option>
+                <option value="C" ${d[6]=="C"?"selected":""}>C</option>
+
+            </select>
+        </td>
+
+        <!-- EKSKUL 2 -->
+        <td>
+            <span class="teks">${d[7]||"Tidak Ikut"}</span>
+            <select id="ex2_${i}">
+                <option value="" ${!d[7]?"selected":""}>Tidak Ikut</option>
+                <option ${d[7]=="Futsal"?"selected":""}>Futsal</option>
+                <option ${d[7]=="Paskib"?"selected":""}>Paskib</option>
+                <option ${d[7]=="Pramuka"?"selected":""}>Pramuka</option>
+                <option ${d[7]=="PMR"?"selected":""}>PMR</option>
+                <option ${d[7]=="Tari"?"selected":""}>Tari</option>
+                <option ${d[7]=="Silat"?"selected":""}>Silat</option>
+            </select>
+        </td>
+        
+        <!-- NILAI 2 -->
+        <td>
+            <span class="teks">${d[8]||"-"}</span>
+            <select id="nil2_${i}">
+                <option value="" ${!d[8]?"selected":""}>-</option>
+                <option value="A" ${d[8]=="A"?"selected":""}>A</option>
+                <option value="B" ${d[8]=="B"?"selected":""}>B</option>
+                <option value="C" ${d[8]=="C"?"selected":""}>C</option>
+ 
+            </select>
+        </td>
         `;
         tb.appendChild(tr);
     }
-    if(!ada) tb.innerHTML="<tr><td colspan=7>Data tidak ada</td></tr>";
+    if(!ada) tb.innerHTML="<tr><td colspan=9>Data tidak ada</td></tr>";
 }
 
-// ✅ FUNGSI SIMPAN YANG 100% BERHASIL
+// ✅ FUNGSI SIMPAN KE GOOGLE SHEET
 async function simpan(){
     if(!confirm("Yakin simpan ke Google Sheet?")) return;
 
-    // Kumpulkan data baru
     let baru = [data[0]];
     for(let i=1;i<data.length;i++){
-        let el = document.getElementById("ex_"+i);
+        let ex1 = document.getElementById(`ex1_${i}`).value;
+        let nil1 = document.getElementById(`nil1_${i}`).value;
+        let ex2 = document.getElementById(`ex2_${i}`).value;
+        let nil2 = document.getElementById(`nil2_${i}`).value;
+
         baru.push([
             data[i][0], data[i][1], data[i][2], data[i][3], data[i][4],
-            el.value, data[i][6]
+            ex1, nil1, ex2, nil2 // Simpan ke kolom berurutan
         ]);
     }
 
@@ -271,15 +310,13 @@ async function simpan(){
     try{
         showInfo("⏳ Mengirim data ke Google...");
 
-        // 🔑 KUNCI UTAMA: PAKAI FormData, BUKAN JSON
         let formData = new FormData();
-        formData.append("data", JSON.stringify(baru)); // Masukkan data ke formulir
+        formData.append("data", JSON.stringify(baru));
 
-        // Kirim ke server
         let res = await fetch(URL, {
             method: "POST",
             body: formData,
-            redirect: "follow" // WAJIB ADA
+            redirect: "follow"
         });
 
         let teks = await res.text();
@@ -296,26 +333,21 @@ async function simpan(){
     }
 }
 
-// ✅ FUNGSI CETAK SESUAI PERMINTAAN
+// ✅ FUNGSI CETAK
 function cetak(){
-    // Ambil nama kelas yang sedang difilter
     let kelasTerpilih = document.getElementById("filterKelas").value;
     document.getElementById("namaKelasCetak").textContent = (kelasTerpilih !== "SEMUA") ? kelasTerpilih : "Semua Kelas";
 
-    // Buat format tanggal hari ini: Jakarta, 14 Juni 2026
     const hari = new Date();
     const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
     const tglCetak = hari.getDate() + " " + namaBulan[hari.getMonth()] + " " + hari.getFullYear();
     document.getElementById("tanggalHariIni").textContent = tglCetak;
 
-    // Tampilkan elemen khusus cetak
     document.getElementById("judulCetak").style.display = "block";
     document.getElementById("tandaTangan").style.display = "block";
 
-    // Jalankan perintah cetak browser
     window.print();
 
-    // Sembunyikan kembali setelah cetak selesai
     setTimeout(() => {
         document.getElementById("judulCetak").style.display = "none";
         document.getElementById("tandaTangan").style.display = "none";
