@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menu 3D</title>
+    <title>Menu 3D - Versi Terbaru</title>
  
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/JjyvHZbP/logo-menu3d.png">
     <link rel="shortcut icon" type="image/png" href="https://i.ibb.co.com/JjyvHZbP/logo-menu3d.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    
     <style>
         /* === RESET & FIX VIEWPORT HP === */
         html, body {
@@ -55,6 +55,16 @@
             background-color: rgba(10, 15, 30, 0.4) !important;
         }
 
+        /* WADAH UNTUK CANVAS PARTIKEL */
+        #particleCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
         /* === WADAH MENU === */
         .menu-container {
             position: relative;
@@ -62,6 +72,41 @@
             height: 380px;
             margin: 0 auto;
             z-index: 2;
+        }
+
+        /* === ELEMEN GARIS ORBIT NEON BERDENYUT === */
+        .orbit-line {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 300px;
+            height: 300px;
+            border: 2px dashed rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 
+                0 0 15px rgba(255, 255, 255, 0.1),
+                inset 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .orbit-line.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            animation: orbitPulse 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes orbitPulse {
+            0% {
+                border-color: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.05), inset 0 0 10px rgba(255, 255, 255, 0.05);
+            }
+            100% {
+                border-color: rgba(255, 255, 255, 0.5);
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.25), inset 0 0 25px rgba(255, 255, 255, 0.25);
+            }
         }
 
         /* === LINGKARAN PUSAT 3D === */
@@ -83,10 +128,14 @@
                 inset 0 -8px 12px rgba(0, 0, 0, 0.15), 
                 inset 0 8px 12px rgba(255, 255, 255, 0.9);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .center-circle:hover {
-            transform: translate(-50%, -50%) scale(1.05);
+            transform: translate(-50%, -50%) scale(1.06);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4), 
+                inset 0 -4px 8px rgba(0, 0, 0, 0.1), 
+                inset 0 6px 10px rgba(255, 255, 255, 0.9);
         }
 
         /* === WADAH TEKS MELINGKAR === */
@@ -99,10 +148,15 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             overflow: visible; 
+            transition: animation-duration 0.5s ease;
         }
         @keyframes putarTeks {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .menu-container:has(.menu-item:hover) .text-circle {
+            animation-duration: 45s;
         }
 
         .char {
@@ -150,22 +204,46 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
             transform-origin: center center;
-            
-            /* Awalnya disembunyikan */
             opacity: 0;
-            transform: scale(0);
+            transform: translate(var(--x), var(--y)) scale(0);
             visibility: hidden;
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            /* Kita pisah durasi filter & box-shadow agar tidak tabrakan dengan CSS Animation melayang */
+            transition: opacity 0.4s ease, visibility 0.4s, box-shadow 0.3s ease, filter 0.3s ease;
             z-index: 5;
+            left: calc(50% - 37px);
+            top: calc(50% - 37px);
         }
 
+        /* ✅ SAAT SIFAT .show AKTIF, JALANKAN ANIMASI ME LINGKAr/MELAYANGsecara tak terbatas */
         .menu-item.show {
             opacity: 1;
-            transform: scale(1);
             visibility: visible;
+            animation: mengorbitMelayang var(--durasi-float, 4s) ease-in-out infinite alternate;
+            animation-delay: var(--delay-float, 0s);
+        }
+
+        /* ✅ RUMUS ANIMASI ORBIT FLOATING DENGAN BERTAHAN PADA TITIK KOORDINAT ASLINYA */
+        @keyframes mengorbitMelayang {
+            0% {
+                transform: translate(calc(var(--x) - 4px), calc(var(--y) - 5px)) scale(1) rotate(-1deg);
+            }
+            50% {
+                transform: translate(var(--x), var(--y)) scale(1.02) rotate(1deg);
+            }
+            100% {
+                transform: translate(calc(var(--x) + 4px), calc(var(--y) + 5px)) scale(1) rotate(-0.5deg);
+            }
+        }
+
+        /* ✅ JIKA DI-HOVER, MATIKAN SEMENTARA ANIMASI MELAYANG AGAR SENSASI KLIK TETAP STABIL */
+        .menu-item.show:hover {
+            animation-play-state: paused !important;
+            transform: translate(var(--x), var(--y)) scale(1.13) !important;
+            filter: brightness(1.1);
+            z-index: 40;
         }
 
         .menu-item::before {
@@ -179,34 +257,52 @@
 
         .menu-item span {
             font-size: 9px;
-            margin-top: 2px;
+            margin-top: 3px;
             font-weight: 700;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             pointer-events: none;
         }
 
-        /* ✅ WARNA UNIK UNTUK SETIAP IKON (TIDAK ADA YANG SAMA) */
+        /* WARNA UNIK & UPDATE GRADIEN CAHAYA SAAT HOVER */
         .color-0 { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); border: 2px solid #fb923c; box-shadow: 0 8px 15px rgba(194,65,12,0.4), 0 4px 0 #7c2d12; }
-        .color-1 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: 2px solid #60a5fa; box-shadow: 0 8px 15px rgba(29,78,216,0.4), 0 4px 0 #1e3a8a; }
-        .color-2 { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); border: 2px solid #4ade80; box-shadow: 0 8px 15px rgba(21,128,61,0.4), 0 4px 0 #14532d; }
-        .color-3 { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border: 2px solid #f87171; box-shadow: 0 8px 15px rgba(185,28,28,0.4), 0 4px 0 #7f1d1d; }
-        .color-4 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); border: 2px solid #c084fc; box-shadow: 0 8px 15px rgba(126,34,206,0.4), 0 4px 0 #581c87; }
-        .color-5 { background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); border: 2px solid #2dd4bf; box-shadow: 0 8px 15px rgba(15,118,110,0.4), 0 4px 0 #115e59; }
-        .color-6 { background: linear-gradient(135deg, #eab308 0%, #a16207 100%); border: 2px solid #facc15; box-shadow: 0 8px 15px rgba(161,98,7,0.4), 0 4px 0 #854d0e; }
-        .color-7 { background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); border: 2px solid #f472b6; box-shadow: 0 8px 15px rgba(190,24,93,0.4), 0 4px 0 #831843; }
-        .color-8 { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); border: 2px solid #818cf8; box-shadow: 0 8px 15px rgba(67,56,202,0.4), 0 4px 0 #3730a3; }
-        .color-9 { background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border: 2px solid #a3e635; box-shadow: 0 8px 15px rgba(77,124,15,0.4), 0 4px 0 #3f6212; }
+        .color-0:hover { box-shadow: 0 14px 28px rgba(194,65,12,0.6), 0 1px 0 #7c2d12; }
 
-        /* === ANIMASI MASUK KE LOGO === */
+        .color-1 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: 2px solid #60a5fa; box-shadow: 0 8px 15px rgba(29,78,216,0.4), 0 4px 0 #1e3a8a; }
+        .color-1:hover { box-shadow: 0 14px 28px rgba(29,78,216,0.6), 0 1px 0 #1e3a8a; }
+
+        .color-2 { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); border: 2px solid #4ade80; box-shadow: 0 8px 15px rgba(21,128,61,0.4), 0 4px 0 #14532d; }
+        .color-2:hover { box-shadow: 0 14px 28px rgba(21,128,61,0.6), 0 1px 0 #14532d; }
+
+        .color-3 { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border: 2px solid #f87171; box-shadow: 0 8px 15px rgba(185,28,28,0.4), 0 4px 0 #7f1d1d; }
+        .color-3:hover { box-shadow: 0 14px 28px rgba(185,28,28,0.6), 0 1px 0 #7f1d1d; }
+
+        .color-4 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); border: 2px solid #c084fc; box-shadow: 0 8px 15px rgba(126,34,206,0.4), 0 4px 0 #581c87; }
+        .color-4:hover { box-shadow: 0 14px 28px rgba(126,34,206,0.6), 0 1px 0 #581c87; }
+
+        .color-5 { background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); border: 2px solid #2dd4bf; box-shadow: 0 8px 15px rgba(15,118,110,0.4), 0 4px 0 #115e59; }
+        .color-5:hover { box-shadow: 0 14px 28px rgba(15,118,110,0.6), 0 1px 0 #115e59; }
+
+        .color-6 { background: linear-gradient(135deg, #eab308 0%, #a16207 100%); border: 2px solid #facc15; box-shadow: 0 8px 15px rgba(161,98,7,0.4), 0 4px 0 #854d0e; }
+        .color-6:hover { box-shadow: 0 14px 28px rgba(161,98,7,0.6), 0 1px 0 #854d0e; }
+
+        .color-7 { background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); border: 2px solid #f472b6; box-shadow: 0 8px 15px rgba(190,24,93,0.4), 0 4px 0 #831843; }
+        .color-7:hover { box-shadow: 0 14px 28px rgba(190,24,93,0.6), 0 1px 0 #831843; }
+
+        .color-8 { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); border: 2px solid #818cf8; box-shadow: 0 8px 15px rgba(67,56,202,0.4), 0 4px 0 #3730a3; }
+        .color-8:hover { box-shadow: 0 14px 28px rgba(67,56,202,0.6), 0 1px 0 #3730a3; }
+
+        .color-9 { background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border: 2px solid #a3e635; box-shadow: 0 8px 15px rgba(77,124,15,0.4), 0 4px 0 #3f6212; }
+        .color-9:hover { box-shadow: 0 14px 28px rgba(77,124,15,0.6), 0 1px 0 #3f6212; }
+
         .move-to-center {
-            animation: masukKeDalamLogo 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-            z-index: 30 !important;
+            animation: luncurKeTengahLogo 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards !important;
+            z-index: 50 !important;
         }
-        @keyframes masukKeDalamLogo {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            40% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            60% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            100% { transform: translate(0, 0) scale(1); opacity: 1; }
+        @keyframes luncurKeTengahLogo {
+            0% { transform: translate(var(--x), var(--y)) scale(1); opacity: 1; }
+            45% { transform: translate(0px, 0px) scale(0.2); opacity: 0.5; }
+            55% { transform: translate(0px, 0px) scale(0.2); opacity: 0.5; }
+            100% { transform: translate(var(--x), var(--y)) scale(1); opacity: 1; }
         }
 
         /* === TOMBOL TEMA === */
@@ -274,7 +370,6 @@
             color: #1f2937 !important;
             margin-bottom: 0.5rem;
         }
-        .input-custom:focus { border-color: #0d9488; box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2); }
         body.dark-mode .input-custom { background-color: #e2e8f0 !important; color: #111827 !important; border-color: #94a3b8; }
 
         .item-menu-editor {
@@ -299,55 +394,50 @@
 </head>
 <body class="dark-mode">
 
+    <canvas id="particleCanvas"></canvas>
     <div class="bg-overlay-fixed"></div>
     <button id="toggleMode">☀️</button>
 
     <div class="menu-container" id="menuContainer">
+        <div class="orbit-line" id="orbitLine"></div>
+
         <div class="center-circle" id="tombolUtama">
             <div class="text-circle" id="textCircle"></div>
             <img class="logo-sekolah" id="logoTujuan" src="https://i.ibb.co.com/bgHfySHf/sticker-earth-t-shirt-811396-75337-removebg-preview.png" alt="Logo Menu 3D">
         </div>
-        <!-- Ikon menu akan dibuat otomatis di sini lewat JavaScript -->
     </div>
 
     <div class="settings-panel" id="panelPengaturan">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold"><i class="fa fa-cog mr-2 text-teal-600"></i>Pengaturan Menu</h3>
+            <h3 class="text-lg font-bold"><i class="fa-solid fa-gear mr-2 text-teal-600"></i>Pengaturan Menu</h3>
             <button id="btnTutupPanel" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
         </div>
         
-        <!-- Ubah Teks Berputar -->
         <div class="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <label class="block text-sm font-semibold mb-2"><i class="fa fa-pencil mr-2 text-blue-500"></i>Ubah Teks Berputar:</label>
-            <input type="text" id="inputTeksBerputar" placeholder="Contoh: SMP NEGERI 110 JAKARTA" class="input-custom" maxlength="50">
+            <label class="block text-sm font-semibold mb-2"><i class="fa-solid fa-pen mr-2 text-blue-500"></i>Ubah Teks Berputar:</label>
+            <input type="text" id="inputTeksBerputar" class="input-custom" maxlength="50">
         </div>
 
-        <!-- Ubah Logo -->
         <div class="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <label class="block text-sm font-semibold mb-2"><i class="fa fa-image mr-2 text-green-500"></i>Ubah Logo Sekolah:</label>
-            <input type="text" id="inputLogoBaru" placeholder="https://link-gambar.png" class="input-custom">
+            <label class="block text-sm font-semibold mb-2"><i class="fa-solid fa-image mr-2 text-green-500"></i>Ubah Logo:</label>
+            <input type="text" id="inputLogoBaru" class="input-custom">
         </div>
 
-        <!-- ✅ TAMBAH / EDIT IKON MENU -->
         <div class="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <label class="block text-sm font-semibold mb-2"><i class="fa fa-th-large mr-2 text-purple-500"></i>Daftar Ikon Menu:</label>
-            <div id="daftarEditorIkon">
-                <!-- Form edit ikon akan muncul di sini -->
-            </div>
+            <label class="block text-sm font-semibold mb-2"><i class="fa-solid fa-table-cells-large mr-2 text-purple-500"></i>Daftar Ikon Menu:</label>
+            <div id="daftarEditorIkon"></div>
             <button type="button" id="btnTambahIkon" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-3 rounded-lg text-sm mt-2">
-                <i class="fa fa-plus mr-1"></i> Tambah Ikon Baru
+                <i class="fa-solid fa-plus mr-1"></i> Tambah Ikon Baru
             </button>
-            <p class="text-xs text-gray-500 mt-1">*Gunakan kode icon Font Awesome (contoh: fa-book, fa-users)</p>
         </div>
 
-        <!-- Pengaturan Latar -->
         <div class="mb-4">
             <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">Warna Latar:</label>
-            <input type="color" id="colorPicker" value="#2c5f2d" class="w-12 h-10 border rounded cursor-pointer bg-transparent">
+            <input type="color" id="colorPicker" class="w-12 h-10 border rounded cursor-pointer bg-transparent">
         </div>
         <div class="mb-4">
             <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">Gambar Latar (URL):</label>
-            <input type="text" id="bgUrlInput" placeholder="https://link-gambar.jpg" class="input-custom">
+            <input type="text" id="bgUrlInput" class="input-custom">
         </div>
 
         <button id="btnTerapkanBg" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg text-sm shadow-md">
@@ -360,25 +450,23 @@
         const DEFAULT_TEKS = "SELAMAT DATANG DI WEBSITE SAYA ";
         const DEFAULT_LOGO = "https://i.ibb.co.com/bgHfySHf/sticker-earth-t-shirt-811396-75337-removebg-preview.png";
         
-        // 🔗 GANTI DENGAN LINK SKRIP ANDA
         const SHEET_URL = "https://script.google.com/macros/s/AKfycbyExu8UNQD6AGALGTaGeofCA53zK2QBol1H5Qw1R_j-hcimTdq3h8PjGFbhCp0WZIpT/exec";
 
-        // ✅ DATA IKON DEFAULT
         let daftarIkonDefault = [
-            { ikon: "fa-book", label: "Agenda", link: "#" },
-            { ikon: "fa-users", label: "Siswa", link: "#" },
-            { ikon: "fa-star", label: "Baru", link: "#" },
-            { ikon: "fa-calendar", label: "Jadwal", link: "#" },
-            { ikon: "fa-file-text", label: "Nilai", link: "#" },
-            { ikon: "fa-newspaper-o", label: "Pengumuman", link: "#" },
-            { ikon: "fa-cog", label: "Pengaturan", link: "#" }
+            { ikon: "book", label: "Agenda", link: "#" },
+            { ikon: "users", label: "Siswa", link: "#" },
+            { ikon: "star", label: "Baru", link: "#" },
+            { ikon: "calendar-days", label: "Jadwal", link: "#" },
+            { ikon: "file-lines", label: "Nilai", link: "#" },
+            { ikon: "bullhorn", label: "Pengumuman", link: "#" },
+            { ikon: "gear", label: "Pengaturan", link: "#" }
         ];
 
         let menuTampil = false;
         let daftarIkon = [];
 
-        // 🟢 ELEMEN
         const tombolUtama = document.getElementById('tombolUtama');
+        const orbitLine = document.getElementById('orbitLine');
         const panelPengaturan = document.getElementById('panelPengaturan');
         const btnTutupPanel = document.getElementById('btnTutupPanel');
         const inputTeksBerputar = document.getElementById('inputTeksBerputar');
@@ -389,30 +477,125 @@
         const toggleMode = document.getElementById('toggleMode');
         const logoTujuan = document.getElementById('logoTujuan');
 
-        window.addEventListener('DOMContentLoaded', () => {
-            ambilDataDariSheet(); // ✅ Ambil data dari internet saat dibuka
+        function putarSuaraMenu(apakahTerbuka) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.type = 'sine';
+                if (apakahTerbuka) {
+                    osc.frequency.setValueAtTime(350, audioCtx.currentTime); 
+                    osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.08); 
+                } else {
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime); 
+                    osc.frequency.exponentialRampToValueAtTime(250, audioCtx.currentTime + 0.08); 
+                }
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); 
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08); 
+                osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) { console.log(e); }
+        }
 
-            // ✅ KLIK LOGO MUNCULKAN IKON
+        function putarSuaraKlikSubMenu() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(1500, audioCtx.currentTime); 
+                osc.frequency.setValueAtTime(40, audioCtx.currentTime + 0.02); 
+                gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime); 
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02); 
+                osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.02);
+            } catch (e) { console.log(e); }
+        }
+
+        // CANVAS LOGIKA PARTIKEL DEBU CAHAYA
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let arrayPartikel = [];
+        const jumlahPartikel = 45;
+
+        function sesuaikanUkuranCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', sesuaikanUkuranCanvas);
+        sesuaikanUkuranCanvas();
+
+        class PartikelCahaya {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height + canvas.height;
+                this.ukuran = Math.random() * 3.5 + 0.5;
+                this.kecepatanY = Math.random() * 0.4 + 0.1;
+                this.kecepatanX = (Math.random() * 0.2 - 0.1);
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.y -= this.kecepatanY;
+                this.x += this.kecepatanX;
+                if (this.y < -10) {
+                    this.y = canvas.height + 10;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                let gradien = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.ukuran);
+                gradien.addColorStop(0, `rgba(255, 253, 230, ${this.alpha})`);
+                gradien.addColorStop(1, `rgba(255, 253, 230, 0)`);
+                ctx.fillStyle = gradien;
+                ctx.arc(this.x, this.y, this.ukuran * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function inisialisasiPartikel() {
+            arrayPartikel = [];
+            for (let i = 0; i < jumlahPartikel; i++) {
+                let p = new PartikelCahaya();
+                p.y = Math.random() * canvas.height;
+                arrayPartikel.push(p);
+            }
+        }
+
+        function jalankanAnimasiPartikel() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < arrayPartikel.length; i++) {
+                arrayPartikel[i].update();
+                arrayPartikel[i].draw();
+            }
+            requestAnimationFrame(jalankanAnimasiPartikel);
+        }
+        inisialisasiPartikel();
+        jalankanAnimasiPartikel();
+
+
+        window.addEventListener('DOMContentLoaded', () => {
+            ambilDataDariSheet();
+
             tombolUtama.addEventListener('click', () => {
                 menuTampil = !menuTampil;
+                putarSuaraMenu(menuTampil);
+                orbitLine.classList.toggle('show', menuTampil);
                 document.querySelectorAll('.menu-item').forEach(menu => {
                     menu.classList.toggle('show', menuTampil);
                 });
             });
         });
 
-        // === ✅ AMBIL DATA DARI GOOGLE SHEET ===
         function ambilDataDariSheet(){
-            fetch(SHEET_URL + "?t=" + new Date().getTime()) // ⏱️ Cegah cache, ambil data TERBARU
+            fetch(SHEET_URL + "?t=" + new Date().getTime())
             .then(res => res.json())
             .then(data => {
-                // Jika ada data di Sheet, pakai itu. Jika kosong, pakai default
                 const teks = data.teks || DEFAULT_TEKS;
                 const logo = data.logo || DEFAULT_LOGO;
                 const latar = data.latar ? JSON.parse(data.latar) : {type:"image", value:DEFAULT_BG_IMAGE};
                 const ikon = data.ikon ? JSON.parse(data.ikon) : daftarIkonDefault;
 
-                // Terapkan ke tampilan
                 inputTeksBerputar.value = teks; buatTeksBerputar(teks);
                 inputLogoBaru.value = logo; logoTujuan.src = logo;
                 
@@ -430,14 +613,12 @@
                 buatEditorIkon();
             })
             .catch(err => {
-                // ❌ Jika gagal ambil data, pakai default saja
                 daftarIkon = [...daftarIkonDefault];
                 buatMenuDinamis();
                 buatEditorIkon();
             });
         }
 
-        // === ✅ SIMPAN DATA KE GOOGLE SHEET (DIPERBAIKI) ===
         function simpanKeSheet(){
             const data = {
                 teks: inputTeksBerputar.value,
@@ -451,13 +632,12 @@
 
             fetch(SHEET_URL, {
                 method: "POST",
-                mode: "no-cors", // ✅ WAJIB AGAR BISA SIMPAN KE GOOGLE
+                mode: "no-cors",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(data)
             });
         }
 
-        // === FUNGSI MEMBUAT TEKS BERPUTAR ===
         function buatTeksBerputar(teks) {
             const wadah = document.getElementById("textCircle");
             wadah.innerHTML = '';
@@ -477,44 +657,65 @@
             }
         }
 
-        // === ✅ FUNGSI UTAMA: MEMBUAT MENU MELINGKAR BERAPAPUN JUMLAHNYA & WARNA BERBEDA ===
         function buatMenuDinamis() {
             const wadah = document.getElementById("menuContainer");
-            // Hapus menu lama
             document.querySelectorAll('.menu-item').forEach(el => el.remove());
 
             const jumlah = daftarIkon.length;
-            const radiusLingkaran = 150; // Jarak dari tengah ke ikon
-            const sudutAwal = -90; // Mulai dari atas (derajat)
+            const radiusLingkaran = 150;
+            const sudutAwal = -90;
 
             daftarIkon.forEach((data, indeks) => {
                 const sudut = sudutAwal + (indeks * (360 / jumlah));
                 const radian = sudut * Math.PI / 180;
                 
-                const x = radiusLingkaran * Math.cos(radian);
-                const y = radiusLingkaran * Math.sin(radian);
+                const x = Math.round(radiusLingkaran * Math.cos(radian));
+                const y = Math.round(radiusLingkaran * Math.sin(radian));
 
-                const elemen = document.createElement(data.link !== '#' ? 'a' : 'div');
+                const elemen = document.createElement('a');
                 elemen.className = "menu-item";
-                // ✅ BERIKAN KELAS WARNA BERBEDA SESUAI URUTAN
                 elemen.classList.add(`color-${indeks % 10}`);
-                if(data.link !== '#') elemen.href = data.link;
-                elemen.style.left = `calc(50% + ${x}px - 37px)`;
-                elemen.style.top = `calc(50% + ${y}px - 37px)`;
-                elemen.style.transitionDelay = `${indeks * 0.1}s`;
+                elemen.href = data.link;
+                
+                elemen.style.setProperty('--x', `${x}px`);
+                elemen.style.setProperty('--y', `${y}px`);
+                
+                // ✅ BERIKAN VARIABEL UNIK AGAR DURASI DAN DELAY MELAYANG SETIAP TOMBOL BERBEDA (ACAK ESTETIK)
+                const durasiAcak = (3.5 + (indeks * 0.4)).toFixed(1);
+                const delayAcak = (indeks * 0.15).toFixed(2);
+                elemen.style.setProperty('--durasi-float', `${durasiAcak}s`);
+                elemen.style.setProperty('--delay-float', `-${delayAcak}s`);
 
-                elemen.innerHTML = `<i class="fa ${data.ikon}"></i><span>${data.label}</span>`;
+                let namaIkonBersih = data.ikon.replace('fa-solid', '').replace('fa-', '').trim();
+                elemen.innerHTML = `<i class="fa-solid fa-${namaIkonBersih}"></i><span>${data.label}</span>`;
                 
-                if(data.label === "Pengaturan") elemen.id = "btnPengaturan";
+                elemen.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    putarSuaraKlikSubMenu(); 
+                    elemen.classList.add('move-to-center');
+                    
+                    setTimeout(() => {
+                        if(data.label === "Pengaturan") {
+                            panelPengaturan.classList.add('open');
+                        } else if(data.link !== '#') {
+                            window.location.href = data.link;
+                        }
+                    }, 600);
+
+                    setTimeout(() => {
+                        elemen.classList.remove('move-to-center');
+                    }, 1220);
+                });
                 
-                elemen.onclick = (e) => gerakKeTengah(elemen, e);
                 wadah.appendChild(elemen);
             });
-
-            pasangEventKlikPengaturan();
+            
+            if(menuTampil) {
+                document.querySelectorAll('.menu-item').forEach(menu => menu.classList.add('show'));
+                orbitLine.classList.add('show');
+            }
         }
 
-        // === FUNGSI EDITOR DI DALAM PENGATURAN ===
         function buatEditorIkon() {
             const wadah = document.getElementById("daftarEditorIkon");
             wadah.innerHTML = '';
@@ -527,22 +728,18 @@
                         <span class="text-xs font-bold">Ikon #${idx+1}</span>
                         <button class="btn-hapus" onclick="hapusIkon(${idx})">Hapus</button>
                     </div>
-                    <input type="text" placeholder="Kode Ikon (fa-...)" class="input-custom input-ikon" value="${item.ikon}">
-                    <input type="text" placeholder="Nama Label" class="input-custom input-label" value="${item.label}">
-                    <input type="text" placeholder="Link URL (http.../#)" class="input-custom input-link" value="${item.link}">
+                    <input type="text" class="input-custom input-ikon" value="${item.ikon}">
+                    <input type="text" class="input-custom input-label" value="${item.label}">
+                    <input type="text" class="input-custom input-link" value="${item.link}">
                 `;
                 wadah.appendChild(div);
-            });
-
-            wadah.querySelectorAll('.input-custom').forEach(inp => {
-                inp.addEventListener('input', ambilDataDariEditor);
             });
         }
 
         function ambilDataDariEditor(){
             const dataBaru = [];
             document.querySelectorAll('.item-menu-editor').forEach(block => {
-                const ikon = block.querySelector('.input-ikon').value || 'fa-question';
+                const ikon = block.querySelector('.input-ikon').value || 'question';
                 const label = block.querySelector('.input-label').value || 'Menu';
                 const link = block.querySelector('.input-link').value || '#';
                 dataBaru.push({ikon, label, link});
@@ -552,44 +749,22 @@
 
         function hapusIkon(idx){
             if(daftarIkon.length <= 1) return alert("Minimal harus ada 1 ikon!");
+            ambilDataDariEditor();
             daftarIkon.splice(idx, 1);
             buatEditorIkon();
         }
 
         document.getElementById('btnTambahIkon').addEventListener('click', () => {
-            daftarIkon.push({ikon: "fa-star", label: "Baru", link: "#"});
+            ambilDataDariEditor();
+            daftarIkon.push({ikon: "star", label: "Baru", link: "#"});
             buatEditorIkon();
         });
 
-        // === ANIMASI KLIK ===
-        function gerakKeTengah(elemen, event) {
-            if (event) event.preventDefault(); 
-            elemen.classList.add('move-to-center');
-            const targetUrl = elemen.getAttribute('href');
-            setTimeout(() => {
-                elemen.classList.remove('move-to-center');
-                if (targetUrl && targetUrl !== '#') window.location.href = targetUrl;
-            }, 1200); 
-            return false;
-        }
-
-        // === PANEL PENGATURAN ===
-        function pasangEventKlikPengaturan(){
-            const btnPengaturan = document.getElementById('btnPengaturan');
-            if(!btnPengaturan) return;
-            btnPengaturan.addEventListener('click', () => { 
-                gerakKeTengah(btnPengaturan, null); 
-                panelPengaturan.classList.add('open'); 
-            });
-        }
-
         btnTutupPanel.addEventListener('click', () => { 
             panelPengaturan.classList.remove('open'); 
-            const btnPengaturan = document.getElementById('btnPengaturan');
-            if(btnPengaturan) btnPengaturan.classList.remove('move-to-center'); 
         });
 
-        btnTerapkanBg.addEventListener('click', async () => {
+        btnTerapkanBg.addEventListener('click', () => {
             ambilDataDariEditor();
 
             let urlGambar = bgUrlInput.value.trim();
@@ -597,7 +772,6 @@
             const teksBaru = inputTeksBerputar.value;
             const logoBaru = inputLogoBaru.value.trim();
 
-            // Simpan Latar
             if (urlGambar !== "") {
                 document.body.style.backgroundImage = `url('${urlGambar}')`;
             } else {
@@ -605,19 +779,18 @@
                 document.body.style.backgroundColor = warnaDipilih;
             }
             
-            // Simpan Teks & Logo
             buatTeksBerputar(teksBaru);
             if (logoBaru) logoTujuan.src = logoBaru;
 
             buatMenuDinamis(); 
-            simpanKeSheet(); // ✅ OTOMATIS SIMPAN KE GOOGLE SHEET
-            alert("✅ Pengaturan Tersimpan"); // ⚠️ TANDA BERHASIL
+            simpanKeSheet(); 
+            alert("✅ Pengaturan Tersimpan"); 
 
             panelPengaturan.classList.remove('open');
         });
 
-        // Tombol Mode
         toggleMode.addEventListener('click', () => {
+            putarSuaraKlikSubMenu();
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
             toggleMode.innerHTML = isDark ? '☀️' : '🌙';
