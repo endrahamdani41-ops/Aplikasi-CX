@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menu 3D - Versi Terbaru</title>
+    <title>Menu 3D - Versi Letupan Tengah</title>
  
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/JjyvHZbP/logo-menu3d.png">
     <link rel="shortcut icon" type="image/png" href="https://i.ibb.co.com/JjyvHZbP/logo-menu3d.png">
@@ -192,11 +192,41 @@
             100% { opacity: 1; filter: drop-shadow(0 8px 16px rgba(30, 64, 175, 0.6)) scale(1.03); }
         }
 
-        /* === STRUKTUR TOMBOL MENU DINAMIS === */
+        /* === 🚀 UTAMA: LOGIKA LETUPAN DARI TENGAH LOGO 🚀 === */
         .menu-item {
             position: absolute;
             width: 74px;
             height: 74px;
+            z-index: 5;
+            left: calc(50% - 37px);
+            top: calc(50% - 37px);
+            
+            /* Sifat mutlak saat tertutup: kumpul di titik (0,0) tengah logo besar & tak terlihat */
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(0px, 0px) scale(0);
+            
+            /* Efek transisi meluncur elastis yang ditarik dari koordinat (0,0) */
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, visibility 0.4s;
+        }
+
+        /* KETIKA MENU DIKLIK (AKTIF) -> MELUNCUR KE KOORDINAT ASLINYA DI VAR CSS */
+        .menu-item.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(var(--x), var(--y)) scale(1);
+        }
+
+        /* KETIKA DI-HOVER -> PERBESAR SEDIKIT AGAR PREMIUM */
+        .menu-item.show:hover {
+            transform: translate(var(--x), var(--y)) scale(1.12) !important;
+            z-index: 40;
+        }
+
+        /* === 🛰️ WADAH KHUSUS ANIMASI MENGORBIT / MELAYANG (YANG MEMBUAT TIDAK BENTROK) 🛰️ === */
+        .orbit-wrapper {
+            width: 100%;
+            height: 100%;
             color: white;
             border-radius: 50%;
             display: flex;
@@ -206,47 +236,30 @@
             text-decoration: none;
             font-size: 22px;
             cursor: pointer;
-            transform-origin: center center;
-            opacity: 0;
-            transform: translate(var(--x), var(--y)) scale(0);
-            visibility: hidden;
-            /* Kita pisah durasi filter & box-shadow agar tidak tabrakan dengan CSS Animation melayang */
-            transition: opacity 0.4s ease, visibility 0.4s, box-shadow 0.3s ease, filter 0.3s ease;
-            z-index: 5;
-            left: calc(50% - 37px);
-            top: calc(50% - 37px);
+            position: relative;
+            transition: box-shadow 0.3s ease, filter 0.3s ease;
         }
 
-        /* ✅ SAAT SIFAT .show AKTIF, JALANKAN ANIMASI ME LINGKAr/MELAYANGsecara tak terbatas */
-        .menu-item.show {
-            opacity: 1;
-            visibility: visible;
+        /* Jalankan efek mengayun/orbit hanya saat menu sukses terbuka */
+        .menu-item.show .orbit-wrapper {
             animation: mengorbitMelayang var(--durasi-float, 4s) ease-in-out infinite alternate;
             animation-delay: var(--delay-float, 0s);
         }
 
-        /* ✅ RUMUS ANIMASI ORBIT FLOATING DENGAN BERTAHAN PADA TITIK KOORDINAT ASLINYA */
-        @keyframes mengorbitMelayang {
-            0% {
-                transform: translate(calc(var(--x) - 4px), calc(var(--y) - 5px)) scale(1) rotate(-1deg);
-            }
-            50% {
-                transform: translate(var(--x), var(--y)) scale(1.02) rotate(1deg);
-            }
-            100% {
-                transform: translate(calc(var(--x) + 4px), calc(var(--y) + 5px)) scale(1) rotate(-0.5deg);
-            }
-        }
-
-        /* ✅ JIKA DI-HOVER, MATIKAN SEMENTARA ANIMASI MELAYANG AGAR SENSASI KLIK TETAP STABIL */
-        .menu-item.show:hover {
+        /* Jika kursor mouse menyentuh menu, jeda ayunannya agar presisi */
+        .menu-item.show:hover .orbit-wrapper {
             animation-play-state: paused !important;
-            transform: translate(var(--x), var(--y)) scale(1.13) !important;
             filter: brightness(1.1);
-            z-index: 40;
         }
 
-        .menu-item::before {
+        /* KEYFRAMES FLOATING MURNI PADA KELAS INTERNAL (Independent) */
+        @keyframes mengorbitMelayang {
+            0% { transform: translate(-3px, -4px) rotate(-1deg); }
+            50% { transform: translate(0px, 0px) scale(1.02) rotate(1deg); }
+            100% { transform: translate(3px, 4px) rotate(-0.5deg); }
+        }
+
+        .orbit-wrapper::before {
             content: '';
             position: absolute;
             top: 4px; left: 15%;
@@ -255,7 +268,7 @@
             border-radius: 50px / 20px;
         }
 
-        .menu-item span {
+        .orbit-wrapper span {
             font-size: 9px;
             margin-top: 3px;
             font-weight: 700;
@@ -672,27 +685,35 @@
                 const x = Math.round(radiusLingkaran * Math.cos(radian));
                 const y = Math.round(radiusLingkaran * Math.sin(radian));
 
-                const elemen = document.createElement('a');
-                elemen.className = "menu-item";
-                elemen.classList.add(`color-${indeks % 10}`);
-                elemen.href = data.link;
+                const elemenMenu = document.createElement('div');
+                elemenMenu.className = "menu-item";
                 
-                elemen.style.setProperty('--x', `${x}px`);
-                elemen.style.setProperty('--y', `${y}px`);
+                // Set koordinat tujuan meluncur di element terluar
+                elemenMenu.style.setProperty('--x', `${x}px`);
+                elemenMenu.style.setProperty('--y', `${y}px`);
                 
-                // ✅ BERIKAN VARIABEL UNIK AGAR DURASI DAN DELAY MELAYANG SETIAP TOMBOL BERBEDA (ACAK ESTETIK)
-                const durasiAcak = (3.5 + (indeks * 0.4)).toFixed(1);
-                const delayAcak = (indeks * 0.15).toFixed(2);
-                elemen.style.setProperty('--durasi-float', `${durasiAcak}s`);
-                elemen.style.setProperty('--delay-float', `-${delayAcak}s`);
+                // Efek stagger (antrean keluar berurutan tipis agar dramatis)
+                elemenMenu.style.transitionDelay = `${indeks * 0.05}s`;
+
+                // Buat tag anchor di dalam wadah penampung orbit melayang
+                const elemenAyun = document.createElement('a');
+                elemenAyun.className = "orbit-wrapper";
+                elemenAyun.classList.add(`color-${indeks % 10}`);
+                elemenAyun.href = data.link;
+
+                // Set variabel durasi & delay ayunan murni di element dalam
+                const durasiAcak = (3.4 + (indeks * 0.3)).toFixed(1);
+                const delayAcak = (indeks * 0.2).toFixed(2);
+                elemenAyun.style.setProperty('--durasi-float', `${durasiAcak}s`);
+                elemenAyun.style.setProperty('--delay-float', `-${delayAcak}s`);
 
                 let namaIkonBersih = data.ikon.replace('fa-solid', '').replace('fa-', '').trim();
-                elemen.innerHTML = `<i class="fa-solid fa-${namaIkonBersih}"></i><span>${data.label}</span>`;
+                elemenAyun.innerHTML = `<i class="fa-solid fa-${namaIkonBersih}"></i><span>${data.label}</span>`;
                 
-                elemen.addEventListener('click', (e) => {
+                elemenAyun.addEventListener('click', (e) => {
                     e.preventDefault(); 
                     putarSuaraKlikSubMenu(); 
-                    elemen.classList.add('move-to-center');
+                    elemenMenu.classList.add('move-to-center');
                     
                     setTimeout(() => {
                         if(data.label === "Pengaturan") {
@@ -703,11 +724,12 @@
                     }, 600);
 
                     setTimeout(() => {
-                        elemen.classList.remove('move-to-center');
+                        elemenMenu.classList.remove('move-to-center');
                     }, 1220);
                 });
                 
-                wadah.appendChild(elemen);
+                elemenMenu.appendChild(elemenAyun);
+                wadah.appendChild(elemenMenu);
             });
             
             if(menuTampil) {
