@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persediaan Barang Habis Pakai SMP Negeri 110 Jakarta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#121212',
+                        cardDark: '#1e1e1e',
+                        accentBlue: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        /* Custom scrollbar untuk estetika UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-dark text-neutral-800 dark:text-gray-200 min-h-screen transition-colors duration-300">
+
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-neutral-200 dark:border-neutral-800 pb-6">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-500/20">
+                    <i data-lucide="box" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
+                        Persediaan Barang Habis Pakai <span class="text-blue-500">SMP Negeri 110 Jakarta</span>
+                    </h1>
+                    <p class="text-sm text-neutral-500 dark:text-gray-400 mt-1 flex items-center gap-1.5">
+                        <i data-lucide="database" class="w-4 h-4 text-green-500"></i> Data tersimpan & tersinkronisasi di Google Sheets
+                    </p>
+                </div>
+            </div>
+            
+            <button onclick="toggleTema()" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition text-sm font-medium">
+                <i data-lucide="sun" id="icon-sun" class="w-4 h-4 hidden dark:block"></i>
+                <i data-lucide="moon" id="icon-moon" class="w-4 h-4 block dark:hidden"></i>
+                <span id="text-tema">Ubah Tema</span>
+            </button>
+        </header>
+
+        <div class="flex border-b border-neutral-200 dark:border-neutral-800 mb-6 overflow-x-auto">
+            <button onclick="switchTab('input')" id="tab-input" class="px-5 py-3 border-b-2 border-transparent text-sm font-medium text-neutral-500 dark:text-gray-400 hover:text-neutral-700 dark:hover:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="file-edit" class="w-4 h-4"></i> Input Barang
+            </button>
+            <button onclick="switchTab('stok')" id="tab-stok" class="px-5 py-3 border-b-2 border-blue-500 text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 whitespace-nowrap bg-neutral-100 dark:bg-neutral-900/50 rounded-t-lg">
+                <i data-lucide="layout-grid" class="w-4 h-4"></i> Daftar Stok
+            </button>
+            <button onclick="switchTab('riwayat')" id="tab-riwayat" class="px-5 py-3 border-b-2 border-transparent text-sm font-medium text-neutral-500 dark:text-gray-400 hover:text-neutral-700 dark:hover:text-gray-200 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="history" class="w-4 h-4"></i> Riwayat Perubahan
+            </button>
+        </div>
+
+        <main>
+            <div id="panel-input" class="hidden animate-fadeIn">
+                <div class="bg-white dark:bg-cardDark p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm max-w-2xl mx-auto">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-neutral-900 dark:text-white">
+                        <i data-lucide="plus-circle" class="text-blue-500"></i> Form Input Transaksi Barang
+                    </h2>
+                    
+                    <form id="form-transaksi" onsubmit="kirimTransaksi(event)" class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-400 mb-2">Jenis Transaksi</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="flex items-center justify-center gap-2 p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 cursor-pointer hover:border-blue-500/50 transition">
+                                    <input type="radio" name="jenis_transaksi" value="Masuk" checked class="text-blue-600 focus:ring-blue-500">
+                                    <span class="text-sm font-semibold text-green-500 flex items-center gap-1"><i data-lucide="arrow-down-left" class="w-4 h-4"></i> Barang Masuk</span>
+                                </label>
+                                <label class="flex items-center justify-center gap-2 p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 cursor-pointer hover:border-blue-500/50 transition">
+                                    <input type="radio" name="jenis_transaksi" value="Keluar" class="text-blue-600 focus:ring-blue-500">
+                                    <span class="text-sm font-semibold text-red-500 flex items-center gap-1"><i data-lucide="arrow-up-right" class="w-4 h-4"></i> Barang Keluar</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="input-nama-barang" class="block text-sm font-medium text-neutral-400 mb-2">Nama Barang</label>
+                            <select id="input-nama-barang" required
+                                class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-neutral-900 border border-transparent dark:border-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-neutral-900 dark:text-white">
+                                <option value="" disabled selected>-- Pilih Barang dari Gudang --</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="input-jumlah" class="block text-sm font-medium text-neutral-400 mb-2">Jumlah Barang</label>
+                            <input type="number" id="input-jumlah" min="1" required placeholder="Contoh: 5"
+                                class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-neutral-900 border border-transparent dark:border-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-neutral-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label for="input-keterangan" class="block text-sm font-medium text-neutral-400 mb-2">Keterangan / Keperluan</label>
+                            <textarea id="input-keterangan" rows="3" placeholder="Contoh: Untuk kebutuhan ruang guru / UTS"
+                                class="w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-neutral-900 border border-transparent dark:border-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-neutral-900 dark:text-white"></textarea>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" id="btn-submit-transaksi"
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+                                <i data-lucide="send" class="w-4 h-4"></i> Simpan Transaksi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="panel-stok" class="block animate-fadeIn">
+                <div class="bg-white dark:bg-cardDark p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
+                        <h2 class="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">Daftar Persediaan Barang</h2>
+                        
+                        <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                            <button onclick="eksporExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 shadow-md shadow-green-600/10 transition">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel
+                            </button>
+                            <button onclick="eksporPDF()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 shadow-md shadow-red-600/10 transition">
+                                <i data-lucide="file-text" class="w-4 h-4"></i> PDF
+                            </button>
+                            
+                            <div class="relative w-full sm:w-64">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-neutral-400">
+                                    <i data-lucide="search" class="w-4 h-4"></i>
+                                </span>
+                                <input type="text" id="pencarian-barang" onkeyup="filterBarang()" placeholder="Cari barang..." 
+                                    class="w-full pl-9 pr-4 py-2 rounded-xl bg-gray-100 dark:bg-neutral-900 border border-transparent dark:border-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-neutral-900 dark:text-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
+                        <table id="tabel-stok-barang" class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-400 font-semibold text-xs tracking-wider uppercase border-b border-neutral-200 dark:border-neutral-800">
+                                    <th class="px-4 py-3.5 text-center w-16">NO</th>
+                                    <th class="px-4 py-3.5">NAMA BARANG</th>
+                                    <th class="px-4 py-3.5 text-center w-40">JUMLAH STOK</th>
+                                    <th class="px-4 py-3.5 text-center w-36">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-body-barang" class="divide-y divide-neutral-200 dark:divide-neutral-800 text-neutral-600 dark:text-gray-300">
+                                <tr>
+                                    <td colspan="4" class="text-center py-8 text-neutral-500">
+                                        <div class="flex flex-col items-center gap-2">
+                                            <div class="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <span class="text-sm">Menghubungkan ke Google Sheets...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-riwayat" class="hidden animate-fadeIn">
+                <div class="bg-white dark:bg-cardDark p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="history" class="text-blue-500"></i> Riwayat Perubahan Stok
+                            </h2>
+                            <p class="text-neutral-500 dark:text-gray-400 text-sm mt-1">Log mutasi barang masuk dan keluar otomatis dari Google Sheets.</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-400 font-semibold text-xs tracking-wider uppercase border-b border-neutral-200 dark:border-neutral-800">
+                                    <th class="px-4 py-3.5 text-center w-44">TANGGAL & WAKTU</th>
+                                    <th class="px-4 py-3.5">NAMA BARANG</th>
+                                    <th class="px-4 py-3.5 text-center w-36">JENIS MUTASI</th>
+                                    <th class="px-4 py-3.5 text-center w-28">JUMLAH</th>
+                                    <th class="px-4 py-3.5">KETERANGAN / KEPERLUAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-body-riwayat" class="divide-y divide-neutral-200 dark:divide-neutral-800 text-neutral-600 dark:text-gray-300">
+                                <tr>
+                                    <td colspan="5" class="text-center py-8 text-neutral-500">
+                                        <div class="flex flex-col items-center gap-2">
+                                            <div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <span class="text-sm">Menunggu data riwayat terunduh...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // =========================================================================
+        // 1. URL WEB APP GOOGLE APPS SCRIPT (KODE /exec)
+        // =========================================================================
+        const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzQHmsJE3BqMoU4TDHC5XI7fV4zeMTR8lJ8ktCMPgSQensudrZ_CTAuVCMdlHivd0SBOw/exec"; 
+
+        // Variabel penampung data utama
+        let masterDataBarang = [];
+        let masterDataRiwayat = [];
+
+        // ==========================================
+        // 2. AMBIL DATA VIA TEMBUS BLOKIRAN (JSONP)
+        // ==========================================
+        function muatDataStokTembusBlokir() {
+            const callbackLama = document.getElementById("google-script-bypass");
+            if (callbackLama) callbackLama.remove();
+
+            const script = document.createElement("script");
+            script.id = "google-script-bypass";
+            script.src = `${URL_GOOGLE_SCRIPT}?callback=tanganiResponsData`;
+            
+            script.onerror = function() {
+                console.error("Gagal memuat script dari Google.");
+                tampilkanPesanGagal("Gagal terhubung dengan server Google Apps Script.");
+            };
+
+            document.body.appendChild(script);
+        }
+
+        // ==========================================
+        // 3. HANDLER RESPONS DATA UTAMA
+        // ==========================================
+        function tanganiResponsData(data) {
+            if (!data || data.error) {
+                console.error("Error dari backend:", data ? data.error : "Data kosong");
+                tampilkanPesanGagal(data ? data.error : "Data tidak valid.");
+                return;
+            }
+
+            console.log("Data Berhasil Diterima!", data);
+            
+            // Pengondisian jika backend mengirim objek terpisah {stok:[], riwayat:[]} atau array gabungan murni
+            if (data.stok) {
+                masterDataBarang = data.stok;
+                masterDataRiwayat = data.riwayat || [];
+            } else if (Array.isArray(data)) {
+                masterDataBarang = data;
+                masterDataRiwayat = []; // Default kosong jika sheet log belum dipisah di backend GAS
+            }
+            
+            // Jalankan fungsi render UI komponen secara paralel
+            renderTabel(masterDataBarang);
+            perbaruiDropdownBarang(masterDataBarang);
+            renderRiwayat(masterDataRiwayat);
+        }
+
+        // =========================================================================
+        // 4. FUNGSIONAL RENDER BARIS TABEL STOK BARANG (FIXED KEY POSITION)
+        // =========================================================================
+        function renderTabel(dataArray) {
+            const bodyTabel = document.getElementById("tabel-body-barang");
+            bodyTabel.innerHTML = "";
+
+            if (!dataArray || dataArray.length === 0) {
+                bodyTabel.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-neutral-500 text-sm">Tidak ada barang yang cocok atau ditemukan.</td></tr>`;
+                return;
+            }
+
+            dataArray.forEach((barang, index) => {
+                const baris = document.createElement("tr");
+                baris.className = "border-b border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition duration-150";
+
+                let noUrut, namaBarang, jumlahStok;
+
+                // Sinkronisasi data JSON Object agar kolom nomor dan nama barang tidak terbalik
+                if (typeof barang === 'object' && !Array.isArray(barang)) {
+                    namaBarang = barang.no || "Tanpa Nama Barang";
+                    jumlahStok = Number(barang.nama_barang) || 0; 
+                    noUrut = index + 1; // Membuat penomoran urut otomatis di UI (1, 2, 3...)
+                } else {
+                    noUrut = barang[0] || (index + 1);
+                    namaBarang = barang[1] || "Tanpa Nama";
+                    jumlahStok = Number(barang[2]) || 0;
+                }
+
+                const statusBarang = jumlahStok > 0 ? "Tersedia" : "Habis";
+                const warnaBadge = statusBarang === "Tersedia" 
+                    ? "text-green-600 bg-green-500/10 dark:text-green-400" 
+                    : "text-red-600 bg-red-500/10 dark:text-red-400";
+
+                baris.innerHTML = `
+                    <td class="px-4 py-3.5 text-center text-sm font-medium text-neutral-400 dark:text-neutral-500">${noUrut}</td>
+                    <td class="px-4 py-3.5 text-sm font-semibold text-neutral-900 dark:text-gray-100">${namaBarang}</td>
+                    <td class="px-4 py-3.5 text-center text-sm font-bold text-neutral-800 dark:text-gray-200">${jumlahStok}</td>
+                    <td class="px-4 py-3.5 text-center text-sm">
+                        <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide ${warnaBadge}">
+                            ${statusBarang}
+                        </span>
+                    </td>
+                `;
+                bodyTabel.appendChild(baris);
+            });
+        }
+
+        // =========================================================================
+        // 5. AUTO-FILL DROPDOWN FORM INPUT BARANG
+        // =========================================================================
+        function perbaruiDropdownBarang(dataArray) {
+            const dropdown = document.getElementById("input-nama-barang");
+            if (!dropdown) return;
+            
+            dropdown.innerHTML = '<option value="" disabled selected>-- Pilih Barang dari Gudang --</option>';
+            if (!dataArray || dataArray.length === 0) return;
+
+            dataArray.forEach(barang => {
+                let nama = "";
+                if (typeof barang === 'object' && !Array.isArray(barang)) {
+                    nama = barang.no; // Membaca teks string nama barang asli
+                } else if (Array.isArray(barang)) {
+                    nama = barang[1];
+                }
+
+                // Memastikan data valid berupa teks nama, bukan angka indeks
+                if (nama && isNaN(nama)) { 
+                    const opsi = document.createElement("option");
+                    opsi.value = nama.trim();
+                    opsi.textContent = nama.trim();
+                    dropdown.appendChild(opsi);
+                }
+            });
+        }
+
+        // =========================================================================
+        // 6. FUNGSIONAL RENDER TABEL RIWAYAT / LOG MUTASI BARANG
+        // =========================================================================
+        function renderRiwayat(riwayatArray) {
+            const bodyRiwayat = document.getElementById("tabel-body-riwayat");
+            if (!bodyRiwayat) return;
+            
+            bodyRiwayat.innerHTML = "";
+
+            if (!riwayatArray || riwayatArray.length === 0) {
+                bodyRiwayat.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-neutral-500 text-sm">Belum ada riwayat perubahan barang yang tercatat dari Sheets.</td></tr>`;
+                return;
+            }
+
+            riwayatArray.forEach((log) => {
+                const baris = document.createElement("tr");
+                baris.className = "border-b border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition duration-150";
+
+                const tanggalRaw = log.tanggal || log.Timestamp || "-";
+                const namaBarang = log.nama_barang || log.nama || "-";
+                const jenisMutasi = log.jenis_transaksi || log.jenis || "-";
+                const jumlah = Math.abs(Number(log.jumlah)) || 0;
+                const keterangan = log.keterangan || "-";
+
+                const warnaBadge = jenisMutasi === "Masuk" 
+                    ? "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400" 
+                    : "text-amber-600 bg-amber-500/10 dark:text-amber-400";
+
+                baris.innerHTML = `
+                    <td class="px-4 py-3 text-center text-xs text-neutral-400 font-mono">${tanggalRaw}</td>
+                    <td class="px-4 py-3 text-sm font-semibold text-neutral-900 dark:text-gray-100">${namaBarang}</td>
+                    <td class="px-4 py-3 text-center text-sm">
+                        <span class="inline-flex px-2 py-0.5 rounded-md text-xs font-semibold ${warnaBadge}">
+                            ${jenisMutasi}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-center text-sm font-bold ${jenisMutasi === 'Masuk' ? 'text-emerald-500' : 'text-red-400'}">
+                        ${jumlah}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-neutral-500 dark:text-gray-400">${keterangan}</td>
+                `;
+                bodyRiwayat.appendChild(baris);
+            });
+        }
+
+        // =========================================================================
+        // 7. PROSES KIRIM FORM INPUT TRANSAKSI KE GOOGLE SHEETS
+        // =========================================================================
+        function kirimTransaksi(event) {
+            event.preventDefault();
+            
+            const btnSubmit = document.getElementById("btn-submit-transaksi");
+            const jenis = document.querySelector('input[name="jenis_transaksi"]:checked').value;
+            const nama = document.getElementById("input-nama-barang").value;
+            const jumlah = document.getElementById("input-jumlah").value;
+            const keterangan = document.getElementById("input-keterangan").value;
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Menyimpan...';
+
+            const urlKirim = `${URL_GOOGLE_SCRIPT}?aksi=input_transaksi&jenis=${encodeURIComponent(jenis)}&nama=${encodeURIComponent(nama)}&jumlah=${jumlah}&keterangan=${encodeURIComponent(keterangan)}`;
+
+            // Tembak data transaksi menggunakan mode no-cors untuk keamanan CORS lokal browser
+            fetch(urlKirim, { mode: 'no-cors' })
+                .then(() => {
+                    alert(`Transaksi Barang ${jenis} Berhasil Disimpan!`);
+                    document.getElementById("form-transaksi").reset();
+                    
+                    // Tarik data terbaru agar semua dashboard langsung ter-update
+                    muatDataStokTembusBlokir();
+                    switchTab('stok');
+                })
+                .catch(err => {
+                    console.error("Gagal mengirim transaksi:", err);
+                    alert("Terjadi kesalahan koneksi saat menyimpan transaksi.");
+                })
+                .finally(() => {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Simpan Transaksi';
+                    lucide.createIcons();
+                });
+        }
+
+        // ==========================================
+        // 8. FITUR LIVE SEARCH BARANG
+        // ==========================================
+        function filterBarang() {
+            const kataKunci = document.getElementById("pencarian-barang").value.toLowerCase().trim();
+            
+            const hasilFilter = masterDataBarang.filter(barang => {
+                const nama = (typeof barang === 'object' ? barang.no : barang[1] || "").toLowerCase();
+                return nama.includes(kataKunci);
+            });
+
+            renderTabel(hasilFilter);
+        }
+
+        function tampilkanPesanGagal(pesan) {
+            const bodyTabel = document.getElementById("tabel-body-barang");
+            if (bodyTabel) {
+                bodyTabel.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-6 text-sm text-red-500 font-medium">
+                            <div class="flex items-center justify-center gap-2">
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                Gagal memuat data: ${pesan}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        // =========================================================================
+        // FUNGSIONAL EKSPOR DATA (EXCEL & PDF)
+        // =========================================================================
+        function eksporExcel() {
+            if (masterDataBarang.length === 0) {
+                alert("Tidak ada data persediaan barang untuk diekspor!");
+                return;
+            }
+            
+            // Format ulang data agar rapi saat dibuka di Excel
+            const dataEkspor = masterDataBarang.map((barang, index) => {
+                let namaBarang, jumlahStok;
+                if (typeof barang === 'object' && !Array.isArray(barang)) {
+                    namaBarang = barang.no || "Tanpa Nama Barang";
+                    jumlahStok = Number(barang.nama_barang) || 0;
+                } else {
+                    namaBarang = barang[1] || "Tanpa Nama";
+                    jumlahStok = Number(barang[2]) || 0;
+                }
+                return {
+                    "NO": index + 1,
+                    "NAMA BARANG": namaBarang,
+                    "JUMLAH STOK": jumlahStok,
+                    "STATUS": jumlahStok > 0 ? "Tersedia" : "Habis"
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(dataEkspor);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Stok Barang");
+            
+            // Generate file Excel otomatis terunduh
+            XLSX.writeFile(workbook, "Persediaan_Barang_Habis_Pakai_SMPN_110.xlsx");
+        }
+
+        function eksporPDF() {
+            if (masterDataBarang.length === 0) {
+                alert("Tidak ada data persediaan barang untuk didownload!");
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Judul Dokumen PDF
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text("LAPORAN E-PERSEDIAAN", 14, 15);
+            doc.setFontSize(12);
+            doc.text("SMP NEGERI 110 JAKARTA", 14, 21);
+            
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(9);
+            doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 14, 27);
+
+            // Mapping isi data baris tabel
+            const barisTabel = masterDataBarang.map((barang, index) => {
+                let namaBarang, jumlahStok;
+                if (typeof barang === 'object' && !Array.isArray(barang)) {
+                    namaBarang = barang.no || "Tanpa Nama Barang";
+                    jumlahStok = Number(barang.nama_barang) || 0;
+                } else {
+                    namaBarang = barang[1] || "Tanpa Nama";
+                    jumlahStok = Number(barang[2]) || 0;
+                }
+                return [
+                    index + 1,
+                    namaBarang,
+                    jumlahStok,
+                    jumlahStok > 0 ? "Tersedia" : "Habis"
+                ];
+            });
+
+            // AutoTable Rendering PDF
+            doc.autoTable({
+                startY: 32,
+                head: [["NO", "NAMA BARANG", "JUMLAH STOK", "STATUS"]],
+                body: barisTabel,
+                theme: 'grid',
+                headStyles: { fillColor: [37, 99, 235], halign: 'center' }, // Blue accent color
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 15 },
+                    2: { halign: 'center', cellWidth: 35 },
+                    3: { halign: 'center', cellWidth: 30 }
+                },
+                styles: { fontSize: 10 }
+            });
+
+            doc.save("Persediaan_Barang_Habis_Pakai_SMPN_110.pdf");
+        }
+
+        // ==========================================
+        // 9. MANAGEMENT TABS NAVIGATION & THEME
+        // ==========================================
+        function switchTab(tabName) {
+            const tabs = ['input', 'stok', 'riwayat'];
+            tabs.forEach(t => {
+                const button = document.getElementById(`tab-${t}`);
+                const panel = document.getElementById(`panel-${t}`);
+                
+                if (t === tabName) {
+                    button.className = "px-5 py-3 border-b-2 border-blue-500 text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 bg-neutral-100 dark:bg-neutral-900/50 rounded-t-lg";
+                    panel.classList.remove('hidden');
+                    panel.classList.add('block');
+                } else {
+                    button.className = "px-5 py-3 border-b-2 border-transparent text-sm font-medium text-neutral-500 dark:text-gray-400 hover:text-neutral-700 dark:hover:text-gray-200 flex items-center gap-2";
+                    panel.classList.remove('block');
+                    panel.classList.add('hidden');
+                }
+            });
+        }
+
+        function toggleTema() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Inisialisasi dasar aplikasi saat pertama kali diakses
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            
+            lucide.createIcons();
+            muatDataStokTembusBlokir();
+        });
+    </script>
+</body>
+</html>
