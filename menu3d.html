@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menu 3D - Versi Letupan Tengah</title>
+    <title>Menu 3D - Edisi Ledakan Shockwave Gelombang</title>
  
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/JjyvHZbP/logo-menu3d.png">
     <link rel="shortcut icon" type="image/png" href="https://i.ibb.co.com/JjyvHZbP/logo-menu3d.png">
@@ -55,14 +55,13 @@
             background-color: rgba(10, 15, 30, 0.4) !important;
         }
 
-        /* WADAH UNTUK CANVAS PARTIKEL */
         #particleCanvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 4; /* Di atas ikon menu agar riakan lingkaran meluncur di atas tombol */
         }
 
         /* === WADAH MENU === */
@@ -192,7 +191,7 @@
             100% { opacity: 1; filter: drop-shadow(0 8px 16px rgba(30, 64, 175, 0.6)) scale(1.03); }
         }
 
-        /* === 🚀 UTAMA: LOGIKA LETUPAN DARI TENGAH LOGO 🚀 === */
+        /* === SUB-MENU UTAMA === */
         .menu-item {
             position: absolute;
             width: 74px;
@@ -201,29 +200,25 @@
             left: calc(50% - 37px);
             top: calc(50% - 37px);
             
-            /* Sifat mutlak saat tertutup: kumpul di titik (0,0) tengah logo besar & tak terlihat */
             opacity: 0;
             visibility: hidden;
             transform: translate(0px, 0px) scale(0);
-            
-            /* Efek transisi meluncur elastis yang ditarik dari koordinat (0,0) */
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, visibility 0.4s;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, visibility 0.4s;
         }
 
-        /* KETIKA MENU DIKLIK (AKTIF) -> MELUNCUR KE KOORDINAT ASLINYA DI VAR CSS */
         .menu-item.show {
             opacity: 1;
             visibility: visible;
             transform: translate(var(--x), var(--y)) scale(1);
         }
 
-        /* KETIKA DI-HOVER -> PERBESAR SEDIKIT AGAR PREMIUM */
-        .menu-item.show:hover {
-            transform: translate(var(--x), var(--y)) scale(1.12) !important;
-            z-index: 40;
+        .menu-item:not(.show) {
+            transform: translate(0px, 0px) scale(0) !important;
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.36, 0, 0.66, -0.56), opacity 0.3s ease;
         }
 
-        /* === 🛰️ WADAH KHUSUS ANIMASI MENGORBIT / MELAYANG (YANG MEMBUAT TIDAK BENTROK) 🛰️ === */
+        /* === WADAH ANIMASI MELAYANG === */
         .orbit-wrapper {
             width: 100%;
             height: 100%;
@@ -240,19 +235,16 @@
             transition: box-shadow 0.3s ease, filter 0.3s ease;
         }
 
-        /* Jalankan efek mengayun/orbit hanya saat menu sukses terbuka */
         .menu-item.show .orbit-wrapper {
             animation: mengorbitMelayang var(--durasi-float, 4s) ease-in-out infinite alternate;
             animation-delay: var(--delay-float, 0s);
         }
 
-        /* Jika kursor mouse menyentuh menu, jeda ayunannya agar presisi */
-        .menu-item.show:hover .orbit-wrapper {
+        .menu-item:hover .orbit-wrapper {
             animation-play-state: paused !important;
-            filter: brightness(1.1);
+            filter: brightness(1.15);
         }
 
-        /* KEYFRAMES FLOATING MURNI PADA KELAS INTERNAL (Independent) */
         @keyframes mengorbitMelayang {
             0% { transform: translate(-3px, -4px) rotate(-1deg); }
             50% { transform: translate(0px, 0px) scale(1.02) rotate(1deg); }
@@ -276,49 +268,48 @@
             pointer-events: none;
         }
 
-        /* WARNA UNIK & UPDATE GRADIEN CAHAYA SAAT HOVER */
-        .color-0 { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); border: 2px solid #fb923c; box-shadow: 0 8px 15px rgba(194,65,12,0.4), 0 4px 0 #7c2d12; }
+        /* WARNA GRADIEN ICON & VARIABEL WARNA SHOCKWAVE */
+        .color-0 { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); border: 2px solid #fb923c; box-shadow: 0 8px 15px rgba(194,65,12,0.4), 0 4px 0 #7c2d12; --neon: #f97316; }
         .color-0:hover { box-shadow: 0 14px 28px rgba(194,65,12,0.6), 0 1px 0 #7c2d12; }
 
-        .color-1 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: 2px solid #60a5fa; box-shadow: 0 8px 15px rgba(29,78,216,0.4), 0 4px 0 #1e3a8a; }
+        .color-1 { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: 2px solid #60a5fa; box-shadow: 0 8px 15px rgba(29,78,216,0.4), 0 4px 0 #1e3a8a; --neon: #3b82f6; }
         .color-1:hover { box-shadow: 0 14px 28px rgba(29,78,216,0.6), 0 1px 0 #1e3a8a; }
 
-        .color-2 { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); border: 2px solid #4ade80; box-shadow: 0 8px 15px rgba(21,128,61,0.4), 0 4px 0 #14532d; }
+        .color-2 { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); border: 2px solid #4ade80; box-shadow: 0 8px 15px rgba(21,128,61,0.4), 0 4px 0 #14532d; --neon: #22c55e; }
         .color-2:hover { box-shadow: 0 14px 28px rgba(21,128,61,0.6), 0 1px 0 #14532d; }
 
-        .color-3 { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border: 2px solid #f87171; box-shadow: 0 8px 15px rgba(185,28,28,0.4), 0 4px 0 #7f1d1d; }
+        .color-3 { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border: 2px solid #f87171; box-shadow: 0 8px 15px rgba(185,28,28,0.4), 0 4px 0 #7f1d1d; --neon: #ef4444; }
         .color-3:hover { box-shadow: 0 14px 28px rgba(185,28,28,0.6), 0 1px 0 #7f1d1d; }
 
-        .color-4 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); border: 2px solid #c084fc; box-shadow: 0 8px 15px rgba(126,34,206,0.4), 0 4px 0 #581c87; }
+        .color-4 { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); border: 2px solid #c084fc; box-shadow: 0 8px 15px rgba(126,34,206,0.4), 0 4px 0 #581c87; --neon: #a855f7; }
         .color-4:hover { box-shadow: 0 14px 28px rgba(126,34,206,0.6), 0 1px 0 #581c87; }
 
-        .color-5 { background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); border: 2px solid #2dd4bf; box-shadow: 0 8px 15px rgba(15,118,110,0.4), 0 4px 0 #115e59; }
+        .color-5 { background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); border: 2px solid #2dd4bf; box-shadow: 0 8px 15px rgba(15,118,110,0.4), 0 4px 0 #115e59; --neon: #14b8a6; }
         .color-5:hover { box-shadow: 0 14px 28px rgba(15,118,110,0.6), 0 1px 0 #115e59; }
 
-        .color-6 { background: linear-gradient(135deg, #eab308 0%, #a16207 100%); border: 2px solid #facc15; box-shadow: 0 8px 15px rgba(161,98,7,0.4), 0 4px 0 #854d0e; }
+        .color-6 { background: linear-gradient(135deg, #eab308 0%, #a16207 100%); border: 2px solid #facc15; box-shadow: 0 8px 15px rgba(161,98,7,0.4), 0 4px 0 #854d0e; --neon: #eab308; }
         .color-6:hover { box-shadow: 0 14px 28px rgba(161,98,7,0.6), 0 1px 0 #854d0e; }
 
-        .color-7 { background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); border: 2px solid #f472b6; box-shadow: 0 8px 15px rgba(190,24,93,0.4), 0 4px 0 #831843; }
+        .color-7 { background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); border: 2px solid #f472b6; box-shadow: 0 8px 15px rgba(190,24,93,0.4), 0 4px 0 #831843; --neon: #ec4899; }
         .color-7:hover { box-shadow: 0 14px 28px rgba(190,24,93,0.6), 0 1px 0 #831843; }
 
-        .color-8 { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); border: 2px solid #818cf8; box-shadow: 0 8px 15px rgba(67,56,202,0.4), 0 4px 0 #3730a3; }
+        .color-8 { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); border: 2px solid #818cf8; box-shadow: 0 8px 15px rgba(67,56,202,0.4), 0 4px 0 #3730a3; --neon: #6366f1; }
         .color-8:hover { box-shadow: 0 14px 28px rgba(67,56,202,0.6), 0 1px 0 #3730a3; }
 
-        .color-9 { background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border: 2px solid #a3e635; box-shadow: 0 8px 15px rgba(77,124,15,0.4), 0 4px 0 #3f6212; }
+        .color-9 { background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border: 2px solid #a3e635; box-shadow: 0 8px 15px rgba(77,124,15,0.4), 0 4px 0 #3f6212; --neon: #84cc16; }
         .color-9:hover { box-shadow: 0 14px 28px rgba(77,124,15,0.6), 0 1px 0 #3f6212; }
 
+        /* MODIFIKASI ANIMASI: Meluncur ciut lalu mental ke posisi asal */
         .move-to-center {
-            animation: luncurKeTengahLogo 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards !important;
-            z-index: 50 !important;
+            animation: luncurKeTengahLogo 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards !important;
         }
         @keyframes luncurKeTengahLogo {
             0% { transform: translate(var(--x), var(--y)) scale(1); opacity: 1; }
-            45% { transform: translate(0px, 0px) scale(0.2); opacity: 0.5; }
-            55% { transform: translate(0px, 0px) scale(0.2); opacity: 0.5; }
+            40% { transform: translate(0px, 0px) scale(0.1); opacity: 0.3; }
+            50% { transform: translate(0px, 0px) scale(0.1); opacity: 0.3; }
             100% { transform: translate(var(--x), var(--y)) scale(1); opacity: 1; }
         }
 
-        /* === TOMBOL TEMA === */
         #toggleMode {
             position: fixed;
             top: 20px; right: 20px;
@@ -332,7 +323,6 @@
             z-index: 999;
             transition: all 0.3s ease;
         }
-        #toggleMode:hover { background: rgba(255, 255, 255, 0.3); }
 
         /* === PANEL PENGATURAN === */
         .settings-panel {
@@ -368,8 +358,6 @@
             background: rgba(30, 41, 59, 0.95);
             color: #f8fafc;
         }
-        body.dark-mode .settings-panel h3,
-        body.dark-mode .settings-panel label { color: #f8fafc; }
         
         .input-custom {
             width: 100%;
@@ -477,7 +465,9 @@
 
         let menuTampil = false;
         let daftarIkon = [];
+        let efekRippleList = []; // Menampung objek ring gelombang yang aktif
 
+        const menuContainer = document.getElementById('menuContainer');
         const tombolUtama = document.getElementById('tombolUtama');
         const orbitLine = document.getElementById('orbitLine');
         const panelPengaturan = document.getElementById('panelPengaturan');
@@ -507,29 +497,35 @@
                 gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08); 
                 osc.connect(gainNode); gainNode.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.08);
-            } catch (e) { console.log(e); }
+            } catch (e) { }
         }
 
-        function putarSuaraKlikSubMenu() {
+        // Efek audio sonar/radar futuristik pendek melengking halus (*Digital Echo*)
+        function putarSuaraShockwave() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(1500, audioCtx.currentTime); 
-                osc.frequency.setValueAtTime(40, audioCtx.currentTime + 0.02); 
-                gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime); 
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02); 
-                osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.02);
-            } catch (e) { console.log(e); }
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(580, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.25);
+                
+                gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } catch (e) {}
         }
 
-        // CANVAS LOGIKA PARTIKEL DEBU CAHAYA
+        // CANVAS ENGINE (PARTIKEL AMBIENT + CINCIN SHOCKWAVE RADIAl)
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let arrayPartikel = [];
-        const jumlahPartikel = 45;
+        const jumlahPartikel = 40;
 
         function sesuaikanUkuranCanvas() {
             canvas.width = window.innerWidth;
@@ -538,14 +534,14 @@
         window.addEventListener('resize', sesuaikanUkuranCanvas);
         sesuaikanUkuranCanvas();
 
-        class PartikelCahaya {
+        class PartikelAmbient {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height + canvas.height;
-                this.ukuran = Math.random() * 3.5 + 0.5;
-                this.kecepatanY = Math.random() * 0.4 + 0.1;
+                this.ukuran = Math.random() * 2 + 0.5;
+                this.kecepatanY = Math.random() * 0.3 + 0.1;
                 this.kecepatanX = (Math.random() * 0.2 - 0.1);
-                this.alpha = Math.random() * 0.5 + 0.1;
+                this.alpha = Math.random() * 0.4 + 0.1;
             }
             update() {
                 this.y -= this.kecepatanY;
@@ -557,19 +553,62 @@
             }
             draw() {
                 ctx.beginPath();
-                let gradien = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.ukuran);
-                gradien.addColorStop(0, `rgba(255, 253, 230, ${this.alpha})`);
-                gradien.addColorStop(1, `rgba(255, 253, 230, 0)`);
-                ctx.fillStyle = gradien;
-                ctx.arc(this.x, this.y, this.ukuran * 2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.arc(this.x, this.y, this.ukuran, 0, Math.PI * 2);
                 ctx.fill();
             }
+        }
+
+        // Class Generator Cincin Gelombang Riak Air (Shockwave Ring)
+        class WaveRing {
+            constructor(x, y, warnaHex, delay) {
+                this.x = x;
+                this.y = y;
+                this.warna = warnaHex;
+                this.delay = delay; // Waktu tunggu sebelum cincin mulai membesar
+                this.radius = 10;
+                this.radiusMaks = 90; // Jangkauan bentangan riakan gelombang
+                this.alpha = 1.0;
+                this.kecepatanEkspansi = 3.5;
+            }
+            update() {
+                if (this.delay > 0) {
+                    this.delay--;
+                    return;
+                }
+                this.radius += this.kecepatanEkspansi;
+                // Hitung rasio ukuran agar semakin membesar nilainya semakin memudar kencang
+                let rasio = this.radius / this.radiusMaks;
+                this.alpha = 1 - rasio;
+            }
+            draw() {
+                if (this.delay > 0 || this.alpha <= 0) return;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                
+                // Desain garis luar melingkar
+                ctx.strokeStyle = this.warna;
+                ctx.lineWidth = 3 * this.alpha;
+                ctx.shadowColor = this.warna;
+                ctx.shadowBlur = 12;
+                
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        // Memicu letupan riakan 3 lapis cincin gelombang sekaligus
+        function pemicuLedakanShockwave(x, y, warnaHex) {
+            efekRippleList.push(new WaveRing(x, y, warnaHex, 0));  // Cincin ke-1 langsung jalan
+            efekRippleList.push(new WaveRing(x, y, warnaHex, 6));  // Cincin ke-2 delay 6 frame
+            efekRippleList.push(new WaveRing(x, y, warnaHex, 12)); // Cincin ke-3 delay 12 frame
         }
 
         function inisialisasiPartikel() {
             arrayPartikel = [];
             for (let i = 0; i < jumlahPartikel; i++) {
-                let p = new PartikelCahaya();
+                let p = new PartikelAmbient();
                 p.y = Math.random() * canvas.height;
                 arrayPartikel.push(p);
             }
@@ -577,10 +616,23 @@
 
         function jalankanAnimasiPartikel() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 1. Gambar Partikel Latar Belakang
             for (let i = 0; i < arrayPartikel.length; i++) {
                 arrayPartikel[i].update();
                 arrayPartikel[i].draw();
             }
+
+            // 2. Update & Gambar Cincin Gelombang Air Futuristik
+            for (let i = efekRippleList.length - 1; i >= 0; i--) {
+                efekRippleList[i].update();
+                if (efekRippleList[i].radius >= efekRippleList[i].radiusMaks) {
+                    efekRippleList.splice(i, 1);
+                } else {
+                    efekRippleList[i].draw();
+                }
+            }
+
             requestAnimationFrame(jalankanAnimasiPartikel);
         }
         inisialisasiPartikel();
@@ -675,7 +727,7 @@
             document.querySelectorAll('.menu-item').forEach(el => el.remove());
 
             const jumlah = daftarIkon.length;
-            const radiusLingkaran = 150;
+            const radiusLingkaran = 145;
             const sudutAwal = -90;
 
             daftarIkon.forEach((data, indeks) => {
@@ -687,32 +739,42 @@
 
                 const elemenMenu = document.createElement('div');
                 elemenMenu.className = "menu-item";
-                
-                // Set koordinat tujuan meluncur di element terluar
                 elemenMenu.style.setProperty('--x', `${x}px`);
                 elemenMenu.style.setProperty('--y', `${y}px`);
-                
-                // Efek stagger (antrean keluar berurutan tipis agar dramatis)
-                elemenMenu.style.transitionDelay = `${indeks * 0.05}s`;
+                elemenMenu.style.transitionDelay = `${indeks * 0.04}s`;
 
-                // Buat tag anchor di dalam wadah penampung orbit melayang
                 const elemenAyun = document.createElement('a');
                 elemenAyun.className = "orbit-wrapper";
-                elemenAyun.classList.add(`color-${indeks % 10}`);
+                const kelasWarna = `color-${indeks % 10}`;
+                elemenAyun.classList.add(kelasWarna);
                 elemenAyun.href = data.link;
 
-                // Set variabel durasi & delay ayunan murni di element dalam
-                const durasiAcak = (3.4 + (indeks * 0.3)).toFixed(1);
-                const delayAcak = (indeks * 0.2).toFixed(2);
+                const durasiAcak = (3.2 + (indeks * 0.2)).toFixed(1);
+                const delayAcak = (indeks * 0.15).toFixed(2);
                 elemenAyun.style.setProperty('--durasi-float', `${durasiAcak}s`);
                 elemenAyun.style.setProperty('--delay-float', `-${delayAcak}s`);
 
                 let namaIkonBersih = data.ikon.replace('fa-solid', '').replace('fa-', '').trim();
                 elemenAyun.innerHTML = `<i class="fa-solid fa-${namaIkonBersih}"></i><span>${data.label}</span>`;
                 
+                // === 🌊 LOGIKA SHOCKWAVE LINGKARAN KETIKA DIKLIK 🌊 ===
                 elemenAyun.addEventListener('click', (e) => {
-                    e.preventDefault(); 
-                    putarSuaraKlikSubMenu(); 
+                    e.preventDefault();
+                    
+                    // Koordinat absolut titik tengah tombol sub-menu untuk pusat riakan
+                    const batasTombol = elemenAyun.getBoundingClientRect();
+                    const pusatX = batasTombol.left + (batasTombol.width / 2);
+                    const pusatY = batasTombol.top + (batasTombol.height / 2);
+
+                    // Ambil warna hex kustom dari CSS custom variable
+                    const gayaComputed = window.getComputedStyle(elemenAyun);
+                    const warnaHex = gayaComputed.getPropertyValue('--neon').trim() || '#ffffff';
+
+                    // Jalankan suara sonar dan letupan cincin gelombang
+                    putarSuaraShockwave();
+                    pemicuLedakanShockwave(pusatX, pusatY, warnaHex);
+                    
+                    // Jalankan animasi meluncur menciut bawaan bapak
                     elemenMenu.classList.add('move-to-center');
                     
                     setTimeout(() => {
@@ -721,13 +783,13 @@
                         } else if(data.link !== '#') {
                             window.location.href = data.link;
                         }
-                    }, 600);
+                    }, 550);
 
                     setTimeout(() => {
                         elemenMenu.classList.remove('move-to-center');
-                    }, 1220);
+                    }, 1000);
                 });
-                
+
                 elemenMenu.appendChild(elemenAyun);
                 wadah.appendChild(elemenMenu);
             });
@@ -758,7 +820,7 @@
             });
         }
 
-        function ambilDataDariEditor(){
+        function dapatkanDataDariEditor(){
             const dataBaru = [];
             document.querySelectorAll('.item-menu-editor').forEach(block => {
                 const ikon = block.querySelector('.input-ikon').value || 'question';
@@ -771,13 +833,13 @@
 
         function hapusIkon(idx){
             if(daftarIkon.length <= 1) return alert("Minimal harus ada 1 ikon!");
-            ambilDataDariEditor();
+            dapatkanDataDariEditor();
             daftarIkon.splice(idx, 1);
             buatEditorIkon();
         }
 
         document.getElementById('btnTambahIkon').addEventListener('click', () => {
-            ambilDataDariEditor();
+            dapatkanDataDariEditor();
             daftarIkon.push({ikon: "star", label: "Baru", link: "#"});
             buatEditorIkon();
         });
@@ -787,7 +849,7 @@
         });
 
         btnTerapkanBg.addEventListener('click', () => {
-            ambilDataDariEditor();
+            dapatkanDataDariEditor();
 
             let urlGambar = bgUrlInput.value.trim();
             const warnaDipilih = colorPicker.value;
@@ -812,7 +874,6 @@
         });
 
         toggleMode.addEventListener('click', () => {
-            putarSuaraKlikSubMenu();
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
             toggleMode.innerHTML = isDark ? '☀️' : '🌙';
