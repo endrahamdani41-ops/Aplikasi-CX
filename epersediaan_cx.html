@@ -26,7 +26,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
     <style>
-        /* Custom scrollbar untuk estetika UI */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -154,18 +153,20 @@
                     </div>
 
                     <div class="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
-                        <table id="tabel-stok-barang" class="w-full text-left border-collapse">
+                        <table id="tabel-stok-barang" class="w-full text-left border-collapse min-w-[700px]">
                             <thead>
                                 <tr class="bg-gray-100 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-400 font-semibold text-xs tracking-wider uppercase border-b border-neutral-200 dark:border-neutral-800">
-                                    <th class="px-4 py-3.5 text-center w-16">NO</th>
-                                    <th class="px-4 py-3.5">NAMA BARANG</th>
-                                    <th class="px-4 py-3.5 text-center w-40">JUMLAH STOK</th>
-                                    <th class="px-4 py-3.5 text-center w-36">STATUS</th>
+                                    <th class="px-4 py-3.5 text-center w-14">NO</th>
+                                    <th class="px-4 py-3.5 w-52">NAMA BARANG</th>
+                                    <th class="px-4 py-3.5">TYPE</th>
+                                    <th class="px-4 py-3.5 text-center w-28">SATUAN</th>
+                                    <th class="px-4 py-3.5 text-center w-36">JUMLAH STOK</th>
+                                    <th class="px-4 py-3.5 text-center w-28">STATUS</th>
                                 </tr>
                             </thead>
                             <tbody id="tabel-body-barang" class="divide-y divide-neutral-200 dark:divide-neutral-800 text-neutral-600 dark:text-gray-300">
                                 <tr>
-                                    <td colspan="4" class="text-center py-8 text-neutral-500">
+                                    <td colspan="6" class="text-center py-8 text-neutral-500">
                                         <div class="flex flex-col items-center gap-2">
                                             <div class="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                                             <span class="text-sm">Menghubungkan ke Google Sheets...</span>
@@ -180,7 +181,6 @@
 
             <div id="panel-riwayat" class="hidden animate-fadeIn">
                 <div class="bg-white dark:bg-cardDark p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
-                    
                     <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 mb-6">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
@@ -219,18 +219,12 @@
     </div>
 
     <script>
-        // =========================================================================
-        // 1. URL WEB APP GOOGLE APPS SCRIPT (KODE /exec)
-        // =========================================================================
-        const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzQHmsJE3BqMoU4TDHC5XI7fV4zeMTR8lJ8ktCMPgSQensudrZ_CTAuVCMdlHivd0SBOw/exec"; 
+        // GANTI LINK DI BAWAH INI DENGAN LINK WEB APP BARU YANG DI-DEPLOY DARI GAS TERBARU!
+        const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbwL7Uagyy2JgOsDHT-oC6TaKgTOK8MjOppIFlTyWVT7ntjQHJZR3bZZFhgiTXYaCXHrDQ/exec"; 
 
-        // Variabel penampung data utama
         let masterDataBarang = [];
         let masterDataRiwayat = [];
 
-        // ==========================================
-        // 2. AMBIL DATA VIA TEMBUS BLOKIRAN (JSONP)
-        // ==========================================
         function muatDataStokTembusBlokir() {
             const callbackLama = document.getElementById("google-script-bypass");
             if (callbackLama) callbackLama.remove();
@@ -247,9 +241,6 @@
             document.body.appendChild(script);
         }
 
-        // ==========================================
-        // 3. HANDLER RESPONS DATA UTAMA
-        // ==========================================
         function tanganiResponsData(data) {
             if (!data || data.error) {
                 console.error("Error dari backend:", data ? data.error : "Data kosong");
@@ -259,59 +250,81 @@
 
             console.log("Data Berhasil Diterima!", data);
             
-            // Pengondisian jika backend mengirim objek terpisah {stok:[], riwayat:[]} atau array gabungan murni
             if (data.stok) {
                 masterDataBarang = data.stok;
                 masterDataRiwayat = data.riwayat || [];
             } else if (Array.isArray(data)) {
                 masterDataBarang = data;
-                masterDataRiwayat = []; // Default kosong jika sheet log belum dipisah di backend GAS
+                masterDataRiwayat = [];
             }
             
-            // Jalankan fungsi render UI komponen secara paralel
             renderTabel(masterDataBarang);
             perbaruiDropdownBarang(masterDataBarang);
             renderRiwayat(masterDataRiwayat);
         }
 
         // =========================================================================
-        // 4. FUNGSIONAL RENDER BARIS TABEL STOK BARANG (FIXED KEY POSITION)
+        // EKSTRAKSI PROTEKSI DATA AGAR SINKRON DAN COCOK DENGAN STRUKTUR OBJECT GAS
         // =========================================================================
+        function ekstrakPropertiBarang(barang, index) {
+            let noUrut = index + 1;
+            let namaBarang = "Tanpa Nama";
+            let typeBarang = "-";
+            let satuan = "-";
+            let jumlahStok = 0;
+
+            if (typeof barang === 'object' && !Array.isArray(barang)) {
+                // Sesuai format properti object dari GAS terbaru
+                namaBarang = barang.nama_barang || barang.NAMA_BARANG || barang["NAMA BARANG"] || "Tanpa Nama";
+                typeBarang = barang.type || barang.TYPE || "-";
+                satuan = barang.satuan || barang.SATUAN || "-";
+                jumlahStok = barang.jumlah_stok !== undefined ? barang.jumlah_stok : (barang.JUMLAH_STOK || 0);
+                noUrut = barang.no || noUrut;
+            } else if (Array.isArray(barang)) {
+                // Fallback jika data berwujud baris array mentah
+                noUrut = barang[0] || noUrut;
+                namaBarang = barang[1] || "Tanpa Nama";
+                typeBarang = barang[2] || "-";
+                satuan = barang[3] || "-";
+                jumlahStok = barang[4] !== undefined ? barang[4] : 0;
+            }
+
+            return {
+                no: noUrut,
+                nama: String(namaBarang).trim(),
+                type: String(typeBarang).trim(),
+                satuan: String(satuan).trim(),
+                stok: Number(jumlahStok) || 0
+            };
+        }
+
         function renderTabel(dataArray) {
             const bodyTabel = document.getElementById("tabel-body-barang");
             bodyTabel.innerHTML = "";
 
             if (!dataArray || dataArray.length === 0) {
-                bodyTabel.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-neutral-500 text-sm">Tidak ada barang yang cocok atau ditemukan.</td></tr>`;
+                bodyTabel.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-neutral-500 text-sm">Tidak ada barang yang ditemukan.</td></tr>`;
                 return;
             }
 
-            dataArray.forEach((barang, index) => {
+            dataArray.forEach((item, index) => {
+                const b = ekstrakPropertiBarang(item, index);
+                if (b.nama.toLowerCase() === "nama barang") return; // abaikan baris header
+
                 const baris = document.createElement("tr");
                 baris.className = "border-b border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition duration-150";
 
-                let noUrut, namaBarang, jumlahStok;
-
-                // Sinkronisasi data JSON Object agar kolom nomor dan nama barang tidak terbalik
-                if (typeof barang === 'object' && !Array.isArray(barang)) {
-                    namaBarang = barang.no || "Tanpa Nama Barang";
-                    jumlahStok = Number(barang.nama_barang) || 0; 
-                    noUrut = index + 1; // Membuat penomoran urut otomatis di UI (1, 2, 3...)
-                } else {
-                    noUrut = barang[0] || (index + 1);
-                    namaBarang = barang[1] || "Tanpa Nama";
-                    jumlahStok = Number(barang[2]) || 0;
-                }
-
-                const statusBarang = jumlahStok > 0 ? "Tersedia" : "Habis";
+                const statusBarang = b.stok > 0 ? "Tersedia" : "Habis";
                 const warnaBadge = statusBarang === "Tersedia" 
                     ? "text-green-600 bg-green-500/10 dark:text-green-400" 
                     : "text-red-600 bg-red-500/10 dark:text-red-400";
 
                 baris.innerHTML = `
-                    <td class="px-4 py-3.5 text-center text-sm font-medium text-neutral-400 dark:text-neutral-500">${noUrut}</td>
-                    <td class="px-4 py-3.5 text-sm font-semibold text-neutral-900 dark:text-gray-100">${namaBarang}</td>
-                    <td class="px-4 py-3.5 text-center text-sm font-bold text-neutral-800 dark:text-gray-200">${jumlahStok}</td>
+                    <td class="px-4 py-3.5 text-center text-sm font-medium text-neutral-400 dark:text-neutral-500">${b.no}</td>
+                    <td class="px-4 py-3.5 text-sm font-semibold text-neutral-900 dark:text-gray-100">${b.nama}</td>
+                    <td class="px-4 py-3.5 text-sm text-neutral-500 dark:text-gray-400">${b.type}</td>
+                    <td class="px-4 py-3.5 text-center text-sm text-neutral-500 dark:text-gray-400">${b.satuan}</td>
+                    <td class="px-4 py-3.5 text-center text-sm font-bold text-neutral-800 dark:text-gray-200">${b.stok}</td>
                     <td class="px-4 py-3.5 text-center text-sm">
                         <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide ${warnaBadge}">
                             ${statusBarang}
@@ -322,9 +335,6 @@
             });
         }
 
-        // =========================================================================
-        // 5. AUTO-FILL DROPDOWN FORM INPUT BARANG
-        // =========================================================================
         function perbaruiDropdownBarang(dataArray) {
             const dropdown = document.getElementById("input-nama-barang");
             if (!dropdown) return;
@@ -332,35 +342,24 @@
             dropdown.innerHTML = '<option value="" disabled selected>-- Pilih Barang dari Gudang --</option>';
             if (!dataArray || dataArray.length === 0) return;
 
-            dataArray.forEach(barang => {
-                let nama = "";
-                if (typeof barang === 'object' && !Array.isArray(barang)) {
-                    nama = barang.no; // Membaca teks string nama barang asli
-                } else if (Array.isArray(barang)) {
-                    nama = barang[1];
-                }
-
-                // Memastikan data valid berupa teks nama, bukan angka indeks
-                if (nama && isNaN(nama)) { 
+            dataArray.forEach((item, index) => {
+                const b = ekstrakPropertiBarang(item, index);
+                if (b.nama && b.nama.toLowerCase() !== "nama barang") { 
                     const opsi = document.createElement("option");
-                    opsi.value = nama.trim();
-                    opsi.textContent = nama.trim();
+                    opsi.value = b.nama;
+                    opsi.textContent = b.nama;
                     dropdown.appendChild(opsi);
                 }
             });
         }
 
-        // =========================================================================
-        // 6. FUNGSIONAL RENDER TABEL RIWAYAT / LOG MUTASI BARANG
-        // =========================================================================
         function renderRiwayat(riwayatArray) {
             const bodyRiwayat = document.getElementById("tabel-body-riwayat");
             if (!bodyRiwayat) return;
-            
             bodyRiwayat.innerHTML = "";
 
             if (!riwayatArray || riwayatArray.length === 0) {
-                bodyRiwayat.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-neutral-500 text-sm">Belum ada riwayat perubahan barang yang tercatat dari Sheets.</td></tr>`;
+                bodyRiwayat.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-neutral-500 text-sm">Belum ada riwayat perubahan barang yang tercatat.</td></tr>`;
                 return;
             }
 
@@ -373,6 +372,8 @@
                 const jenisMutasi = log.jenis_transaksi || log.jenis || "-";
                 const jumlah = Math.abs(Number(log.jumlah)) || 0;
                 const keterangan = log.keterangan || "-";
+
+                if (String(namaBarang).toLowerCase() === "nama barang") return;
 
                 const warnaBadge = jenisMutasi === "Masuk" 
                     ? "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400" 
@@ -395,12 +396,8 @@
             });
         }
 
-        // =========================================================================
-        // 7. PROSES KIRIM FORM INPUT TRANSAKSI KE GOOGLE SHEETS
-        // =========================================================================
         function kirimTransaksi(event) {
             event.preventDefault();
-            
             const btnSubmit = document.getElementById("btn-submit-transaksi");
             const jenis = document.querySelector('input[name="jenis_transaksi"]:checked').value;
             const nama = document.getElementById("input-nama-barang").value;
@@ -412,18 +409,15 @@
 
             const urlKirim = `${URL_GOOGLE_SCRIPT}?aksi=input_transaksi&jenis=${encodeURIComponent(jenis)}&nama=${encodeURIComponent(nama)}&jumlah=${jumlah}&keterangan=${encodeURIComponent(keterangan)}`;
 
-            // Tembak data transaksi menggunakan mode no-cors untuk keamanan CORS lokal browser
             fetch(urlKirim, { mode: 'no-cors' })
                 .then(() => {
                     alert(`Transaksi Barang ${jenis} Berhasil Disimpan!`);
                     document.getElementById("form-transaksi").reset();
-                    
-                    // Tarik data terbaru agar semua dashboard langsung ter-update
                     muatDataStokTembusBlokir();
                     switchTab('stok');
                 })
                 .catch(err => {
-                    console.error("Gagal mengirim transaksi:", err);
+                    console.error(err);
                     alert("Terjadi kesalahan koneksi saat menyimpan transaksi.");
                 })
                 .finally(() => {
@@ -433,69 +427,47 @@
                 });
         }
 
-        // ==========================================
-        // 8. FITUR LIVE SEARCH BARANG
-        // ==========================================
         function filterBarang() {
             const kataKunci = document.getElementById("pencarian-barang").value.toLowerCase().trim();
-            
-            const hasilFilter = masterDataBarang.filter(barang => {
-                const nama = (typeof barang === 'object' ? barang.no : barang[1] || "").toLowerCase();
-                return nama.includes(kataKunci);
+            const hasilFilter = masterDataBarang.filter((item, index) => {
+                const b = ekstrakPropertiBarang(item, index);
+                return b.nama.toLowerCase().includes(kataKunci);
             });
-
             renderTabel(hasilFilter);
         }
 
         function tampilkanPesanGagal(pesan) {
             const bodyTabel = document.getElementById("tabel-body-barang");
             if (bodyTabel) {
-                bodyTabel.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center py-6 text-sm text-red-500 font-medium">
-                            <div class="flex items-center justify-center gap-2">
-                                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-                                Gagal memuat data: ${pesan}
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                bodyTabel.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-sm text-red-500 font-medium"><i data-lucide="alert-triangle" class="inline w-4 h-4 mr-1"></i>Gagal memuat data: ${pesan}</td></tr>`;
                 lucide.createIcons();
             }
         }
 
-        // =========================================================================
-        // FUNGSIONAL EKSPOR DATA (EXCEL & PDF)
-        // =========================================================================
         function eksporExcel() {
             if (masterDataBarang.length === 0) {
                 alert("Tidak ada data persediaan barang untuk diekspor!");
                 return;
             }
             
-            // Format ulang data agar rapi saat dibuka di Excel
-            const dataEkspor = masterDataBarang.map((barang, index) => {
-                let namaBarang, jumlahStok;
-                if (typeof barang === 'object' && !Array.isArray(barang)) {
-                    namaBarang = barang.no || "Tanpa Nama Barang";
-                    jumlahStok = Number(barang.nama_barang) || 0;
-                } else {
-                    namaBarang = barang[1] || "Tanpa Nama";
-                    jumlahStok = Number(barang[2]) || 0;
-                }
-                return {
-                    "NO": index + 1,
-                    "NAMA BARANG": namaBarang,
-                    "JUMLAH STOK": jumlahStok,
-                    "STATUS": jumlahStok > 0 ? "Tersedia" : "Habis"
-                };
+            const dataEkspor = [];
+            masterDataBarang.forEach((item, index) => {
+                const b = ekstrakPropertiBarang(item, index);
+                if (b.nama.toLowerCase() === "nama barang") return;
+                
+                dataEkspor.push({
+                    "NO": b.no,
+                    "NAMA BARANG": b.nama,
+                    "TYPE": b.type,
+                    "SATUAN": b.satuan,
+                    "JUMLAH STOK": b.stok,
+                    "STATUS": b.stok > 0 ? "Tersedia" : "Habis"
+                });
             });
 
             const worksheet = XLSX.utils.json_to_sheet(dataEkspor);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Stok Barang");
-            
-            // Generate file Excel otomatis terunduh
             XLSX.writeFile(workbook, "Persediaan_Barang_Habis_Pakai_SMPN_110.xlsx");
         }
 
@@ -508,62 +480,55 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Judul Dokumen PDF
             doc.setFont("Helvetica", "bold");
             doc.setFontSize(14);
-            doc.text("LAPORAN E-PERSEDIAAN", 14, 15);
-            doc.setFontSize(12);
+            doc.text("LAPORAN E-PERSEDIAAN GUDANG BARANG", 14, 15);
+            doc.setFontSize(11);
             doc.text("SMP NEGERI 110 JAKARTA", 14, 21);
             
             doc.setFont("Helvetica", "normal");
-            doc.setFontSize(9);
-            doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 14, 27);
+            doc.setFontSize(8);
+            doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 14, 26);
 
-            // Mapping isi data baris tabel
-            const barisTabel = masterDataBarang.map((barang, index) => {
-                let namaBarang, jumlahStok;
-                if (typeof barang === 'object' && !Array.isArray(barang)) {
-                    namaBarang = barang.no || "Tanpa Nama Barang";
-                    jumlahStok = Number(barang.nama_barang) || 0;
-                } else {
-                    namaBarang = barang[1] || "Tanpa Nama";
-                    jumlahStok = Number(barang[2]) || 0;
-                }
-                return [
-                    index + 1,
-                    namaBarang,
-                    jumlahStok,
-                    jumlahStok > 0 ? "Tersedia" : "Habis"
-                ];
+            const barisTabel = [];
+            masterDataBarang.forEach((item, index) => {
+                const b = ekstrakPropertiBarang(item, index);
+                if (b.nama.toLowerCase() === "nama barang") return;
+                
+                barisTabel.push([
+                    b.no,
+                    b.nama,
+                    b.type,
+                    b.satuan,
+                    b.stok,
+                    b.stok > 0 ? "Tersedia" : "Habis"
+                ]);
             });
 
-            // AutoTable Rendering PDF
             doc.autoTable({
-                startY: 32,
-                head: [["NO", "NAMA BARANG", "JUMLAH STOK", "STATUS"]],
+                startY: 30,
+                head: [["NO", "NAMA BARANG", "TYPE", "SATUAN", "JUMLAH STOK", "STATUS"]],
                 body: barisTabel,
                 theme: 'grid',
-                headStyles: { fillColor: [37, 99, 235], halign: 'center' }, // Blue accent color
+                headStyles: { fillColor: [37, 99, 235], halign: 'center', fontSize: 9 }, 
                 columnStyles: {
-                    0: { halign: 'center', cellWidth: 15 },
-                    2: { halign: 'center', cellWidth: 35 },
-                    3: { halign: 'center', cellWidth: 30 }
+                    0: { halign: 'center', cellWidth: 12 },
+                    1: { cellWidth: 45 },
+                    3: { halign: 'center', cellWidth: 20 },
+                    4: { halign: 'center', cellWidth: 30 },
+                    5: { halign: 'center', cellWidth: 22 }
                 },
-                styles: { fontSize: 10 }
+                styles: { fontSize: 9 }
             });
 
             doc.save("Persediaan_Barang_Habis_Pakai_SMPN_110.pdf");
         }
 
-        // ==========================================
-        // 9. MANAGEMENT TABS NAVIGATION & THEME
-        // ==========================================
         function switchTab(tabName) {
             const tabs = ['input', 'stok', 'riwayat'];
             tabs.forEach(t => {
                 const button = document.getElementById(`tab-${t}`);
                 const panel = document.getElementById(`panel-${t}`);
-                
                 if (t === tabName) {
                     button.className = "px-5 py-3 border-b-2 border-blue-500 text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2 bg-neutral-100 dark:bg-neutral-900/50 rounded-t-lg";
                     panel.classList.remove('hidden');
@@ -587,7 +552,6 @@
             }
         }
 
-        // Inisialisasi dasar aplikasi saat pertama kali diakses
         document.addEventListener("DOMContentLoaded", () => {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             if (savedTheme === 'dark') {
@@ -595,7 +559,6 @@
             } else {
                 document.documentElement.classList.remove('dark');
             }
-            
             lucide.createIcons();
             muatDataStokTembusBlokir();
         });
