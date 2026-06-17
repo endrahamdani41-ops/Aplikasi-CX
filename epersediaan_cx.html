@@ -32,17 +32,19 @@
           <i data-lucide="box" class="w-8 h-8"></i>
         </div>
         <div>
-          <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
-            E-Persediaan</h1>
-
-           <h1 <span class="text-blue-500">SMPN 110 Jakarta</span></h1>
-         
+          <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+            E-Persediaan <span class="text-blue-500">SMPN 110 Jakarta</span>
+          </h1>
+          <p class="text-sm text-neutral-500 dark:text-gray-400 mt-1 flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Data tersimpan & tersinkronisasi di Google Sheets
+          </p>
         </div>
       </div>
-      <button onclick="toggleTema()" class="px-4 py-2 text-sm font-medium bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-gray-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-sm">
+      <button onclick="toggleTema()" class="px-4 py-2 text-sm font-medium bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-gray-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-sm" title="Ubah Tema">
         <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
         <i data-lucide="moon" class="w-4 h-4 hidden dark:block"></i>
-        
+        <span>Mode</span>
       </button>
     </header>
 
@@ -183,19 +185,24 @@
   </div>
 
   <script>
-    // 📢 CANTUMKAN LINK EXECUTIVE GOOGLE APPS SCRIPT ANDA DI SINI
     const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzfIkDKrOOJ6TNmzkLttRNgh9heWsljqHNidMCpRBmoqd6RPEAbqJ6A4spss00SpiCNuw/exec";
-
     let arrayKeranjang = [];
 
+    // 🚀 OPTIMASI HP: Langsung muat data dari detik pertama tanpa menunggu element visual selesai
+    (function ambilDataAwalCepat() {
+      const script = document.createElement('script');
+      script.src = `${URL_GOOGLE_SCRIPT}?callback=handleResponsAmbilData&_=${new Date().getTime()}`;
+      document.body.appendChild(script);
+    })();
+
     document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
-      muatDataStokTembusBlokir();
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
     });
 
     function toggleTema() {
-      const html = document.documentElement;
-      html.classList.toggle('dark');
+      document.documentElement.classList.toggle('dark');
     }
 
     function pindahTab(namaTab) {
@@ -213,6 +220,9 @@
     }
 
     function muatDataStokTembusBlokir() {
+      const selectBarang = document.getElementById('nama_barang');
+      if (selectBarang) selectBarang.innerHTML = '<option value="">Memuat ulang gudang...</option>';
+      
       const script = document.createElement('script');
       script.src = `${URL_GOOGLE_SCRIPT}?callback=handleResponsAmbilData&_=${new Date().getTime()}`;
       document.body.appendChild(script);
@@ -323,7 +333,7 @@
       if (!tbody) return;
 
       if (arrayKeranjang.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-neutral-400 italic">Belum ada barang di dalam antrean.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-neutral-400 italic">Belum ada barang !</td></tr>`;
         return;
       }
 
@@ -377,8 +387,8 @@
       window.handleResponsKirimMassal = function(res) {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i> Simpan Semua Transaksi Sekarang`;
-          lucide.createIcons();
+          btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i> Simpan Transaksi`;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         if (res.result === "success") {
@@ -394,7 +404,7 @@
         delete window.handleResponsKirimMassal;
       };
 
-      script.src = `${URL_GOOGLE_SCRIPT}?callback=handleResponsKirimMassal&aksi=input_transaksi_massal&keterangan=${parameterKet}&keranjang=${payloadJSON}&_=${new Date().getTime()}`;
+      script.src = `${URL_GOOGLE_SCRIPT}?callback=handleResponsKirimMassal&aksi=input_transaksi_massal&keterangan=${parameterKet}&grid=true&keranjang=${payloadJSON}&_=${new Date().getTime()}`;
       document.body.appendChild(script);
     }
   </script>
