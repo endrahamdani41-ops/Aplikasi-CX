@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Siswa Lulusan - SMPN 110 JAKARTA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        darkBg: '#111827',
+                        darkCard: '#1F2937',
+                        darkText: '#E5E7EB',
+                        danger: '#EF4444',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        info: '#3B82F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-darkBg text-neutral dark:text-darkText min-h-screen transition-colors duration-300">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- Header -->
+        <header class="mb-8 relative">
+            <button id="tombolMode" class="absolute top-2 right-2 z-10 p-2.5 rounded-full bg-white/20 dark:bg-darkCard/50 hover:bg-white/30 dark:hover:bg-darkCard transition-all backdrop-blur-sm" title="Ubah Tampilan">
+                <i class="fa fa-moon-o dark:hidden text-white text-lg"></i>
+                <i class="fa fa-sun-o hidden dark:inline text-yellow-400 text-lg"></i>
+            </button>
+
+            <div class="bg-primary dark:bg-primary/90 text-white rounded-2xl shadow-lg p-6 md:p-8 text-center">
+                <i class="fa fa-graduation-cap text-5xl mb-3"></i>
+                <h1 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold">DATA REKAP LULUSAN</h1>
+                <p class="text-blue-100 dark:text-blue-200 mt-2">SMP Negeri 110 Jakarta - Rekap Sekolah Tujuan</p>
+            </div>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-4 mb-6 justify-end items-start md:items-center">
+            <div class="relative w-full md:w-72">
+                <input type="text" id="cariData" placeholder="Cari NIS / Nama..." class="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition">
+                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+
+        <!-- Statistik -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white dark:bg-darkCard rounded-xl p-4 shadow text-center">
+                <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Siswa</h3>
+                <p id="totalData" class="text-2xl font-bold text-primary">0</p>
+            </div>
+            <div class="bg-white dark:bg-darkCard rounded-xl p-4 shadow text-center">
+                <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sudah Isi</h3>
+                <p id="sudahIsi" class="text-2xl font-bold text-success">0</p>
+            </div>
+            <div class="bg-white dark:bg-darkCard rounded-xl p-4 shadow text-center">
+                <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sekolah Negeri</h3>
+                <p id="jmlNegeri" class="text-2xl font-bold text-green-600 dark:text-green-400">0</p>
+            </div>
+            <div class="bg-white dark:bg-darkCard rounded-xl p-4 shadow text-center">
+                <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sekolah Swasta</h3>
+                <p id="jmlSwasta" class="text-2xl font-bold text-purple-600 dark:text-purple-400">0</p>
+            </div>
+        </div>
+
+        <!-- Grafik -->
+        <div class="bg-white dark:bg-darkCard rounded-2xl shadow-md p-4 mb-8">
+            <h3 class="text-lg font-semibold mb-4 text-center">Perbandingan Sekolah Negeri vs Swasta</h3>
+            <div class="h-[400px]">
+                <canvas id="grafikNegeriSwasta"></canvas>
+            </div>
+        </div>
+
+        <!-- Tabel -->
+        <section class="bg-white dark:bg-darkCard rounded-2xl shadow-md overflow-hidden mb-8">
+            <div class="overflow-x-auto scrollbar-hide">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 uppercase">
+                        <tr>
+                            <th class="px-4 py-3">No</th>
+                            <th class="px-4 py-3">NIS</th>
+                            <th class="px-4 py-3">Nama Lengkap</th>
+                            <th class="px-4 py-3">Kelas</th>
+                            <th class="px-4 py-3">Sekolah Tujuan</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Waktu Kirim</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelData" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tr><td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"><i class="fa fa-spinner fa-spin mr-2"></i> Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="text-center">
+            <button id="muatUlang" class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition"><i class="fa fa-refresh mr-2"></i> Muat Ulang Data</button>
+        </div>
+    </div>
+
+    <script>
+        // 👇👇👇 TEMPEL URL BARU ANDA DI SINI 👇👇👇
+        const URL_GOOGLE_SHEETS = "https://script.google.com/macros/s/AKfycbzltlyo_bYiVWX0q7VDlShBV7Xz_B05BMPAqKO5lFc2IbbBARY__ucUeDiHV1hH2UuM1A/exec";
+        // 👆👆👆 URL BARU DI SINI 👆👆👆
+
+        let semuaData = [];
+        let dataInduk = [];
+        let grafik = null;
+
+        const tombolMode = document.getElementById('tombolMode');
+        const html = document.documentElement;
+        const tabelData = document.getElementById('tabelData');
+        const cariData = document.getElementById('cariData');
+        const muatUlang = document.getElementById('muatUlang');
+        const totalData = document.getElementById('totalData');
+        const sudahIsi = document.getElementById('sudahIsi');
+        const jmlNegeri = document.getElementById('jmlNegeri');
+        const jmlSwasta = document.getElementById('jmlSwasta');
+        const ctxGrafik = document.getElementById('grafikNegeriSwasta').getContext('2d');
+
+        if (localStorage.getItem('modeTampilan') === 'dark' || (!localStorage.getItem('modeTampilan') && window.matchMedia('(prefers-color-scheme: dark)').matches)) { html.classList.add('dark'); }
+        tombolMode.addEventListener('click', () => { html.classList.toggle('dark'); localStorage.setItem('modeTampilan', html.classList.contains('dark') ? 'dark' : 'light'); if (grafik) grafik.update(); });
+
+        function cekJenisSekolah(namaSekolah) {
+            const nama = namaSekolah.trim().toUpperCase();
+            if (nama.includes('N ') || nama.includes('NOMOR') || nama.endsWith(' N') || nama.includes('SMAN') || nama.includes('SMKN') || nama.includes('MAN')) return 'Negeri';
+            else return 'Swasta';
+        }
+
+        async function ambilSemuaData() {
+            tabelData.innerHTML = `<tr><td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"><i class="fa fa-spinner fa-spin mr-2"></i> Memuat data...</td></tr>`;
+            try {
+                const resInduk = await fetch(URL_GOOGLE_SHEETS + '?aksi=ambil_data');
+                if (!resInduk.ok) throw new Error("Gagal terhubung ke server");
+                dataInduk = await resInduk.json();
+                if (dataInduk.error) throw new Error(dataInduk.error);
+
+                const resData = await fetch(URL_GOOGLE_SHEETS);
+                if (!resData.ok) throw new Error("Gagal ambil data masuk");
+                semuaData = await resData.json();
+                if (semuaData.error) throw new Error(semuaData.error);
+
+                hitungStatistik(); tampilkanData(semuaData); buatGrafikNegeriSwasta(semuaData);
+            } catch (err) {
+                tabelData.innerHTML = `<tr><td colspan="7" class="px-4 py-6 text-center text-red-500"><i class="fa fa-warning mr-2"></i> Gagal ambil data!<br>${err.message}</td></tr>`;
+            }
+        }
+
+        function hitungStatistik() {
+            let negeri = 0, swasta = 0;
+            semuaData.forEach(item => { if (cekJenisSekolah(item.sekolah) === 'Negeri') negeri++; else swasta++; });
+            totalData.textContent = dataInduk.length; sudahIsi.textContent = semuaData.length; jmlNegeri.textContent = negeri; jmlSwasta.textContent = swasta;
+        }
+
+        function tampilkanData(data) {
+            if (data.length === 0) { tabelData.innerHTML = `<tr><td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">Belum ada data masuk.</td></tr>`; return; }
+            let htmlTabel = "";
+            data.forEach((item, idx) => {
+                const jenis = cekJenisSekolah(item.sekolah);
+                const warnaBadge = jenis === 'Negeri' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
+                htmlTabel += `<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"><td class="px-4 py-3">${idx+1}</td><td class="px-4 py-3 font-mono">${item.nis}</td><td class="px-4 py-3">${item.nama}</td><td class="px-4 py-3">${item.kelas}</td><td class="px-4 py-3 font-medium">${item.sekolah}</td><td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${warnaBadge}">${jenis}</span></td><td class="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">${item.waktu}</td></tr>`;
+            });
+            tabelData.innerHTML = htmlTabel;
+        }
+
+        function buatGrafikNegeriSwasta(data) {
+            let negeri = 0, swasta = 0;
+            data.forEach(item => { if (cekJenisSekolah(item.sekolah) === 'Negeri') negeri++; else swasta++; });
+            if (grafik) grafik.destroy();
+            const warnaTeks = html.classList.contains('dark') ? '#E5E7EB' : '#374151';
+            const warnaGaris = html.classList.contains('dark') ? '#374151' : '#E5E7EB';
+            grafik = new Chart(ctxGrafik, {
+                type: 'bar',
+                data: { labels: ['SEKOLAH NEGERI', 'SEKOLAH SWASTA'], datasets: [{ label: 'Jumlah Siswa', data: [negeri, swasta], backgroundColor: ['rgba(16, 185, 129, 0.75)', 'rgba(139, 92, 246, 0.75)'], borderColor: ['rgba(16, 185, 129, 1)', 'rgba(139, 92, 246, 1)'], borderWidth:2, borderRadius:10, barThickness:120 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display:false} }, scales: { y: {beginAtZero:true, ticks:{color:warnaTeks}, grid:{color:warnaGaris}}, x:{ticks:{color:warnaTeks}, grid:{display:false}} } }
+            });
+        }
+
+        cariData.addEventListener('input', function() {
+            const kataKunci = this.value.trim().toLowerCase();
+            if (!kataKunci) { tampilkanData(semuaData); buatGrafikNegeriSwasta(semuaData); return; }
+            const hasilCari = semuaData.filter(item => item.nis.toLowerCase().includes(kataKunci) || item.nama.toLowerCase().includes(kataKunci) || item.sekolah.toLowerCase().includes(kataKunci));
+            tampilkanData(hasilCari); buatGrafikNegeriSwasta(hasilCari);
+        });
+
+        muatUlang.addEventListener('click', ambilSemuaData);
+        document.addEventListener('DOMContentLoaded', ambilSemuaData);
+    </script>
+</body>
+</html>
