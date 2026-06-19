@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isi Data Sekolah Tujuan - SMPN 110 JAKARTA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        darkBg: '#111827',
+                        darkCard: '#1F2937',
+                        darkText: '#E5E7EB',
+                        success: '#10B981',
+                        danger: '#EF4444',
+                        warning: '#F59E0B',
+                        info: '#3B82F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .shadow-elegant {
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-darkBg text-neutral dark:text-darkText min-h-screen transition-colors duration-300">
+    <div class="container mx-auto px-4 py-10 max-w-2xl">
+        <!-- Header -->
+        <header class="mb-8 relative">
+            <!-- Tombol Ubah Mode -->
+            <button id="tombolMode" class="absolute top-2 right-2 z-10 p-2.5 rounded-full bg-white/20 dark:bg-darkCard/50 hover:bg-white/30 dark:hover:bg-darkCard transition-custom backdrop-blur-sm" title="Ubah Tampilan">
+                <i class="fa fa-moon-o dark:hidden text-white text-lg"></i>
+                <i class="fa fa-sun-o hidden dark:inline text-yellow-400 text-lg"></i>
+            </button>
+
+            <div class="bg-primary dark:bg-primary/90 text-white rounded-2xl shadow-lg p-6 md:p-8 text-center">
+                <i class="fa fa-graduation-cap text-5xl mb-3"></i>
+                <h1 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold">
+                    SMPN 110 JAKARTA
+                </h1>
+                <p class="text-blue-100 dark:text-blue-200 mt-2">Masukkan NIS Anda, lalu isi sekolah tempat diterima</p>
+            </div>
+        </header>
+
+        <!-- ✅ KOTAK PESAN INFO / ERROR / SUKSES - ELEGAN & MODERN -->
+        <div id="kotakPesan" class="hidden rounded-2xl p-5 mb-6 shadow-elegant border-l-4 transition-custom">
+            <div class="flex items-center gap-3">
+                <i id="ikonPesan" class="text-2xl"></i>
+                <div>
+                    <h4 id="judulPesan" class="font-semibold text-base"></h4>
+                    <p id="isiPesan" class="text-sm mt-0.5 opacity-90"></p>
+                </div>
+                <button id="tutupPesan" class="ml-auto text-lg opacity-70 hover:opacity-100 transition-custom">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Pesan Sudah Mengisi -->
+        <div id="pesanSudahIsi" class="hidden bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 rounded-2xl p-6 md:p-8 text-center mb-8 shadow-elegant">
+            <i class="fa fa-check-circle text-4xl mb-3"></i>
+            <h3 class="text-lg font-semibold mb-2">Data Sudah Dikirim</h3>
+            <p>Terima kasih, Anda sudah mengirimkan data. Formulir telah dikunci dan tidak dapat diisi ulang.</p>
+        </div>
+
+        <!-- Form Input Data -->
+        <section id="formSection" class="bg-white dark:bg-darkCard rounded-2xl shadow-md p-6 md:p-8 transition-colors duration-300">
+            <form id="formSiswa" class="space-y-6">
+                <!-- INPUT NIS SAJA DI AWAL -->
+                <div id="bagianInputNis" class="space-y-2">
+                    <label for="nisInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Masukkan NIS Anda</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="nisInput" class="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary dark:focus:border-blue-400 outline-none transition-custom" placeholder="Contoh: 12442" required>
+                        <button type="button" id="btnCekNis" class="px-4 py-3 bg-primary hover:bg-primary/90 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-custom">
+                            Cek
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DATA YANG MUNCUL SETELAH NIS BENAR -->
+                <div id="dataLengkap" class="hidden space-y-6">
+                    <div class="text-right">
+                        <button type="button" id="btnUbahNis" class="text-sm text-blue-600 dark:text-blue-400 hover:underline transition-custom">
+                            <i class="fa fa-pencil-square-o mr-1"></i> Salah NIS? Ubah di sini
+                        </button>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Lengkap</label>
+                        <input type="text" id="nama" name="nama" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-darkBg/50 text-gray-600 dark:text-gray-400 rounded-lg outline-none" readonly>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kelas Terakhir</label>
+                        <input type="text" id="kelas" name="kelas" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-darkBg/50 text-gray-600 dark:text-gray-400 rounded-lg outline-none" readonly>
+                    </div>
+
+                    <input type="hidden" id="nis" name="nis" value="">
+
+                    <div class="space-y-2">
+                        <label for="sekolahTujuan" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Sekolah Tempat Diterima</label>
+                        <input type="text" id="sekolahTujuan" name="sekolah_tujuan" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary dark:focus:border-blue-400 outline-none transition-custom" placeholder="Contoh: SMA N 1 JAKARTA / SMA BUDI UTOMO" required>
+                    </div>
+
+                    <!-- Info Deteksi Otomatis -->
+                    <div id="infoDeteksi" class="hidden p-3 rounded-lg text-sm font-medium"></div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="tombolKirim" class="w-full bg-primary hover:bg-primary/90 dark:bg-blue-600 dark:hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-custom transform hover:scale-[0.98] shadow-md text-lg">
+                            <i class="fa fa-save mr-2"></i> Kirim Data
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <p id="infoText" class="text-center text-gray-500 dark:text-gray-400 text-sm mt-6">
+            Masukkan NIS Anda, lalu isi sekolah tujuan. Anda hanya bisa mengirim satu kali saja.
+        </p>
+    </div>
+
+    <!-- Script -->
+    <script>
+        // === KONFIGURASI: TEMPEL URL BARU HASIL DEPLOY DI SINI ===
+        const URL_GOOGLE_SHEETS = "https://script.google.com/macros/s/AKfycbyiwBsE0qSEckLZ4lD72JTVQKIQjrgvDKkC1bRm27t1mDU6JeSKKSu4c01HJ8N-rOMaag/exec"; 
+        // =========================================================
+
+        let daftarSiswa = [];
+        const form = document.getElementById('formSiswa');
+        const tombolMode = document.getElementById('tombolMode');
+        const html = document.documentElement;
+        const pesanSudahIsi = document.getElementById('pesanSudahIsi');
+        const formSection = document.getElementById('formSection');
+        const infoText = document.getElementById('infoText');
+        const tombolKirim = document.getElementById('tombolKirim');
+        const nisInput = document.getElementById('nisInput');
+        const btnCekNis = document.getElementById('btnCekNis');
+        const btnUbahNis = document.getElementById('btnUbahNis');
+        const bagianInputNis = document.getElementById('bagianInputNis');
+        const dataLengkap = document.getElementById('dataLengkap');
+        const inputNis = document.getElementById('nis');
+        const inputNama = document.getElementById('nama');
+        const inputKelas = document.getElementById('kelas');
+        const sekolahTujuan = document.getElementById('sekolahTujuan');
+        const infoDeteksi = document.getElementById('infoDeteksi');
+
+        // Elemen Kotak Pesan
+        const kotakPesan = document.getElementById('kotakPesan');
+        const ikonPesan = document.getElementById('ikonPesan');
+        const judulPesan = document.getElementById('judulPesan');
+        const isiPesan = document.getElementById('isiPesan');
+        const tutupPesan = document.getElementById('tutupPesan');
+
+        // === FUNGSI TAMPILKAN PESAN ELEGAN ===
+        function tampilkanPesan(jenis, judul, teks) {
+            // Reset kelas
+            kotakPesan.className = 'rounded-2xl p-5 mb-6 shadow-elegant border-l-4 transition-custom';
+            kotakPesan.classList.remove('hidden');
+            
+            // Tentukan warna & ikon
+            switch(jenis) {
+                case 'sukses':
+                    kotakPesan.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-500', 'text-green-800', 'dark:text-green-300');
+                    ikonPesan.className = 'fa fa-check-circle text-2xl';
+                    break;
+                case 'error':
+                    kotakPesan.classList.add('bg-red-50', 'dark:bg-red-900/20', 'border-red-500', 'text-red-800', 'dark:text-red-300');
+                    ikonPesan.className = 'fa fa-times-circle text-2xl';
+                    break;
+                case 'peringatan':
+                    kotakPesan.classList.add('bg-yellow-50', 'dark:bg-yellow-900/20', 'border-yellow-500', 'text-yellow-800', 'dark:text-yellow-300');
+                    ikonPesan.className = 'fa fa-exclamation-triangle text-2xl';
+                    break;
+                case 'info':
+                    kotakPesan.classList.add('bg-blue-50', 'dark:bg-blue-900/20', 'border-blue-500', 'text-blue-800', 'dark:text-blue-300');
+                    ikonPesan.className = 'fa fa-info-circle text-2xl';
+                    break;
+            }
+
+            judulPesan.textContent = judul;
+            isiPesan.textContent = teks;
+        }
+
+        // Tutup pesan
+        tutupPesan.addEventListener('click', () => kotakPesan.classList.add('hidden'));
+
+        // === FUNGSI MODE GELAP / TERANG ===
+        if (localStorage.getItem('modeTampilan') === 'dark' || 
+            (!localStorage.getItem('modeTampilan') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        }
+        tombolMode.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('modeTampilan', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // === CEK STATUS SUDAH ISI ATAU BELUM ===
+        async function cekStatusPengisian() {
+            try {
+                const res = await fetch(URL_GOOGLE_SHEETS);
+                const dataSudahAda = await res.json();
+                const nisTersimpan = localStorage.getItem('nisTerakhir');
+
+                if (nisTersimpan && Array.isArray(dataSudahAda) && dataSudahAda.some(item => item.nis === nisTersimpan)) {
+                    formSection.classList.add('hidden');
+                    infoText.classList.add('hidden');
+                    pesanSudahIsi.classList.remove('hidden');
+                } else {
+                    pesanSudahIsi.classList.add('hidden');
+                    formSection.classList.remove('hidden');
+                    infoText.classList.remove('hidden');
+                }
+            } catch (e) {
+                tampilkanPesan('error', 'Koneksi Gagal', 'Tidak dapat terhubung ke server. Cek kembali URL.');
+            }
+        }
+
+        // === AMBIL DATA SISWA DARI SHEET DATA_INDUK ===
+        function ambilDataSiswa() {
+            fetch(URL_GOOGLE_SHEETS + '?aksi=ambil_data')
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    daftarSiswa = data;
+                } else {
+                    tampilkanPesan('error', 'Data Salah', 'Format data dari server tidak sesuai.');
+                }
+            })
+            .catch(err => tampilkanPesan('error', 'Koneksi Gagal', 'Tidak dapat memuat daftar siswa.'));
+        }
+
+        // === CEK NIS SAAT KLIK TOMBOL CEK ===
+        btnCekNis.addEventListener('click', function() {
+            const nisCari = nisInput.value.trim().replace(/[\s\.]/g, '');
+            if (!nisCari) {
+                tampilkanPesan('peringatan', 'Isi NIS', 'Masukkan nomor induk siswa terlebih dahulu.');
+                return;
+            }
+
+            // ✅ COCOKKAN SEBAGAI TEKS (SOLUSI UTAMA NIS TIDAK TERBACA)
+            const ketemu = daftarSiswa.find(siswa => String(siswa.nis).trim() === String(nisCari).trim());
+            
+            if (ketemu) {
+                kotakPesan.classList.add('hidden');
+                inputNis.value = String(ketemu.nis).trim();
+                inputNama.value = String(ketemu.nama).trim().toUpperCase();
+                inputKelas.value = String(ketemu.kelas).trim().toUpperCase();
+                
+                bagianInputNis.classList.add('hidden');
+                dataLengkap.classList.remove('hidden');
+            } else {
+                tampilkanPesan('error', 'NIS Tidak Ditemukan', 'Nomor Induk Siswa tidak ada di daftar. Periksa kembali pengetikan Anda.');
+                dataLengkap.classList.add('hidden');
+            }
+        });
+
+        // === UBAH NIS JIKA SALAH ===
+        btnUbahNis.addEventListener('click', function() {
+            nisInput.value = "";
+            inputNis.value = "";
+            inputNama.value = "";
+            inputKelas.value = "";
+            sekolahTujuan.value = "";
+            infoDeteksi.classList.add('hidden');
+            
+            bagianInputNis.classList.remove('hidden');
+            dataLengkap.classList.add('hidden');
+            kotakPesan.classList.add('hidden');
+        });
+
+        // === DETEKSI OTOMATIS NEGERI / SWASTA & JENIS SEKOLAH ===
+        sekolahTujuan.addEventListener('input', function() {
+            const nama = this.value.trim().toUpperCase();
+            if(nama.length < 2) { infoDeteksi.classList.add('hidden'); return; }
+
+            let jenis = '';
+            let status = '';
+            let warna = '';
+
+            // Deteksi Jenis Sekolah
+            if(nama.includes('SMA') || nama.includes('SMAN')) jenis = 'SMA / SMAN';
+            else if(nama.includes('SMK') || nama.includes('SMKN')) jenis = 'SMK / SMKN';
+            else if(nama.includes('MA') || nama.includes('MAN')) jenis = 'MA / MAN';
+            else jenis = 'Lainnya';
+
+            // Deteksi Status: SMAN/SMKN/MAN otomatis = NEGERI
+            if(nama.includes('N ') || nama.includes('NOMOR') || nama.endsWith(' N') || nama.includes('SMAN') || nama.includes('SMKN') || nama.includes('MAN')) {
+                status = 'Negeri';
+                warna = 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800';
+            } else {
+                status = 'Swasta';
+                warna = 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800';
+            }
+
+            // Tampilkan info
+            infoDeteksi.classList.remove('hidden');
+            infoDeteksi.className = `p-3 rounded-lg text-sm font-medium ${warna}`;
+            infoDeteksi.innerHTML = `<div class="flex items-center gap-2"><i class="fa fa-check-circle text-lg"></i><span>Terdeteksi: ${jenis} - ${status}</span></div>`;
+        });
+
+        // === KIRIM DATA KE SERVER ===
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            tombolKirim.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> Mengirim...';
+            tombolKirim.disabled = true;
+            kotakPesan.classList.add('hidden');
+
+            const dataKirim = new URLSearchParams();
+            dataKirim.append("nis", inputNis.value.trim());
+            dataKirim.append("nama", inputNama.value.trim().toUpperCase());
+            dataKirim.append("kelas", inputKelas.value.trim().toUpperCase());
+            dataKirim.append("sekolah_tujuan", sekolahTujuan.value.trim().toUpperCase());
+            
+            fetch(URL_GOOGLE_SHEETS, {
+                method: 'POST',
+                body: dataKirim
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'berhasil') {
+                    localStorage.setItem('nisTerakhir', inputNis.value);
+                    tampilkanPesan('sukses', 'Berhasil Disimpan', 'Terima kasih! Data sekolah tujuan Anda sudah tercatat.');
+                    setTimeout(() => location.reload(), 1500);
+                } else if (data.status === 'sudah_ada') {
+                    tampilkanPesan('peringatan', 'Data Sudah Ada', data.pesan || 'NIS ini sudah mengisi data sebelumnya.');
+                } else {
+                    tampilkanPesan('error', 'Gagal', data.pesan || 'Terjadi kesalahan.');
+                }
+            })
+            .catch(error => {
+                tampilkanPesan('error', 'Gagal Mengirim', 'Terjadi kesalahan jaringan. Silakan coba lagi.');
+            })
+            .finally(() => {
+                tombolKirim.innerHTML = '<i class="fa fa-save mr-2"></i> Kirim Data';
+                tombolKirim.disabled = false;
+            });
+        });
+
+        // === MULAI ===
+        document.addEventListener('DOMContentLoaded', async () => {
+            await cekStatusPengisian();
+            ambilDataSiswa();
+        });
+    </script>
+</body>
+</html>
