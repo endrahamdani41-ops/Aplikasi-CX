@@ -17,10 +17,8 @@
                         darkBg: '#111827',
                         darkCard: '#1F2937',
                         darkText: '#E5E7EB',
-                        danger: '#EF4444',
-                        success: '#10B981',
-                        warning: '#F59E0B',
-                        info: '#3B82F6',
+                        negeri: '#10B981',
+                        swasta: '#8B5CF6',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -41,84 +39,101 @@
             .scrollbar-hide::-webkit-scrollbar {
                 display: none;
             }
+            /* ✅ Teks tetap satu baris, tidak turun */
+            .teks-satu-baris {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            /* ✅ Kelas untuk background gambar sekolah */
+            .bg-header-sekolah {
+                background-position: center;
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
         }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-darkBg text-neutral dark:text-darkText min-h-screen transition-colors duration-300">
-    <div class="container mx-auto px-4 py-8 max-w-5xl">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Header -->
         <header class="mb-8 relative">
-            <button id="tombolMode" class="absolute top-2 right-2 z-10 p-2.5 rounded-full bg-white/20 dark:bg-darkCard/50 hover:bg-white/30 dark:hover:bg-darkCard transition-all backdrop-blur-sm" title="Ubah Tampilan">
+            <button id="tombolMode" class="absolute top-2 right-2 z-10 p-2.5 rounded-full bg-black/20 dark:bg-darkCard/50 hover:bg-black/30 dark:hover:bg-darkCard transition-all backdrop-blur-sm" title="Ubah Tampilan">
                 <i class="fa fa-moon-o dark:hidden text-white text-lg"></i>
                 <i class="fa fa-sun-o hidden dark:inline text-yellow-400 text-lg"></i>
             </button>
 
-            <div class="bg-primary dark:bg-primary/90 text-white rounded-2xl shadow-lg p-6 md:p-8 text-center">
-                <i class="fa fa-graduation-cap text-5xl mb-3"></i>
-                <h1 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold">DATA REKAP LULUSAN</h1>
-                <p class="text-blue-100 dark:text-blue-200 mt-2">SMP Negeri 110 Jakarta - Rekap Sekolah Tujuan</p>
+            <!-- ✅ BAGIAN HEADER DENGAN GAMBAR SEKOLAH SEBAGAI LATAR -->
+            <div 
+                class="bg-header-sekolah rounded-2xl shadow-lg p-6 md:p-8 text-center relative overflow-hidden"
+                style="background-image: url('https://i.ibb.co.com/5g1b4BkL/Whats-App-Image-2026-06-15-at-11-40-08.jpg');"
+            >
+                <!-- ✅ LAPISAN GELAP AGAR TULISAN TETAP JELAS -->
+                <div class="absolute inset-0 bg-black/50 dark:bg-black/70 z-0"></div>
+
+                <!-- ✅ ISI KONTEN HEADER (DI ATAS GAMBAR) -->
+                <div class="relative z-10">
+                    <!-- ✅ LOGO SEKOLAH -->
+                    <img 
+                        src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" 
+                        alt="Logo SMPN 110 Jakarta" 
+                        class="w-24 h-24 md:w-32 md:h-32 object-contain mx-auto mb-3 drop-shadow-md"
+                    >
+                    
+                    <h1 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-white drop-shadow-lg">DATA REKAP LULUSAN</h1>
+                    <p class="text-blue-100 dark:text-blue-200 mt-2 drop-shadow-md">SMP Negeri 110 Jakarta - Rekap Sekolah Tujuan Per Kelas</p>
+                </div>
             </div>
         </header>
 
+        <!-- Pencarian -->
         <div class="flex flex-col md:flex-row gap-4 mb-6 justify-end items-start md:items-center">
             <div class="relative w-full md:w-72">
-                <input type="text" id="cariData" placeholder="Cari NIS / Nama..." class="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition">
+                <input type="text" id="cariData" placeholder="Cari NIS / Nama / Kelas..." class="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 bg-white dark:bg-darkBg rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition">
                 <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             </div>
         </div>
 
-        <!-- Statistik -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <!-- Statistik TOTAL -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-white dark:bg-darkCard rounded-xl p-4 shadow text-center">
                 <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Siswa</h3>
                 <p id="totalData" class="text-2xl font-bold text-primary">0</p>
             </div>
             <div class="bg-white dark:bg-darkCard rounded-xl p-4 shadow text-center">
                 <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sudah Isi</h3>
-                <p id="sudahIsi" class="text-2xl font-bold text-success">0</p>
+                <p id="sudahIsi" class="text-2xl font-bold text-primary">0</p>
             </div>
             <div class="bg-white dark:bg-darkCard rounded-xl p-4 shadow text-center">
                 <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sekolah Negeri</h3>
-                <p id="jmlNegeri" class="text-2xl font-bold text-green-600 dark:text-green-400">0</p>
+                <p id="jmlNegeri" class="text-2xl font-bold text-negeri">0</p>
             </div>
             <div class="bg-white dark:bg-darkCard rounded-xl p-4 shadow text-center">
                 <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sekolah Swasta</h3>
-                <p id="jmlSwasta" class="text-2xl font-bold text-purple-600 dark:text-purple-400">0</p>
+                <p id="jmlSwasta" class="text-2xl font-bold text-swasta">0</p>
             </div>
         </div>
 
-        <!-- Grafik -->
+        <!-- ✅ GRAFIK -->
         <div class="bg-white dark:bg-darkCard rounded-2xl shadow-md p-4 mb-8">
-            <h3 class="text-lg font-semibold mb-4 text-center">Perbandingan Sekolah Negeri vs Swasta</h3>
+            <h3 class="text-lg font-semibold mb-4 text-center">Perbandingan Sekolah Negeri vs Swasta (Keseluruhan)</h3>
             <div class="h-[400px]">
                 <canvas id="grafikNegeriSwasta"></canvas>
             </div>
         </div>
 
-        <!-- Tabel -->
-        <section class="bg-white dark:bg-darkCard rounded-2xl shadow-md overflow-hidden mb-8">
-            <div class="overflow-x-auto scrollbar-hide">
-                <table class="w-full text-sm text-left">
-                    <thead class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 uppercase">
-                        <tr>
-                            <th class="px-4 py-3">No</th>
-                            <th class="px-4 py-3">NIS</th>
-                            <th class="px-4 py-3">Nama Lengkap</th>
-                            <th class="px-4 py-3">Kelas</th>
-                            <th class="px-4 py-3">Sekolah Tujuan</th>
-                            <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3">Waktu Kirim</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelData" class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <tr><td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"><i class="fa fa-spinner fa-spin mr-2"></i> Memuat data...</td></tr>
-                    </tbody>
-                </table>
+        <!-- ✅ BAGIAN UTAMA: TAMPIL PER KELAS DENGAN WARNA BERBEDA -->
+        <div id="wadahPerKelas">
+            <div class="text-center py-10 text-gray-500 dark:text-gray-400">
+                <i class="fa fa-spinner fa-spin mr-2"></i> Memuat data per kelas...
             </div>
-        </section>
+        </div>
 
-        <div class="text-center">
-            <button id="muatUlang" class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition"><i class="fa fa-refresh mr-2"></i> Muat Ulang Data</button>
+        <!-- Tombol Muat Ulang -->
+        <div class="text-center mt-8">
+            <button id="muatUlang" class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition">
+                <i class="fa fa-refresh mr-2"></i> Muat Ulang Data
+            </button>
         </div>
     </div>
 
@@ -129,30 +144,81 @@
 
         let semuaData = [];
         let dataInduk = [];
-        let grafik = null;
+        let grafik = null; // Variabel grafik dikembalikan
 
         const tombolMode = document.getElementById('tombolMode');
         const html = document.documentElement;
-        const tabelData = document.getElementById('tabelData');
+        const wadahPerKelas = document.getElementById('wadahPerKelas');
         const cariData = document.getElementById('cariData');
         const muatUlang = document.getElementById('muatUlang');
         const totalData = document.getElementById('totalData');
         const sudahIsi = document.getElementById('sudahIsi');
         const jmlNegeri = document.getElementById('jmlNegeri');
         const jmlSwasta = document.getElementById('jmlSwasta');
-        const ctxGrafik = document.getElementById('grafikNegeriSwasta').getContext('2d');
+        const ctxGrafik = document.getElementById('grafikNegeriSwasta').getContext('2d'); // Kembalikan konteks grafik
 
-        if (localStorage.getItem('modeTampilan') === 'dark' || (!localStorage.getItem('modeTampilan') && window.matchMedia('(prefers-color-scheme: dark)').matches)) { html.classList.add('dark'); }
-        tombolMode.addEventListener('click', () => { html.classList.toggle('dark'); localStorage.setItem('modeTampilan', html.classList.contains('dark') ? 'dark' : 'light'); if (grafik) grafik.update(); });
+        // ✅ DAFTAR WARNA BERBEDA UNTUK SETIAP KELAS
+        const daftarWarna = [
+            { header: 'from-blue-500/10 to-blue-600/5', headerDark: 'from-blue-500/20 to-blue-600/10', teks: 'text-blue-700 dark:text-blue-300', tabel: 'bg-blue-50/50 dark:bg-blue-900/10', tabelHeader: 'bg-blue-100/80 dark:bg-blue-800/30' },
+            { header: 'from-emerald-500/10 to-emerald-600/5', headerDark: 'from-emerald-500/20 to-emerald-600/10', teks: 'text-emerald-700 dark:text-emerald-300', tabel: 'bg-emerald-50/50 dark:bg-emerald-900/10', tabelHeader: 'bg-emerald-100/80 dark:bg-emerald-800/30' },
+            { header: 'from-purple-500/10 to-purple-600/5', headerDark: 'from-purple-500/20 to-purple-600/10', teks: 'text-purple-700 dark:text-purple-300', tabel: 'bg-purple-50/50 dark:bg-purple-900/10', tabelHeader: 'bg-purple-100/80 dark:bg-purple-800/30' },
+            { header: 'from-amber-500/10 to-amber-600/5', headerDark: 'from-amber-500/20 to-amber-600/10', teks: 'text-amber-700 dark:text-amber-300', tabel: 'bg-amber-50/50 dark:bg-amber-900/10', tabelHeader: 'bg-amber-100/80 dark:bg-amber-800/30' },
+            { header: 'from-rose-500/10 to-rose-600/5', headerDark: 'from-rose-500/20 to-rose-600/10', teks: 'text-rose-700 dark:text-rose-300', tabel: 'bg-rose-50/50 dark:bg-rose-900/10', tabelHeader: 'bg-rose-100/80 dark:bg-rose-800/30' },
+            { header: 'from-cyan-500/10 to-cyan-600/5', headerDark: 'from-cyan-500/20 to-cyan-600/10', teks: 'text-cyan-700 dark:text-cyan-300', tabel: 'bg-cyan-50/50 dark:bg-cyan-900/10', tabelHeader: 'bg-cyan-100/80 dark:bg-cyan-800/30' },
+            { header: 'from-indigo-500/10 to-indigo-600/5', headerDark: 'from-indigo-500/20 to-indigo-600/10', teks: 'text-indigo-700 dark:text-indigo-300', tabel: 'bg-indigo-50/50 dark:bg-indigo-900/10', tabelHeader: 'bg-indigo-100/80 dark:bg-indigo-800/30' },
+            { header: 'from-lime-500/10 to-lime-600/5', headerDark: 'from-lime-500/20 to-lime-600/10', teks: 'text-lime-700 dark:text-lime-300', tabel: 'bg-lime-50/50 dark:bg-lime-900/10', tabelHeader: 'bg-lime-100/80 dark:bg-lime-800/30' },
+            { header: 'from-fuchsia-500/10 to-fuchsia-600/5', headerDark: 'from-fuchsia-500/20 to-fuchsia-600/10', teks: 'text-fuchsia-700 dark:text-fuchsia-300', tabel: 'bg-fuchsia-50/50 dark:bg-fuchsia-900/10', tabelHeader: 'bg-fuchsia-100/80 dark:bg-fuchsia-800/30' },
+            { header: 'from-orange-500/10 to-orange-600/5', headerDark: 'from-orange-500/20 to-orange-600/10', teks: 'text-orange-700 dark:text-orange-300', tabel: 'bg-orange-50/50 dark:bg-orange-900/10', tabelHeader: 'bg-orange-100/80 dark:bg-orange-800/30' }
+        ];
 
+        // Mode Gelap/Terang
+        if (localStorage.getItem('modeTampilan') === 'dark' || (!localStorage.getItem('modeTampilan') && window.matchMedia('(prefers-color-scheme: dark)').matches)) { 
+            html.classList.add('dark'); 
+        }
+        tombolMode.addEventListener('click', () => { 
+            html.classList.toggle('dark'); 
+            localStorage.setItem('modeTampilan', html.classList.contains('dark') ? 'dark' : 'light'); 
+            tampilkanSemuaPerKelas(semuaData);
+            if (grafik) grafik.update(); // Update grafik saat ganti mode
+        });
+
+        // ✅ Fungsi Cek Negeri / Swasta
         function cekJenisSekolah(namaSekolah) {
+            if (!namaSekolah) return "Belum Isi";
             const nama = namaSekolah.trim().toUpperCase();
-            if (nama.includes('N ') || nama.includes('NOMOR') || nama.endsWith(' N') || nama.includes('SMAN') || nama.includes('SMKN') || nama.includes('MAN')) return 'Negeri';
-            else return 'Swasta';
+            if (nama.includes('N ') || nama.includes('NOMOR') || nama.endsWith(' N') || nama.includes('SMAN') || nama.includes('SMKN') || nama.includes('MAN')) return "Negeri";
+            else return "Swasta";
         }
 
+        // ✅ Urutkan Kelas
+        function urutkanBerdasarkanKelas(data) {
+            return data.sort((a, b) => a.kelas.localeCompare(b.kelas));
+        }
+
+        // ✅ URUTKAN BERDASARKAN NAMA LENGKAP (A - Z)
+        function urutkanBerdasarkanNama(data) {
+            return data.sort((a, b) => a.nama.localeCompare(b.nama, 'id', { sensitivity: 'base' }));
+        }
+
+        // ✅ Kelompokkan Data Berdasarkan Kelas
+        function kelompokkanPerKelas(data) {
+            const kelompok = {};
+            data.forEach(item => {
+                const kelas = item.kelas;
+                if (!kelompok[kelas]) kelompok[kelas] = [];
+                kelompok[kelas].push(item);
+            });
+            // Urutkan nama kelas
+            return Object.keys(kelompok).sort().reduce((obj, key) => {
+                // ✅ DI DALAM KELAS: URUTKAN NAMA SISWA
+                obj[key] = urutkanBerdasarkanNama(kelompok[key]);
+                return obj;
+            }, {});
+        }
+
+        // Ambil Data
         async function ambilSemuaData() {
-            tabelData.innerHTML = `<tr><td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"><i class="fa fa-spinner fa-spin mr-2"></i> Memuat data...</td></tr>`;
+            wadahPerKelas.innerHTML = `<div class="text-center py-10 text-gray-500 dark:text-gray-400"><i class="fa fa-spinner fa-spin mr-2"></i> Memuat data...</div>`;
             try {
                 const resInduk = await fetch(URL_GOOGLE_SHEETS + '?aksi=ambil_data');
                 if (!resInduk.ok) throw new Error("Gagal terhubung ke server");
@@ -164,47 +230,210 @@
                 semuaData = await resData.json();
                 if (semuaData.error) throw new Error(semuaData.error);
 
-                hitungStatistik(); tampilkanData(semuaData); buatGrafikNegeriSwasta(semuaData);
+                semuaData = urutkanBerdasarkanKelas(semuaData);
+                hitungStatistikTotal(semuaData);
+                tampilkanSemuaPerKelas(semuaData);
+                buatGrafikNegeriSwasta(semuaData); // Panggil fungsi buat grafik
+
             } catch (err) {
-                tabelData.innerHTML = `<tr><td colspan="7" class="px-4 py-6 text-center text-red-500"><i class="fa fa-warning mr-2"></i> Gagal ambil data!<br>${err.message}</td></tr>`;
+                wadahPerKelas.innerHTML = `<div class="text-center py-10 text-red-500"><i class="fa fa-warning mr-2"></i> Gagal ambil data!<br>${err.message}</div>`;
             }
         }
 
-        function hitungStatistik() {
-            let negeri = 0, swasta = 0;
-            semuaData.forEach(item => { if (cekJenisSekolah(item.sekolah) === 'Negeri') negeri++; else swasta++; });
-            totalData.textContent = dataInduk.length; sudahIsi.textContent = semuaData.length; jmlNegeri.textContent = negeri; jmlSwasta.textContent = swasta;
+        // Hitung Statistik Keseluruhan
+        function hitungStatistikTotal(data) {
+            let neg = 0, swa = 0;
+            data.forEach(item => { if (cekJenisSekolah(item.sekolah) === "Negeri") neg++; else if (cekJenisSekolah(item.sekolah) === "Swasta") swa++; });
+            totalData.textContent = dataInduk.length;
+            sudahIsi.textContent = data.length;
+            jmlNegeri.textContent = neg;
+            jmlSwasta.textContent = swa;
         }
 
-        function tampilkanData(data) {
-            if (data.length === 0) { tabelData.innerHTML = `<tr><td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">Belum ada data masuk.</td></tr>`; return; }
-            let htmlTabel = "";
-            data.forEach((item, idx) => {
-                const jenis = cekJenisSekolah(item.sekolah);
-                const warnaBadge = jenis === 'Negeri' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
-                htmlTabel += `<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"><td class="px-4 py-3">${idx+1}</td><td class="px-4 py-3 font-mono">${item.nis}</td><td class="px-4 py-3">${item.nama}</td><td class="px-4 py-3">${item.kelas}</td><td class="px-4 py-3 font-medium">${item.sekolah}</td><td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${warnaBadge}">${jenis}</span></td><td class="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">${item.waktu}</td></tr>`;
-            });
-            tabelData.innerHTML = htmlTabel;
-        }
-
+        // ✅ FUNGSI GRAFIK
         function buatGrafikNegeriSwasta(data) {
             let negeri = 0, swasta = 0;
             data.forEach(item => { if (cekJenisSekolah(item.sekolah) === 'Negeri') negeri++; else swasta++; });
+            
             if (grafik) grafik.destroy();
+
             const warnaTeks = html.classList.contains('dark') ? '#E5E7EB' : '#374151';
             const warnaGaris = html.classList.contains('dark') ? '#374151' : '#E5E7EB';
+
             grafik = new Chart(ctxGrafik, {
                 type: 'bar',
-                data: { labels: ['SEKOLAH NEGERI', 'SEKOLAH SWASTA'], datasets: [{ label: 'Jumlah Siswa', data: [negeri, swasta], backgroundColor: ['rgba(16, 185, 129, 0.75)', 'rgba(139, 92, 246, 0.75)'], borderColor: ['rgba(16, 185, 129, 1)', 'rgba(139, 92, 246, 1)'], borderWidth:2, borderRadius:10, barThickness:120 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display:false} }, scales: { y: {beginAtZero:true, ticks:{color:warnaTeks}, grid:{color:warnaGaris}}, x:{ticks:{color:warnaTeks}, grid:{display:false}} } }
+                data: {
+                    labels: ['SEKOLAH NEGERI', 'SEKOLAH SWASTA'],
+                    datasets: [{
+                        label: 'Jumlah Siswa',
+                        data: [negeri, swasta],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.75)',
+                            'rgba(139, 92, 246, 0.75)'
+                        ],
+                        borderColor: [
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(139, 92, 246, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 10,
+                        barThickness: 120
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1F2937',
+                            titleColor: '#FFF',
+                            bodyColor: '#FFF',
+                            padding: 12,
+                            cornerRadius: 8,
+                            font: { size: 14, weight: 'bold' },
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Jumlah: ${context.raw} siswa`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: warnaTeks,
+                                font: { size: 13, weight: 'bold' },
+                                stepSize: 1
+                            },
+                            grid: { color: warnaGaris },
+                            title: {
+                                display: true,
+                                text: 'JUMLAH SISWA',
+                                color: warnaTeks,
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: warnaTeks,
+                                font: { size: 15, weight: 'bold' }
+                            },
+                            grid: { display: false }
+                        }
+                    }
+                }
             });
         }
 
+        // ✅ TAMPILKAN SETIAP KELAS BESERTA WARNA BERBEDA
+        function tampilkanSemuaPerKelas(data) {
+            if (data.length === 0) {
+                wadahPerKelas.innerHTML = `<div class="text-center py-10 text-gray-500 dark:text-gray-400">Belum ada data masuk.</div>`;
+                return;
+            }
+
+            const dataPerKelas = kelompokkanPerKelas(data);
+            let htmlKeseluruhan = "";
+            let indeksWarna = 0; // Penanda urutan warna
+
+            // Loop untuk setiap kelas
+            for (const [namaKelas, daftarSiswa] of Object.entries(dataPerKelas)) {
+                
+                // Pilih warna bergantian
+                const warna = daftarWarna[indeksWarna % daftarWarna.length];
+                indeksWarna++;
+
+                // Hitung jumlah negeri & swasta di kelas ini
+                let neg = 0, swa = 0;
+                daftarSiswa.forEach(s => {
+                    if (cekJenisSekolah(s.sekolah) === "Negeri") neg++;
+                    else if (cekJenisSekolah(s.sekolah) === "Swasta") swa++;
+                });
+
+                // BAGIAN HEADER KELAS + STATISTIK
+                htmlKeseluruhan += `
+                <div class="mb-10 rounded-2xl shadow-md overflow-hidden ${warna.tabel}">
+                    <div class="bg-gradient-to-r ${warna.header} dark:${warna.headerDark} px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <h2 class="text-xl font-bold ${warna.teks}">KELAS ${namaKelas}</h2>
+                        <div class="flex gap-6">
+                            <div class="text-center">
+                                <div class="text-xs text-gray-600 dark:text-gray-300">Negeri</div>
+                                <div class="font-bold text-negeri text-lg">${neg}</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs text-gray-600 dark:text-gray-300">Swasta</div>
+                                <div class="font-bold text-swasta text-lg">${swa}</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs text-gray-600 dark:text-gray-300">Total</div>
+                                <div class="font-bold ${warna.teks} text-lg">${daftarSiswa.length}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABEL DATA SISWA KELAS ${namaKelas} -->
+                    <div class="overflow-x-auto scrollbar-hide">
+                        <table class="w-full text-sm text-left">
+                            <thead class="${warna.tabelHeader}">
+                                <tr>
+                                    <th class="px-4 py-3 teks-satu-baris w-[50px]">No</th>
+                                    <th class="px-4 py-3 teks-satu-baris w-[90px]">NIS</th>
+                                    <th class="px-4 py-3 teks-satu-baris min-w-[200px] font-semibold">Nama Lengkap ↕</th>
+                                    <th class="px-4 py-3 teks-satu-baris min-w-[220px]">Sekolah Tujuan</th>
+                                    <th class="px-4 py-3 teks-satu-baris w-[110px]">Status</th>
+                                    <th class="px-4 py-3 teks-satu-baris w-[140px]">Waktu Kirim</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">`;
+
+                // Isi data siswa kelas ini (sudah urut nama)
+                daftarSiswa.forEach((siswa, idx) => {
+                    const jenis = cekJenisSekolah(siswa.sekolah);
+                    const warnaBadge = jenis === 'Negeri' 
+                        ? 'bg-negeri/10 text-negeri dark:bg-negeri/20' 
+                        : 'bg-swasta/10 text-swasta dark:bg-swasta/20';
+
+                    htmlKeseluruhan += `
+                                <tr class="hover:bg-white/60 dark:hover:bg-darkCard/40 transition">
+                                    <td class="px-4 py-3 teks-satu-baris">${idx+1}</td>
+                                    <td class="px-4 py-3 teks-satu-baris font-mono">${siswa.nis}</td>
+                                    <td class="px-4 py-3 teks-satu-baris font-medium">${siswa.nama}</td>
+                                    <td class="px-4 py-3 teks-satu-baris">${siswa.sekolah}</td>
+                                    <td class="px-4 py-3 teks-satu-baris">
+                                        <span class="px-2 py-1 rounded text-xs font-semibold ${warnaBadge}">${jenis}</span>
+                                    </td>
+                                    <td class="px-4 py-3 teks-satu-baris text-xs text-gray-600 dark:text-gray-300">${siswa.waktu}</td>
+                                </tr>`;
+                });
+
+                htmlKeseluruhan += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+            }
+
+            wadahPerKelas.innerHTML = htmlKeseluruhan;
+        }
+
+        // Fitur Pencarian
         cariData.addEventListener('input', function() {
             const kataKunci = this.value.trim().toLowerCase();
-            if (!kataKunci) { tampilkanData(semuaData); buatGrafikNegeriSwasta(semuaData); return; }
-            const hasilCari = semuaData.filter(item => item.nis.toLowerCase().includes(kataKunci) || item.nama.toLowerCase().includes(kataKunci) || item.sekolah.toLowerCase().includes(kataKunci));
-            tampilkanData(hasilCari); buatGrafikNegeriSwasta(hasilCari);
+            if (!kataKunci) {
+                tampilkanSemuaPerKelas(semuaData);
+                buatGrafikNegeriSwasta(semuaData); // Grafik kembali normal saat cari dikosongkan
+                return;
+            }
+            const hasilCari = semuaData.filter(item => 
+                item.nis.toLowerCase().includes(kataKunci) || 
+                item.nama.toLowerCase().includes(kataKunci) || 
+                item.kelas.toLowerCase().includes(kataKunci) ||
+                item.sekolah.toLowerCase().includes(kataKunci)
+            );
+            tampilkanSemuaPerKelas(hasilCari);
+            buatGrafikNegeriSwasta(hasilCari); // Grafik ikut berubah sesuai hasil cari
         });
 
         muatUlang.addEventListener('click', ambilSemuaData);
