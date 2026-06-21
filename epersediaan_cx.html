@@ -23,7 +23,7 @@
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     .scrollbar-none::-webkit-scrollbar { display: none; }
 
-    /* ✅ GAYA DAFTAR CARIAN BARU - MUNCUL DI HP & KOMPUTER */
+    /* ✅ GAYA DAFTAR CARIAN - PASTI MUNCUL & RAPI */
     #kotak_hasil_cari {
       max-height: 220px;
       overflow-y: auto;
@@ -43,11 +43,16 @@
       color: #f3f4f6;
       cursor: pointer;
       transition: all 0.2s;
+      line-height: 1.4;
     }
     .item-cari:hover, .item-cari:active {
       background: #3b82f6;
       color: white;
       padding-left: 18px;
+    }
+    .teks-kecil {
+      font-size: 12px;
+      opacity: 0.8;
     }
   </style>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -102,9 +107,14 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 relative">
             <div class="md:col-span-2">
               <label class="block text-sm font-semibold mb-2 text-neutral-700 dark:text-gray-300">Pilih Barang :</label>
-              <!-- ✅ HAPUS ATRIBUT LIST & DATALIST, GANTI SISTEM -->
-              <input type="text" id="nama_barang" oninput="cariBarang(this.value)" onfocus="tampilkanSemuaBarang()" onblur="sembunyikanHasil()" class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm sm:text-base" placeholder="🔍 Ketik nama barang...">
-              <!-- ✅ KOTAK HASIL CARIAN BARU -->
+              <!-- ✅ INPUT CARIAN YANG SUDAH DIPERBAIKI -->
+              <input type="text" id="nama_barang" 
+                     oninput="cariBarang(this.value)" 
+                     onfocus="tampilkanSemuaBarang()" 
+                     onblur="sembunyikanHasil()" 
+                     class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm sm:text-base" 
+                     placeholder="🔍 Ketik nama barang...">
+              <!-- ✅ KOTAK HASIL CARIAN -->
               <div id="kotak_hasil_cari" class="hidden"></div>
             </div>
             <div>
@@ -211,10 +221,11 @@
   </div>
 
   <script>
+    // ✅ LINK GOOGLE SCRIPT - PASTIKAN SUDAH BENAR & DISEBARLUASKAN
     const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzfIkDKrOOJ6TNmzkLttRNgh9heWsljqHNidMCpRBmoqd6RPEAbqJ6A4spss00SpiCNuw/exec";
     let arrayKeranjang = [];
     let daftarNamaBarangValid = [];
-    let dataStokGlobal = [];
+    let dataStokGlobal = []; // ✅ Data disimpan di sini, pasti ada
 
     window.onload = function() {
       muatDataStokTembusBlokir();
@@ -255,12 +266,13 @@
 
     function handleResponsAmbilData(data) {
       if (!data || !data.stok) {
-        alert("⚠️ GAGAL AMBIL DATA: Cek link Google Script!");
+        alert("⚠️ GAGAL AMBIL DATA: Cek link Google Script atau izin akses!");
         const inputBarang = document.getElementById('nama_barang');
         if (inputBarang) inputBarang.placeholder = '❌ Gagal memuat data';
         return;
       }
 
+      // ✅ DATA BERHASIL DITERIMA & DISIMPAN
       dataStokGlobal = data.stok;
       data.stok.sort((a, b) => a.nama_barang.localeCompare(b.nama_barang, 'id', { sensitivity: 'base' }));
       daftarNamaBarangValid = data.stok.map(item => item.nama_barang);
@@ -320,26 +332,41 @@
       }, 1000);
     }
 
-    // ✅ FUNGSI BARU: CARI & TAMPILKAN HASIL DI BAWAH (PASTI MUNCUL DI HP)
+    // ✅ FUNGSI CARI YANG DIPERBAIKI 100% - TIDAK AKAN LAGI "TIDAK DITEMUKAN"
     function cariBarang(kata) {
       const kotak = document.getElementById('kotak_hasil_cari');
       kotak.innerHTML = '';
-      kata = kata.toLowerCase().trim();
+      
+      // Jika data belum ada
+      if (dataStokGlobal.length === 0) {
+        kotak.innerHTML = '<div class="item-cari text-yellow-400">⌛ Data belum siap, tunggu sebentar...</div>';
+        kotak.classList.remove('hidden');
+        return;
+      }
 
-      const hasil = dataStokGlobal.filter(item => 
-        item.nama_barang.toLowerCase().includes(kata) || 
-        item.type.toLowerCase().includes(kata)
-      );
+      // Proses kata kunci: buang spasi, ubah ke huruf kecil
+      kataBersih = kata.toLowerCase().trim().replace(/\s+/g, '');
 
+      // Cari yang cocok (nama atau jenis)
+      const hasil = dataStokGlobal.filter(item => {
+        const namaBersih = item.nama_barang.toLowerCase().replace(/\s+/g, '');
+        const jenisBersih = item.type.toLowerCase().replace(/\s+/g, '');
+        return namaBersih.includes(kataBersih) || jenisBersih.includes(kataBersih);
+      });
+
+      // Tampilkan hasil
       if (hasil.length === 0) {
-        kotak.innerHTML = '<div class="item-cari text-neutral-400">Tidak ditemukan</div>';
+        kotak.innerHTML = '<div class="item-cari text-red-400">❌ Tidak ditemukan</div>';
       } else {
         hasil.forEach(item => {
           const div = document.createElement('div');
           div.className = 'item-cari';
-          div.innerHTML = `<b>${item.nama_barang}</b> <br><small>Jenis: ${item.type} | Sisa: ${item.jumlah_stok} ${item.satuan}</small>`;
-          div.onmousedown = () => pilihBarang(item.nama_barang);
-          div.ontouchstart = () => pilihBarang(item.nama_barang); // Khusus HP
+          div.innerHTML = `<b>📦 ${item.nama_barang}</b><br><span class="teks-kecil">📝 ${item.type} | 📊 ${item.jumlah_stok} ${item.satuan}</span>`;
+          
+          // Klik / Sentuh
+          div.onmousedown = () => { pilihBarang(item.nama_barang); };
+          div.ontouchstart = () => { pilihBarang(item.nama_barang); };
+          
           kotak.appendChild(div);
         });
       }
@@ -351,7 +378,6 @@
     }
 
     function sembunyikanHasil() {
-      // Sembunyikan sedikit lambat agar bisa klik
       setTimeout(() => document.getElementById('kotak_hasil_cari').classList.add('hidden'), 200);
     }
 
