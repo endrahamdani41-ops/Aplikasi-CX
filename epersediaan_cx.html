@@ -47,6 +47,14 @@
       color: white;
       padding-left: 18px;
     }
+
+    /* ✅ TAMBAHAN: Agar teks nama barang TIDAK TURUN BARIS */
+    .nama-barang-satu-baris {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px; /* Sesuaikan lebar maksimal */
+    }
   </style>
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -287,7 +295,8 @@
 
             baris.innerHTML = `
               <td class="px-6 py-3.5 text-center text-neutral-400 font-mono">${indeks + 1}</td>
-              <td class="px-6 py-3.5 font-semibold text-neutral-900 dark:text-white">${item.nama_barang}</td>
+              <!-- ✅ DITAMBAHKAN: class nama-barang-satu-baris -->
+              <td class="px-6 py-3.5 font-semibold text-neutral-900 dark:text-white nama-barang-satu-baris" title="${item.nama_barang}">${item.nama_barang}</td>
               <td class="px-6 py-3.5 text-neutral-600 dark:text-gray-300">${item.type}</td>
               <td class="px-6 py-3.5 text-center text-neutral-500">${item.satuan}</td>
               <td class="px-6 py-3.5 text-center font-bold text-lg text-neutral-900 dark:text-white">${item.jumlah_stok}</td>
@@ -313,7 +322,8 @@
               
               barisLog.innerHTML = `
                 <td class="px-6 py-3 text-neutral-500 font-mono text-xs">${log.tanggal}</td>
-                <td class="px-6 py-3 font-medium text-neutral-900 dark:text-white">${log.nama_barang}</td>
+                <!-- ✅ DITAMBAHKAN: class nama-barang-satu-baris -->
+                <td class="px-6 py-3 font-medium text-neutral-900 dark:text-white nama-barang-satu-baris" title="${log.nama_barang}">${log.nama_barang}</td>
                 <td class="px-6 py-3 text-center">${badgeMutasi}</td>
                 <td class="px-6 py-3 text-center font-bold text-red-600 dark:text-red-400">${Math.abs(log.jumlah)}</td>
                 <td class="px-6 py-3 text-neutral-600 dark:text-gray-300 text-xs">${log.keterangan}</td>
@@ -443,7 +453,8 @@
         tr.className = "hover:bg-neutral-50 dark:hover:bg-neutral-800/40";
         tr.innerHTML = `
           <td class="px-4 py-2.5 text-center text-neutral-400 font-mono">${index + 1}</td>
-          <td class="px-4 py-2.5 font-medium text-neutral-900 dark:text-white">${item.nama}</td>
+          <!-- ✅ DITAMBAHKAN: class nama-barang-satu-baris -->
+          <td class="px-4 py-2.5 font-medium text-neutral-900 dark:text-white nama-barang-satu-baris" title="${item.nama}">${item.nama}</td>
           <td class="px-4 py-2.5 text-center font-bold text-blue-600 dark:text-blue-400">${item.jumlah}</td>
           <td class="px-4 py-2.5 text-center">
             <button type="button" onclick="hapusBarangKeranjang(${index})" class="text-red-500 hover:text-red-700 font-medium text-xs px-2 py-1 rounded-md border border-red-200 dark:border-red-900/40 hover:bg-red-50 dark:hover:bg-red-950/20">
