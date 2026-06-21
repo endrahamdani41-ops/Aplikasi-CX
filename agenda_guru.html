@@ -39,11 +39,21 @@
         .login-card p { text-align: center; color: #94a3b8; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
         .login-group { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
         .login-group label { font-size: 14px; color: #cbd5e1; font-weight: 600; }
-        .login-group input { text-align: center; padding: 10px 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #f8fafc; font-size: 15px; }
+        
+        /* Modifikasi: Isi teks box username & password berada di tengah */
+        .login-card .login-group input { 
+            padding: 10px 12px; 
+            background: #0f172a; 
+            border: 1px solid #475569; 
+            border-radius: 6px; 
+            color: #f8fafc; 
+            font-size: 15px; 
+            text-align: center; 
+        }
+        
         .btn-login { width: 100%; padding: 11px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; }
         .error-msg { color: #ef4444; font-size: 13px; text-align: center; margin-top: 10px; display: none; font-weight: bold; }
 
-        /* KONTROL LOGO DI LAYAR KOMPUTER (NORMAL) */
         .logo-container { text-align: center; margin-bottom: 12px; width: 100%; }
         .logo-sekolah { width: 65px !important; height: auto !important; object-fit: contain; display: inline-block; }
 
@@ -144,10 +154,9 @@
         .status-loading { color: #2ecc71; font-weight: bold; }
         .print-text-fallback { display: none !important; }
 
-        /* KONTROL KHUSUS SAAT CETAK KE PDF (PRINTER) */
         @media print {
             .logo-container { text-align: center !important; margin-bottom: 15px !important; width: 100% !important; display: block !important; }
-            .logo-sekolah { width: 65px !important; height: auto !important; display: inline-block !important; margin: 0 auto !important; } /* <--- UKURAN LOGO MEMBESAR SAAT PRINT */
+            .logo-sekolah { width: 70px !important; height: auto !important; display: inline-block !important; margin: 0 auto !important; }
             .refleksi-container .print-text-fallback, .refleksi-container div, .refleksi-container p { padding-left: 14px !important; margin-top: 4px !important; margin-bottom: 12px !important; display: block !important; color: #000000 !important; }
             .hidden-print-element { display: none !important; }
             table tr { page-break-inside: avoid !important; break-inside: avoid !important; }
@@ -178,13 +187,13 @@
                 <img src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110" class="logo-sekolah">
             </div>
             <h2>SMPN 110 JAKARTA</h2>
-            <h2>Agenda Mengajar Guru</h2><br><br>
+            <p>Agenda Mengajar Guru</p>
             <div class="login-group">
-
+                <label for="username">Username</label>
                 <input type="text" id="username" placeholder="Masukkan Username" autocomplete="off">
             </div>
             <div class="login-group">
-
+                <label for="password">Password</label>
                 <input type="password" id="password" placeholder="Masukkan Password">
             </div>
             <button class="btn-login" onclick="prosesValidasiLogin()" style="
@@ -209,7 +218,7 @@
                 onmousedown="this.style.transform='translateY(3px)'; this.style.boxShadow='0 1px 0 #7c3aed, 0 2px 4px rgba(0, 0, 0, 0.3)';"
                 onmouseup="this.style.transform='none'; this.style.boxShadow='0 4px 0 #8b5cf6, 0 6px 10px rgba(0, 0, 0, 0.3)';"
                 onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 0 #7c3aed, 0 6px 10px rgba(0, 0, 0, 0.3)';">
-                    👁️
+                    👁️ Refleksi: ON
                 </button>
                 <button class="btn btn-save" onclick="eksporJurnalKeSheets(false)" style="
                     background-color: #22c55e; color: white; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; position: relative; transition: all 0.1s ease; box-shadow: 0 4px 0 #16a34a, 0 6px 10px rgba(0, 0, 0, 0.3);
@@ -217,7 +226,7 @@
                 onmousedown="this.style.transform='translateY(3px)'; this.style.boxShadow='0 1px 0 #16a34a, 0 2px 4px rgba(0, 0, 0, 0.3)';"
                 onmouseup="this.style.transform='none'; this.style.boxShadow='0 4px 0 #22c55e, 0 6px 10px rgba(0, 0, 0, 0.3)';"
                 onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 0 #16a34a, 0 6px 10px rgba(0, 0, 0, 0.3)';">
-                    💾
+                    💾 Simpan Jurnal
                 </button>
                 <button class="btn btn-pdf" onclick="cetakSemuaJurnalPDF()" style="
                     background-color: #eab308; color: #0f172a; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; position: relative; transition: all 0.1s ease; box-shadow: 0 4px 0 #ca8a04, 0 6px 10px rgba(0, 0, 0, 0.3);
@@ -225,7 +234,7 @@
                 onmousedown="this.style.transform='translateY(3px)'; this.style.boxShadow='0 1px 0 #ca8a04, 0 2px 4px rgba(0, 0, 0, 0.3)';"
                 onmouseup="this.style.transform='none'; this.style.boxShadow='0 4px 0 #eab308, 0 6px 10px rgba(0, 0, 0, 0.3)';"
                 onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 0 #ca8a04, 0 6px 10px rgba(0, 0, 0, 0.3)';">
-                    🖨️
+                    🖨️ Cetak PDF
                 </button>
                 <button class="btn btn-logout" onclick="window.location.reload();" style="
                     background-color: #dc2626; color: white; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; position: relative; transition: all 0.1s ease; box-shadow: 0 4px 0 #991b1b, 0 6px 10px rgba(0, 0, 0, 0.3);
@@ -233,7 +242,7 @@
                 onmousedown="this.style.transform='translateY(3px)'; this.style.boxShadow='0 1px 0 #991b1b, 0 2px 4px rgba(0, 0, 0, 0.3)';"
                 onmouseup="this.style.transform='none'; this.style.boxShadow='0 4px 0 #dc2626, 0 6px 10px rgba(0, 0, 0, 0.3)';"
                 onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 0 #991b1b, 0 6px 10px rgba(0, 0, 0, 0.3)';">
-                    <i class="fa-solid fa-right-from-bracket" style="font-size: 14px;"></i>&nbsp;
+                    <i class="fa-solid fa-right-from-bracket" style="font-size: 14px;"></i>&nbsp;Keluar
                 </button>
             </div>
         </div>
@@ -253,25 +262,25 @@
             <div class="divider hide-on-print" id="garis-pembatas"></div>
 
             <div class="logo-container">
-                <img src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110" class="logo-sekolah">
+                <img src="https://i.ibb.co.com/S7935s95/erasebg-transformed.png" alt="Logo SMPN 110" class="logo-sekolah" alt="Logo SMPN 110" class="logo-sekolah">
             </div>
             <h1>AGENDA MENGAJAR GURU</h1>
-            <h3>Tahun Ajaran: <span id="tahun-ajaran-otomatis">...</span></h3><br><br>
+            <h3>Tahun Ajaran: <span id="tahun-ajaran-otomatis">...</span></h3><br>
             
             <div class="profil-guru">
                 <div class="profil-grid">
                     <div class="form-group"><label>Nama Guru</label><span class="print-text-fallback" id="lbl_nama_guru"></span><input type="text" id="nama_guru" class="hide-field-on-print" readonly></div>
                     <div class="form-group"><label>NIP</label><span class="print-text-fallback" id="lbl_nip"></span><input type="text" id="nip" class="hide-field-on-print" readonly></div>
                     <div class="form-group"><label>Mata Pelajaran</label><span class="print-text-fallback" id="lbl_mata_pelajaran"></span><input type="text" id="mata_pelajaran" class="hide-field-on-print" readonly></div>
-                    <div class="form-group"><label>Semester</label><span class="print-text-fallback" id="lbl_kelas_semester"></span><input type="text" id="kelas_semester" class="hide-field-on-print" value="Genap" readonly></div>
+                    <div class="form-group"><label>Semester</label><span class="print-text-fallback" id="lbl_kelas_semester"></span><input type="text" id="kelas_semester" class="hide-field-on-print" readonly style="color: #94a3b8; cursor: not-allowed;"></div>
                 </div>
             </div>
 
             <div class="wrapper-kontrol-jurnal hide-on-print">
                 <div class="area-filter-pencarian">
-                    <label for="filter_kelas_jurnal"><i class="fa-solid fa-magnifying-glass"></i> Cari Kelas:</label>
+                    <label for="filter_kelas_jurnal"><i class="fa-solid fa-magnifying-glass"></i> Cari & Saring Jurnal Berdasarkan Kelas:</label>
                     <select id="filter_kelas_jurnal" onchange="eksekusiFilterKelasDiLayarAplikasi()">
-                        <option value="SEMUA">Semua</option>
+                        <option value="SEMUA">-- Tampilkan Semua Kelas --</option>
                         <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
                         <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
                         <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
@@ -306,7 +315,7 @@
                 <span class="page-info" id="info-halaman">Halaman 1 dari 1</span>
                 <button class="btn-nav" id="btn-next" onclick="halamanBerikutnya()">Selanjutnya ➡️</button>
             </div>
-<br>
+
             <h2 id="judul-refleksi">Catatan Refleksi Bulanan Guru</h2><br>
             <div class="refleksi-container" id="kontainer-refleksi">
                 <label><strong>1. Apa yang berjalan efektif bulan ini?</strong></label>
@@ -365,7 +374,7 @@
 
         window.onload = async function() {
             aturTanggalTtdOtomatis();
-            aturTahunAjaranOtomatis();
+            aturTahunAjaranDanSemesterOtomatis(); 
             await ambilDataMateriDariSheets();
             renderTabelBerdasarkanHalaman(); 
             inialisasiPemicuSimpanOtomatis();
@@ -375,7 +384,7 @@
             });
         };
 
-        function aturTahunAjaranOtomatis() {
+        function aturTahunAjaranDanSemesterOtomatis() {
             const d = new Date();
             const tahunSekarang = d.getFullYear();
             const bulanSekarang = d.getMonth(); 
@@ -389,6 +398,10 @@
                 tahunSelesai = tahunSekarang;
             }
             document.getElementById("tahun-ajaran-otomatis").innerText = `${tahunMulai}/${tahunSelesai}`;
+
+            const semesterAktif = (bulanSekarang >= 6) ? "Ganjil" : "Genap";
+            document.getElementById("kelas_semester").value = semesterAktif;
+            document.getElementById("lbl_kelas_semester").innerText = semesterAktif;
         }
 
         function toggleTampilanRefleksiManual() {
@@ -399,11 +412,11 @@
             if (isRefleksiVisible) {
                 judul.style.display = "block"; kontainer.style.display = "block";
                 judul.classList.remove("hidden-print-element"); kontainer.classList.remove("hidden-print-element");
-                btn.innerHTML = "👁️"; btn.style.backgroundColor = "#8b5cf6";
+                btn.innerHTML = "👁️ Refleksi: ON"; btn.style.backgroundColor = "#8b5cf6";
             } else {
                 judul.style.display = "none"; kontainer.style.display = "none";
                 judul.classList.add("hidden-print-element"); kontainer.classList.add("hidden-print-element");
-                btn.innerHTML = "🙈"; btn.style.backgroundColor = "#64748b";
+                btn.innerHTML = "🙈 Refleksi: OFF"; btn.style.backgroundColor = "#64748b";
             }
         }
 
@@ -434,7 +447,7 @@
             const passIn = document.getElementById("password").value;
             if (passIn !== "gurucx") { document.getElementById("login-error-msg").style.display = "block"; return; }
             if (userIn.startsWith("guru")) {
-                document.getElementById("loading_status").innerText = "⏳ Memeriksa Profil Guru...";
+
                 fetch(`${URL_WEB_APP_SCRIPT}?action=getProfilGuru&username=${userIn}`)
                 .then(res => res.json())
                 .then(res => {
@@ -791,6 +804,7 @@
                 if (hasil.status === "sukses") {
                     document.getElementById("loading_status").innerText = "✅ Semua perubahan tersimpan otomatis";
                     document.getElementById("loading_status").style.color = "#2ecc71";
+                    
                     if (!isSilentMode) alert("🚀 Berhasil menyimpan data Jurnal Mengajar dan Catatan Refleksi Bulanan ke Google Sheets!");
                 } else {
                     document.getElementById("loading_status").innerText = "❌ Gagal Menyimpan Otomatis";
@@ -804,7 +818,7 @@
         }
 
         function downloadTemplateExcelKosong() {
-            const header = [["Mata Pelajaran", "Kelas", "Tujuan Pembelajaran", "Materi Pokok"], ["Informatika", "9A", "Siswa paham logika sistem komputer", "Hardware & Software"]];
+            const header = [["Mata Pelajaran", "Kelas", "Tujuan Pembelajaran", "Materi Pokok"], ["Informatika", "9", "Siswa paham logika sistem komputer", "Hardware & Software"]];
             let wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(header);
             XLSX.utils.book_append_sheet(wb, ws, "Database_Materi"); XLSX.writeFile(wb, "Template_Database_Materi.xlsx");
         }
