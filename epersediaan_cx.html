@@ -20,23 +20,34 @@
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button { appearance: none; -webkit-appearance: none; margin: 0; }
     input[type=number] { appearance: none; -moz-appearance: textfield; }
-    input::-webkit-calendar-picker-indicator { opacity: 0.6; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     .scrollbar-none::-webkit-scrollbar { display: none; }
-    
-    /* ✅ Memperbaiki tampilan daftar saran */
-    datalist#daftar_gudang option {
-      padding: 10px 14px !important;
-      font-size: 13px !important;
-      line-height: 1.6 !important;
-      white-space: normal !important;
-      height: auto !important;
-      background: #1f2937 !important;
-      color: #f3f4f6 !important;
-      border-bottom: 1px solid #374151 !important;
+
+    /* ✅ GAYA DAFTAR CARIAN BARU - MUNCUL DI HP & KOMPUTER */
+    #kotak_hasil_cari {
+      max-height: 220px;
+      overflow-y: auto;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 0 0 12px 12px;
+      margin-top: -8px;
+      z-index: 9999;
+      position: absolute;
+      width: calc(100% - 32px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
-    datalist#daftar_gudang option:hover {
-      background: #3b82f6 !important;
+    .item-cari {
+      padding: 10px 14px;
+      font-size: 14px;
+      border-bottom: 1px solid #374151;
+      color: #f3f4f6;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .item-cari:hover, .item-cari:active {
+      background: #3b82f6;
+      color: white;
+      padding-left: 18px;
     }
   </style>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -88,11 +99,13 @@
 
           <hr class="border-neutral-200 dark:border-neutral-800 my-4 sm:my-5">
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 relative">
             <div class="md:col-span-2">
               <label class="block text-sm font-semibold mb-2 text-neutral-700 dark:text-gray-300">Pilih Barang :</label>
-              <input type="text" id="nama_barang" list="daftar_gudang" class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm sm:text-base" placeholder="🔍 Ketik nama barang...">
-              <datalist id="daftar_gudang"></datalist>
+              <!-- ✅ HAPUS ATRIBUT LIST & DATALIST, GANTI SISTEM -->
+              <input type="text" id="nama_barang" oninput="cariBarang(this.value)" onfocus="tampilkanSemuaBarang()" onblur="sembunyikanHasil()" class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm sm:text-base" placeholder="🔍 Ketik nama barang...">
+              <!-- ✅ KOTAK HASIL CARIAN BARU -->
+              <div id="kotak_hasil_cari" class="hidden"></div>
             </div>
             <div>
               <label class="block text-sm font-semibold mb-2 text-neutral-700 dark:text-gray-300">Jumlah Barang :</label>
@@ -198,13 +211,11 @@
   </div>
 
   <script>
-    // ✅ LINK GOOGLE SCRIPT - Pastikan ini BENAR & SUDAH DISEBARKAN!
     const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzfIkDKrOOJ6TNmzkLttRNgh9heWsljqHNidMCpRBmoqd6RPEAbqJ6A4spss00SpiCNuw/exec";
     let arrayKeranjang = [];
     let daftarNamaBarangValid = [];
-    let dataStokGlobal = []; // Simpan data global untuk pencarian manual
+    let dataStokGlobal = [];
 
-    // ✅ MUAT DATA SAAT BUKA
     window.onload = function() {
       muatDataStokTembusBlokir();
     };
@@ -213,10 +224,6 @@
       if (typeof lucide !== 'undefined') {
         lucide.createIcons();
       }
-      
-      // ✅ Tambah pencarian manual (karena datalist kadang bermasalah)
-      const inputCari = document.getElementById('nama_barang');
-      inputCari.addEventListener('input', fungsiCariBarang);
     });
 
     function toggleTema() {
@@ -239,10 +246,7 @@
 
     function muatDataStokTembusBlokir() {
       const inputBarang = document.getElementById('nama_barang');
-      if (inputBarang) {
-        inputBarang.value = '';
-        inputBarang.placeholder = '⌛ Memuat data barang...';
-      }
+      if (inputBarang) inputBarang.placeholder = '⌛ Memuat data barang...';
       
       const script = document.createElement('script');
       script.src = `${URL_GOOGLE_SCRIPT}?callback=handleResponsAmbilData&_=${new Date().getTime()}`;
@@ -251,51 +255,29 @@
 
     function handleResponsAmbilData(data) {
       if (!data || !data.stok) {
-        alert("⚠️ GAGAL AMBIL DATA: Cek link Google Script atau izin akses!");
+        alert("⚠️ GAGAL AMBIL DATA: Cek link Google Script!");
         const inputBarang = document.getElementById('nama_barang');
         if (inputBarang) inputBarang.placeholder = '❌ Gagal memuat data';
         return;
       }
 
-      // Simpan data ke variabel global
       dataStokGlobal = data.stok;
-      
-      data.stok.sort((a, b) => {
-        return a.nama_barang.localeCompare(b.nama_barang, 'id', { sensitivity: 'base' });
-      });
-
+      data.stok.sort((a, b) => a.nama_barang.localeCompare(b.nama_barang, 'id', { sensitivity: 'base' }));
       daftarNamaBarangValid = data.stok.map(item => item.nama_barang);
 
-      const datalistGudang = document.getElementById('daftar_gudang');
       const inputBarang = document.getElementById('nama_barang');
-      
       if (inputBarang) inputBarang.placeholder = '🔍 Ketik nama barang...';
-
-      if (datalistGudang) {
-        datalistGudang.innerHTML = '';
-        data.stok.forEach(item => {
-          const option = document.createElement('option');
-          option.value = item.nama_barang;
-          // ✅ Tampilan SANGAT JELAS
-          option.textContent = `📦 ${item.nama_barang} | 📝 ${item.type} | 📊 ${item.jumlah_stok} ${item.satuan}`;
-          datalistGudang.appendChild(option);
-        });
-      }
 
       const tabelStok = document.getElementById('tabel_stok_body');
       if (tabelStok) {
         tabelStok.innerHTML = '';
         data.stok.forEach((item, indeks) => {
+          let statusBadge = '<span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-md bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400 border border-green-200/20 dark:border-green-800/30">Tersedia</span>';
+          if (item.jumlah_stok <= 0) statusBadge = '<span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-md bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-400 border border-red-200/20 dark:border-red-800/30">Habis</span>';
+          else if (item.jumlah_stok <= 5) statusBadge = '<span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-md bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400 border border-yellow-200/20 dark:border-yellow-800/30">Menipis</span>';
+
           const baris = document.createElement('tr');
           baris.className = "border-b border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800/30";
-          
-          let statusBadge = '<span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-md bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400 border border-green-200/20 dark:border-green-800/30">Tersedia</span>';
-          if (item.jumlah_stok <= 0) {
-            statusBadge = '<span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-md bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-400 border border-red-200/20 dark:border-red-800/30">Habis</span>';
-          } else if (item.jumlah_stok <= 5) {
-            statusBadge = '<span class="inline-block px-2.5 py-1 text-xs font-semibold rounded-md bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400 border border-yellow-200/20 dark:border-yellow-800/30">Menipis</span>';
-          }
-
           baris.innerHTML = `
             <td class="px-4 py-3.5 text-center text-neutral-400 font-mono">${indeks + 1}</td>
             <td class="px-4 py-3.5 font-semibold text-neutral-900 dark:text-white max-w-[200px] truncate" title="${item.nama_barang}">${item.nama_barang}</td>
@@ -316,11 +298,9 @@
             tabelRiwayat.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-neutral-400 italic">Belum ada aktivitas mutasi barang.</td></tr>';
           } else {
             data.riwayat.forEach(log => {
+              const badgeMutasi = `<span class="px-2 py-0.5 text-xs font-bold rounded bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400">Keluar</span>`;
               const barisLog = document.createElement('tr');
               barisLog.className = "border-b border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800/20";
-              
-              const badgeMutasi = `<span class="px-2 py-0.5 text-xs font-bold rounded bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400">Keluar</span>`;
-              
               barisLog.innerHTML = `
                 <td class="px-4 sm:px-6 py-3 text-neutral-500 font-mono text-xs whitespace-nowrap">${log.tanggal}</td>
                 <td class="px-4 sm:px-6 py-3 font-medium text-neutral-900 dark:text-white whitespace-nowrap">${log.nama_barang}</td>
@@ -340,35 +320,44 @@
       }, 1000);
     }
 
-    // ✅ FUNGSI PENCARIAN MANUAL (SOLUSI UTAMA)
-    function fungsiCariBarang() {
-      const kataKunci = document.getElementById('nama_barang').value.toLowerCase().trim();
-      const daftar = document.getElementById('daftar_gudang');
-      daftar.innerHTML = '';
+    // ✅ FUNGSI BARU: CARI & TAMPILKAN HASIL DI BAWAH (PASTI MUNCUL DI HP)
+    function cariBarang(kata) {
+      const kotak = document.getElementById('kotak_hasil_cari');
+      kotak.innerHTML = '';
+      kata = kata.toLowerCase().trim();
 
-      if (kataKunci.length < 1) {
-        // Tampilkan SEMUA barang jika kosong
-        dataStokGlobal.forEach(item => {
-          const opt = document.createElement('option');
-          opt.value = item.nama_barang;
-          opt.textContent = `📦 ${item.nama_barang} | 📝 ${item.type} | 📊 ${item.jumlah_stok} ${item.satuan}`;
-          daftar.appendChild(opt);
-        });
-        return;
-      }
-
-      // Tampilkan yang COCOK saja
-      const hasilCari = dataStokGlobal.filter(item => 
-        item.nama_barang.toLowerCase().includes(kataKunci) || 
-        item.type.toLowerCase().includes(kataKunci)
+      const hasil = dataStokGlobal.filter(item => 
+        item.nama_barang.toLowerCase().includes(kata) || 
+        item.type.toLowerCase().includes(kata)
       );
 
-      hasilCari.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.nama_barang;
-        opt.textContent = `📦 ${item.nama_barang} | 📝 ${item.type} | 📊 ${item.jumlah_stok} ${item.satuan}`;
-        daftar.appendChild(opt);
-      });
+      if (hasil.length === 0) {
+        kotak.innerHTML = '<div class="item-cari text-neutral-400">Tidak ditemukan</div>';
+      } else {
+        hasil.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'item-cari';
+          div.innerHTML = `<b>${item.nama_barang}</b> <br><small>Jenis: ${item.type} | Sisa: ${item.jumlah_stok} ${item.satuan}</small>`;
+          div.onmousedown = () => pilihBarang(item.nama_barang);
+          div.ontouchstart = () => pilihBarang(item.nama_barang); // Khusus HP
+          kotak.appendChild(div);
+        });
+      }
+      kotak.classList.remove('hidden');
+    }
+
+    function tampilkanSemuaBarang() {
+      if (dataStokGlobal.length > 0) cariBarang('');
+    }
+
+    function sembunyikanHasil() {
+      // Sembunyikan sedikit lambat agar bisa klik
+      setTimeout(() => document.getElementById('kotak_hasil_cari').classList.add('hidden'), 200);
+    }
+
+    function pilihBarang(nama) {
+      document.getElementById('nama_barang').value = nama;
+      sembunyikanHasil();
     }
 
     function tambahKeKeranjang() {
