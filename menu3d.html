@@ -89,7 +89,7 @@
             pointer-events: none;
             z-index: 3;
             opacity: 0;
-            transition: opacity 0.6s ease, border-color 0.6s ease;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
             box-shadow: 
                 0 0 15px rgba(255, 255, 255, 0.1),
                 inset 0 0 15px rgba(255, 255, 255, 0.1);
@@ -124,7 +124,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10;
+            z-index: 50;
             border: 4px solid #ffffff;
             box-shadow: 
                 0 15px 35px rgba(0, 0, 0, 0.3), 
@@ -139,6 +139,9 @@
                 0 20px 40px rgba(0, 0, 0, 0.4), 
                 inset 0 -4px 8px rgba(0, 0, 0, 0.1), 
                 inset 0 6px 10px rgba(255, 255, 255, 0.9);
+        }
+        .center-circle:active {
+            transform: translate(-50%, -50%) scale(0.95);
         }
 
         /* === WADAH TEKS MELINGKAR === */
@@ -196,32 +199,29 @@
             100% { opacity: 1; filter: drop-shadow(0 8px 16px rgba(30, 64, 175, 0.6)) scale(1.03); }
         }
 
-        /* === SUB-MENU UTAMA === */
+        /* === SUB-MENU UTAMA (IKON KECIL) === */
         .menu-item {
             position: absolute;
             width: 74px;
             height: 74px;
-            z-index: 5;
+            z-index: 10;
             left: calc(50% - 37px);
             top: calc(50% - 37px);
             
+            /* Posisi awal bersembunyi tepat di tengah logo */
+            transform: translate(0px, 0px) scale(0);
             opacity: 0;
             visibility: hidden;
-            transform: translate(0px, 0px) scale(0);
-            /* Dihapus transisi transform agar pergerakan drag terasa instan dan smooth */
-            transition: opacity 0.4s ease, visibility 0.4s;
+            
+            /* Transisi Pop Out / Masuk perlahan */
+            transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease, visibility 0.5s;
         }
 
+        /* State saat ikon berhasil pop out ke luar */
         .menu-item.show {
             opacity: 1;
             visibility: visible;
             transform: translate(var(--x), var(--y)) scale(1);
-        }
-
-        .menu-item:not(.show) {
-            transform: translate(0px, 0px) scale(0) !important;
-            opacity: 0;
-            transition: transform 0.5s cubic-bezier(0.36, 0, 0.66, -0.56), opacity 0.3s ease;
         }
 
         /* === WADAH ANIMASI MELAYANG === */
@@ -305,7 +305,7 @@
         .color-9 { background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border: 2px solid #a3e635; box-shadow: 0 8px 15px rgba(77,124,15,0.4), 0 4px 0 #3f6212; --neon: #84cc16; }
         .color-9:hover { box-shadow: 0 14px 28px rgba(77,124,15,0.6), 0 1px 0 #3f6212; }
 
-        /* MODIFIKASI ANIMASI: Meluncur ciut lalu mental ke posisi asal */
+        /* MODIFIKASI SELEKSI MENU UNTUK EFEK SHOCKWAVE KLIK */
         .move-to-center {
             animation: luncurKeTengahLogo 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards !important;
         }
@@ -476,8 +476,8 @@
         // === VARIABEL DRAG / GESER ROTASI ===
         let sedangDrag = false;
         let sudutAwalPointer = 0;
-        let sudutTambahan = 0; // Menyimpan akumulasi pergeseran rotasi
-        let totalPergeseranPiksel = 0; // Deteksi apakah pointer benar-benar digeser atau sekadar klik
+        let sudutTambahan = 0; 
+        let totalPergeseranPiksel = 0; 
 
         const menuContainer = document.getElementById('menuContainer');
         const tombolUtama = document.getElementById('tombolUtama');
@@ -517,18 +517,13 @@
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
-                
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(580, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.25);
-                
                 gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
-                
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.25);
+                osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
             } catch (e) {}
         }
 
@@ -572,35 +567,22 @@
 
         class WaveRing {
             constructor(x, y, warnaHex, delay) {
-                this.x = x;
-                this.y = y;
-                this.warna = warnaHex;
-                this.delay = delay; 
-                this.radius = 10;
-                this.radiusMaks = 90; 
-                this.alpha = 1.0;
-                this.kecepatanEkspansi = 3.5;
+                this.x = x; this.y = y; this.warna = warnaHex; this.delay = delay; 
+                this.radius = 10; this.radiusMaks = 90; this.alpha = 1.0; this.kecepatanEkspansi = 3.5;
             }
             update() {
-                if (this.delay > 0) {
-                    this.delay--;
-                    return;
-                }
+                if (this.delay > 0) { this.delay--; return; }
                 this.radius += this.kecepatanEkspansi;
                 let rasio = this.radius / this.radiusMaks;
                 this.alpha = 1 - rasio;
             }
             draw() {
                 if (this.delay > 0 || this.alpha <= 0) return;
-                ctx.save();
-                ctx.beginPath();
+                ctx.save(); ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = this.warna;
-                ctx.lineWidth = 3 * this.alpha;
-                ctx.shadowColor = this.warna;
-                ctx.shadowBlur = 12;
-                ctx.stroke();
-                ctx.restore();
+                ctx.strokeStyle = this.warna; ctx.lineWidth = 3 * this.alpha;
+                ctx.shadowColor = this.warna; ctx.shadowBlur = 12;
+                ctx.stroke(); ctx.restore();
             }
         }
 
@@ -622,8 +604,7 @@
         function jalankanAnimasiPartikel() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             for (let i = 0; i < arrayPartikel.length; i++) {
-                arrayPartikel[i].update();
-                arrayPartikel[i].draw();
+                arrayPartikel[i].update(); arrayPartikel[i].draw();
             }
             for (let i = efekRippleList.length - 1; i >= 0; i--) {
                 efekRippleList[i].update();
@@ -638,23 +619,39 @@
         inisialisasiPartikel();
         jalankanAnimasiPartikel();
 
-
         window.addEventListener('DOMContentLoaded', () => {
             ambilDataDariSheet();
 
+            // EVENT KLIK LOGO UTAMA UNTUK MEKARKAN / MENARIK KEMBALI MENU
             tombolUtama.addEventListener('click', (e) => {
-                // Hanya trigger menu jika tidak sedang digeser/drag jauh
                 if (totalPergeseranPiksel > 7) return;
 
                 menuTampil = !menuTampil;
                 putarSuaraMenu(menuTampil);
-                orbitLine.classList.toggle('show', menuTampil);
-                document.querySelectorAll('.menu-item').forEach(menu => {
-                    menu.classList.toggle('show', menuTampil);
-                });
+                
+                const elemenIkon = document.querySelectorAll('.menu-item');
+
+                if (menuTampil) {
+                    orbitLine.classList.add('show');
+                    elemenIkon.forEach((menu, i) => {
+                        // Reset transition ke default agar efek pop-out aktif berurutan
+                        menu.style.transition = "transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease, visibility 0.5s";
+                        setTimeout(() => {
+                            if (menuTampil) menu.classList.add('show');
+                        }, i * 75); // Efek staggered (satu-per-satu) keluar dari tengah logo
+                    });
+                } else {
+                    orbitLine.classList.remove('show');
+                    elemenIkon.forEach((menu) => {
+                        // Gunakan transisi menutup masuk meluncur kembali ke koordinat tengah (0,0)
+                        menu.style.transition = "all 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045)";
+                        menu.classList.remove('show');
+                    });
+                    sudutTambahan = 0; // Reset putaran rotasi kustom saat menu ditutup penuh
+                }
             });
 
-            // INDUKSI EVENT INTERAKSI DRAG ROTASI
+            // EVENT DRAG ROTASI
             menuContainer.addEventListener('mousedown', mulaiDrag);
             window.addEventListener('mousemove', prosesDrag);
             window.addEventListener('mouseup', selesaiDrag);
@@ -664,25 +661,18 @@
             window.addEventListener('touchend', selesaiDrag);
         });
 
-        // === FUNGSI LOGIKA MENGHITUNG SUDUT DAN POSISI DRAG ===
+        // === FUNGSI LOGIKA MENGHITUNG DRAG ===
         function dapatkanSudutPointer(e) {
             const batasMenu = menuContainer.getBoundingClientRect();
-            // Titik tengah kontainer menu
             const pusatX = batasMenu.left + batasMenu.width / 2;
             const pusatY = batasMenu.top + batasMenu.height / 2;
-            
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            
-            // Hitung sudut dalam satuan derajat menggunakan Trigonometri atan2
-            const radian = Math.atan2(clientY - pusatY, clientX - pusatX);
-            return radian * (180 / Math.PI);
+            return Math.atan2(clientY - pusatY, clientX - pusatX) * (180 / Math.PI);
         }
 
         function mulaiDrag(e) {
-            // Abaikan jika user menekan tombol pengaturan/input di dalam panel
-            if (e.target.closest('.settings-panel') || !menuTampil) return;
-            
+            if (e.target.closest('.settings-panel') || !menuTampil || e.target.closest('#tombolUtama')) return;
             sedangDrag = true;
             totalPergeseranPiksel = 0;
             sudutAwalPointer = dapatkanSudutPointer(e);
@@ -690,19 +680,16 @@
 
         function prosesDrag(e) {
             if (!sedangDrag) return;
-            
             totalPergeseranPiksel += 1;
             const sudutSekarang = dapatkanSudutPointer(e);
             let selisihSudut = sudutSekarang - sudutAwalPointer;
             
-            // Koreksi patahan transisi lompatan lingkaran 180 ke -180 derajat
             if (selisihSudut > 180) selisihSudut -= 360;
             if (selisihSudut < -180) selisihSudut += 360;
             
             sudutTambahan += selisihSudut;
             sudutAwalPointer = sudutSekarang;
             
-            // Render ulang posisi ikon berdasarkan sudut tambahan yang baru
             perbaruiPosisiMenu();
         }
 
@@ -752,13 +739,7 @@
                 }),
                 ikon: JSON.stringify(daftarIkon)
             };
-
-            fetch(SHEET_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(data)
-            });
+            fetch(SHEET_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"}, body: JSON.stringify(data) });
         }
 
         function buatTeksBerputar(teks) {
@@ -770,8 +751,7 @@
             const radius = 55;
             for (let i = 0; i < jumlahHuruf; i++) {
                 const huruf = document.createElement("div");
-                huruf.className = "char";
-                huruf.innerText = teks[i];
+                huruf.className = "char"; huruf.innerText = teks[i];
                 const sudut = i * sudutPerHuruf;
                 const x = Math.sin(sudut * Math.PI / 180) * radius;
                 const y = -Math.cos(sudut * Math.PI / 180) * radius;
@@ -781,7 +761,6 @@
         }
 
         function buatMenuDinamis() {
-            // Hapus menu lama
             document.querySelectorAll('.menu-item').forEach(el => el.remove());
             const wadah = document.getElementById("menuContainer");
 
@@ -805,11 +784,7 @@
                 elemenAyun.innerHTML = `<i class="fa-solid fa-${namaIkonBersih}"></i><span>${data.label}</span>`;
                 
                 elemenAyun.addEventListener('click', (e) => {
-                    // Blokir aksi klik jika user sebenarnya sedang menggeser/drag menu
-                    if (totalPergeseranPiksel > 7) {
-                        e.preventDefault();
-                        return;
-                    }
+                    if (totalPergeseranPiksel > 7) { e.preventDefault(); return; }
                     e.preventDefault();
                     
                     const batasTombol = elemenAyun.getBoundingClientRect();
@@ -832,16 +807,13 @@
                         }
                     }, 550);
 
-                    setTimeout(() => {
-                        elemenMenu.classList.remove('move-to-center');
-                    }, 1000);
+                    setTimeout(() => { elemenMenu.classList.remove('move-to-center'); }, 1000);
                 });
 
                 elemenMenu.appendChild(elemenAyun);
                 wadah.appendChild(elemenMenu);
             });
             
-            // Hitung posisi koordinat X & Y awal
             perbaruiPosisiMenu();
             
             if(menuTampil) {
@@ -850,18 +822,17 @@
             }
         }
 
-        // === FUNGSI MATEMATIKA RE-RENDER KOORDINAT IKON BERDASARKAN SUDUT AKTIF ===
+        // === RENDER ULANG KOORDINAT IKON SAAT DISERET/DRAG ===
         function perbaruiPosisiMenu() {
             const elemenIkon = document.querySelectorAll('.menu-item');
             const jumlah = elemenIkon.length;
             if (jumlah === 0) return;
 
             const radiusLingkaran = 145;
-            const sudutAwal = -90; // Memulai dari jam 12 tegak lurus
+            const sudutAwal = -90; 
 
             elemenIkon.forEach((elemenMenu) => {
                 const indeks = parseInt(elemenMenu.getAttribute('data-indeks'));
-                // Tambahkan variabel 'sudutTambahan' hasil dari geseran tangan
                 const sudut = sudutAwal + (indeks * (360 / jumlah)) + sudutTambahan;
                 const radian = sudut * Math.PI / 180;
                 
@@ -871,8 +842,9 @@
                 elemenMenu.style.setProperty('--x', `${x}px`);
                 elemenMenu.style.setProperty('--y', `${y}px`);
                 
-                // Terapkan translasi instan saat drag agar halus
-                if (elemenMenu.classList.contains('show')) {
+                // Matikan transisi transisi CSS sewaktu diseret (drag) agar tidak delay / berat
+                if (menuTampil && sedangDrag) {
+                    elemenMenu.style.transition = "none";
                     elemenMenu.style.transform = `translate(${x}px, ${y}px) scale(1)`;
                 }
             });
@@ -881,7 +853,6 @@
         function buatEditorIkon() {
             const wadah = document.getElementById("daftarEditorIkon");
             wadah.innerHTML = '';
-
             daftarIkon.forEach((item, idx) => {
                 const div = document.createElement('div');
                 div.className = "item-menu-editor";
@@ -922,13 +893,10 @@
             buatEditorIkon();
         });
 
-        btnTutupPanel.addEventListener('click', () => { 
-            panelPengaturan.classList.remove('open'); 
-        });
+        btnTutupPanel.addEventListener('click', () => { panelPengaturan.classList.remove('open'); });
 
         btnTerapkanBg.addEventListener('click', () => {
             dapatkanDataDariEditor();
-
             let urlGambar = bgUrlInput.value.trim();
             const warnaDipilih = colorPicker.value;
             const teksBaru = inputTeksBerputar.value;
@@ -940,14 +908,11 @@
                 document.body.style.backgroundImage = "none";
                 document.body.style.backgroundColor = warnaDipilih;
             }
-            
             buatTeksBerputar(teksBaru);
             if (logoBaru) logoTujuan.src = logoBaru;
 
-            buatMenuDinamis(); 
-            simpanKeSheet(); 
-            alert("✅ Pengaturan Tersimpan"); 
-
+            buatMenuDinamis(); simpanKeSheet(); 
+            alert("✅ Pengaturan Tersimpan");
             panelPengaturan.classList.remove('open');
         });
 
