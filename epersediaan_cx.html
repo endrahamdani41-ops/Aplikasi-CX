@@ -20,6 +20,33 @@
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button { appearance: none; -webkit-appearance: none; margin: 0; }
     input[type=number] { appearance: none; -moz-appearance: textfield; }
+    
+    /* Gaya untuk kotak saran pencarian */
+    .saran-barang {
+      position: absolute;
+      z-index: 999;
+      max-height: 220px;
+      overflow-y: auto;
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 0 0 12px 12px;
+      margin-top: 2px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .item-saran {
+      padding: 10px 14px;
+      font-size: 14px;
+      color: #f3f4f6;
+      cursor: pointer;
+      border-bottom: 1px solid #374151;
+      transition: all 0.2s;
+    }
+    .item-saran:hover {
+      background: #3b82f6;
+      color: white;
+      padding-left: 18px;
+    }
   </style>
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -33,16 +60,14 @@
         </div>
         <div>
           <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-2">
-            E-Persediaan</h1>
-
-           <h1 <span class="text-blue-500">SMPN 110 Jakarta</span></h1>
-         
+            E-Persediaan
+          </h1>
+          <h2 class="text-xl md:text-2xl text-blue-500 font-semibold">SMPN 110 Jakarta</h2>
         </div>
       </div>
       <button onclick="toggleTema()" class="px-4 py-2 text-sm font-medium bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-gray-50 dark:hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-sm">
         <i data-lucide="sun" class="w-4 h-4 dark:hidden"></i>
         <i data-lucide="moon" class="w-4 h-4 hidden dark:block"></i>
-        
       </button>
     </header>
 
@@ -67,17 +92,19 @@
 
           <div class="mb-5">
             <label class="block text-sm font-semibold mb-2 text-neutral-700 dark:text-gray-300">Keterangan / Nama Pemohon :</label>
-            <input type="text" id="keterangan_umum" class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-transparent text-neutral-950 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Contoh: Untuk Ruang Kelas 8F / Endra">
+            <!-- DITAMBAHKAN: oninput untuk ubah huruf awal jadi besar -->
+            <input type="text" id="keterangan_umum" oninput="ubahAwalHurufBesar(this)" class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-transparent text-neutral-950 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Contoh: Untuk Ruang Kelas 8F / Endra">
           </div>
 
           <hr class="border-neutral-200 dark:border-neutral-800 my-5">
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="md:col-span-2">
-              <label class="block text-sm font-semibold mb-2 text-neutral-700 dark:text-gray-300">Pilih Barang :</label>
-              <select id="nama_barang" class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <option value="">Membuat daftar gudang...</option>
-              </select>
+            <div class="md:col-span-2 relative">
+              <label class="block text-sm font-semibold mb-2 text-neutral-700 dark:text-gray-300">Pilih / Ketik Nama Barang :</label>
+              <!-- Input yang bisa diketik -->
+              <input type="text" id="cari_barang" oninput="cariDanTampilkan(this.value)" onfocus="tampilkanSemuaBarang()" onblur="sembunyikanSaran()" class="w-full px-4 py-2.5 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Ketik atau pilih nama barang...">
+              <!-- Kotak saran hasil pencarian -->
+              <div id="daftar_saran" class="saran-barang hidden"></div>
             </div>
             <div>
               <label class="block text-sm font-semibold mb-2 text-neutral-700 dark:text-gray-300">Jumlah Barang :</label>
@@ -183,15 +210,34 @@
   </div>
 
   <script>
-    // 📢 CANTUMKAN LINK EXECUTIVE GOOGLE APPS SCRIPT ANDA DI SINI
+    // 📢 LINK GOOGLE SCRIPT SUDAH BENAR DAN TERBARU
     const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzfIkDKrOOJ6TNmzkLttRNgh9heWsljqHNidMCpRBmoqd6RPEAbqJ6A4spss00SpiCNuw/exec";
 
     let arrayKeranjang = [];
+    let daftarSemuaBarang = []; // Menyimpan semua data barang untuk pencarian
 
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
       muatDataStokTembusBlokir();
     });
+
+    // FUNGSI BARU: Ubah setiap awal kata jadi huruf besar
+    function ubahAwalHurufBesar(input) {
+      let nilai = input.value;
+      // Simpan posisi kursor agar tidak loncat ke akhir
+      let posisiKursor = input.selectionStart;
+      
+      // Ubah huruf awal setiap kata jadi besar, sisanya kecil
+      nilai = nilai.replace(/\b\w/g, function(huruf) {
+        return huruf.toUpperCase();
+      });
+      
+      // Masukkan kembali ke input
+      input.value = nilai;
+      
+      // Kembalikan posisi kursor ke semula
+      input.selectionStart = input.selectionEnd = posisiKursor;
+    }
 
     function toggleTema() {
       const html = document.documentElement;
@@ -222,16 +268,8 @@
       if (!data) return;
 
       if (data.stok) {
-        const selectBarang = document.getElementById('nama_barang');
-        if (selectBarang) {
-          selectBarang.innerHTML = '<option value="">-- Pilih Barang dari Gudang --</option>';
-          data.stok.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.nama_barang;
-            option.textContent = `${item.nama_barang} (${item.type}) [Sisa: ${item.jumlah_stok} ${item.satuan}]`;
-            selectBarang.appendChild(option);
-          });
-        }
+        // Simpan data barang ke variabel global
+        daftarSemuaBarang = data.stok;
 
         const tabelStok = document.getElementById('tabel_stok_body');
         if (tabelStok) {
@@ -290,12 +328,84 @@
       scriptSampah.forEach(s => s.remove());
     }
 
+    // Fungsi pencarian barang
+    function cariDanTampilkan(kataKunci) {
+      const kotakSaran = document.getElementById('daftar_saran');
+      kotakSaran.innerHTML = '';
+      kataKunci = kataKunci.toLowerCase().trim();
+
+      if (!kataKunci) {
+        tampilkanSemuaBarang();
+        return;
+      }
+
+      // Cari barang yang cocok
+      const hasilCari = daftarSemuaBarang.filter(item => 
+        item.nama_barang.toLowerCase().includes(kataKunci) || 
+        item.type.toLowerCase().includes(kataKunci)
+      );
+
+      if (hasilCari.length === 0) {
+        kotakSaran.innerHTML = '<div class="item-saran text-red-400">❌ Barang tidak ditemukan</div>';
+      } else {
+        hasilCari.forEach(item => {
+          const elemen = document.createElement('div');
+          elemen.className = 'item-saran';
+          elemen.innerHTML = `<b>📦 ${item.nama_barang}</b><br><small>Jenis: ${item.type} | Stok: ${item.jumlah_stok} ${item.satuan}</small>`;
+          elemen.onmousedown = () => pilihBarang(item.nama_barang);
+          kotakSaran.appendChild(elemen);
+        });
+      }
+      kotakSaran.classList.remove('hidden');
+    }
+
+    // Tampilkan semua barang saat input diklik
+    function tampilkanSemuaBarang() {
+      const kotakSaran = document.getElementById('daftar_saran');
+      kotakSaran.innerHTML = '';
+      
+      if (daftarSemuaBarang.length === 0) {
+        kotakSaran.innerHTML = '<div class="item-saran text-yellow-400">⌛ Memuat data barang...</div>';
+      } else {
+        daftarSemuaBarang.forEach(item => {
+          const elemen = document.createElement('div');
+          elemen.className = 'item-saran';
+          elemen.innerHTML = `<b>📦 ${item.nama_barang}</b><br><small>Jenis: ${item.type} | Stok: ${item.jumlah_stok} ${item.satuan}</small>`;
+          elemen.onmousedown = () => pilihBarang(item.nama_barang);
+          kotakSaran.appendChild(elemen);
+        });
+      }
+      kotakSaran.classList.remove('hidden');
+    }
+
+    // Sembunyikan daftar saran
+    function sembunyikanSaran() {
+      setTimeout(() => {
+        document.getElementById('daftar_saran').classList.add('hidden');
+      }, 200);
+    }
+
+    // Masukkan nama barang ke input saat dipilih
+    function pilihBarang(nama) {
+      document.getElementById('cari_barang').value = nama;
+      sembunyikanSaran();
+    }
+
     function tambahKeKeranjang() {
-      const selectBarang = document.getElementById('nama_barang');
+      const inputBarang = document.getElementById('cari_barang');
       const inputJumlah = document.getElementById('jumlah_barang');
 
-      if (!selectBarang || !selectBarang.value) {
-        alert("Pilih barang dari gudang terlebih dahulu!");
+      if (!inputBarang || !inputBarang.value.trim()) {
+        alert("Pilih atau ketik nama barang dari gudang terlebih dahulu!");
+        return;
+      }
+
+      const barangTerpilih = inputBarang.value.trim();
+      // Cek apakah barang ada di daftar
+      const barangAda = daftarSemuaBarang.some(item => item.nama_barang === barangTerpilih);
+
+      if (!barangAda) {
+        alert("⚠️ Nama barang tidak terdaftar! Silakan pilih dari daftar yang muncul.");
         return;
       }
 
@@ -305,7 +415,6 @@
         return;
       }
 
-      const barangTerpilih = selectBarang.value;
       const indexExist = arrayKeranjang.findIndex(item => item.nama === barangTerpilih);
 
       if (indexExist > -1) {
@@ -314,6 +423,7 @@
         arrayKeranjang.push({ nama: barangTerpilih, jumlah: jml });
       }
 
+      inputBarang.value = '';
       inputJumlah.value = '';
       renderTabelKeranjangSaja();
     }
@@ -377,7 +487,7 @@
       window.handleResponsKirimMassal = function(res) {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i> Simpan Semua Transaksi Sekarang`;
+          btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i> Simpan Transaksi`;
           lucide.createIcons();
         }
 
