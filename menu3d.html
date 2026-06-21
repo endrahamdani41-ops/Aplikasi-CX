@@ -61,7 +61,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 4; /* Di atas ikon menu agar riakan lingkaran meluncur di atas tombol */
+            z-index: 4;
         }
 
         /* === WADAH MENU === */
@@ -71,6 +71,10 @@
             height: 380px;
             margin: 0 auto;
             z-index: 2;
+            cursor: grab;
+        }
+        .menu-container:active {
+            cursor: grabbing;
         }
 
         /* === ELEMEN GARIS ORBIT NEON BERDENYUT === */
@@ -85,7 +89,7 @@
             pointer-events: none;
             z-index: 3;
             opacity: 0;
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: opacity 0.6s ease, border-color 0.6s ease;
             box-shadow: 
                 0 0 15px rgba(255, 255, 255, 0.1),
                 inset 0 0 15px rgba(255, 255, 255, 0.1);
@@ -148,6 +152,7 @@
             transform: translate(-50%, -50%);
             overflow: visible; 
             transition: animation-duration 0.5s ease;
+            pointer-events: none;
         }
         @keyframes putarTeks {
             from { transform: translate(-50%, -50%) rotate(0deg); }
@@ -203,7 +208,8 @@
             opacity: 0;
             visibility: hidden;
             transform: translate(0px, 0px) scale(0);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, visibility 0.4s;
+            /* Dihapus transisi transform agar pergerakan drag terasa instan dan smooth */
+            transition: opacity 0.4s ease, visibility 0.4s;
         }
 
         .menu-item.show {
@@ -465,7 +471,13 @@
 
         let menuTampil = false;
         let daftarIkon = [];
-        let efekRippleList = []; // Menampung objek ring gelombang yang aktif
+        let efekRippleList = []; 
+
+        // === VARIABEL DRAG / GESER ROTASI ===
+        let sedangDrag = false;
+        let sudutAwalPointer = 0;
+        let sudutTambahan = 0; // Menyimpan akumulasi pergeseran rotasi
+        let totalPergeseranPiksel = 0; // Deteksi apakah pointer benar-benar digeser atau sekadar klik
 
         const menuContainer = document.getElementById('menuContainer');
         const tombolUtama = document.getElementById('tombolUtama');
@@ -500,7 +512,6 @@
             } catch (e) { }
         }
 
-        // Efek audio sonar/radar futuristik pendek melengking halus (*Digital Echo*)
         function putarSuaraShockwave() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -521,7 +532,7 @@
             } catch (e) {}
         }
 
-        // CANVAS ENGINE (PARTIKEL AMBIENT + CINCIN SHOCKWAVE RADIAl)
+        // CANVAS ENGINE
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let arrayPartikel = [];
@@ -559,15 +570,14 @@
             }
         }
 
-        // Class Generator Cincin Gelombang Riak Air (Shockwave Ring)
         class WaveRing {
             constructor(x, y, warnaHex, delay) {
                 this.x = x;
                 this.y = y;
                 this.warna = warnaHex;
-                this.delay = delay; // Waktu tunggu sebelum cincin mulai membesar
+                this.delay = delay; 
                 this.radius = 10;
-                this.radiusMaks = 90; // Jangkauan bentangan riakan gelombang
+                this.radiusMaks = 90; 
                 this.alpha = 1.0;
                 this.kecepatanEkspansi = 3.5;
             }
@@ -577,7 +587,6 @@
                     return;
                 }
                 this.radius += this.kecepatanEkspansi;
-                // Hitung rasio ukuran agar semakin membesar nilainya semakin memudar kencang
                 let rasio = this.radius / this.radiusMaks;
                 this.alpha = 1 - rasio;
             }
@@ -586,23 +595,19 @@
                 ctx.save();
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                
-                // Desain garis luar melingkar
                 ctx.strokeStyle = this.warna;
                 ctx.lineWidth = 3 * this.alpha;
                 ctx.shadowColor = this.warna;
                 ctx.shadowBlur = 12;
-                
                 ctx.stroke();
                 ctx.restore();
             }
         }
 
-        // Memicu letupan riakan 3 lapis cincin gelombang sekaligus
         function pemicuLedakanShockwave(x, y, warnaHex) {
-            efekRippleList.push(new WaveRing(x, y, warnaHex, 0));  // Cincin ke-1 langsung jalan
-            efekRippleList.push(new WaveRing(x, y, warnaHex, 6));  // Cincin ke-2 delay 6 frame
-            efekRippleList.push(new WaveRing(x, y, warnaHex, 12)); // Cincin ke-3 delay 12 frame
+            efekRippleList.push(new WaveRing(x, y, warnaHex, 0));  
+            efekRippleList.push(new WaveRing(x, y, warnaHex, 6));  
+            efekRippleList.push(new WaveRing(x, y, warnaHex, 12)); 
         }
 
         function inisialisasiPartikel() {
@@ -616,14 +621,10 @@
 
         function jalankanAnimasiPartikel() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 1. Gambar Partikel Latar Belakang
             for (let i = 0; i < arrayPartikel.length; i++) {
                 arrayPartikel[i].update();
                 arrayPartikel[i].draw();
             }
-
-            // 2. Update & Gambar Cincin Gelombang Air Futuristik
             for (let i = efekRippleList.length - 1; i >= 0; i--) {
                 efekRippleList[i].update();
                 if (efekRippleList[i].radius >= efekRippleList[i].radiusMaks) {
@@ -632,7 +633,6 @@
                     efekRippleList[i].draw();
                 }
             }
-
             requestAnimationFrame(jalankanAnimasiPartikel);
         }
         inisialisasiPartikel();
@@ -642,7 +642,10 @@
         window.addEventListener('DOMContentLoaded', () => {
             ambilDataDariSheet();
 
-            tombolUtama.addEventListener('click', () => {
+            tombolUtama.addEventListener('click', (e) => {
+                // Hanya trigger menu jika tidak sedang digeser/drag jauh
+                if (totalPergeseranPiksel > 7) return;
+
                 menuTampil = !menuTampil;
                 putarSuaraMenu(menuTampil);
                 orbitLine.classList.toggle('show', menuTampil);
@@ -650,7 +653,62 @@
                     menu.classList.toggle('show', menuTampil);
                 });
             });
+
+            // INDUKSI EVENT INTERAKSI DRAG ROTASI
+            menuContainer.addEventListener('mousedown', mulaiDrag);
+            window.addEventListener('mousemove', prosesDrag);
+            window.addEventListener('mouseup', selesaiDrag);
+
+            menuContainer.addEventListener('touchstart', mulaiDrag, { passive: false });
+            window.addEventListener('touchmove', prosesDrag, { passive: false });
+            window.addEventListener('touchend', selesaiDrag);
         });
+
+        // === FUNGSI LOGIKA MENGHITUNG SUDUT DAN POSISI DRAG ===
+        function dapatkanSudutPointer(e) {
+            const batasMenu = menuContainer.getBoundingClientRect();
+            // Titik tengah kontainer menu
+            const pusatX = batasMenu.left + batasMenu.width / 2;
+            const pusatY = batasMenu.top + batasMenu.height / 2;
+            
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            // Hitung sudut dalam satuan derajat menggunakan Trigonometri atan2
+            const radian = Math.atan2(clientY - pusatY, clientX - pusatX);
+            return radian * (180 / Math.PI);
+        }
+
+        function mulaiDrag(e) {
+            // Abaikan jika user menekan tombol pengaturan/input di dalam panel
+            if (e.target.closest('.settings-panel') || !menuTampil) return;
+            
+            sedangDrag = true;
+            totalPergeseranPiksel = 0;
+            sudutAwalPointer = dapatkanSudutPointer(e);
+        }
+
+        function prosesDrag(e) {
+            if (!sedangDrag) return;
+            
+            totalPergeseranPiksel += 1;
+            const sudutSekarang = dapatkanSudutPointer(e);
+            let selisihSudut = sudutSekarang - sudutAwalPointer;
+            
+            // Koreksi patahan transisi lompatan lingkaran 180 ke -180 derajat
+            if (selisihSudut > 180) selisihSudut -= 360;
+            if (selisihSudut < -180) selisihSudut += 360;
+            
+            sudutTambahan += selisihSudut;
+            sudutAwalPointer = sudutSekarang;
+            
+            // Render ulang posisi ikon berdasarkan sudut tambahan yang baru
+            perbaruiPosisiMenu();
+        }
+
+        function selesaiDrag() {
+            sedangDrag = false;
+        }
 
         function ambilDataDariSheet(){
             fetch(SHEET_URL + "?t=" + new Date().getTime())
@@ -723,25 +781,14 @@
         }
 
         function buatMenuDinamis() {
-            const wadah = document.getElementById("menuContainer");
+            // Hapus menu lama
             document.querySelectorAll('.menu-item').forEach(el => el.remove());
-
-            const jumlah = daftarIkon.length;
-            const radiusLingkaran = 145;
-            const sudutAwal = -90;
+            const wadah = document.getElementById("menuContainer");
 
             daftarIkon.forEach((data, indeks) => {
-                const sudut = sudutAwal + (indeks * (360 / jumlah));
-                const radian = sudut * Math.PI / 180;
-                
-                const x = Math.round(radiusLingkaran * Math.cos(radian));
-                const y = Math.round(radiusLingkaran * Math.sin(radian));
-
                 const elemenMenu = document.createElement('div');
                 elemenMenu.className = "menu-item";
-                elemenMenu.style.setProperty('--x', `${x}px`);
-                elemenMenu.style.setProperty('--y', `${y}px`);
-                elemenMenu.style.transitionDelay = `${indeks * 0.04}s`;
+                elemenMenu.setAttribute('data-indeks', indeks);
 
                 const elemenAyun = document.createElement('a');
                 elemenAyun.className = "orbit-wrapper";
@@ -757,24 +804,24 @@
                 let namaIkonBersih = data.ikon.replace('fa-solid', '').replace('fa-', '').trim();
                 elemenAyun.innerHTML = `<i class="fa-solid fa-${namaIkonBersih}"></i><span>${data.label}</span>`;
                 
-                // === 🌊 LOGIKA SHOCKWAVE LINGKARAN KETIKA DIKLIK 🌊 ===
                 elemenAyun.addEventListener('click', (e) => {
+                    // Blokir aksi klik jika user sebenarnya sedang menggeser/drag menu
+                    if (totalPergeseranPiksel > 7) {
+                        e.preventDefault();
+                        return;
+                    }
                     e.preventDefault();
                     
-                    // Koordinat absolut titik tengah tombol sub-menu untuk pusat riakan
                     const batasTombol = elemenAyun.getBoundingClientRect();
                     const pusatX = batasTombol.left + (batasTombol.width / 2);
                     const pusatY = batasTombol.top + (batasTombol.height / 2);
 
-                    // Ambil warna hex kustom dari CSS custom variable
                     const gayaComputed = window.getComputedStyle(elemenAyun);
                     const warnaHex = gayaComputed.getPropertyValue('--neon').trim() || '#ffffff';
 
-                    // Jalankan suara sonar dan letupan cincin gelombang
                     putarSuaraShockwave();
                     pemicuLedakanShockwave(pusatX, pusatY, warnaHex);
                     
-                    // Jalankan animasi meluncur menciut bawaan bapak
                     elemenMenu.classList.add('move-to-center');
                     
                     setTimeout(() => {
@@ -794,10 +841,41 @@
                 wadah.appendChild(elemenMenu);
             });
             
+            // Hitung posisi koordinat X & Y awal
+            perbaruiPosisiMenu();
+            
             if(menuTampil) {
                 document.querySelectorAll('.menu-item').forEach(menu => menu.classList.add('show'));
                 orbitLine.classList.add('show');
             }
+        }
+
+        // === FUNGSI MATEMATIKA RE-RENDER KOORDINAT IKON BERDASARKAN SUDUT AKTIF ===
+        function perbaruiPosisiMenu() {
+            const elemenIkon = document.querySelectorAll('.menu-item');
+            const jumlah = elemenIkon.length;
+            if (jumlah === 0) return;
+
+            const radiusLingkaran = 145;
+            const sudutAwal = -90; // Memulai dari jam 12 tegak lurus
+
+            elemenIkon.forEach((elemenMenu) => {
+                const indeks = parseInt(elemenMenu.getAttribute('data-indeks'));
+                // Tambahkan variabel 'sudutTambahan' hasil dari geseran tangan
+                const sudut = sudutAwal + (indeks * (360 / jumlah)) + sudutTambahan;
+                const radian = sudut * Math.PI / 180;
+                
+                const x = Math.round(radiusLingkaran * Math.cos(radian));
+                const y = Math.round(radiusLingkaran * Math.sin(radian));
+
+                elemenMenu.style.setProperty('--x', `${x}px`);
+                elemenMenu.style.setProperty('--y', `${y}px`);
+                
+                // Terapkan translasi instan saat drag agar halus
+                if (elemenMenu.classList.contains('show')) {
+                    elemenMenu.style.transform = `translate(${x}px, ${y}px) scale(1)`;
+                }
+            });
         }
 
         function buatEditorIkon() {
@@ -809,7 +887,7 @@
                 div.className = "item-menu-editor";
                 div.innerHTML = `
                     <div class="flex justify-between items-center mb-1">
-                        <span class="text-xs font-bold">Ikon #${idx+1}</span>
+                        <span class="text-xs font-semibold">Ikon #${idx+1}</span>
                         <button class="btn-hapus" onclick="hapusIkon(${idx})">Hapus</button>
                     </div>
                     <input type="text" class="input-custom input-ikon" value="${item.ikon}">
