@@ -74,7 +74,7 @@
         }
         .filter-wilayah input:focus, .filter-wilayah select:focus {outline: none; border-color: #1565c0;}
 
-        /* Gaya Tombol Masuk Semua */
+        /* ✅ Perbaikan gaya tombol: tampil secara default, sembunyi saat perlu */
         .btn-masuk-semua {
             background-color: #2ecc71;
             color: #000;
@@ -85,6 +85,10 @@
             font-size: 14px;
             cursor: pointer;
             transition: background 0.2s;
+            display: inline-block;
+        }
+        .btn-masuk-semua.sembunyi {
+            display: none;
         }
         .btn-masuk-semua:hover {
             background-color: #27ae60;
@@ -186,7 +190,7 @@
                         <input type="date" id="tanggal" onchange="muatData()">
                     </div>
                 </div>
-                <button class="btn-masuk-semua" onclick="setSemuaHadir()">✅ Masuk Semua</button>
+                <button id="tombolMasukSemua" class="btn-masuk-semua" onclick="setSemuaHadir()">✅ Masuk Semua</button>
             </div>
 
             <div id="notif" class="notif"></div>
@@ -238,6 +242,12 @@
 
         document.getElementById('tanggal').valueAsDate = new Date();
 
+        // ✅ Pastikan tombol tampil saat halaman baru dibuka
+        window.addEventListener('load', () => {
+            const tombol = document.getElementById("tombolMasukSemua");
+            tombol.classList.remove("sembunyi");
+        });
+
         function bersihkanTeks(teks) {
             return (teks || "").toString().trim().toLowerCase();
         }
@@ -252,11 +262,23 @@
 
         function gantiTampilan(jenis) {
             tampilanAktif = jenis;
+            const tombolMasukSemua = document.getElementById("tombolMasukSemua");
+
+            // ✅ Atur tampilan tombol: tampil di presensi, sembunyi di penilaian
+            if (jenis === "presensi") {
+                tombolMasukSemua.classList.remove("sembunyi");
+            } else {
+                tombolMasukSemua.classList.add("sembunyi");
+            }
+
             document.getElementById('btnPresensi').classList.toggle('aktif', jenis === 'presensi');
             document.getElementById('btnPenilaian').classList.toggle('aktif', jenis === 'penilaian');
             document.getElementById('tampilanPresensi').classList.toggle('aktif', jenis === 'presensi');
             document.getElementById('tampilanPenilaian').classList.toggle('aktif', jenis === 'penilaian');
             document.getElementById('judulUtama').textContent = jenis === 'presensi' ? "Presensi Latihan Ekstrakurikuler" : "Penilaian Ekskul";
+            document.querySelector('.keterangan').innerHTML = jenis === 'presensi' 
+                ? 'ℹ️ <strong>Petunjuk:</strong> Pilih Ekskul dan Tanggal. Klik langsung status kehadiran atau gunakan tombol <strong>Masuk Semua</strong>. Semua perubahan tersimpan otomatis.'
+                : 'ℹ️ <strong>Petunjuk:</strong> Pilih Ekskul. Masukkan nilai untuk setiap siswa. Perubahan tersimpan otomatis.';
             if (dataMurid.length > 0) tampilkanData();
         }
 

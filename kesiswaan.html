@@ -9,23 +9,12 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#121212;color:#eee;padding:20px;}
 .container{max-width:1200px;margin:auto;background:#1e1e1e;border-radius:8px;overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,0.5);}
-.header{background:#1565c0;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;}
+.header{background:#1565c0;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
 .header h1{font-size:17px;font-weight:normal;}
 button{padding:7px 14px;border:none;border-radius:4px;cursor:pointer;color:white;margin-left:5px;transition:background 0.3s;}
 
-/* ✅ WARNA TOMBOL CETAK COKLAT */
-.btn-cetak {
-    background-color: #8B4513;
-}
-.btn-cetak:hover {
-    background-color: #A0522D;
-}
-.btn-simpan {
-    background-color: #2e7d32;
-}
-.btn-simpan:hover {
-    background-color: #388e3c;
-}
+.btn-cetak {background-color: #8B4513;}
+.btn-cetak:hover {background-color: #A0522D;}
 
 .konten{padding:15px;}
 .input-group{margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
@@ -36,79 +25,56 @@ th,td{border:1px solid #444;padding:7px 5px;text-align:center;vertical-align:mid
 th{background:#1976d2;font-weight:normal;}
 tr:nth-child(even){background:#2a2a2a;}
 tr:hover{background:#383838;}
-.notif{position:fixed;top:20px;right:20px;background:#27ae60;color:white;padding:10px 16px;border-radius:4px;display:none;z-index:999;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-.error-box{background:#c0392b;color:white;padding:8px;border-radius:4px;margin:8px 0;display:none;}
-.info-box{background:#f39c12;color:white;padding:8px;border-radius:4px;margin:8px 0;display:none;}
 
-/* ==== STYLE KHUSUS CETAK - DIATUR PAS 1 LEMBAR ==== */
+.notif{position:fixed;top:20px;right:20px;background:#27ae60;color:white;padding:10px 16px;border-radius:4px;display:none;z-index:999;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.notif.info{background:#3498db;}
+.notif.simpan{background:#2ecc71;}
+.notif.gagal{background:#e74c3c;}
+
 @media print{
-    @page {
-        size: A4;
-        margin: 10mm;
-    }
+    @page {size: A4; margin: 10mm;}
     body{background:white !important;color:black !important;padding:0 !important;font-size:10px !important;}
-    .header, .input-group, button, .notif, .error-box, .info-box{display:none !important;}
+    .header, .input-group, button, .notif{display:none !important;}
     .container{background:white;box-shadow:none;max-width:100%;}
-    
     .judul-cetak{text-align:center;margin-bottom:10px;line-height:1.4;}
     .judul-cetak h1{font-size:14px;font-weight:bold;}
     .judul-cetak h3{font-size:12px;font-weight:bold;margin-top:2px;}
-
     table{width:100%;border:1px solid #000;font-size:12px !important;table-layout:fixed;}
-    th,td{border:2px solid #000;padding:3px 3px !important;overflow:hidden;text-overflow:ellipsis;}
-    
-    /* Atur lebar kolom agar pas semua */
-    th:nth-child(1), td:nth-child(1) { width: 4%; }  /* No */
-    th:nth-child(2), td:nth-child(2) { width: 7%; }  /* NIS */
-    th:nth-child(3), td:nth-child(3) { width: 27%; text-align:left !important; } /* Nama */
-    th:nth-child(4), td:nth-child(4) { width: 4%; }  /* JK */
-    th:nth-child(5), td:nth-child(5) { width: 6%; }  /* Kelas */
-    th:nth-child(6), td:nth-child(6) { width: 12%; } /* Ekskul 1 */
-    th:nth-child(7), td:nth-child(7) { width: 5%; }  /* Nilai 1 */
-    th:nth-child(8), td:nth-child(8) { width: 12%; } /* Ekskul 2 */
-    th:nth-child(9), td:nth-child(9) { width: 5%; }  /* Nilai 2 */
-
+    th,td{border:1px solid #000;padding:3px 3px !important;overflow:hidden;text-overflow:ellipsis;}
+    th:nth-child(1), td:nth-child(1) { width: 4%; }
+    th:nth-child(2), td:nth-child(2) { width: 7%; }
+    th:nth-child(3), td:nth-child(3) { width: 27%; text-align:left !important; }
+    th:nth-child(4), td:nth-child(4) { width: 4%; }
+    th:nth-child(5), td:nth-child(5) { width: 6%; }
+    th:nth-child(6), td:nth-child(6) { width: 12%; }
+    th:nth-child(7), td:nth-child(7) { width: 5%; }
+    th:nth-child(8), td:nth-child(8) { width: 12%; }
+    th:nth-child(9), td:nth-child(9) { width: 5%; }
     tr:nth-child(even){background:#f0f0f0;}
-
-    /* ✅ SAAT CETAK: SEMBUNYIKAN KOTAK PILIHAN, TAMPILKAN TEKS SAJA */
     td select { display: none !important; }
     td .teks { display: inline !important; font-weight:normal; }
-
-    /* ✅ Warna merah tetap muncul saat dicetak */
     .nama-merah { color: red !important; font-weight: bold; }
-
     .tanda-tangan{margin-top:15px;text-align:right;}
     .tanda-tangan .isi-ttd{display:inline-block;text-align:center;font-size:10px;}
     .tanda-tangan p{margin:3px 0;}
 }
 
-/* ✅ DI LAYAR: Tampilan teks disembunyikan */
 .teks { display: none; }
-
-/* ✅ KELAS WARNA MERAH UNTUK NAMA JIKA TIDAK IKUT EKSKUL */
-.nama-merah {
-    color: #ff4444 !important;
-    font-weight: bold;
-}
+.nama-merah { color: #ff4444 !important; font-weight: bold; }
 </style>
 </head>
 <body>
 
-<div class="notif" id="notif">Berhasil disimpan</div>
+<div class="notif" id="notif"></div>
 <div class="container">
 <div class="header">
     <div><h1><b>SMPN 110 Jakarta</b> - Data Ekstrakurikuler Murid</h1></div>
     <div>
         <button class="btn-cetak" onclick="cetak()">🖨️ Cetak</button>
-        <button class="btn-simpan" onclick="simpan()">💾 Simpan</button>
     </div>
 </div>
 
 <div class="konten">
-<div class="error-box" id="errorBox"></div>
-<div class="info-box" id="infoBox"></div>
-
-<!-- Bagian ini MUNCUL SAAT DICETAK -->
 <div class="judul-cetak" id="judulCetak" style="display:none;">
     <h1>SMPN 110 JAKARTA</h1>
     <h3>EKSTRAKURIKULER KELAS <span id="namaKelasCetak"></span></h3>
@@ -151,9 +117,8 @@ tr:hover{background:#383838;}
 <tbody id="tbody"></tbody>
 </table>
 
-<!-- Bagian ini MUNCUL SAAT DICETAK -->
 <div class="tanda-tangan" id="tandaTangan" style="display:none;">
-    <div class="isi-ttd"><br>
+    <div class="isi-ttd">
         <p>Jakarta, <span id="tanggalHariIni"></span></p>
         <p>Wakil Kesiswaan,</p>
         <br><br><br>
@@ -166,45 +131,25 @@ tr:hover{background:#383838;}
 </div>
 
 <script>
-// ✅ URL SUDAH DIISI DENGAN YANG BARU
-const URL = "https://script.google.com/macros/s/AKfycbxhaxVjXOWFZVU9Y3pWYSbKN1SAcn8VrUfxJ9DWTKrHIzFOPyOEKl3uqdO74pDNAMH36A/exec"; 
-
+const URL = "https://script.google.com/macros/s/AKfycbzwZOue8QonH5QpQlvQm5cFGKPzTbZ1F7uawbRjjevWusMer8krzM6eo2j2nufdHLnnyQ/exec"; 
 let data = [];
-const errorBox = document.getElementById("errorBox");
-const infoBox = document.getElementById("infoBox");
+let simpanTunda;
 
-// BACA DATA DARI GOOGLE
 async function load(){
     let tb = document.getElementById("tbody");
-    tb.innerHTML = '<tr><td colspan="9">⏳ Sedang memuat data...</td></tr>';
-    errorBox.style.display = "none";
-    infoBox.style.display = "none";
+    tb.innerHTML = '<tr><td colspan="9">⏳ Memuat data...</td></tr>';
 
     try{
-        let res = await fetch(URL, {cache: "no-store"});
-        if (!res.ok) throw new Error("Tidak bisa akses server");
+        let res = await fetch(URL + "?mode=getdata", {cache: "no-store"});
+        if (!res.ok) throw new Error("Tidak terhubung");
         data = await res.json();
-        
-        if (!data || data.length < 2) throw new Error("Data kosong");
-
-        // ✅ Pastikan setiap baris punya panjang kolom yang sama
         data = data.map(baris => { while(baris.length < 9) baris.push(""); return baris; });
-
         isiFilter();
         render();
-        showInfo("✅ Data dimuat dari Google Sheet");
-
+        tampilkanNotif("✅ Data siap digunakan", "info");
     }catch(e){
-        console.error("Gagal baca:", e);
-        let simpananLokal = localStorage.getItem("dataEkskulSiswa");
-        if (simpananLokal) {
-            data = JSON.parse(simpananLokal);
-            isiFilter();
-            render();
-            showError("⚠️ Tampil data cadangan (lokal)");
-        } else {
-            tb.innerHTML = '<tr><td colspan="9">❌ Tidak ada data</td></tr>';
-        }
+        console.error(e);
+        tb.innerHTML = '<tr><td colspan="9">❌ Gagal memuat data</td></tr>';
     }
 }
 
@@ -229,15 +174,12 @@ function render(){
     let cari=bersihkanTeks(document.getElementById("search").value);
     
     let ada=false;
-    let nomorUrut = 1; // ✅ NOMOR URUT DIULANG DARI 1 SETIAP FILTER BERUBAH
+    let nomorUrut = 1;
 
     for(let i=1;i<data.length;i++){
         let d=data[i];
-        
-        // Filter: Kelas
         if(fK!="SEMUA" && d[4]!=fK) continue;
         
-        // Filter: Ekskul (Cocokkan meski beda huruf)
         let cocokEkskul = true;
         if(fE!="semua") {
             let e1 = bersihkanTeks(d[5]);
@@ -246,12 +188,9 @@ function render(){
         }
         if(!cocokEkskul) continue;
 
-        // Filter: Pencarian Nama
         if(cari && !bersihkanTeks(d[2]).includes(cari)) continue;
 
         ada=true;
-
-        // ✅ LOGIKA WARNA MERAH: JIKA KEDUA EKSKUL KOSONG / TIDAK IKUT
         let ekskul1 = d[5] || "";
         let ekskul2 = d[7] || "";
         let kelasWarna = "";
@@ -261,16 +200,14 @@ function render(){
 
         let tr=document.createElement("tr");
         tr.innerHTML=`
-        <td>${nomorUrut++}</td> <!-- ✅ NOMOR URUT BERJALAN 1,2,3... -->
+        <td>${nomorUrut++}</td>
         <td>${d[1]||"-"}</td>
         <td class="${kelasWarna}" style="text-align:left">${d[2]||"-"}</td>
         <td>${d[3]||"-"}</td>
         <td>${d[4]||"-"}</td>
         
-        <!-- EKSKUL 1 -->
         <td>
-            <span class="teks">${d[5]||"Tidak Ikut"}</span>
-            <select id="ex1_${i}">
+            <select id="ex1_${i}" onchange="perubahanData()">
                 <option value="" ${!d[5]?"selected":""}>Tidak Ikut</option>
                 <option ${d[5]=="Futsal"?"selected":""}>Futsal</option>
                 <option ${d[5]=="Paskib"?"selected":""}>Paskib</option>
@@ -284,10 +221,8 @@ function render(){
             </select>
         </td>
         
-        <!-- NILAI 1 -->
         <td>
-            <span class="teks">${d[6]||"-"}</span>
-            <select id="nil1_${i}">
+            <select id="nil1_${i}" onchange="perubahanData()">
                 <option value="" ${!d[6]?"selected":""}>-</option>
                 <option value="A" ${d[6]=="A"?"selected":""}>A</option>
                 <option value="B" ${d[6]=="B"?"selected":""}>B</option>
@@ -295,10 +230,8 @@ function render(){
             </select>
         </td>
 
-        <!-- EKSKUL 2 -->
         <td>
-            <span class="teks">${d[7]||"Tidak Ikut"}</span>
-            <select id="ex2_${i}">
+            <select id="ex2_${i}" onchange="perubahanData()">
                 <option value="" ${!d[7]?"selected":""}>Tidak Ikut</option>
                 <option ${d[7]=="Futsal"?"selected":""}>Futsal</option>
                 <option ${d[7]=="Paskib"?"selected":""}>Paskib</option>
@@ -312,10 +245,8 @@ function render(){
             </select>
         </td>
         
-        <!-- NILAI 2 -->
         <td>
-            <span class="teks">${d[8]||"-"}</span>
-            <select id="nil2_${i}">
+            <select id="nil2_${i}" onchange="perubahanData()">
                 <option value="" ${!d[8]?"selected":""}>-</option>
                 <option value="A" ${d[8]=="A"?"selected":""}>A</option>
                 <option value="B" ${d[8]=="B"?"selected":""}>B</option>
@@ -328,30 +259,29 @@ function render(){
     if(!ada) tb.innerHTML="<tr><td colspan=9>Data tidak ada</td></tr>";
 }
 
-// ✅ FUNGSI SIMPAN KE GOOGLE SHEET
-async function simpan(){
-    if(!confirm("Yakin simpan ke Google Sheet?")) return;
+function perubahanData(){
+    clearTimeout(simpanTunda);
+    simpanTunda = setTimeout(autoSimpan, 800); // Simpan otomatis setelah berhenti mengubah
+}
 
+async function autoSimpan(){
+    tampilkanNotif("💾 Menyimpan perubahan...", "info");
     let baru = [data[0]];
     for(let i=1;i<data.length;i++){
-        let ex1 = document.getElementById(`ex1_${i}`).value;
-        let nil1 = document.getElementById(`nil1_${i}`).value;
-        let ex2 = document.getElementById(`ex2_${i}`).value;
-        let nil2 = document.getElementById(`nil2_${i}`).value;
+        let ex1 = document.getElementById(`ex1_${i}`)?.value || "";
+        let nil1 = document.getElementById(`nil1_${i}`)?.value || "";
+        let ex2 = document.getElementById(`ex2_${i}`)?.value || "";
+        let nil2 = document.getElementById(`nil2_${i}`)?.value || "";
 
         baru.push([
             data[i][0], data[i][1], data[i][2], data[i][3], data[i][4],
-            ex1, nil1, ex2, nil2 // Simpan ke kolom berurutan
+            ex1, nil1, ex2, nil2
         ]);
     }
 
-    // Simpan ke cadangan lokal
-    localStorage.setItem("dataEkskulSiswa", JSON.stringify(baru));
-
     try{
-        showInfo("⏳ Mengirim data ke Google...");
-
         let formData = new FormData();
+        formData.append("mode", "simpandata");
         formData.append("data", JSON.stringify(baru));
 
         let res = await fetch(URL, {
@@ -361,20 +291,18 @@ async function simpan(){
         });
 
         let teks = await res.text();
-
         if (teks === "SUKSES") {
-            showNotif("✅ BERHASIL! Data masuk ke Google Sheet!");
             data = baru;
+            tampilkanNotif("✅ Tersimpan otomatis", "simpan");
         } else {
-            throw new Error("Respon: " + teks);
+            throw new Error(teks);
         }
-
     }catch(e){
-        showError("❌ GAGAL: " + e.message);
+        tampilkanNotif("❌ Gagal menyimpan", "gagal");
+        console.error(e);
     }
 }
 
-// ✅ FUNGSI CETAK
 function cetak(){
     let kelasTerpilih = document.getElementById("filterKelas").value;
     document.getElementById("namaKelasCetak").textContent = (kelasTerpilih !== "SEMUA") ? kelasTerpilih : "Semua Kelas";
@@ -395,9 +323,13 @@ function cetak(){
     }, 1000);
 }
 
-function showNotif(t){document.getElementById("notif").innerText=t;document.getElementById("notif").style.display="block";setTimeout(()=>document.getElementById("notif").style.display="none",3000);}
-function showError(t){errorBox.innerText=t;errorBox.style.display="block";setTimeout(()=>errorBox.style.display="none",6000);}
-function showInfo(t){infoBox.innerText=t;infoBox.style.display="block";setTimeout(()=>infoBox.style.display="none",4000);}
+function tampilkanNotif(teks, jenis = "info"){
+    const el = document.getElementById("notif");
+    el.textContent = teks;
+    el.className = `notif ${jenis}`;
+    el.style.display = "block";
+    setTimeout(() => el.style.display = "none", 2500);
+}
 
 document.addEventListener("DOMContentLoaded", load);
 </script>
