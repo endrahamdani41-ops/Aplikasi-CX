@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ikon Bergerak Serentak + Keluar Lebih Jauh</title>
+    <title>Menu Ikon di Atas Gambar</title>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
         * {
@@ -65,7 +65,7 @@
             background: var(--toggle-btn-hover);
         }
 
-        /* Area Setengah Lingkaran */
+        /* ✅ Area Setengah Lingkaran + Gambar Latar (di belakang semua elemen) */
         .tunnel {
             position: absolute;
             bottom: 0;
@@ -75,23 +75,15 @@
             height: 200px;
             border-radius: 200px 200px 0 0;
             overflow: hidden;
-            border: none;
-            background: transparent;
-        }
-
-        /* Gambar Latar */
-        .tunnel::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
             background: url("https://i.pinimg.com/originals/43/3f/d1/433fd198d0b5b09e071b9d64a6176bb4.jpg") center / cover no-repeat;
+            cursor: pointer;
+            z-index: 1; /* Posisi paling belakang */
         }
 
-        /* Wadah Ikon */
+        /* Wadah Ikon (berada di atas gambar latar) */
         .icons-wrapper {
             --radius: 200px;
-            --jarak-keluar: 90px; /* ✅ Jarak keluar lebih jauh */
+            --jarak-keluar: 90px;
             position: absolute;
             bottom: 0;
             left: 50%;
@@ -99,7 +91,8 @@
             width: 400px;
             height: 200px;
             transform-origin: center bottom;
-            z-index: 5;
+            z-index: 5; /* Di atas gambar latar */
+            pointer-events: none;
         }
 
         /* Gaya Ikon */
@@ -112,31 +105,29 @@
             margin-left: -26px;
             margin-bottom: -26px;
             border-radius: 50%;
-            border: 1px solid #222;
+            border: 2px solid #ffffff; /* Bingkai putih seperti contoh */
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 19px;
             color: #ffffff;
             text-decoration: none;
-            /* Transisi serentak */
             transition: all 0.4s cubic-bezier(0.3, 0, 0.7, 1);
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             cursor: pointer;
             transform-origin: center center;
-            /* ✅ Animasi mengambang serentak */
             animation: float 3s ease-in-out infinite;
-            animation-delay: 0s !important; /* Hapus jeda agar sama semua */
+            animation-delay: 0s !important;
+            pointer-events: auto;
         }
 
-        /* ✅ Animasi mengambang serentak */
         @keyframes float {
             0% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateY(0); }
             50% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateY(-5px); }
             100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateY(0); }
         }
 
-        /* Posisi & warna masing-masing ikon */
+        /* Posisi & Warna Ikon sesuai urutan */
         .menu-icon:nth-child(1) { --rotasi: -72deg; transform: rotate(-72deg) translateY(calc(-1 * var(--radius))); background-color: #e74c3c; }
         .menu-icon:nth-child(2) { --rotasi: -48deg; transform: rotate(-48deg) translateY(calc(-1 * var(--radius))); background-color: #e67e22; }
         .menu-icon:nth-child(3) { --rotasi: -24deg; transform: rotate(-24deg) translateY(calc(-1 * var(--radius))); background-color: #f1c40f; }
@@ -145,7 +136,7 @@
         .menu-icon:nth-child(6) { --rotasi: 48deg;  transform: rotate(48deg)  translateY(calc(-1 * var(--radius))); background-color: #9b59b6; }
         .menu-icon:nth-child(7) { --rotasi: 72deg;  transform: rotate(72deg)  translateY(calc(-1 * var(--radius))); background-color: #e91e63; }
 
-        /* ✅ SAAT MENU DITUTUP: Keluar lebih jauh */
+        /* SAAT MENU DITUTUP: Ikon keluar lebih jauh */
         .menu-closed .menu-icon {
             animation: none;
             transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - var(--jarak-keluar))) scale(0.6);
@@ -153,17 +144,16 @@
             pointer-events: none;
         }
 
-        /* ✅ SAAT DIKLIK: Masuk ke tengah lurus */
+        /* SAAT DIKLIK: Ikon meluncur ke tengah */
         .menu-icon.active-slide {
             animation: none;
-            transform: translate(-50%, -50%) scale(0.45) rotate(0deg) !important;
+            transform: translate(-50%, -50%) scale(0.38) rotate(0deg) !important;
             left: 50%;
-            bottom: 32px;
+            bottom: 30px;
             z-index: 7;
             opacity: 1;
             border: none;
             box-shadow: none;
-            pointer-events: auto;
         }
 
         /* Efek hover */
@@ -176,32 +166,6 @@
         /* Tanda ikon aktif */
         .menu-icon.active {
             box-shadow: inset 0 0 0 2px #ffffff, 0 0 0 3px #222;
-        }
-
-        /* Tombol tengah garis tiga */
-        .menu-toggle {
-            position: absolute;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            background-color: var(--toggle-btn-bg);
-            border: 2px solid #ffffff;
-            color: white;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            transition: transform 0.2s ease;
-        }
-        .menu-toggle:hover {
-            transform: translateX(-50%) scale(1.08);
-            background-color: var(--toggle-btn-hover);
         }
 
         /* Tooltip */
@@ -233,26 +197,22 @@
             .tunnel { width: 320px; height: 160px; border-radius: 160px 160px 0 0; }
             .icons-wrapper { --radius: 160px; --jarak-keluar: 70px; width: 320px; height: 160px; }
             .menu-icon { width: 46px; height: 46px; margin-left: -23px; margin-bottom: -23px; font-size: 17px; }
-            .menu-toggle { width: 58px; height: 58px; font-size: 20px; }
             .mode-switch { top: -35px; font-size: 12px; padding: 4px 10px; }
-            .menu-icon.active-slide { transform: translate(-50%, -50%) scale(0.42) rotate(0deg) !important; bottom: 29px; }
+            .menu-icon.active-slide { transform: translate(-50%, -50%) scale(0.35) rotate(0deg) !important; bottom: 28px; }
         }
     </style>
 </head>
 <body>
     <div class="menu-container menu-open" id="mainMenu">
         <button class="mode-switch" id="darkModeBtn">
-            <i class="fa fa-moon-o"></i> Mode Gelap
+            <i class="fa fa-moon-o"></i> 
         </button>
 
-        <div class="tunnel"></div>
+        <!-- Area gambar latar belakang -->
+        <div class="tunnel" id="toggleArea"></div>
 
-        <button class="menu-toggle" id="toggleBtn">
-            <i class="fa fa-bars"></i>
-        </button>
-
+        <!-- Wadah ikon di atas gambar -->
         <div class="icons-wrapper">
-            <!-- ✅ Ikon Home sudah dimasukkan link tujuan -->
             <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" target="_blank" class="menu-icon" data-tooltip="Agenda Guru">
                 <i class="fa fa-home"></i>
             </a>
@@ -279,35 +239,29 @@
 
     <script>
         const menuContainer = document.getElementById('mainMenu');
-        const toggleBtn = document.getElementById('toggleBtn');
+        const toggleArea = document.getElementById('toggleArea');
         const menuIcons = document.querySelectorAll('.menu-icon');
         const darkModeBtn = document.getElementById('darkModeBtn');
 
-        // Buka / Tutup menu - gerakan serentak
-        toggleBtn.addEventListener('click', () => {
+        // Klik gambar latar untuk tampilkan/sembunyikan ikon
+        toggleArea.addEventListener('click', () => {
             menuIcons.forEach(i => i.classList.remove('active-slide'));
             menuContainer.classList.toggle('menu-open');
             menuContainer.classList.toggle('menu-closed');
-            const icon = toggleBtn.querySelector('i');
-            icon.classList.toggle('fa-bars');
-            icon.classList.toggle('fa-times');
         });
 
-        // Klik ikon masuk ke tengah, lalu buka link jika selesai
+        // Klik ikon untuk meluncur ke tengah lalu buka link
         menuIcons.forEach(icon => {
             icon.addEventListener('click', function(e) {
-                // Cek jika ini ikon Home dengan link eksternal
                 const link = this.getAttribute('href');
                 const isExternal = link && link.startsWith('http');
 
-                if (!isExternal) e.preventDefault(); // Hentikan default jika bukan link luar
-
+                if (!isExternal) e.preventDefault();
                 if (menuContainer.classList.contains('menu-closed')) return;
 
                 menuIcons.forEach(i => i.classList.remove('active', 'active-slide'));
                 this.classList.add('active-slide');
 
-                // Tunggu animasi selesai baru buka link
                 setTimeout(() => {
                     this.classList.remove('active-slide');
                     this.classList.add('active');
@@ -321,8 +275,8 @@
             document.body.classList.toggle('dark-mode');
             const icon = darkModeBtn.querySelector('i');
             darkModeBtn.innerHTML = document.body.classList.contains('dark-mode')
-                ? '<i class="fa fa-sun-o"></i> Mode Terang'
-                : '<i class="fa fa-moon-o"></i> Mode Gelap';
+                ? '<i class="fa fa-sun-o"></i> '
+                : '<i class="fa fa-moon-o"></i> ';
         });
     </script>
 </body>
