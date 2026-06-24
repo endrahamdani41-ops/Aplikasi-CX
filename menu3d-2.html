@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ikon Meledak + Asap Tepat di Ikon</title>
+    <title>Ikon Meluncur Keluar-Masuk</title>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
         * {
@@ -83,7 +83,7 @@
         /* Wadah Ikon */
         .icons-wrapper {
             --radius: 200px;
-            --jarak-keluar: 90px;
+            --jarak-keluar: 90px; /* Jarak meluncur keluar */
             position: absolute;
             bottom: 0;
             left: 50%;
@@ -112,7 +112,7 @@
             font-size: 19px;
             color: #ffffff;
             text-decoration: none;
-            transition: all 0.4s cubic-bezier(0.3, 0, 0.7, 1);
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transisi halus masuk-keluar */
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             cursor: pointer;
             transform-origin: center center;
@@ -138,9 +138,9 @@
         .menu-icon:nth-child(6) { --rotasi: 48deg;  transform: rotate(48deg)  translateY(calc(-1 * var(--radius))); background-color: #9b59b6; }
         .menu-icon:nth-child(7) { --rotasi: 72deg;  transform: rotate(72deg)  translateY(calc(-1 * var(--radius))); background-color: #e91e63; }
 
-        /* SAAT MENU DITUTUP: Ikon keluar lebih jauh */
+        /* ✅ SAAT MENU DITUTUP: Semua ikon meluncur keluar & menghilang */
         .menu-closed .menu-icon {
-            animation: none;
+            animation: none; /* Hentikan mengambang saat keluar */
             transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - var(--jarak-keluar))) scale(0.6);
             opacity: 0;
             pointer-events: none;
@@ -153,7 +153,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
 
-        /* ✅ ANIMASI MELEDAK */
+        /* ✅ ANIMASI MELEDAK + ASAP */
         .menu-icon.explode {
             animation: explode 0.8s ease-out forwards;
             z-index: 10;
@@ -166,7 +166,7 @@
             100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) scale(0); opacity: 0; }
         }
 
-        /* ✅ Efek asap - tepat di posisi tengah ikon */
+        /* ✅ Efek asap tepat di tengah ikon */
         .smoke {
             position: absolute;
             width: 70px;
@@ -225,7 +225,7 @@
 <body>
     <div class="menu-container menu-open" id="mainMenu">
         <button class="mode-switch" id="darkModeBtn">
-            <i class="fa fa-moon-o"></i> 
+            <i class="fa fa-moon-o"></i> Mode Gelap
         </button>
 
         <div class="tunnel" id="toggleArea"></div>
@@ -261,46 +261,51 @@
         const menuIcons = document.querySelectorAll('.menu-icon');
         const darkModeBtn = document.getElementById('darkModeBtn');
 
-        // Klik gambar untuk sembunyi/tampil ikon
+        // ✅ Klik gambar: semua ikon meluncur keluar / masuk kembali serentak
         toggleArea.addEventListener('click', () => {
+            // Bersihkan efek yang sedang berjalan
             document.querySelectorAll('.smoke').forEach(s => s.remove());
             menuIcons.forEach(i => {
                 i.classList.remove('explode');
-                i.style.opacity = '1';
+                i.style.opacity = '';
                 i.style.transform = '';
                 i.style.animation = '';
             });
+
+            // Ubah status tampilan ikon
             menuContainer.classList.toggle('menu-open');
             menuContainer.classList.toggle('menu-closed');
         });
 
-        // ✅ Klik ikon: asap tepat di tengah ikon
+        // ✅ Klik satu ikon: efek meledak + asap tepat di tempatnya
         menuIcons.forEach(icon => {
             icon.addEventListener('click', function(e) {
                 e.preventDefault();
                 const link = this.getAttribute('href');
                 const isExternal = link && link.startsWith('http');
 
+                // Tidak berfungsi jika ikon sedang dalam keadaan tersembunyi
                 if (menuContainer.classList.contains('menu-closed')) return;
                 if (this.classList.contains('explode')) return;
 
-                // Hentikan animasi mengambang
+                // Hentikan animasi mengambang sementara
                 this.style.animation = 'none';
 
-                // Buat asap langsung di dalam ikon
+                // Buat efek asap tepat di tengah ikon
                 const smoke = document.createElement('div');
                 smoke.classList.add('smoke');
                 this.appendChild(smoke);
 
-                // Jalankan efek meledak
+                // Jalankan animasi meledak
                 this.classList.add('explode');
 
-                // Setelah selesai efek
+                // Setelah efek selesai
                 setTimeout(() => {
                     this.classList.remove('explode');
                     this.style.opacity = '0';
                     smoke.remove();
 
+                    // Tampilkan kembali ikon dan buka link
                     setTimeout(() => {
                         this.style.opacity = '1';
                         this.style.transform = '';
@@ -311,13 +316,13 @@
             });
         });
 
-        // Mode terang/gelap
+        // Mode terang / gelap
         darkModeBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             const icon = darkModeBtn.querySelector('i');
             darkModeBtn.innerHTML = document.body.classList.contains('dark-mode')
-                ? '<i class="fa fa-sun-o"></i> '
-                : '<i class="fa fa-moon-o"></i> ';
+                ? '<i class="fa fa-sun-o"></i> Mode Terang'
+                : '<i class="fa fa-moon-o"></i> Mode Gelap';
         });
     </script>
 </body>
