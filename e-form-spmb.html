@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Instrumen Data Murid - Kemendikdasmen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,6 +15,12 @@
                         darkBg: '#121212',
                         darkCard: '#1e1e1e',
                         darkText: '#e5e7eb'
+                    },
+                    screens: {
+                        'xs': '360px',
+                        'sm': '480px',
+                        'md': '768px',
+                        'lg': '1024px'
                     }
                 }
             }
@@ -22,52 +28,72 @@
     </script>
     <style type="text/tailwindcss">
         @layer utilities {
-            .form-group {
-                @apply mb-4;
+            .form-group { @apply mb-4 sm:mb-5; }
+            .form-label { @apply block text-sm sm:text-base font-semibold mb-1.5 text-gray-200; }
+            .form-input { @apply w-full p-2 sm:p-2.5 border border-gray-600 rounded bg-gray-700 text-gray-100 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary/50; }
+            .radio-group, .checkbox-group { @apply flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 mt-1.5; }
+            .radio-item, .checkbox-item { @apply flex items-center gap-2 text-sm sm:text-base text-gray-200; }
+            .status-info { @apply p-3 mb-4 rounded text-center font-medium text-sm sm:text-base hidden; }
+            .section-title { @apply text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-blue-400 border-b border-gray-700 pb-2; }
+        }
+
+        /* Gaya khusus untuk mode cetak */
+        @media print {
+            body {
+                background: #fff !important;
+                color: #000 !important;
+                font-size: 11pt;
+                margin: 0;
+                padding: 0;
             }
-            .form-label {
-                @apply block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-200;
+            .dark\:bg-darkBg, .dark\:bg-darkCard, .bg-darkBg, .bg-darkCard {
+                background: #fff !important;
+                color: #000 !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0.5cm !important;
+                margin: 0 0 0.8cm 0 !important;
+            }
+            .form-label, .radio-item, .checkbox-item, p, h1, h2 {
+                color: #000 !important;
             }
             .form-input {
-                @apply w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50;
+                background: #fff !important;
+                color: #000 !important;
+                border: 1px solid #999 !important;
+                font-size: 10pt !important;
             }
-            .radio-group, .checkbox-group {
-                @apply flex flex-wrap gap-4 mt-1;
+            button, #statusPesan {
+                display: none !important;
             }
-            .radio-item, .checkbox-item {
-                @apply flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200;
-            }
-            .status-info {
-                @apply p-3 mb-4 rounded text-center font-medium;
+            @page {
+                margin: 1cm;
+                size: A4;
             }
         }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-darkBg text-gray-900 dark:text-darkText min-h-screen transition-colors duration-300">
-    <div class="max-w-4xl mx-auto p-4 md:p-6">
-        <!-- Header & Tombol Mode -->
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-xl md:text-2xl font-bold text-center w-full">
+<body class="bg-darkBg text-gray-100 min-h-screen transition-colors duration-300">
+    <div class="w-full max-w-4xl mx-auto p-3 sm:p-4 md:p-6">
+        <div class="mb-5 sm:mb-6 text-center">
+            <h1 class="text-lg sm:text-xl md:text-2xl font-bold leading-tight">
                 KEMENDIKDASMEN<br>INSTRUMEN DATA MURID
             </h1>
-            <button id="toggleDark" class="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">
-                🌙 / ☀️
-            </button>
         </div>
 
-        <div id="statusPesan" class="status-info hidden"></div>
+        <div id="statusPesan" class="status-info"></div>
 
-        <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow mb-6 text-sm text-justify">
+        <div class="bg-darkCard p-3 sm:p-4 rounded-lg shadow mb-5 sm:mb-6 text-xs sm:text-sm text-justify leading-relaxed">
             Instrumen ini digunakan untuk memperoleh informasi mengenai identitas murid, identitas orang tua/wali, latar belakang keluarga, kondisi sosial ekonomi, serta data pendukung perkembangan murid. Hasil pendataan ini menjadi dasar bagi sekolah dalam memahami karakteristik murid, memetakan kebutuhan layanan pendidikan, dan memberikan pendampingan yang sesuai.<br><br>
             <strong>Catatan:</strong> Seluruh data yang diberikan bersifat rahasia dan hanya digunakan untuk kepentingan pendidikan di sekolah. Mohon mengisi dengan lengkap dan benar.
         </div>
 
-        <form id="formDataMurid" class="space-y-6">
-            <!-- Bagian A: Identitas Murid -->
-            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow">
-                <h2 class="text-lg font-semibold mb-4 text-primary dark:text-blue-400 border-b pb-2">A. IDENTITAS MURID</h2>
+        <form id="formDataMurid" class="space-y-5 sm:space-y-6">
+            <!-- A. Identitas Murid -->
+            <div class="bg-darkCard p-3 sm:p-4 rounded-lg shadow">
+                <h2 class="section-title">A. IDENTITAS MURID</h2>
 
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Nama Lengkap Murid *:</label>
                         <input type="text" name="nama_murid" class="form-input" required>
@@ -81,7 +107,7 @@
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Kewarganegaraan *:</label>
                         <div class="radio-group">
@@ -95,7 +121,7 @@
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Nomor NIK *:</label>
                         <input type="text" name="nik_murid" maxlength="16" class="form-input" required>
@@ -106,7 +132,7 @@
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Tempat Lahir *:</label>
                         <input type="text" name="tempat_lahir" class="form-input" required>
@@ -117,7 +143,7 @@
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Nomor Akta Lahir:</label>
                         <input type="text" name="no_akta" class="form-input">
@@ -131,7 +157,7 @@
                             <div class="checkbox-item"><input type="radio" name="agama_murid" value="Hindu"> Hindu</div>
                             <div class="checkbox-item"><input type="radio" name="agama_murid" value="Budha"> Budha</div>
                             <div class="checkbox-item"><input type="radio" name="agama_murid" value="Konghucu"> Konghucu</div>
-                            <div class="checkbox-item">Lainnya: <input type="text" name="agama_murid_lain" class="w-20"></div>
+                            <div class="checkbox-item">Lainnya: <input type="text" name="agama_murid_lain" class="w-20 sm:w-24 ml-1"></div>
                         </div>
                     </div>
                 </div>
@@ -141,7 +167,7 @@
                     <textarea name="alamat_murid" rows="2" class="form-input" required></textarea>
                 </div>
 
-                <div class="grid md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Tempat Tinggal *:</label>
                         <input type="text" name="tempat_tinggal" class="form-input" required>
@@ -162,11 +188,10 @@
                 </div>
             </div>
 
-            <!-- Bagian B: Identitas Ayah -->
-            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow">
-                <h2 class="text-lg font-semibold mb-4 text-primary dark:text-blue-400 border-b pb-2">B. IDENTITAS AYAH</h2>
-
-                <div class="grid md:grid-cols-2 gap-4">
+            <!-- B. Identitas Ayah -->
+            <div class="bg-darkCard p-3 sm:p-4 rounded-lg shadow">
+                <h2 class="section-title">B. IDENTITAS AYAH</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Nama Ayah Kandung *:</label>
                         <input type="text" name="nama_ayah" class="form-input" required>
@@ -176,7 +201,6 @@
                         <input type="text" name="nik_ayah" maxlength="16" class="form-input" required>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Agama Ayah *:</label>
                     <div class="checkbox-group">
@@ -186,10 +210,9 @@
                         <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Hindu"> Hindu</div>
                         <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Budha"> Budha</div>
                         <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Konghucu"> Konghucu</div>
-                        <div class="checkbox-item">Lainnya: <input type="text" name="agama_ayah_lain" class="w-20"></div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="agama_ayah_lain" class="w-20 sm:w-24 ml-1"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Pendidikan Terakhir Ayah *:</label>
                     <div class="checkbox-group">
@@ -199,10 +222,9 @@
                         <div class="checkbox-item"><input type="radio" name="pend_ayah" value="S1"> S1</div>
                         <div class="checkbox-item"><input type="radio" name="pend_ayah" value="S2"> S2</div>
                         <div class="checkbox-item"><input type="radio" name="pend_ayah" value="S3"> S3</div>
-                        <div class="checkbox-item">Lainnya: <input type="text" name="pend_ayah_lain" class="w-20"></div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pend_ayah_lain" class="w-20 sm:w-24 ml-1"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Pekerjaan Ayah *:</label>
                     <div class="checkbox-group">
@@ -215,10 +237,9 @@
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Petani"> Petani</div>
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="TKI/TKW"> TKI/TKW</div>
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Pensiunan"> Pensiunan</div>
-                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_ayah_lain" class="w-20"></div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_ayah_lain" class="w-20 sm:w-24 ml-1"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Penghasilan Ayah *:</label>
                     <div class="checkbox-group">
@@ -230,8 +251,7 @@
                         <div class="checkbox-item"><input type="radio" name="gaji_ayah" value=">10jt"> > Rp10jt</div>
                     </div>
                 </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Alamat Domisili Ayah *:</label>
                         <textarea name="alamat_ayah" rows="2" class="form-input" required></textarea>
@@ -243,11 +263,10 @@
                 </div>
             </div>
 
-            <!-- Bagian C: Identitas Ibu -->
-            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow">
-                <h2 class="text-lg font-semibold mb-4 text-primary dark:text-blue-400 border-b pb-2">C. IDENTITAS IBU</h2>
-
-                <div class="grid md:grid-cols-2 gap-4">
+            <!-- C. Identitas Ibu -->
+            <div class="bg-darkCard p-3 sm:p-4 rounded-lg shadow">
+                <h2 class="section-title">C. IDENTITAS IBU</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Nama Ibu *:</label>
                         <input type="text" name="nama_ibu" class="form-input" required>
@@ -257,8 +276,7 @@
                         <input type="text" name="nik_ibu" maxlength="16" class="form-input" required>
                     </div>
                 </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Tahun Lahir Ibu *:</label>
                         <input type="number" name="tahun_lahir_ibu" min="1940" max="2010" class="form-input" required>
@@ -272,11 +290,10 @@
                             <div class="checkbox-item"><input type="radio" name="pend_ibu" value="S1"> S1</div>
                             <div class="checkbox-item"><input type="radio" name="pend_ibu" value="S2"> S2</div>
                             <div class="checkbox-item"><input type="radio" name="pend_ibu" value="S3"> S3</div>
-                            <div class="checkbox-item">Lainnya: <input type="text" name="pend_ibu_lain" class="w-20"></div>
+                            <div class="checkbox-item">Lainnya: <input type="text" name="pend_ibu_lain" class="w-20 sm:w-24 ml-1"></div>
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Agama Ibu *:</label>
                     <div class="checkbox-group">
@@ -286,10 +303,9 @@
                         <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Hindu"> Hindu</div>
                         <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Budha"> Budha</div>
                         <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Konghucu"> Konghucu</div>
-                        <div class="checkbox-item">Lainnya: <input type="text" name="agama_ibu_lain" class="w-20"></div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="agama_ibu_lain" class="w-20 sm:w-24 ml-1"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Pekerjaan Ibu *:</label>
                     <div class="checkbox-group">
@@ -302,10 +318,9 @@
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Petani"> Petani</div>
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="TKI/TKW"> TKI/TKW</div>
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Pensiunan"> Pensiunan</div>
-                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_ibu_lain" class="w-20"></div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_ibu_lain" class="w-20 sm:w-24 ml-1"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Penghasilan Ibu *:</label>
                     <div class="checkbox-group">
@@ -317,8 +332,7 @@
                         <div class="checkbox-item"><input type="radio" name="gaji_ibu" value=">10jt"> > Rp10jt</div>
                     </div>
                 </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Alamat Domisili Ibu *:</label>
                         <textarea name="alamat_ibu" rows="2" class="form-input" required></textarea>
@@ -328,8 +342,7 @@
                         <input type="tel" name="hp_ibu" class="form-input" required>
                     </div>
                 </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Jarak Rumah ke Sekolah *:</label>
                         <div class="radio-group">
@@ -345,8 +358,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="grid md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Hobi Anak *:</label>
                         <input type="text" name="hobi" class="form-input" required>
@@ -367,11 +379,10 @@
                 </div>
             </div>
 
-            <!-- Bagian D: Identitas Wali -->
-            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow">
-                <h2 class="text-lg font-semibold mb-4 text-primary dark:text-blue-400 border-b pb-2">D. IDENTITAS WALI <small class="text-xs font-normal">(Isi jika ada)</small></h2>
-
-                <div class="grid md:grid-cols-2 gap-4">
+            <!-- D. Identitas Wali -->
+            <div class="bg-darkCard p-3 sm:p-4 rounded-lg shadow">
+                <h2 class="section-title">D. IDENTITAS WALI <small class="text-xs sm:text-sm font-normal">(Isi jika ada)</small></h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Nama Lengkap Wali:</label>
                         <input type="text" name="nama_wali" class="form-input">
@@ -381,7 +392,6 @@
                         <textarea name="alamat_wali" rows="2" class="form-input"></textarea>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Pendidikan Terakhir Wali:</label>
                     <div class="checkbox-group">
@@ -391,10 +401,9 @@
                         <div class="checkbox-item"><input type="radio" name="pend_wali" value="S1"> S1</div>
                         <div class="checkbox-item"><input type="radio" name="pend_wali" value="S2"> S2</div>
                         <div class="checkbox-item"><input type="radio" name="pend_wali" value="S3"> S3</div>
-                        <div class="checkbox-item">Lainnya: <input type="text" name="pend_wali_lain" class="w-20"></div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pend_wali_lain" class="w-20 sm:w-24 ml-1"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Pekerjaan Wali:</label>
                     <div class="checkbox-group">
@@ -407,11 +416,10 @@
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Petani"> Petani</div>
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="TKI/TKW"> TKI/TKW</div>
                         <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Pensiunan"> Pensiunan</div>
-                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_wali_lain" class="w-20"></div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_wali_lain" class="w-20 sm:w-24 ml-1"></div>
                     </div>
                 </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div class="form-group">
                         <label class="form-label">Nomor HP Wali:</label>
                         <input type="tel" name="hp_wali" class="form-input">
@@ -430,9 +438,8 @@
                 </div>
             </div>
 
-            <!-- Tanda Tangan & Tombol -->
-            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow text-center">
-                <p class="text-sm italic">Saya menyatakan bahwa data yang diisi dalam formulir ini benar dan dapat dipertanggungjawabkan.</p>
+            <div class="bg-darkCard p-3 sm:p-4 rounded-lg shadow text-center text-sm sm:text-base">
+                <p class="italic">Saya menyatakan bahwa data yang diisi dalam formulir ini benar dan dapat dipertanggungjawabkan.</p>
                 <br>
                 <p>..........................., ...............................</p>
                 <br><br>
@@ -441,38 +448,27 @@
                 <p>( ........................................................................... )</p>
             </div>
 
-            <div class="flex flex-wrap gap-3 justify-center">
-                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-8 py-2 rounded shadow font-medium">📤 Kirim & Simpan ke Google Sheet</button>
-                <button type="reset" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded shadow">Kosongkan Formulir</button>
+            <!-- Tombol -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded shadow font-medium text-base sm:text-lg w-full sm:w-auto">📤 Kirim & Simpan ke Google Sheet</button>
+                <button type="button" onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded shadow font-medium text-base sm:text-lg w-full sm:w-auto">🖨️ Cetak Formulir</button>
             </div>
         </form>
     </div>
 
     <script>
-        // ---------------- Mode Gelap ----------------
-        const toggleBtn = document.getElementById('toggleDark');
-        if (localStorage.getItem('theme') === 'dark' || 
-            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
-        toggleBtn.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-        });
+        // ---------------- GANTI URL INI DENGAN URL ANDA ----------------
+        const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzzD60kKrXqXSMsx2u26uEsnTdRw_g6AntTFgRIFmspX2Pz7yEO09LoyCLl4h-H8wBU/exec";
+        // ----------------------------------------------------------------
 
-        // ---------------- URL Tujuan Google Sheet ----------------
-        const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbz4IMFunkHx9ixrbYnPPgtpokgwFi59h-lNWYpKIlzIKfThfTm3l8Gw186WVF_1NZ8c/exec"; // GANTI DENGAN URL ANDA
-
-        // ---------------- Kirim Data ke Google Sheet ----------------
         const form = document.getElementById('formDataMurid');
         const statusPesan = document.getElementById('statusPesan');
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             statusPesan.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
-            statusPesan.textContent = "Sedang mengirim data...";
+            statusPesan.textContent = "⏳ Sedang mengirim data...";
             statusPesan.classList.add('bg-blue-100', 'text-blue-800');
-            statusPesan.classList.remove('hidden');
 
             const formData = new FormData(form);
             const dataObj = {};
@@ -482,18 +478,14 @@
 
             fetch(URL_GOOGLE_SCRIPT, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 body: JSON.stringify(dataObj)
             })
             .then(res => res.json())
             .then(res => {
                 if (res.status === "sukses") {
-                    statusPesan.textContent = "✅ Data berhasil dikirim dan tersimpan di Google Sheet!";
+                    statusPesan.textContent = "✅ Berhasil! Data tersimpan ke Google Sheet.";
                     statusPesan.classList.remove('bg-blue-100', 'text-blue-800');
                     statusPesan.classList.add('bg-green-100', 'text-green-800');
-                    form.reset();
                 } else {
                     throw new Error(res.pesan);
                 }
