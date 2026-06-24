@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Ikon di Atas Gambar</title>
+    <title>Ikon Meledak + Asap Tepat di Ikon</title>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
         * {
@@ -65,7 +65,7 @@
             background: var(--toggle-btn-hover);
         }
 
-        /* ✅ Area Setengah Lingkaran + Gambar Latar (di belakang semua elemen) */
+        /* Area Setengah Lingkaran + Gambar Latar */
         .tunnel {
             position: absolute;
             bottom: 0;
@@ -77,10 +77,10 @@
             overflow: hidden;
             background: url("https://i.pinimg.com/originals/43/3f/d1/433fd198d0b5b09e071b9d64a6176bb4.jpg") center / cover no-repeat;
             cursor: pointer;
-            z-index: 1; /* Posisi paling belakang */
+            z-index: 1;
         }
 
-        /* Wadah Ikon (berada di atas gambar latar) */
+        /* Wadah Ikon */
         .icons-wrapper {
             --radius: 200px;
             --jarak-keluar: 90px;
@@ -91,7 +91,7 @@
             width: 400px;
             height: 200px;
             transform-origin: center bottom;
-            z-index: 5; /* Di atas gambar latar */
+            z-index: 5;
             pointer-events: none;
         }
 
@@ -105,7 +105,7 @@
             margin-left: -26px;
             margin-bottom: -26px;
             border-radius: 50%;
-            border: 2px solid #ffffff; /* Bingkai putih seperti contoh */
+            border: 2px solid #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -119,15 +119,17 @@
             animation: float 3s ease-in-out infinite;
             animation-delay: 0s !important;
             pointer-events: auto;
+            z-index: 6;
         }
 
+        /* Animasi mengambang halus */
         @keyframes float {
             0% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateY(0); }
             50% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateY(-5px); }
             100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateY(0); }
         }
 
-        /* Posisi & Warna Ikon sesuai urutan */
+        /* Posisi & Warna Ikon */
         .menu-icon:nth-child(1) { --rotasi: -72deg; transform: rotate(-72deg) translateY(calc(-1 * var(--radius))); background-color: #e74c3c; }
         .menu-icon:nth-child(2) { --rotasi: -48deg; transform: rotate(-48deg) translateY(calc(-1 * var(--radius))); background-color: #e67e22; }
         .menu-icon:nth-child(3) { --rotasi: -24deg; transform: rotate(-24deg) translateY(calc(-1 * var(--radius))); background-color: #f1c40f; }
@@ -144,28 +146,46 @@
             pointer-events: none;
         }
 
-        /* SAAT DIKLIK: Ikon meluncur ke tengah */
-        .menu-icon.active-slide {
-            animation: none;
-            transform: translate(-50%, -50%) scale(0.38) rotate(0deg) !important;
-            left: 50%;
-            bottom: 30px;
-            z-index: 7;
-            opacity: 1;
-            border: none;
-            box-shadow: none;
-        }
-
         /* Efek hover */
-        .menu-icon:hover:not(.active-slide):not(.menu-closed .menu-icon) {
+        .menu-icon:hover:not(.explode) {
             animation: none;
             transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) scale(1.12);
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
 
-        /* Tanda ikon aktif */
-        .menu-icon.active {
-            box-shadow: inset 0 0 0 2px #ffffff, 0 0 0 3px #222;
+        /* ✅ ANIMASI MELEDAK */
+        .menu-icon.explode {
+            animation: explode 0.8s ease-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes explode {
+            0% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) scale(1); opacity: 1; }
+            40% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) scale(1.3); opacity: 0.9; }
+            70% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) scale(0.2); opacity: 0; }
+            100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) scale(0); opacity: 0; }
+        }
+
+        /* ✅ Efek asap - tepat di posisi tengah ikon */
+        .smoke {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(220,220,220,0.95) 0%, rgba(160,160,160,0.6) 35%, rgba(120,120,120,0.2) 65%, rgba(0,0,0,0) 100%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.2);
+            animation: smoke-expand 0.9s ease-out forwards;
+            pointer-events: none;
+            z-index: 9;
+        }
+
+        @keyframes smoke-expand {
+            0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.95; }
+            40% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+            80% { transform: translate(-50%, -50%) scale(2.0); opacity: 0.2; }
+            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
         }
 
         /* Tooltip */
@@ -198,7 +218,7 @@
             .icons-wrapper { --radius: 160px; --jarak-keluar: 70px; width: 320px; height: 160px; }
             .menu-icon { width: 46px; height: 46px; margin-left: -23px; margin-bottom: -23px; font-size: 17px; }
             .mode-switch { top: -35px; font-size: 12px; padding: 4px 10px; }
-            .menu-icon.active-slide { transform: translate(-50%, -50%) scale(0.35) rotate(0deg) !important; bottom: 28px; }
+            .smoke { width: 60px; height: 60px; }
         }
     </style>
 </head>
@@ -208,10 +228,8 @@
             <i class="fa fa-moon-o"></i> 
         </button>
 
-        <!-- Area gambar latar belakang -->
         <div class="tunnel" id="toggleArea"></div>
 
-        <!-- Wadah ikon di atas gambar -->
         <div class="icons-wrapper">
             <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" target="_blank" class="menu-icon" data-tooltip="Agenda Guru">
                 <i class="fa fa-home"></i>
@@ -222,7 +240,7 @@
             <a href="#layanan" class="menu-icon" data-tooltip="Layanan">
                 <i class="fa fa-cogs"></i>
             </a>
-            <a href="#produk" class="menu-icon active" data-tooltip="Produk">
+            <a href="#produk" class="menu-icon" data-tooltip="Produk">
                 <i class="fa fa-shopping-bag"></i>
             </a>
             <a href="#galeri" class="menu-icon" data-tooltip="Galeri">
@@ -243,30 +261,53 @@
         const menuIcons = document.querySelectorAll('.menu-icon');
         const darkModeBtn = document.getElementById('darkModeBtn');
 
-        // Klik gambar latar untuk tampilkan/sembunyikan ikon
+        // Klik gambar untuk sembunyi/tampil ikon
         toggleArea.addEventListener('click', () => {
-            menuIcons.forEach(i => i.classList.remove('active-slide'));
+            document.querySelectorAll('.smoke').forEach(s => s.remove());
+            menuIcons.forEach(i => {
+                i.classList.remove('explode');
+                i.style.opacity = '1';
+                i.style.transform = '';
+                i.style.animation = '';
+            });
             menuContainer.classList.toggle('menu-open');
             menuContainer.classList.toggle('menu-closed');
         });
 
-        // Klik ikon untuk meluncur ke tengah lalu buka link
+        // ✅ Klik ikon: asap tepat di tengah ikon
         menuIcons.forEach(icon => {
             icon.addEventListener('click', function(e) {
+                e.preventDefault();
                 const link = this.getAttribute('href');
                 const isExternal = link && link.startsWith('http');
 
-                if (!isExternal) e.preventDefault();
                 if (menuContainer.classList.contains('menu-closed')) return;
+                if (this.classList.contains('explode')) return;
 
-                menuIcons.forEach(i => i.classList.remove('active', 'active-slide'));
-                this.classList.add('active-slide');
+                // Hentikan animasi mengambang
+                this.style.animation = 'none';
 
+                // Buat asap langsung di dalam ikon
+                const smoke = document.createElement('div');
+                smoke.classList.add('smoke');
+                this.appendChild(smoke);
+
+                // Jalankan efek meledak
+                this.classList.add('explode');
+
+                // Setelah selesai efek
                 setTimeout(() => {
-                    this.classList.remove('active-slide');
-                    this.classList.add('active');
-                    if (isExternal) window.open(link, '_blank');
-                }, 600);
+                    this.classList.remove('explode');
+                    this.style.opacity = '0';
+                    smoke.remove();
+
+                    setTimeout(() => {
+                        this.style.opacity = '1';
+                        this.style.transform = '';
+                        this.style.animation = '';
+                        if (isExternal) window.open(link, '_blank');
+                    }, 400);
+                }, 800);
             });
         });
 
