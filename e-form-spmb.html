@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrumen Data Murid - Kemendikdasmen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        darkBg: '#121212',
+                        darkCard: '#1e1e1e',
+                        darkText: '#e5e7eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .form-group {
+                @apply mb-4;
+            }
+            .form-label {
+                @apply block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-200;
+            }
+            .form-input {
+                @apply w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50;
+            }
+            .radio-group, .checkbox-group {
+                @apply flex flex-wrap gap-4 mt-1;
+            }
+            .radio-item, .checkbox-item {
+                @apply flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200;
+            }
+            .status-info {
+                @apply p-3 mb-4 rounded text-center font-medium;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-darkBg text-gray-900 dark:text-darkText min-h-screen transition-colors duration-300">
+    <div class="max-w-4xl mx-auto p-4 md:p-6">
+        <!-- Header & Tombol Mode -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-xl md:text-2xl font-bold text-center w-full">
+                KEMENDIKDASMEN<br>INSTRUMEN DATA MURID
+            </h1>
+            <button id="toggleDark" class="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">
+                🌙 / ☀️
+            </button>
+        </div>
+
+        <div id="statusPesan" class="status-info hidden"></div>
+
+        <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow mb-6 text-sm text-justify">
+            Instrumen ini digunakan untuk memperoleh informasi mengenai identitas murid, identitas orang tua/wali, latar belakang keluarga, kondisi sosial ekonomi, serta data pendukung perkembangan murid. Hasil pendataan ini menjadi dasar bagi sekolah dalam memahami karakteristik murid, memetakan kebutuhan layanan pendidikan, dan memberikan pendampingan yang sesuai.<br><br>
+            <strong>Catatan:</strong> Seluruh data yang diberikan bersifat rahasia dan hanya digunakan untuk kepentingan pendidikan di sekolah. Mohon mengisi dengan lengkap dan benar.
+        </div>
+
+        <form id="formDataMurid" class="space-y-6">
+            <!-- Bagian A: Identitas Murid -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow">
+                <h2 class="text-lg font-semibold mb-4 text-primary dark:text-blue-400 border-b pb-2">A. IDENTITAS MURID</h2>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Nama Lengkap Murid *:</label>
+                        <input type="text" name="nama_murid" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jenis Kelamin *:</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" name="jk" value="Laki-laki" required> Laki-laki</div>
+                            <div class="radio-item"><input type="radio" name="jk" value="Perempuan"> Perempuan</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Kewarganegaraan *:</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" name="warga" value="WNI" required> WNI</div>
+                            <div class="radio-item"><input type="radio" name="warga" value="WNA"> WNA</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">NISN (jika ada):</label>
+                        <input type="text" name="nisn" class="form-input">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Nomor NIK *:</label>
+                        <input type="text" name="nik_murid" maxlength="16" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nomor Kartu Keluarga (KK) *:</label>
+                        <input type="text" name="no_kk" maxlength="16" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Tempat Lahir *:</label>
+                        <input type="text" name="tempat_lahir" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Lahir *:</label>
+                        <input type="date" name="tgl_lahir" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Nomor Akta Lahir:</label>
+                        <input type="text" name="no_akta" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Agama *:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item"><input type="radio" name="agama_murid" value="Islam" required> Islam</div>
+                            <div class="checkbox-item"><input type="radio" name="agama_murid" value="Katolik"> Katolik</div>
+                            <div class="checkbox-item"><input type="radio" name="agama_murid" value="Protestan"> Protestan</div>
+                            <div class="checkbox-item"><input type="radio" name="agama_murid" value="Hindu"> Hindu</div>
+                            <div class="checkbox-item"><input type="radio" name="agama_murid" value="Budha"> Budha</div>
+                            <div class="checkbox-item"><input type="radio" name="agama_murid" value="Konghucu"> Konghucu</div>
+                            <div class="checkbox-item">Lainnya: <input type="text" name="agama_murid_lain" class="w-20"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Alamat Lengkap *:</label>
+                    <textarea name="alamat_murid" rows="2" class="form-input" required></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Tempat Tinggal *:</label>
+                        <input type="text" name="tempat_tinggal" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mode Transportasi *:</label>
+                        <input type="text" name="transportasi" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Anak ke - ... dari ... bersaudara *:</label>
+                        <input type="text" name="urutan_anak" placeholder="Contoh: 2 dari 3" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Riwayat Penyakit / Kondisi Fisik Khusus *:</label>
+                    <textarea name="riwayat_penyakit" rows="2" class="form-input" placeholder="Tulis 'Tidak ada' jika sehat" required></textarea>
+                </div>
+            </div>
+
+            <!-- Bagian B: Identitas Ayah -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow">
+                <h2 class="text-lg font-semibold mb-4 text-primary dark:text-blue-400 border-b pb-2">B. IDENTITAS AYAH</h2>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Nama Ayah Kandung *:</label>
+                        <input type="text" name="nama_ayah" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">NIK Ayah *:</label>
+                        <input type="text" name="nik_ayah" maxlength="16" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Agama Ayah *:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Islam" required> Islam</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Katolik"> Katolik</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Protestan"> Protestan</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Hindu"> Hindu</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Budha"> Budha</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ayah" value="Konghucu"> Konghucu</div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="agama_ayah_lain" class="w-20"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pendidikan Terakhir Ayah *:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="pend_ayah" value="SD/MI" required> SD/MI</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_ayah" value="SMP/MTs"> SMP/MTs</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_ayah" value="SMA/SMK/MA"> SMA/SMK/MA</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_ayah" value="S1"> S1</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_ayah" value="S2"> S2</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_ayah" value="S3"> S3</div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pend_ayah_lain" class="w-20"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pekerjaan Ayah *:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Wiraswasta" required> Wiraswasta</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="PNS"> PNS</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Karyawan Swasta"> Karyawan Swasta</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Peternak"> Peternak</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Honor"> Honor</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Buruh"> Buruh</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Petani"> Petani</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="TKI/TKW"> TKI/TKW</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ayah" value="Pensiunan"> Pensiunan</div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_ayah_lain" class="w-20"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Penghasilan Ayah *:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="gaji_ayah" value="<500k" required> < Rp500.000</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ayah" value="500k-1jt"> Rp500rb - 1jt</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ayah" value="1jt-2jt"> Rp1jt - 2jt</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ayah" value="2jt-5jt"> Rp2jt - 5jt</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ayah" value="5jt-10jt"> Rp5jt - 10jt</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ayah" value=">10jt"> > Rp10jt</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Alamat Domisili Ayah *:</label>
+                        <textarea name="alamat_ayah" rows="2" class="form-input" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nomor HP Ayah *:</label>
+                        <input type="tel" name="hp_ayah" class="form-input" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian C: Identitas Ibu -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow">
+                <h2 class="text-lg font-semibold mb-4 text-primary dark:text-blue-400 border-b pb-2">C. IDENTITAS IBU</h2>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Nama Ibu *:</label>
+                        <input type="text" name="nama_ibu" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">NIK Ibu *:</label>
+                        <input type="text" name="nik_ibu" maxlength="16" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Tahun Lahir Ibu *:</label>
+                        <input type="number" name="tahun_lahir_ibu" min="1940" max="2010" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pendidikan Terakhir Ibu *:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item"><input type="radio" name="pend_ibu" value="SD/MI" required> SD/MI</div>
+                            <div class="checkbox-item"><input type="radio" name="pend_ibu" value="SMP/MTs"> SMP/MTs</div>
+                            <div class="checkbox-item"><input type="radio" name="pend_ibu" value="SMA/SMK/MA"> SMA/SMK/MA</div>
+                            <div class="checkbox-item"><input type="radio" name="pend_ibu" value="S1"> S1</div>
+                            <div class="checkbox-item"><input type="radio" name="pend_ibu" value="S2"> S2</div>
+                            <div class="checkbox-item"><input type="radio" name="pend_ibu" value="S3"> S3</div>
+                            <div class="checkbox-item">Lainnya: <input type="text" name="pend_ibu_lain" class="w-20"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Agama Ibu *:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Islam" required> Islam</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Katolik"> Katolik</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Protestan"> Protestan</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Hindu"> Hindu</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Budha"> Budha</div>
+                        <div class="checkbox-item"><input type="radio" name="agama_ibu" value="Konghucu"> Konghucu</div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="agama_ibu_lain" class="w-20"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pekerjaan Ibu *:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Wiraswasta" required> Wiraswasta</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="PNS"> PNS</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Karyawan Swasta"> Karyawan Swasta</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Peternak"> Peternak</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Honor"> Honor</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Buruh"> Buruh</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Petani"> Petani</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="TKI/TKW"> TKI/TKW</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_ibu" value="Pensiunan"> Pensiunan</div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_ibu_lain" class="w-20"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Penghasilan Ibu *:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="gaji_ibu" value="<500k" required> < Rp500.000</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ibu" value="500k-1jt"> Rp500rb - 1jt</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ibu" value="1jt-2jt"> Rp1jt - 2jt</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ibu" value="2jt-5jt"> Rp2jt - 5jt</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ibu" value="5jt-10jt"> Rp5jt - 10jt</div>
+                        <div class="checkbox-item"><input type="radio" name="gaji_ibu" value=">10jt"> > Rp10jt</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Alamat Domisili Ibu *:</label>
+                        <textarea name="alamat_ibu" rows="2" class="form-input" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nomor HP/WA Ibu *:</label>
+                        <input type="tel" name="hp_ibu" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Jarak Rumah ke Sekolah *:</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" name="jarak" value="<1km" required> < 1 KM</div>
+                            <div class="radio-item"><input type="radio" name="jarak" value=">1km"> > 1 KM</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu Tempuh *:</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" name="waktu_tempuh" value="<30menit" required> < 30 menit</div>
+                            <div class="radio-item"><input type="radio" name="waktu_tempuh" value=">30menit"> > 30 menit</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Hobi Anak *:</label>
+                        <input type="text" name="hobi" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cita-cita Anak *:</label>
+                        <input type="text" name="cita_cita" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Penanggung Biaya *:</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" name="penanggung" value="Ayah" required> Ayah</div>
+                            <div class="radio-item"><input type="radio" name="penanggung" value="Ibu"> Ibu</div>
+                            <div class="radio-item"><input type="radio" name="penanggung" value="Ayah & Ibu"> Ayah & Ibu</div>
+                            <div class="radio-item"><input type="radio" name="penanggung" value="Wali"> Wali</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian D: Identitas Wali -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow">
+                <h2 class="text-lg font-semibold mb-4 text-primary dark:text-blue-400 border-b pb-2">D. IDENTITAS WALI <small class="text-xs font-normal">(Isi jika ada)</small></h2>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Nama Lengkap Wali:</label>
+                        <input type="text" name="nama_wali" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Alamat Wali:</label>
+                        <textarea name="alamat_wali" rows="2" class="form-input"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pendidikan Terakhir Wali:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="pend_wali" value="SD/MI"> SD/MI</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_wali" value="SMP/MTs"> SMP/MTs</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_wali" value="SMA/SMK/MA"> SMA/SMK/MA</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_wali" value="S1"> S1</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_wali" value="S2"> S2</div>
+                        <div class="checkbox-item"><input type="radio" name="pend_wali" value="S3"> S3</div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pend_wali_lain" class="w-20"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Pekerjaan Wali:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Wiraswasta"> Wiraswasta</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="PNS"> PNS</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Karyawan Swasta"> Karyawan Swasta</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Peternak"> Peternak</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Honor"> Honor</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Buruh"> Buruh</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Petani"> Petani</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="TKI/TKW"> TKI/TKW</div>
+                        <div class="checkbox-item"><input type="radio" name="pekerjaan_wali" value="Pensiunan"> Pensiunan</div>
+                        <div class="checkbox-item">Lainnya: <input type="text" name="pekerjaan_wali_lain" class="w-20"></div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label">Nomor HP Wali:</label>
+                        <input type="tel" name="hp_wali" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Penghasilan Wali:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item"><input type="radio" name="gaji_wali" value="<500k"> < Rp500.000</div>
+                            <div class="checkbox-item"><input type="radio" name="gaji_wali" value="500k-1jt"> Rp500rb - 1jt</div>
+                            <div class="checkbox-item"><input type="radio" name="gaji_wali" value="1jt-2jt"> Rp1jt - 2jt</div>
+                            <div class="checkbox-item"><input type="radio" name="gaji_wali" value="2jt-5jt"> Rp2jt - 5jt</div>
+                            <div class="checkbox-item"><input type="radio" name="gaji_wali" value="5jt-10jt"> Rp5jt - 10jt</div>
+                            <div class="checkbox-item"><input type="radio" name="gaji_wali" value=">10jt"> > Rp10jt</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tanda Tangan & Tombol -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-lg shadow text-center">
+                <p class="text-sm italic">Saya menyatakan bahwa data yang diisi dalam formulir ini benar dan dapat dipertanggungjawabkan.</p>
+                <br>
+                <p>..........................., ...............................</p>
+                <br><br>
+                <p>Tanda Tangan Orang Tua / Wali</p>
+                <br><br><br>
+                <p>( ........................................................................... )</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3 justify-center">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-8 py-2 rounded shadow font-medium">📤 Kirim & Simpan ke Google Sheet</button>
+                <button type="reset" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded shadow">Kosongkan Formulir</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // ---------------- Mode Gelap ----------------
+        const toggleBtn = document.getElementById('toggleDark');
+        if (localStorage.getItem('theme') === 'dark' || 
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        toggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // ---------------- URL Tujuan Google Sheet ----------------
+        const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbz4IMFunkHx9ixrbYnPPgtpokgwFi59h-lNWYpKIlzIKfThfTm3l8Gw186WVF_1NZ8c/exec"; // GANTI DENGAN URL ANDA
+
+        // ---------------- Kirim Data ke Google Sheet ----------------
+        const form = document.getElementById('formDataMurid');
+        const statusPesan = document.getElementById('statusPesan');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            statusPesan.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            statusPesan.textContent = "Sedang mengirim data...";
+            statusPesan.classList.add('bg-blue-100', 'text-blue-800');
+            statusPesan.classList.remove('hidden');
+
+            const formData = new FormData(form);
+            const dataObj = {};
+            for (let [key, value] of formData.entries()) {
+                dataObj[key] = value.trim();
+            }
+
+            fetch(URL_GOOGLE_SCRIPT, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(dataObj)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === "sukses") {
+                    statusPesan.textContent = "✅ Data berhasil dikirim dan tersimpan di Google Sheet!";
+                    statusPesan.classList.remove('bg-blue-100', 'text-blue-800');
+                    statusPesan.classList.add('bg-green-100', 'text-green-800');
+                    form.reset();
+                } else {
+                    throw new Error(res.pesan);
+                }
+            })
+            .catch(err => {
+                statusPesan.textContent = "❌ Gagal mengirim data: " + err.message;
+                statusPesan.classList.remove('bg-blue-100', 'text-blue-800');
+                statusPesan.classList.add('bg-red-100', 'text-red-800');
+            });
+        });
+    </script>
+</body>
+</html>
