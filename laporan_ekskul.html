@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan & Rekap Kehadiran Ekstrakurikuler - SMPN 110 Jakarta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            padding: 15px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background-color: #1565c0;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .header h2 {
+            font-size: 18px;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+
+        /* Tab Menu */
+        .tab-menu {
+            display: flex;
+            background: #2c2c2c;
+            border-bottom: 1px solid #444;
+        }
+        .tab-btn {
+            padding: 12px 20px;
+            background: #3a3a3a;
+            border: none;
+            color: #ddd;
+            font-size: 15px;
+            cursor: pointer;
+            margin-right: 4px;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab-btn.active {
+            background: #1976d2;
+            color: #fff;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Filter Area */
+        .filter-section {
+            background: #2c2c2c;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .filter-group label {
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #3a3a3a;
+            color: #fff;
+            min-width: 140px;
+        }
+        .btn {
+            padding: 9px 18px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-cari {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-cetak {
+            background-color: #2ecc71;
+            color: #000;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Info Kegiatan - Teks Rata Kiri */
+        .info-kegiatan {
+            background: #273746;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #34495e;
+        }
+        .info-kegiatan p {
+            margin: 5px 0;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .info-kegiatan .label {
+            min-width: 170px;
+            display: inline-block;
+            text-align: left;
+        }
+
+        /* Table */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 10px 8px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 14px;
+        }
+        th {
+            background-color: #1976d2;
+            color: #fff;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #292929;
+        }
+        tr:hover {
+            background-color: #333;
+        }
+        .text-left {
+            text-align: left;
+            padding-left: 12px;
+        }
+
+        /* Status */
+        .status-pilihan {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .status-btn {
+            padding: 5px 8px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            min-width: 55px;
+        }
+        .status-btn.aktif {
+            border-color: #fff;
+            font-weight: bold;
+            box-shadow: 0 0 3px rgba(255,255,255,0.4);
+        }
+        .btn-hadir.aktif {background-color: #2ecc71; color: #000;}
+        .btn-sakit.aktif {background-color: #f39c12; color: #000;}
+        .btn-izin.aktif {background-color: #3498db; color: #000;}
+        .btn-alfa.aktif {background-color: #e74c3c; color: #fff;}
+        .keterangan-teks {
+            display: none;
+        }
+
+        /* Rekap Box */
+        .rekap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .rekap-box {
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            border: 2px solid;
+        }
+        .rekap-hadir { border-color: #2ecc71; color: #2ecc71; background: rgba(46,204,113,0.1); }
+        .rekap-sakit { border-color: #f39c12; color: #f39c12; background: rgba(243,156,18,0.1); }
+        .rekap-izin { border-color: #3498db; color: #3498db; background: rgba(52,152,219,0.1); }
+        .rekap-alfa { border-color: #e74c3c; color: #e74c3c; background: rgba(231,76,60,0.1); }
+
+        /* Uraian Kegiatan */
+        .uraian {
+            margin-bottom: 30px;
+        }
+        .uraian h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #fff;
+        }
+        .uraian textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            background: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        /* Tanda Tangan */
+        .tanda-tangan {
+            margin-top: 40px;
+            text-align: right;
+        }
+        .tanda-tangan .tanggal {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+        .tanda-tangan .tempat-ttd {
+            margin-top: 60px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #fff;
+            width: 280px;
+            margin-left: auto;
+        }
+        .tanda-tangan .keterangan {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* Notifikasi */
+        .notif {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            left: 15px;
+            padding: 10px 16px;
+            border-radius: 4px;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            text-align: center;
+            font-size: 14px;
+        }
+        .notif.info { background:#3498db; color:white; }
+        .notif.sukses { background:#2ecc71; color:white; }
+        .notif.gagal { background:#e74c3c; color:white; }
+        .pesan-kosong { text-align: center; padding: 40px; color: #95a5a6; font-style: italic; }
+
+        /* Cetak - Tetap rapi saat dicetak */
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            body { background: white; color: black; padding: 0; font-size: 12pt; }
+            .container { background: white; box-shadow: none; border: none; max-width: 100%; }
+            .tab-menu, .filter-section, .btn, .status-pilihan { display: none !important; }
+            .keterangan-teks { display: inline !important; color: black; }
+            .header { background: white; color: black; border-bottom: 2px solid #000; padding: 10px 0; }
+            .info-kegiatan { background: white; border: 1px solid #000; color: black; }
+            .info-kegiatan p { justify-content: flex-start !important; }
+            .info-kegiatan .label { text-align: left !important; }
+            table { border: 1px solid #000; }
+            th { background: #f0f0f0; color: black; border: 1px solid #000; }
+            td { border: 1px solid #000; color: black; background: white; }
+            .rekap-box { border: 1px solid #000; color: black; background: white; }
+            .uraian textarea { background: white; border: 1px solid #000; color: black; }
+            .tanda-tangan .tempat-ttd { border-bottom: 1px solid #000 !important; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="notif" id="notif"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>LAPORAN KEGIATAN EKSTRAKURIKULER</h1>
+            <h2>SMP NEGERI 110 JAKARTA</h2>
+        </div>
+
+        <!-- Tab Navigasi -->
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="bukaTab('absen-harian')">Absen Harian</button>
+            <button class="tab-btn" onclick="bukaTab('rekap-periode')">Rekap Periode</button>
+        </div>
+
+        <!-- Tab 1: Absen Harian -->
+        <div class="tab-content active" id="absen-harian">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Ekstrakurikuler:</label>
+                    <select id="ekskulHarian" onchange="muatLaporanHarian()">
+                        <option value="">-- Pilih Ekskul --</option>
+                        <option value="Futsal">Futsal</option>
+                        <option value="Paskib">Paskib</option>
+                        <option value="Pramuka">Pramuka</option>
+                        <option value="PMR">PMR</option>
+                        <option value="Tari">Tari</option>
+                        <option value="Silat">Silat</option>
+                        <option value="Taekwondo">Taekwondo</option>
+                        <option value="Tahsin">Tahsin</option>
+                        <option value="Drumband">Drumband</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Tanggal:</label>
+                    <input type="date" id="tanggalHarian" onchange="muatLaporanHarian()">
+                </div>
+                <button class="btn btn-cetak" onclick="window.print()">
+                    <i class="fa fa-print"></i> Cetak
+                </button>
+            </div>
+            <div id="kontenHarian" class="pesan-kosong">Pilih ekskul dan tanggal terlebih dahulu</div>
+        </div>
+
+        <!-- Tab 2: Rekap Periode -->
+        <div class="tab-content" id="rekap-periode">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Ekstrakurikuler:</label>
+                    <select id="ekskulRekap">
+                        <option value="">-- Pilih Ekskul --</option>
+                        <option value="Futsal">Futsal</option>
+                        <option value="Paskib">Paskib</option>
+                        <option value="Pramuka">Pramuka</option>
+                        <option value="PMR">PMR</option>
+                        <option value="Tari">Tari</option>
+                        <option value="Silat">Silat</option>
+                        <option value="Taekwondo">Taekwondo</option>
+                        <option value="Tahsin">Tahsin</option>
+                        <option value="Drumband">Drumband</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Tipe Rekap:</label>
+                    <select id="tipeRekap" onchange="ubahTipeRekap()">
+                        <option value="hari">Per Hari</option>
+                        <option value="minggu">Per Minggu</option>
+                        <option value="bulan">Per Bulan</option>
+                        <option value="semester">Per Semester</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="rentangTanggal">
+                    <label>Tanggal:</label>
+                    <input type="date" id="tglMulai">
+                    <span>s/d</span>
+                    <input type="date" id="tglSelesai">
+                </div>
+                <button class="btn btn-cari" onclick="muatRekap()">
+                    <i class="fa fa-search"></i> Tampilkan Rekap
+                </button>
+                <button class="btn btn-cetak" onclick="window.print()">
+                    <i class="fa fa-print"></i> Cetak
+                </button>
+            </div>
+            <div id="kontenRekap" class="pesan-kosong">Pilih kriteria di atas, lalu klik "Tampilkan Rekap"</div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzq3XEqApIA3dAokZrtYprT4ywhFHuTJb8JLPIVztGy8piEMxigQpCYBGgXBccnIdH6DA/exec";
+        let dataMurid = [];
+        let dataPresensi = [];
+
+        // Set tanggal hari ini
+        const hariIni = new Date().toISOString().split('T')[0];
+        document.getElementById('tanggalHarian').value = hariIni;
+        document.getElementById('tglMulai').value = hariIni;
+        document.getElementById('tglSelesai').value = hariIni;
+
+        function bukaTab(namaTab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(isi => isi.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(namaTab).classList.add('active');
+        }
+
+        function ubahTipeRekap() {
+            const tipe = document.getElementById('tipeRekap').value;
+            const tglMulai = document.getElementById('tglMulai');
+            const tglSelesai = document.getElementById('tglSelesai');
+            const hariIni = new Date();
+
+            if (tipe === 'hari') {
+                tglMulai.valueAsDate = hariIni;
+                tglSelesai.valueAsDate = hariIni;
+            } else if (tipe === 'minggu') {
+                const hari = hariIni.getDay() || 7;
+                const mulai = new Date(hariIni);
+                mulai.setDate(hariIni.getDate() - hari + 1);
+                const akhir = new Date(mulai);
+                akhir.setDate(mulai.getDate() + 6);
+                tglMulai.valueAsDate = mulai;
+                tglSelesai.valueAsDate = akhir;
+            } else if (tipe === 'bulan') {
+                const mulai = new Date(hariIni.getFullYear(), hariIni.getMonth(), 1);
+                const akhir = new Date(hariIni.getFullYear(), hariIni.getMonth() + 1, 0);
+                tglMulai.valueAsDate = mulai;
+                tglSelesai.valueAsDate = akhir;
+            } else if (tipe === 'semester') {
+                const bulan = hariIni.getMonth() + 1;
+                let mulai, akhir;
+                if (bulan >= 1 && bulan <= 6) {
+                    mulai = new Date(hariIni.getFullYear(), 0, 1);
+                    akhir = new Date(hariIni.getFullYear(), 5, 30);
+                } else {
+                    mulai = new Date(hariIni.getFullYear(), 6, 1);
+                    akhir = new Date(hariIni.getFullYear(), 11, 31);
+                }
+                tglMulai.valueAsDate = mulai;
+                tglSelesai.valueAsDate = akhir;
+            }
+        }
+
+        function tampilkanNotif(teks, jenis = "info") {
+            const el = document.getElementById("notif");
+            el.textContent = teks;
+            el.className = `notif ${jenis}`;
+            el.style.display = "block";
+            setTimeout(() => el.style.display = "none", 2500);
+        }
+
+        function formatTanggal(tgl) {
+            const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const d = new Date(tgl);
+            return `${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        async function muatDataDasar() {
+            if (dataMurid.length > 0) return;
+            try {
+                const res = await fetch(SCRIPT_URL + "?mode=getdata&t=" + Date.now(), { cache: 'no-store' });
+                dataMurid = await res.json();
+                dataMurid = dataMurid.map(baris => { while (baris.length < 9) baris.push(""); return baris; });
+            } catch {
+                tampilkanNotif("❌ Gagal memuat data siswa", "gagal");
+            }
+        }
+
+        async function muatLaporanHarian() {
+            const ekskul = document.getElementById('ekskulHarian').value;
+            const tanggal = document.getElementById('tanggalHarian').value;
+            if (!ekskul || !tanggal) return;
+
+            tampilkanNotif("🔄 Memuat data...", "info");
+            await muatDataDasar();
+
+            try {
+                const res = await fetch(SCRIPT_URL + `?mode=getpresensi&ekskul=${ekskul}&tanggal=${tanggal}&t=${Date.now()}`, { cache: 'no-store' });
+                dataPresensi = await res.json() || [];
+                tampilkanLaporanHarian(ekskul, tanggal);
+            } catch {
+                tampilkanNotif("❌ Gagal memuat kehadiran", "gagal");
+            }
+        }
+
+        function tampilkanLaporanHarian(namaEkskul, tanggal) {
+            const tglFormat = formatTanggal(tanggal);
+            let daftar = [];
+            let nomor = 1;
+
+            for (let i = 1; i < dataMurid.length; i++) {
+                const d = dataMurid[i];
+                const ek1 = (d[5] || "").trim().toLowerCase();
+                const ek2 = (d[7] || "").trim().toLowerCase();
+                if (ek1 === namaEkskul.toLowerCase() || ek2 === namaEkskul.toLowerCase()) {
+                    const data = dataPresensi.find(p => p[1] === d[1]) || { 5: "Hadir" };
+                    daftar.push({ no: nomor++, nis: d[1], nama: d[2], kelas: d[4], status: data[5] });
+                }
+            }
+
+            let html = `
+                <div class="info-kegiatan">
+                    <p><span class="label">Nama Ekstrakurikuler</span>: ${namaEkskul}</p>
+                    <p><span class="label">Tanggal Kegiatan</span>: ${tglFormat}</p>
+                    <p><span class="label">Waktu Pelaksanaan</span>: 15.30 - 17.00 WIB</p>
+                    <p><span class="label">Tempat</span>: Lapangan SMPN 110 Jakarta</p>
+                </div>
+
+                <h3>DAFTAR KEHADIRAN PESERTA</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>No</th><th>NIS</th><th>Nama Murid</th><th>Kelas</th><th>Keterangan</th></tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            if (daftar.length > 0) {
+                daftar.forEach(s => {
+                    html += `
+                        <tr>
+                            <td>${s.no}</td>
+                            <td>${s.nis || '-'}</td>
+                            <td class="text-left">${s.nama || '-'}</td>
+                            <td>${s.kelas || '-'}</td>
+                            <td>
+                                <div class="status-pilihan">
+                                    <button class="status-btn btn-hadir ${s.status==='Hadir'?'aktif':''}" onclick="ubahStatus('${s.nis}','Hadir')">Hadir</button>
+                                    <button class="status-btn btn-sakit ${s.status==='Sakit'?'aktif':''}" onclick="ubahStatus('${s.nis}','Sakit')">Sakit</button>
+                                    <button class="status-btn btn-izin ${s.status==='Izin'?'aktif':''}" onclick="ubahStatus('${s.nis}','Izin')">Izin</button>
+                                    <button class="status-btn btn-alfa ${s.status==='Alfa'?'aktif':''}" onclick="ubahStatus('${s.nis}','Alfa')">Alfa</button>
+                                </div>
+                                <span class="keterangan-teks" id="keterangan_${s.nis}">${s.status}</span>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `<tr><td colspan="5" class="pesan-kosong">Belum ada siswa terdaftar</td></tr>`;
+            }
+
+            html += `</tbody></table></div>
+
+            <div class="uraian">
+                <h3>URAIAN KEGIATAN</h3>
+                <textarea placeholder="Jelaskan materi, latihan, atau hal-hal yang dilakukan selama kegiatan hari ini..."></textarea>
+            </div>
+
+            <!-- Bagian Tanda Tangan -->
+            <div class="tanda-tangan">
+                <div class="tanggal">Jakarta, ${tglFormat}</div>
+                <p class="keterangan">Pelatih / Pembina Ekstrakurikuler,</p>
+                <div class="tempat-ttd"></div>
+                <p><b>...........................................</b></p>
+                <p>NIP. .......................................</p>
+            </div>
+            `;
+
+            document.getElementById('kontenHarian').innerHTML = html;
+            tampilkanNotif("✅ Data siap", "sukses");
+        }
+
+        async function ubahStatus(nis, status) {
+            const ekskul = document.getElementById('ekskulHarian').value;
+            const tanggal = document.getElementById('tanggalHarian').value;
+            const baris = document.querySelector(`tr:has(button[onclick*="'${nis}'"])`);
+            const nama = baris.querySelector('td:nth-child(3)').textContent;
+            const kelas = baris.querySelector('td:nth-child(4)').textContent;
+
+            const dataSimpan = [[tanggal, nis, nama, kelas, ekskul, status]];
+            try {
+                const form = new FormData();
+                form.append("mode", "simpanpresensi");
+                form.append("data", JSON.stringify(dataSimpan));
+                const res = await fetch(SCRIPT_URL, { method: "POST", body: form, redirect: "follow" });
+                const hasil = await res.text();
+                if (hasil === "SUKSES") {
+                    document.getElementById(`keterangan_${nis}`).textContent = status;
+                    muatLaporanHarian();
+                    tampilkanNotif("✅ Tersimpan", "sukses");
+                }
+            } catch {
+                tampilkanNotif("❌ Gagal menyimpan", "gagal");
+            }
+        }
+
+        async function muatRekap() {
+            const ekskul = document.getElementById('ekskulRekap').value;
+            const mulai = document.getElementById('tglMulai').value;
+            const akhir = document.getElementById('tglSelesai').value;
+            if (!ekskul || !mulai || !akhir) return;
+
+            tampilkanNotif("🔄 Memuat rekap...", "info");
+            await muatDataDasar();
+
+            try {
+                const res = await fetch(SCRIPT_URL + `?mode=getpresensi&ekskul=${ekskul}&tgl_mulai=${mulai}&tgl_selesai=${akhir}&t=${Date.now()}`, { cache: 'no-store' });
+                const data = await res.json() || [];
+                tampilkanRekap(ekskul, mulai, akhir, data);
+            } catch {
+                tampilkanNotif("❌ Gagal memuat rekap", "gagal");
+            }
+        }
+
+        function tampilkanRekap(ekskul, mulai, akhir, dataPresensi) {
+            let daftar = [];
+            let nomor = 1;
+
+            for (let i = 1; i < dataMurid.length; i++) {
+                const d = dataMurid[i];
+                const ek1 = (d[5] || "").trim().toLowerCase();
+                const ek2 = (d[7] || "").trim().toLowerCase();
+                if (ek1 === ekskul.toLowerCase() || ek2 === ekskul.toLowerCase()) {
+                    const kehadiran = dataPresensi.filter(p => p[1] === d[1]);
+                    const hadir = kehadiran.filter(p => p[5] === "Hadir").length;
+                    const sakit = kehadiran.filter(p => p[5] === "Sakit").length;
+                    const izin = kehadiran.filter(p => p[5] === "Izin").length;
+                    const alfa = kehadiran.filter(p => p[5] === "Alfa").length;
+
+                    daftar.push({
+                        no: nomor++, nis: d[1], nama: d[2], kelas: d[4],
+                        hadir, sakit, izin, alfa
+                    });
+                }
+            }
+
+            const tglMulai = formatTanggal(mulai);
+            const tglAkhir = formatTanggal(akhir);
+
+            let html = `
+                <div class="info-kegiatan">
+                    <p><span class="label">Ekstrakurikuler</span>: ${ekskul}</p>
+                    <p><span class="label">Periode</span>: ${tglMulai} s/d ${tglAkhir}</p>
+                </div>
+
+                <h3>REKAPITULASI KEHADIRAN</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>NIS</th>
+                                <th>Nama Lengkap</th>
+                                <th>Kelas</th>
+                                <th>Hadir</th>
+                                <th>Sakit</th>
+                                <th>Izin</th>
+                                <th>Alfa</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            if (daftar.length > 0) {
+                daftar.forEach(s => {
+                    const total = s.hadir + s.sakit + s.izin + s.alfa;
+                    html += `
+                        <tr>
+                            <td>${s.no}</td>
+                            <td>${s.nis || '-'}</td>
+                            <td class="text-left">${s.nama || '-'}</td>
+                            <td>${s.kelas || '-'}</td>
+                            <td>${s.hadir}</td>
+                            <td>${s.sakit}</td>
+                            <td>${s.izin}</td>
+                            <td>${s.alfa}</td>
+                            <td><b>${total}</b></td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `<tr><td colspan="9" class="pesan-kosong">Belum ada data kehadiran di periode ini</td></tr>`;
+            }
+
+            html += `</tbody></table></div>
+
+            <!-- Bagian Tanda Tangan Rekap -->
+            <div class="tanda-tangan">
+                <div class="tanggal">Jakarta, ${tglAkhir}</div>
+                <p class="keterangan">Pelatih / Pembina Ekstrakurikuler,</p>
+                <br><br><br>
+                <p><b>...........................................</b></p>
+                <p>NIP. .......................................</p>
+            </div>
+            `;
+
+            document.getElementById('kontenRekap').innerHTML = html;
+            tampilkanNotif("✅ Rekap berhasil dimuat", "sukses");
+        }
+
+        // Muat otomatis saat halaman dibuka
+        window.onload = async () => {
+            await muatDataDasar();
+        };
+    </script>
+</body>
+</html>
