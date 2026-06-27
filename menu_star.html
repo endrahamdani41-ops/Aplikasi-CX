@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <!-- Tag ini sangat penting agar tampilan sesuai di HP -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Menu Bintang - Simpan ke Google Sheet</title>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -38,6 +37,10 @@
             --btn-remove-hover: linear-gradient(135deg, #dc2626, #b91c1c);
             --header-bg: linear-gradient(135deg, #6366f1, #4f46e5);
             --text-muted: #64748b;
+
+            /* Ukuran dasar */
+            --radius: 190px;
+            --jarak-keluar: 95px;
         }
         body.dark-mode {
             --body-bg: #121212;
@@ -236,7 +239,7 @@
             cursor: pointer;
             transition: background 0.2s;
             margin-bottom: 14px;
-            min-height: 44px; /* Ukuran tombol standar HP */
+            min-height: 44px;
         }
         .btn-add {
             background: var(--btn-add);
@@ -364,7 +367,7 @@
             background-position: center;
             background-repeat: no-repeat;
             cursor: pointer;
-            z-index: 1;
+            z-index: 20; /* ⚠️ Lebih tinggi agar pasti diklik */
             transition: background-image 0.5s ease, box-shadow 0.5s ease;
             --glow-color: var(--glow-default);
             --glow-rgb: var(--glow-rgb-default);
@@ -374,6 +377,7 @@
                 0 0 20px var(--glow-color),
                 0 0 35px rgba(var(--glow-rgb), 0.5);
             animation: glow-pulse 3s ease-in-out infinite;
+            pointer-events: auto;
         }
 
         @keyframes glow-pulse {
@@ -406,7 +410,7 @@
             background-size: 30px 30px;
             background-position: 0 0;
             animation: shine-move 6s linear infinite;
-            z-index: 3;
+            z-index: 21;
             pointer-events: none;
         }
 
@@ -420,8 +424,6 @@
         }
 
         .icons-wrapper {
-            --radius: 190px;
-            --jarak-keluar: 90px;
             position: absolute;
             bottom: 0;
             left: 50%;
@@ -430,7 +432,7 @@
             max-width: 96%;
             height: 190px;
             transform-origin: center bottom;
-            z-index: 5;
+            z-index: 10; /* ⚠️ Lebih rendah dari lingkaran */
             pointer-events: none;
             overflow: visible;
             transform-style: preserve-3d;
@@ -466,10 +468,22 @@
                 0 6px 12px rgba(0,0,0,0.6),
                 0 10px 20px rgba(0,0,0,0.35),
                 0 16px 28px rgba(0,0,0,0.2);
-            animation: float 3s ease-in-out infinite, star-glow 2.5s ease-in-out infinite;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* ⚠️ Animasi luncur halus */
             pointer-events: auto;
-            z-index: 6;
-            transition: all 0.4s ease;
+            z-index: 15;
+        }
+
+        /* ⚠️ Posisi saat BUKA */
+        .menu-open .menu-icon {
+            transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius)));
+            opacity: 1;
+        }
+
+        /* ⚠️ Posisi saat TUTUP / MASUK */
+        .menu-closed .menu-icon {
+            transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - var(--jarak-keluar))) scale(0.6);
+            opacity: 0;
+            pointer-events: none;
         }
 
         @keyframes star-glow {
@@ -487,6 +501,10 @@
             }
         }
 
+        .menu-open .menu-icon {
+            animation: float 3s ease-in-out infinite, star-glow 2.5s ease-in-out infinite;
+        }
+
         @keyframes float {
             0% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0) translateY(0); }
             50% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(8px) translateY(-6px); }
@@ -498,21 +516,6 @@
             30%  { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - 45px)) translateZ(20px) translateY(-12px) scale(1.12); }
             60%  { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - 22px)) translateZ(10px) translateY(-6px) scale(1.06); }
             100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0) scale(1); }
-        }
-
-        .menu-icon:nth-child(1) { --rotasi: -72deg; --puncak: #ff8888; --tengah: #e74c3c; --dasar: #922b21; --cahaya: #ff6b6b; --rgb-cahaya: 255, 107, 107; }
-        .menu-icon:nth-child(2) { --rotasi: -48deg; --puncak: #ffd080; --tengah: #e67e22; --dasar: #944900; --cahaya: #ffb347; --rgb-cahaya: 255, 179, 71; }
-        .menu-icon:nth-child(3) { --rotasi: -24deg; --puncak: #fff990; --tengah: #f1c40f; --dasar: #9c7d00; --cahaya: #fff350; --rgb-cahaya: 255, 243, 80; }
-        .menu-icon:nth-child(4) { --rotasi: 0deg;   --puncak: #90f5c5; --tengah: #2ecc71; --dasar: #1a7a44; --cahaya: #69f0ae; --rgb-cahaya: 105, 240, 174; }
-        .menu-icon:nth-child(5) { --rotasi: 24deg;  --puncak: #a3c8ff; --tengah: #3498db; --dasar: #1c5b8a; --cahaya: #82b1ff; --rgb-cahaya: 130, 177, 255; }
-        .menu-icon:nth-child(6) { --rotasi: 48deg;  --puncak: #f0b0ff; --tengah: #9b59b6; --dasar: #5f2c72; --cahaya: #ea80fc; --rgb-cahaya: 234, 128, 252; }
-        .menu-icon:nth-child(7) { --rotasi: 72deg;  --puncak: #ffb0cc; --tengah: #e91e63; --dasar: #880e3c; --cahaya: #ff80ab; --rgb-cahaya: 255, 128, 171; }
-
-        .menu-closed .menu-icon {
-            animation: none;
-            transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - var(--jarak-keluar))) scale(0.6);
-            opacity: 0;
-            pointer-events: none;
         }
 
         .menu-icon:hover:not(.flying) {
@@ -540,22 +543,46 @@
             opacity: 0;
             visibility: hidden;
             transition: 0.2s;
-            z-index: 15;
+            z-index: 25;
         }
-        .menu-icon:hover::after {
+        .menu-open .menu-icon:hover::after {
             opacity: 1;
             visibility: visible;
         }
 
-        /* Khusus layar sangat kecil (di bawah 360px) */
+        /* Khusus layar sangat kecil */
         @media (max-width: 359px) {
+            :root {
+                --radius: 160px;
+                --jarak-keluar: 75px;
+            }
             .menu-container { height: 200px; }
             .tunnel { width: 320px; height: 160px; border-radius: 160px 160px 0 0; }
-            .icons-wrapper { --radius: 160px; width: 320px; height: 160px; --jarak-keluar: 75px; }
+            .icons-wrapper { width: 320px; height: 160px; }
             .menu-icon { width: 52px; height: 52px; margin-left: -26px; margin-bottom: -26px; font-size: 18px; }
             .menu-icon::after { bottom: 65px; font-size: 11px; }
             .panel-body { padding: 14px; }
         }
+
+        /* Khusus layar besar */
+        @media (min-width: 481px) {
+            :root {
+                --radius: 240px;
+                --jarak-keluar: 110px;
+            }
+            .menu-container { max-width: 500px; height: 260px; }
+            .tunnel { width: 480px; height: 240px; border-radius: 240px 240px 0 0; }
+            .icons-wrapper { width: 480px; height: 240px; }
+            .menu-icon { width: 68px; height: 68px; margin-left: -34px; margin-bottom: -34px; font-size: 24px; }
+        }
+
+        .menu-icon:nth-child(1) { --rotasi: -72deg; --puncak: #ff8888; --tengah: #e74c3c; --dasar: #922b21; --cahaya: #ff6b6b; --rgb-cahaya: 255, 107, 107; }
+        .menu-icon:nth-child(2) { --rotasi: -48deg; --puncak: #ffd080; --tengah: #e67e22; --dasar: #944900; --cahaya: #ffb347; --rgb-cahaya: 255, 179, 71; }
+        .menu-icon:nth-child(3) { --rotasi: -24deg; --puncak: #fff990; --tengah: #f1c40f; --dasar: #9c7d00; --cahaya: #fff350; --rgb-cahaya: 255, 243, 80; }
+        .menu-icon:nth-child(4) { --rotasi: 0deg;   --puncak: #90f5c5; --tengah: #2ecc71; --dasar: #1a7a44; --cahaya: #69f0ae; --rgb-cahaya: 105, 240, 174; }
+        .menu-icon:nth-child(5) { --rotasi: 24deg;  --puncak: #a3c8ff; --tengah: #3498db; --dasar: #1c5b8a; --cahaya: #82b1ff; --rgb-cahaya: 130, 177, 255; }
+        .menu-icon:nth-child(6) { --rotasi: 48deg;  --puncak: #f0b0ff; --tengah: #9b59b6; --dasar: #5f2c72; --cahaya: #ea80fc; --rgb-cahaya: 234, 128, 252; }
+        .menu-icon:nth-child(7) { --rotasi: 72deg;  --puncak: #ffb0cc; --tengah: #e91e63; --dasar: #880e3c; --cahaya: #ff80ab; --rgb-cahaya: 255, 128, 171; }
     </style>
 </head>
 <body>
@@ -572,7 +599,6 @@
             <button class="close-panel" id="closePanel">&times;</button>
         </div>
         <div class="panel-body">
-            <!-- Bagian Pengaturan Latar -->
             <div class="bagian-pengaturan">
                 <h4>🖼️ Gambar di Latar Belakang</h4>
                 <input type="text" id="urlLatarHalaman" placeholder="URL Gambar Latar Halaman">
@@ -581,12 +607,12 @@
                 <button class="btn-simpan-latar" onclick="simpanLatar()">💾 Simpan Latar Belakang</button>
             </div>
 
-            <!-- Bagian Pengaturan Menu -->
             <div class="bagian-pengaturan">
                 <h4>⭐ Kelola Menu</h4>
-                <input type="text" id="namaMenu" placeholder="contoh: Agenda Guru">
-                <input type="text" id="linkMenu" placeholder="contoh: https://agenda.html">
-                <input type="text" id="kodeIkon" placeholder="contoh: fa-home">
+                <input type="text" id="namaMenu" placeholder="Nama Menu (contoh: Agenda Guru)">
+                <input type="text" id="linkMenu" placeholder="Tautan / Link (contoh: agenda.html)">
+                <input type="text" id="kodeIkon" placeholder="Kode Ikon (contoh: fa-home)">
+                <div class="info-bantuan">* Contoh: fa-home, fa-whatsapp, fa-youtube | Kosong = ikon tanya</div>
                 
                 <button class="btn-add" id="tombolTambah" onclick="tambahMenu()">➕ Tambah Menu Baru</button>
                 <button class="btn-save-edit" id="tombolSimpanEdit" onclick="simpanEdit()">💾 Simpan Perubahan</button>
@@ -609,9 +635,6 @@
     </div>
 
     <script>
-        // --------------------------
-        // ✅ GANTI DENGAN URL SKRIPMU
-        // --------------------------
         const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxoAnsGhGePFddL3pz2eKhKrVc3AHEYh2UrBaue1NcXZjlDOE0Jp42HRx3TUNqkFAbv/exec";
 
         const menuContainer = document.getElementById('mainMenu');
@@ -636,7 +659,6 @@
             {puncak: '#ffb0cc', tengah: '#e91e63', dasar: '#880e3c', cahaya: '#ff80ab', rgb: '255, 128, 171'}
         ];
 
-        // Simpan SEMUA data ke Google Sheet
         async function simpanKeSheet() {
             statusInfo.textContent = "Menyimpan...";
             const semuaMenu = [];
@@ -671,7 +693,6 @@
             }
         }
 
-        // Ambil SEMUA data dari Google Sheet
         async function ambilDariSheet() {
             statusInfo.textContent = "Memuat data...";
             try {
@@ -756,7 +777,6 @@
                 bintang.style.setProperty('--dasar', warna.dasar);
                 bintang.style.setProperty('--cahaya', warna.cahaya);
                 bintang.style.setProperty('--rgb-cahaya', warna.rgb);
-                bintang.style.transform = `rotate(${sudut}deg) translateY(calc(-1 * var(--radius)))`;
             });
 
             pasangEventKlikBintang();
@@ -905,10 +925,10 @@
             indexEdit = null;
         }
 
-        toggleArea.addEventListener('click', () => {
+        // ✅ Event klik utama
+        toggleArea.addEventListener('click', function() {
             document.querySelectorAll('.menu-icon').forEach(i => {
                 i.classList.remove('flying');
-                i.style.animation = '';
             });
             menuContainer.classList.toggle('menu-open');
             menuContainer.classList.toggle('menu-closed');
