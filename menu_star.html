@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Bintang 3D - Tampilan Elegan</title>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        /* === Tema Terang & Gelap === */
+        :root {
+            --body-bg: #ffffff;
+            --text-color: #222222;
+            --toggle-btn-bg: #2c3e50;
+            --toggle-btn-hover: #1a252f;
+            --tooltip-bg: rgba(0,0,0,0.85);
+            --tooltip-color: #ffffff;
+            --glow-default: #4fc3f7;
+            --glow-rgb-default: 79, 195, 247;
+            --panel-bg: #ffffff;
+            --panel-border: #e2e8f0;
+            --panel-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            --input-bg: #f8fafc;
+            --input-border: #e2e8f0;
+            --btn-add: linear-gradient(135deg, #10b981, #059669);
+            --btn-add-hover: linear-gradient(135deg, #059669, #047857);
+            --btn-remove: linear-gradient(135deg, #ef4444, #dc2626);
+            --btn-remove-hover: linear-gradient(135deg, #dc2626, #b91c1c);
+            --header-bg: linear-gradient(135deg, #6366f1, #4f46e5);
+            --text-muted: #64748b;
+        }
+        body.dark-mode {
+            --body-bg: #121212;
+            --text-color: #f0f0f0;
+            --toggle-btn-bg: #444444;
+            --toggle-btn-hover: #555555;
+            --glow-default: #81d4fa;
+            --glow-rgb-default: 129, 212, 250;
+            --panel-bg: #1e1e2f;
+            --panel-border: #333344;
+            --panel-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            --input-bg: #2a2a3f;
+            --input-border: #444455;
+            --text-muted: #a0aec0;
+        }
+
+        /* Latar Belakang */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
+            background-image: url("https://png.pngtree.com/thumb_back/fw800/background/20251102/pngtree-astronaut-floating-amidst-starry-expanse-with-dark-blue-and-orange-hues-image_20203003.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 20px;
+            perspective: 1200px;
+        }
+
+        /* === TOMBOL MODE GELAP/TERANG DI SUDUT KANAN ATAS === */
+        .mode-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--toggle-btn-bg);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 16px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 999;
+            transition: background 0.2s ease;
+        }
+        .mode-switch:hover {
+            background: var(--toggle-btn-hover);
+        }
+
+        /* === Panel Pengaturan === */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(5px);
+            z-index: 190;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            width: 360px;
+            box-shadow: var(--panel-shadow);
+            z-index: 200;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .settings-panel.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Header Panel */
+        .panel-header {
+            background: var(--header-bg);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .panel-header h3 {
+            font-size: 19px;
+            font-weight: 600;
+            margin: 0;
+        }
+        .close-panel {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .close-panel:hover {
+            background: rgba(255,255,255,0.35);
+        }
+
+        /* Isi Panel */
+        .panel-body {
+            padding: 20px;
+        }
+        .settings-panel input,
+        .settings-panel select {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 15px;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .settings-panel input:focus,
+        .settings-panel select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 11px;
+            border: none;
+            border-radius: 10px;
+            background: var(--btn-add);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 16px;
+            box-shadow: 0 3px 8px rgba(16, 185, 129, 0.25);
+        }
+        .btn-add:hover {
+            background: var(--btn-add-hover);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+        }
+
+        /* Daftar Menu */
+        .list-menu {
+            border-top: 1px solid var(--panel-border);
+            padding-top: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+        .list-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+        .list-menu::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .menu-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: rgba(0,0,0,0.04);
+            border-radius: 8px;
+            font-size: 14.5px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        body.dark-mode .menu-item-row {
+            background: rgba(255,255,255,0.06);
+        }
+        .menu-item-row:hover {
+            background: rgba(0,0,0,0.07);
+        }
+        body.dark-mode .menu-item-row:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .remove-btn-small {
+            background: var(--btn-remove);
+            border: none;
+            border-radius: 6px;
+            width: 28px;
+            height: 28px;
+            font-size: 15px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            box-shadow: 0 2px 5px rgba(239, 68, 68, 0.25);
+        }
+        .remove-btn-small:hover {
+            background: var(--btn-remove-hover);
+            box-shadow: 0 3px 8px rgba(239, 68, 68, 0.35);
+        }
+
+        /* Kontainer Utama */
+        .menu-container {
+            position: relative;
+            width: 420px;
+            height: 220px;
+            margin-bottom: 40px;
+            transform-style: preserve-3d;
+        }
+
+        /* Latar dalam Setengah Lingkaran */
+        .tunnel {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 200px;
+            border-radius: 200px 200px 0 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOBZqaDNn1r3k3EgIJaNRvUmzx4Ma7EjrRMw&s");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            z-index: 1;
+            transition: box-shadow 0.5s ease;
+            --glow-color: var(--glow-default);
+            --glow-rgb: var(--glow-rgb-default);
+            box-shadow: 
+                inset 0 0 0 2px rgba(255,255,255,0.4),
+                0 0 10px var(--glow-color),
+                0 0 20px var(--glow-color),
+                0 0 35px rgba(var(--glow-rgb), 0.5);
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% {
+                box-shadow: 
+                    inset 0 0 0 2px rgba(255,255,255,0.4),
+                    0 0 10px var(--glow-color),
+                    0 0 20px var(--glow-color),
+                    0 0 35px rgba(var(--glow-rgb), 0.5);
+            }
+            50% {
+                box-shadow: 
+                    inset 0 0 0 2px rgba(255,255,255,0.6),
+                    0 0 15px var(--glow-color),
+                    0 0 30px var(--glow-color),
+                    0 0 50px rgba(var(--glow-rgb), 0.7);
+            }
+        }
+
+        /* Kilau Berjalan */
+        .shine-path {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            mask: radial-gradient(circle at bottom center, transparent 86%, black 86%);
+            -webkit-mask: radial-gradient(circle at bottom center, transparent 86%, black 86%);
+            background: radial-gradient(circle, #ffffff 0%, rgba(255,255,255,0.9) 30%, transparent 70%);
+            background-size: 30px 30px;
+            background-position: 0 0;
+            animation: shine-move 6s linear infinite;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        @keyframes shine-move {
+            0%    { background-position: 2% 3%; }
+            20%   { background-position: 20% 1%; }
+            40%   { background-position: 40% 0%; }
+            60%   { background-position: 60% 0%; }
+            80%   { background-position: 80% 1%; }
+            100%  { background-position: 98% 3%; }
+        }
+
+        /* Wadah Ikon */
+        .icons-wrapper {
+            --radius: 200px;
+            --jarak-keluar: 90px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 200px;
+            transform-origin: center bottom;
+            z-index: 5;
+            pointer-events: none;
+            overflow: visible;
+            transform-style: preserve-3d;
+        }
+
+        /* === ✅ BINTANG 3D === */
+        .menu-icon {
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 56px;
+            height: 56px;
+            margin-left: -28px;
+            margin-bottom: -28px;
+            clip-path: polygon(
+                50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+                50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #ffffff;
+            text-decoration: none;
+            transform-origin: center center;
+            transform-style: preserve-3d;
+            background: linear-gradient(135deg, var(--puncak) 0%, var(--tengah) 45%, var(--dasar) 100%);
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 
+                inset 3px 3px 2px rgba(255,255,255,0.9),
+                inset 1px 1px 0 rgba(255,255,255,0.6),
+                inset -3px -3px 3px rgba(0,0,0,0.5),
+                inset -1px -1px 0 rgba(0,0,0,0.3),
+                0 6px 10px rgba(0,0,0,0.6),
+                0 12px 20px rgba(0,0,0,0.35),
+                0 20px 30px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite, star-glow 2.5s ease-in-out infinite;
+            pointer-events: auto;
+            z-index: 6;
+            transition: all 0.4s ease;
+        }
+
+        @keyframes star-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 4px #fff) 
+                        drop-shadow(0 0 9px var(--cahaya)) 
+                        drop-shadow(0 0 18px var(--cahaya)) 
+                        drop-shadow(0 0 30px rgba(var(--rgb-cahaya), 0.7));
+            }
+            50% {
+                filter: drop-shadow(0 0 6px #fff) 
+                        drop-shadow(0 0 14px var(--cahaya)) 
+                        drop-shadow(0 0 26px var(--cahaya)) 
+                        drop-shadow(0 0 40px rgba(var(--rgb-cahaya), 0.9));
+            }
+        }
+
+        @keyframes float {
+            0% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0) translateY(0); }
+            50% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(8px) translateY(-6px); }
+            100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0) translateY(0); }
+        }
+
+        @keyframes star-fly {
+            0%   { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0); }
+            30%  { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - 45px)) translateZ(20px) translateY(-12px) scale(1.15); }
+            60%  { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - 22px)) translateZ(10px) translateY(-6px) scale(1.08); }
+            100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0) scale(1); }
+        }
+
+        /* Warna bawaan */
+        .menu-icon:nth-child(1) { --rotasi: -72deg; --puncak: #ff8888; --tengah: #e74c3c; --dasar: #922b21; --cahaya: #ff6b6b; --rgb-cahaya: 255, 107, 107; }
+        .menu-icon:nth-child(2) { --rotasi: -48deg; --puncak: #ffd080; --tengah: #e67e22; --dasar: #944900; --cahaya: #ffb347; --rgb-cahaya: 255, 179, 71; }
+        .menu-icon:nth-child(3) { --rotasi: -24deg; --puncak: #fff990; --tengah: #f1c40f; --dasar: #9c7d00; --cahaya: #fff350; --rgb-cahaya: 255, 243, 80; }
+        .menu-icon:nth-child(4) { --rotasi: 0deg;   --puncak: #90f5c5; --tengah: #2ecc71; --dasar: #1a7a44; --cahaya: #69f0ae; --rgb-cahaya: 105, 240, 174; }
+        .menu-icon:nth-child(5) { --rotasi: 24deg;  --puncak: #a3c8ff; --tengah: #3498db; --dasar: #1c5b8a; --cahaya: #82b1ff; --rgb-cahaya: 130, 177, 255; }
+        .menu-icon:nth-child(6) { --rotasi: 48deg;  --puncak: #f0b0ff; --tengah: #9b59b6; --dasar: #5f2c72; --cahaya: #ea80fc; --rgb-cahaya: 234, 128, 252; }
+        .menu-icon:nth-child(7) { --rotasi: 72deg;  --puncak: #ffb0cc; --tengah: #e91e63; --dasar: #880e3c; --cahaya: #ff80ab; --rgb-cahaya: 255, 128, 171; }
+
+        .menu-closed .menu-icon {
+            animation: none;
+            transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - var(--jarak-keluar))) scale(0.6);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .menu-icon:hover:not(.flying) {
+            animation: none;
+            transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(12px) scale(1.2);
+            filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 18px var(--cahaya)) drop-shadow(0 0 32px var(--cahaya)) drop-shadow(0 0 50px rgba(var(--rgb-cahaya), 1));
+        }
+
+        .menu-icon.flying {
+            animation: star-fly 0.8s ease-out forwards;
+        }
+
+        .menu-icon::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--tooltip-bg);
+            color: var(--tooltip-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+            z-index: 15;
+        }
+        .menu-icon:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsif HP */
+        @media (max-width: 480px) {
+            .menu-container { width: 340px; height: 190px; }
+            .tunnel { width: 320px; height: 160px; border-radius: 160px 160px 0 0; }
+            .icons-wrapper { --radius: 160px; width: 320px; height: 160px; }
+            .menu-icon { width: 50px; height: 50px; margin-left: -25px; margin-bottom: -25px; font-size: 17px; }
+            .settings-panel { width: 92%; }
+            .mode-switch {
+                top: 12px;
+                right: 12px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tombol Mode Gelap/Terang di Sudut Kanan Atas -->
+    <button class="mode-switch" id="darkModeBtn">
+        <i class="fa fa-moon-o"></i> Mode Gelap
+    </button>
+
+    <!-- Latar Belakang Gelap saat Panel Aktif -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Panel Pengaturan -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="panel-header">
+            <h3>Kelola Menu</h3>
+            <button class="close-panel" id="closePanel">&times;</button>
+        </div>
+        <div class="panel-body">
+            <input type="text" id="namaMenu" placeholder="Nama Menu (contoh: Agenda Guru)">
+            <input type="text" id="linkMenu" placeholder="Tautan (contoh: halaman.html)">
+            <select id="pilihIkon">
+                <option value="fa-home">🏠 Rumah</option>
+                <option value="fa-user">👤 Pengguna</option>
+                <option value="fa-shopping-bag">🛍️ Belanja</option>
+                <option value="fa-image">🖼️ Galeri</option>
+                <option value="fa-file-text">📄 Artikel</option>
+                <option value="fa-phone">📞 Kontak</option>
+                <option value="fa-book">📖 Buku</option>
+                <option value="fa-calendar">📅 Kalender</option>
+                <option value="fa-graduation-cap">🎓 Sekolah</option>
+                <option value="fa-info-circle">ℹ️ Info</option>
+            </select>
+            <button class="btn-add" onclick="tambahMenu()">➕ Tambah Menu Baru</button>
+            <div class="list-menu" id="daftarMenu"></div>
+        </div>
+    </div>
+
+    <div class="menu-container menu-open" id="mainMenu">
+        <div class="tunnel" id="toggleArea">
+            <div class="shine-path"></div>
+        </div>
+
+        <div class="icons-wrapper" id="iconsWrapper">
+            <!-- Menu awal termasuk ikon Pengaturan -->
+            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Pengaturan" id="settingsIcon">
+                <i class="fa fa-cogs"></i>
+            </a>
+            <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" target="_blank" class="menu-icon" data-tooltip="Agenda Guru">
+                <i class="fa fa-home"></i>
+            </a>
+            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Profil">
+                <i class="fa fa-user"></i>
+            </a>
+            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Layanan">
+                <i class="fa fa-cogs"></i>
+            </a>
+            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Produk">
+                <i class="fa fa-shopping-bag"></i>
+            </a>
+            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Galeri">
+                <i class="fa fa-image"></i>
+            </a>
+            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Artikel">
+                <i class="fa fa-file-text"></i>
+            </a>
+            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Kontak">
+                <i class="fa fa-phone"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const menuContainer = document.getElementById('mainMenu');
+        const toggleArea = document.getElementById('toggleArea');
+        const iconsWrapper = document.getElementById('iconsWrapper');
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('overlay');
+        const closePanel = document.getElementById('closePanel');
+        const daftarMenuEl = document.getElementById('daftarMenu');
+        const settingsIcon = document.getElementById('settingsIcon');
+
+        // Warna untuk bintang baru
+        const warnaBintang = [
+            {puncak: '#ff8888', tengah: '#e74c3c', dasar: '#922b21', cahaya: '#ff6b6b', rgb: '255, 107, 107'},
+            {puncak: '#ffd080', tengah: '#e67e22', dasar: '#944900', cahaya: '#ffb347', rgb: '255, 179, 71'},
+            {puncak: '#fff990', tengah: '#f1c40f', dasar: '#9c7d00', cahaya: '#fff350', rgb: '255, 243, 80'},
+            {puncak: '#90f5c5', tengah: '#2ecc71', dasar: '#1a7a44', cahaya: '#69f0ae', rgb: '105, 240, 174'},
+            {puncak: '#a3c8ff', tengah: '#3498db', dasar: '#1c5b8a', cahaya: '#82b1ff', rgb: '130, 177, 255'},
+            {puncak: '#f0b0ff', tengah: '#9b59b6', dasar: '#5f2c72', cahaya: '#ea80fc', rgb: '234, 128, 252'},
+            {puncak: '#ffb0cc', tengah: '#e91e63', dasar: '#880e3c', cahaya: '#ff80ab', rgb: '255, 128, 171'}
+        ];
+
+        // Buka panel pengaturan
+        function bukaPengaturan(e) {
+            e.preventDefault();
+            settingsPanel.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        // Tutup panel pengaturan
+        function tutupPengaturan() {
+            settingsPanel.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // Pasang event klik pada ikon pengaturan
+        settingsIcon.addEventListener('click', bukaPengaturan);
+        closePanel.addEventListener('click', tutupPengaturan);
+        overlay.addEventListener('click', tutupPengaturan);
+
+        // Fungsi perbarui posisi dan rotasi semua bintang
+        function perbaruiPosisiBintang() {
+            const semuaBintang = document.querySelectorAll('.menu-icon');
+            const jumlah = semuaBintang.length;
+            if (jumlah === 0) return;
+
+            const sudutPerBintang = 144 / (jumlah - 1);
+            const sudutAwal = -72;
+
+            semuaBintang.forEach((bintang, indeks) => {
+                const sudut = sudutAwal + (indeks * sudutPerBintang);
+                const warna = warnaBintang[indeks % warnaBintang.length];
+
+                bintang.style.setProperty('--rotasi', `${sudut}deg`);
+                bintang.style.setProperty('--puncak', warna.puncak);
+                bintang.style.setProperty('--tengah', warna.tengah);
+                bintang.style.setProperty('--dasar', warna.dasar);
+                bintang.style.setProperty('--cahaya', warna.cahaya);
+                bintang.style.setProperty('--rgb-cahaya', warna.rgb);
+                bintang.style.transform = `rotate(${sudut}deg) translateY(calc(-1 * var(--radius)))`;
+            });
+
+            pasangEventKlikBintang();
+            tampilkanDaftarMenu();
+        }
+
+        // Pasang event klik pada setiap bintang
+        function pasangEventKlikBintang() {
+            document.querySelectorAll('.menu-icon').forEach(icon => {
+                icon.removeEventListener('click', klikBintang);
+                icon.removeEventListener('click', bukaPengaturan);
+                if (icon.dataset.tooltip === "Pengaturan") {
+                    icon.addEventListener('click', bukaPengaturan);
+                } else {
+                    icon.addEventListener('click', klikBintang);
+                }
+            });
+        }
+
+        function klikBintang(e) {
+            e.preventDefault();
+            const link = this.getAttribute('href');
+            const isExternal = link && link.startsWith('http');
+
+            if (!menuContainer.classList.contains('menu-open') || this.classList.contains('flying')) return;
+
+            const glowColor = getComputedStyle(this).getPropertyValue('--cahaya').trim();
+            const glowRgb = getComputedStyle(this).getPropertyValue('--rgb-cahaya').trim();
+            toggleArea.style.setProperty('--glow-color', glowColor);
+            toggleArea.style.setProperty('--glow-rgb', glowRgb);
+
+            this.classList.add('flying');
+            setTimeout(() => {
+                this.classList.remove('flying');
+                setTimeout(() => {
+                    toggleArea.style.setProperty('--glow-color', 'var(--glow-default)');
+                    toggleArea.style.setProperty('--glow-rgb', 'var(--glow-rgb-default)');
+                    if (isExternal && link !== 'javascript:void(0)') window.open(link, '_blank');
+                }, 800);
+            }, 800);
+        }
+
+        // Tambah menu baru
+        function tambahMenu() {
+            const nama = document.getElementById('namaMenu').value.trim();
+            const link = document.getElementById('linkMenu').value.trim() || 'javascript:void(0)';
+            const ikon = document.getElementById('pilihIkon').value;
+
+            if (!nama) {
+                alert('Silakan isi nama menu terlebih dahulu!');
+                return;
+            }
+
+            const bintangBaru = document.createElement('a');
+            bintangBaru.className = 'menu-icon';
+            bintangBaru.href = link;
+            bintangBaru.dataset.tooltip = nama;
+            bintangBaru.innerHTML = `<i class="fa ${ikon}"></i>`;
+
+            iconsWrapper.appendChild(bintangBaru);
+            perbaruiPosisiBintang();
+
+            // Kosongkan input
+            document.getElementById('namaMenu').value = '';
+            document.getElementById('linkMenu').value = '';
+        }
+
+        // Hapus menu
+        function hapusMenu(elemen) {
+            if (elemen.dataset.tooltip === "Pengaturan") {
+                alert("Ikon Pengaturan tidak bisa dihapus!");
+                return;
+            }
+            elemen.remove();
+            perbaruiPosisiBintang();
+        }
+
+        // Tampilkan daftar menu di panel
+        function tampilkanDaftarMenu() {
+            daftarMenuEl.innerHTML = '';
+            document.querySelectorAll('.menu-icon').forEach((item, idx) => {
+                const nama = item.dataset.tooltip;
+                const baris = document.createElement('div');
+                baris.className = 'menu-item-row';
+                baris.innerHTML = `
+                    <span>${idx+1}. ${nama}</span>
+                    ${nama !== "Pengaturan" ? `<button class="remove-btn-small">&times;</button>` : ''}
+                `;
+                if (nama !== "Pengaturan") {
+                    baris.querySelector('.remove-btn-small').addEventListener('click', () => hapusMenu(item));
+                }
+                daftarMenuEl.appendChild(baris);
+            });
+        }
+
+        // Event buka/tutup menu
+        toggleArea.addEventListener('click', () => {
+            document.querySelectorAll('.menu-icon').forEach(i => {
+                i.classList.remove('flying');
+                i.style.animation = '';
+            });
+            menuContainer.classList.toggle('menu-open');
+            menuContainer.classList.toggle('menu-closed');
+            toggleArea.style.setProperty('--glow-color', 'var(--glow-default)');
+            toggleArea.style.setProperty('--glow-rgb', 'var(--glow-rgb-default)');
+        });
+
+        // Mode terang/gelap
+        darkModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            darkModeBtn.innerHTML = document.body.classList.contains('dark-mode')
+                ? '<i class="fa fa-sun-o"></i> Mode Terang'
+                : '<i class="fa fa-moon-o"></i> Mode Gelap';
+        });
+
+        // Inisialisasi awal
+        window.addEventListener('load', () => {
+            perbaruiPosisiBintang();
+        });
+    </script>
+</body>
+</html>
