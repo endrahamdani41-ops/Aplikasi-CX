@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Bintang 3D - Tampilan Elegan</title>
+    <title>Menu Bintang - Simpan ke Google Sheet</title>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
         * {
@@ -13,7 +13,6 @@
             font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
 
-        /* === Tema Terang & Gelap === */
         :root {
             --body-bg: #ffffff;
             --text-color: #222222;
@@ -30,6 +29,10 @@
             --input-border: #e2e8f0;
             --btn-add: linear-gradient(135deg, #10b981, #059669);
             --btn-add-hover: linear-gradient(135deg, #059669, #047857);
+            --btn-edit: linear-gradient(135deg, #f59e0b, #d97706);
+            --btn-edit-hover: linear-gradient(135deg, #d97706, #b45309);
+            --btn-save: linear-gradient(135deg, #3b82f6, #2563eb);
+            --btn-save-hover: linear-gradient(135deg, #2563eb, #1d4ed8);
             --btn-remove: linear-gradient(135deg, #ef4444, #dc2626);
             --btn-remove-hover: linear-gradient(135deg, #dc2626, #b91c1c);
             --header-bg: linear-gradient(135deg, #6366f1, #4f46e5);
@@ -50,11 +53,10 @@
             --text-muted: #a0aec0;
         }
 
-        /* Latar Belakang */
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
-            background-image: url("https://png.pngtree.com/thumb_back/fw800/background/20251102/pngtree-astronaut-floating-amidst-starry-expanse-with-dark-blue-and-orange-hues-image_20203003.webp");
+            background-image: var(--bg-halaman, url("https://images.unsplash.com/photo-1446776811953-b23d57d211a1?auto=format&fit=crop&w=1920&q=80"));
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -66,9 +68,9 @@
             overflow-y: auto;
             padding: 20px;
             perspective: 1200px;
+            transition: background-image 0.5s ease;
         }
 
-        /* === TOMBOL MODE GELAP/TERANG DI SUDUT KANAN ATAS === */
         .mode-switch {
             position: fixed;
             top: 20px;
@@ -89,7 +91,18 @@
             background: var(--toggle-btn-hover);
         }
 
-        /* === Panel Pengaturan === */
+        .status-info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 999;
+        }
+
         .overlay {
             position: fixed;
             top: 0;
@@ -116,14 +129,15 @@
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             border-radius: 16px;
-            width: 360px;
+            width: 460px;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: var(--panel-shadow);
             z-index: 200;
             color: var(--text-color);
             transition: all 0.3s ease;
             opacity: 0;
             pointer-events: none;
-            overflow: hidden;
         }
         .settings-panel.active {
             transform: translate(-50%, -50%) scale(1);
@@ -131,7 +145,6 @@
             pointer-events: auto;
         }
 
-        /* Header Panel */
         .panel-header {
             background: var(--header-bg);
             color: white;
@@ -139,6 +152,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
         .panel-header h3 {
             font-size: 19px;
@@ -163,12 +179,22 @@
             background: rgba(255,255,255,0.35);
         }
 
-        /* Isi Panel */
         .panel-body {
             padding: 20px;
         }
-        .settings-panel input,
-        .settings-panel select {
+
+        .bagian-pengaturan {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--panel-border);
+        }
+        .bagian-pengaturan h4 {
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: var(--header-bg);
+        }
+
+        .settings-panel input {
             width: 100%;
             padding: 10px 14px;
             margin-bottom: 14px;
@@ -180,36 +206,58 @@
             transition: all 0.2s;
             outline: none;
         }
-        .settings-panel input:focus,
-        .settings-panel select:focus {
+        .settings-panel input:focus {
             border-color: #6366f1;
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
-        .btn-add {
+        .info-bantuan {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: -8px 0 16px 0;
+            padding-left: 4px;
+        }
+
+        .btn-add, .btn-save-edit, .btn-simpan-latar {
             width: 100%;
             padding: 11px;
             border: none;
             border-radius: 10px;
-            background: var(--btn-add);
             color: white;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
             margin-bottom: 16px;
+        }
+        .btn-add {
+            background: var(--btn-add);
             box-shadow: 0 3px 8px rgba(16, 185, 129, 0.25);
         }
         .btn-add:hover {
             background: var(--btn-add-hover);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
         }
+        .btn-save-edit {
+            background: var(--btn-edit);
+            box-shadow: 0 3px 8px rgba(245, 158, 11, 0.25);
+            display: none;
+        }
+        .btn-save-edit:hover {
+            background: var(--btn-edit-hover);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+        }
+        .btn-simpan-latar {
+            background: var(--btn-save);
+            box-shadow: 0 3px 8px rgba(59, 130, 246, 0.25);
+        }
+        .btn-simpan-latar:hover {
+            background: var(--btn-save-hover);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+        }
 
-        /* Daftar Menu */
         .list-menu {
-            border-top: 1px solid var(--panel-border);
-            padding-top: 16px;
-            max-height: 200px;
+            max-height: 250px;
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: #cbd5e1 transparent;
@@ -242,6 +290,28 @@
         body.dark-mode .menu-item-row:hover {
             background: rgba(255,255,255,0.1);
         }
+        .btn-group {
+            display: flex;
+            gap: 6px;
+        }
+        .edit-btn-small {
+            background: var(--btn-edit);
+            border: none;
+            border-radius: 6px;
+            width: 28px;
+            height: 28px;
+            font-size: 14px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            box-shadow: 0 2px 5px rgba(245, 158, 11, 0.25);
+        }
+        .edit-btn-small:hover {
+            background: var(--btn-edit-hover);
+        }
         .remove-btn-small {
             background: var(--btn-remove);
             border: none;
@@ -259,36 +329,33 @@
         }
         .remove-btn-small:hover {
             background: var(--btn-remove-hover);
-            box-shadow: 0 3px 8px rgba(239, 68, 68, 0.35);
         }
 
-        /* Kontainer Utama */
         .menu-container {
             position: relative;
-            width: 420px;
-            height: 220px;
-            margin-bottom: 40px;
+            width: 500px;
+            height: 260px;
+            margin-bottom: 50px;
             transform-style: preserve-3d;
         }
 
-        /* Latar dalam Setengah Lingkaran */
         .tunnel {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 400px;
-            height: 200px;
-            border-radius: 200px 200px 0 0;
+            width: 480px;
+            height: 240px;
+            border-radius: 240px 240px 0 0;
             overflow: hidden;
             background: linear-gradient(135deg, #1e293b, #0f172a);
-            background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOBZqaDNn1r3k3EgIJaNRvUmzx4Ma7EjrRMw&s");
+            background-image: var(--bg-lingkaran, url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOBZqaDNn1r3k3EgIJaNRvUmzx4Ma7EjrRMw&s"));
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             cursor: pointer;
             z-index: 1;
-            transition: box-shadow 0.5s ease;
+            transition: background-image 0.5s ease, box-shadow 0.5s ease;
             --glow-color: var(--glow-default);
             --glow-rgb: var(--glow-rgb-default);
             box-shadow: 
@@ -316,7 +383,6 @@
             }
         }
 
-        /* Kilau Berjalan */
         .shine-path {
             position: absolute;
             top: 0;
@@ -327,7 +393,7 @@
             mask: radial-gradient(circle at bottom center, transparent 86%, black 86%);
             -webkit-mask: radial-gradient(circle at bottom center, transparent 86%, black 86%);
             background: radial-gradient(circle, #ffffff 0%, rgba(255,255,255,0.9) 30%, transparent 70%);
-            background-size: 30px 30px;
+            background-size: 35px 35px;
             background-position: 0 0;
             animation: shine-move 6s linear infinite;
             z-index: 3;
@@ -343,16 +409,15 @@
             100%  { background-position: 98% 3%; }
         }
 
-        /* Wadah Ikon */
         .icons-wrapper {
-            --radius: 200px;
-            --jarak-keluar: 90px;
+            --radius: 240px;
+            --jarak-keluar: 110px;
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 400px;
-            height: 200px;
+            width: 480px;
+            height: 240px;
             transform-origin: center bottom;
             z-index: 5;
             pointer-events: none;
@@ -360,15 +425,14 @@
             transform-style: preserve-3d;
         }
 
-        /* === ✅ BINTANG 3D === */
         .menu-icon {
             position: absolute;
             left: 50%;
             bottom: 0;
-            width: 56px;
-            height: 56px;
-            margin-left: -28px;
-            margin-bottom: -28px;
+            width: 68px;
+            height: 68px;
+            margin-left: -34px;
+            margin-bottom: -34px;
             clip-path: polygon(
                 50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
                 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
@@ -376,7 +440,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 24px;
             color: #ffffff;
             text-decoration: none;
             transform-origin: center center;
@@ -388,9 +452,9 @@
                 inset 1px 1px 0 rgba(255,255,255,0.6),
                 inset -3px -3px 3px rgba(0,0,0,0.5),
                 inset -1px -1px 0 rgba(0,0,0,0.3),
-                0 6px 10px rgba(0,0,0,0.6),
-                0 12px 20px rgba(0,0,0,0.35),
-                0 20px 30px rgba(0,0,0,0.2);
+                0 8px 14px rgba(0,0,0,0.6),
+                0 14px 24px rgba(0,0,0,0.35),
+                0 24px 34px rgba(0,0,0,0.2);
             animation: float 3s ease-in-out infinite, star-glow 2.5s ease-in-out infinite;
             pointer-events: auto;
             z-index: 6;
@@ -399,33 +463,32 @@
 
         @keyframes star-glow {
             0%, 100% {
-                filter: drop-shadow(0 0 4px #fff) 
-                        drop-shadow(0 0 9px var(--cahaya)) 
-                        drop-shadow(0 0 18px var(--cahaya)) 
-                        drop-shadow(0 0 30px rgba(var(--rgb-cahaya), 0.7));
+                filter: drop-shadow(0 0 5px #fff) 
+                        drop-shadow(0 0 12px var(--cahaya)) 
+                        drop-shadow(0 0 22px var(--cahaya)) 
+                        drop-shadow(0 0 35px rgba(var(--rgb-cahaya), 0.7));
             }
             50% {
-                filter: drop-shadow(0 0 6px #fff) 
-                        drop-shadow(0 0 14px var(--cahaya)) 
-                        drop-shadow(0 0 26px var(--cahaya)) 
-                        drop-shadow(0 0 40px rgba(var(--rgb-cahaya), 0.9));
+                filter: drop-shadow(0 0 7px #fff) 
+                        drop-shadow(0 0 18px var(--cahaya)) 
+                        drop-shadow(0 0 32px var(--cahaya)) 
+                        drop-shadow(0 0 45px rgba(var(--rgb-cahaya), 0.9));
             }
         }
 
         @keyframes float {
             0% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0) translateY(0); }
-            50% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(8px) translateY(-6px); }
+            50% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(10px) translateY(-8px); }
             100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0) translateY(0); }
         }
 
         @keyframes star-fly {
             0%   { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0); }
-            30%  { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - 45px)) translateZ(20px) translateY(-12px) scale(1.15); }
-            60%  { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - 22px)) translateZ(10px) translateY(-6px) scale(1.08); }
+            30%  { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - 55px)) translateZ(25px) translateY(-15px) scale(1.15); }
+            60%  { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius) - 28px)) translateZ(12px) translateY(-8px) scale(1.08); }
             100% { transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(0) scale(1); }
         }
 
-        /* Warna bawaan */
         .menu-icon:nth-child(1) { --rotasi: -72deg; --puncak: #ff8888; --tengah: #e74c3c; --dasar: #922b21; --cahaya: #ff6b6b; --rgb-cahaya: 255, 107, 107; }
         .menu-icon:nth-child(2) { --rotasi: -48deg; --puncak: #ffd080; --tengah: #e67e22; --dasar: #944900; --cahaya: #ffb347; --rgb-cahaya: 255, 179, 71; }
         .menu-icon:nth-child(3) { --rotasi: -24deg; --puncak: #fff990; --tengah: #f1c40f; --dasar: #9c7d00; --cahaya: #fff350; --rgb-cahaya: 255, 243, 80; }
@@ -443,8 +506,8 @@
 
         .menu-icon:hover:not(.flying) {
             animation: none;
-            transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(12px) scale(1.2);
-            filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 18px var(--cahaya)) drop-shadow(0 0 32px var(--cahaya)) drop-shadow(0 0 50px rgba(var(--rgb-cahaya), 1));
+            transform: rotate(var(--rotasi)) translateY(calc(-1 * var(--radius))) translateZ(15px) scale(1.2);
+            filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 22px var(--cahaya)) drop-shadow(0 0 38px var(--cahaya)) drop-shadow(0 0 55px rgba(var(--rgb-cahaya), 1));
         }
 
         .menu-icon.flying {
@@ -454,14 +517,14 @@
         .menu-icon::after {
             content: attr(data-tooltip);
             position: absolute;
-            bottom: 75px;
+            bottom: 85px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--tooltip-bg);
             color: var(--tooltip-color);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
             white-space: nowrap;
             opacity: 0;
             visibility: hidden;
@@ -473,54 +536,53 @@
             visibility: visible;
         }
 
-        /* Responsif HP */
         @media (max-width: 480px) {
-            .menu-container { width: 340px; height: 190px; }
-            .tunnel { width: 320px; height: 160px; border-radius: 160px 160px 0 0; }
-            .icons-wrapper { --radius: 160px; width: 320px; height: 160px; }
-            .menu-icon { width: 50px; height: 50px; margin-left: -25px; margin-bottom: -25px; font-size: 17px; }
+            .menu-container { width: 400px; height: 220px; }
+            .tunnel { width: 380px; height: 190px; border-radius: 190px 190px 0 0; }
+            .icons-wrapper { --radius: 190px; width: 380px; height: 190px; --jarak-keluar: 90px; }
+            .menu-icon { width: 58px; height: 58px; margin-left: -29px; margin-bottom: -29px; font-size: 21px; }
             .settings-panel { width: 92%; }
-            .mode-switch {
-                top: 12px;
-                right: 12px;
-                padding: 8px 12px;
-                font-size: 14px;
-            }
+            .mode-switch { top: 12px; right: 12px; padding: 8px 12px; font-size: 14px; }
+            .menu-icon::after { bottom: 75px; }
+            .status-info { font-size: 11px; }
         }
     </style>
 </head>
 <body>
-    <!-- Tombol Mode Gelap/Terang di Sudut Kanan Atas -->
+    <div class="status-info" id="statusInfo">Siap</div>
     <button class="mode-switch" id="darkModeBtn">
         <i class="fa fa-moon-o"></i> Mode Gelap
     </button>
 
-    <!-- Latar Belakang Gelap saat Panel Aktif -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- Panel Pengaturan -->
     <div class="settings-panel" id="settingsPanel">
         <div class="panel-header">
-            <h3>Kelola Menu</h3>
+            <h3>Pengaturan Menu & Latar</h3>
             <button class="close-panel" id="closePanel">&times;</button>
         </div>
         <div class="panel-body">
-            <input type="text" id="namaMenu" placeholder="Nama Menu (contoh: Agenda Guru)">
-            <input type="text" id="linkMenu" placeholder="Tautan (contoh: halaman.html)">
-            <select id="pilihIkon">
-                <option value="fa-home">🏠 Rumah</option>
-                <option value="fa-user">👤 Pengguna</option>
-                <option value="fa-shopping-bag">🛍️ Belanja</option>
-                <option value="fa-image">🖼️ Galeri</option>
-                <option value="fa-file-text">📄 Artikel</option>
-                <option value="fa-phone">📞 Kontak</option>
-                <option value="fa-book">📖 Buku</option>
-                <option value="fa-calendar">📅 Kalender</option>
-                <option value="fa-graduation-cap">🎓 Sekolah</option>
-                <option value="fa-info-circle">ℹ️ Info</option>
-            </select>
-            <button class="btn-add" onclick="tambahMenu()">➕ Tambah Menu Baru</button>
-            <div class="list-menu" id="daftarMenu"></div>
+            <!-- Bagian Pengaturan Latar -->
+            <div class="bagian-pengaturan">
+                <h4>🖼️ Gambar di Latar Belakang</h4>
+                <input type="text" id="urlLatarHalaman" placeholder="URL Gambar Latar Halaman">
+                <h4>🖼️ Gambar di Setengah Lingkaran</h4>
+                <input type="text" id="urlLatarLingkaran" placeholder="URL Gambar Latar Setengah Lingkaran">
+                <button class="btn-simpan-latar" onclick="simpanLatar()">💾 Simpan Latar Belakang</button>
+            </div>
+
+            <!-- Bagian Pengaturan Menu -->
+            <div class="bagian-pengaturan">
+                <h4>⭐ Kelola Menu</h4>
+                <input type="text" id="namaMenu" placeholder="contoh: Agenda Guru">
+                <input type="text" id="linkMenu" placeholder="contoh: https://situs.com">
+                <input type="text" id="kodeIkon" placeholder="contoh: fa-home, fa-user, fa-book">
+                 
+                <button class="btn-add" id="tombolTambah" onclick="tambahMenu()">➕ Tambah Menu Baru</button>
+                <button class="btn-save-edit" id="tombolSimpanEdit" onclick="simpanEdit()">💾 Simpan Perubahan Menu</button>
+                
+                <div class="list-menu" id="daftarMenu"></div>
+            </div>
         </div>
     </div>
 
@@ -530,35 +592,18 @@
         </div>
 
         <div class="icons-wrapper" id="iconsWrapper">
-            <!-- Menu awal termasuk ikon Pengaturan -->
-            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Pengaturan" id="settingsIcon">
+            <a href="#" class="menu-icon" data-tooltip="Pengaturan" id="settingsIcon">
                 <i class="fa fa-cogs"></i>
-            </a>
-            <a href="https://endrahamdani41-ops.github.io/Aplikasi-CX/agenda_guru.html" target="_blank" class="menu-icon" data-tooltip="Agenda Guru">
-                <i class="fa fa-home"></i>
-            </a>
-            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Profil">
-                <i class="fa fa-user"></i>
-            </a>
-            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Layanan">
-                <i class="fa fa-cogs"></i>
-            </a>
-            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Produk">
-                <i class="fa fa-shopping-bag"></i>
-            </a>
-            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Galeri">
-                <i class="fa fa-image"></i>
-            </a>
-            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Artikel">
-                <i class="fa fa-file-text"></i>
-            </a>
-            <a href="javascript:void(0)" class="menu-icon" data-tooltip="Kontak">
-                <i class="fa fa-phone"></i>
             </a>
         </div>
     </div>
 
     <script>
+        // --------------------------
+        // ✅ GANTI DENGAN URL SKRIPMU
+        // --------------------------
+        const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxoAnsGhGePFddL3pz2eKhKrVc3AHEYh2UrBaue1NcXZjlDOE0Jp42HRx3TUNqkFAbv/exec";
+
         const menuContainer = document.getElementById('mainMenu');
         const toggleArea = document.getElementById('toggleArea');
         const iconsWrapper = document.getElementById('iconsWrapper');
@@ -568,8 +613,9 @@
         const closePanel = document.getElementById('closePanel');
         const daftarMenuEl = document.getElementById('daftarMenu');
         const settingsIcon = document.getElementById('settingsIcon');
+        const statusInfo = document.getElementById('statusInfo');
+        let indexEdit = null;
 
-        // Warna untuk bintang baru
         const warnaBintang = [
             {puncak: '#ff8888', tengah: '#e74c3c', dasar: '#922b21', cahaya: '#ff6b6b', rgb: '255, 107, 107'},
             {puncak: '#ffd080', tengah: '#e67e22', dasar: '#944900', cahaya: '#ffb347', rgb: '255, 179, 71'},
@@ -580,25 +626,111 @@
             {puncak: '#ffb0cc', tengah: '#e91e63', dasar: '#880e3c', cahaya: '#ff80ab', rgb: '255, 128, 171'}
         ];
 
-        // Buka panel pengaturan
+        // Simpan SEMUA data (menu + latar) ke Google Sheet
+        async function simpanKeSheet() {
+            statusInfo.textContent = "Menyimpan...";
+            const semuaMenu = [];
+            document.querySelectorAll('.menu-icon').forEach(icon => {
+                if (icon.dataset.tooltip !== "Pengaturan") {
+                    semuaMenu.push({
+                        nama: icon.dataset.tooltip,
+                        link: icon.getAttribute('href'),
+                        ikon: icon.querySelector('i').className.replace('fa ', '')
+                    });
+                }
+            });
+
+            const latarHalaman = document.getElementById('urlLatarHalaman').value.trim() || "";
+            const latarLingkaran = document.getElementById('urlLatarLingkaran').value.trim() || "";
+
+            try {
+                const res = await fetch(URL_GOOGLE_SCRIPT, {
+                    method: "POST",
+                    body: JSON.stringify({ 
+                        aksi: "simpan", 
+                        daftarMenu: semuaMenu,
+                        latarHalaman: latarHalaman,
+                        latarLingkaran: latarLingkaran
+                    })
+                });
+                const hasil = await res.json();
+                statusInfo.textContent = hasil.status === "berhasil" ? "Tersimpan" : "Gagal menyimpan";
+            } catch (err) {
+                statusInfo.textContent = "Kesalahan koneksi";
+                console.error(err);
+            }
+        }
+
+        // Ambil SEMUA data dari Google Sheet
+        async function ambilDariSheet() {
+            statusInfo.textContent = "Memuat data...";
+            try {
+                const res = await fetch(URL_GOOGLE_SCRIPT, {
+                    method: "POST",
+                    body: JSON.stringify({ aksi: "ambil" })
+                });
+                const hasil = await res.json();
+                if (hasil.status === "berhasil") {
+                    // Muat latar belakang
+                    if (hasil.latarHalaman) {
+                        document.documentElement.style.setProperty('--bg-halaman', `url("${hasil.latarHalaman}")`);
+                        document.getElementById('urlLatarHalaman').value = hasil.latarHalaman;
+                    }
+                    if (hasil.latarLingkaran) {
+                        document.documentElement.style.setProperty('--bg-lingkaran', `url("${hasil.latarLingkaran}")`);
+                        document.getElementById('urlLatarLingkaran').value = hasil.latarLingkaran;
+                    }
+
+                    // Muat menu
+                    if (hasil.daftarMenu && hasil.daftarMenu.length > 0) {
+                        hasil.daftarMenu.forEach(item => {
+                            const bintangBaru = document.createElement('a');
+                            bintangBaru.className = 'menu-icon';
+                            bintangBaru.href = item.link;
+                            bintangBaru.target = '_blank';
+                            bintangBaru.dataset.tooltip = item.nama;
+                            bintangBaru.innerHTML = `<i class="fa ${item.ikon}"></i>`;
+                            iconsWrapper.appendChild(bintangBaru);
+                        });
+                        perbaruiPosisiBintang();
+                    }
+                }
+                statusInfo.textContent = "Siap";
+            } catch (err) {
+                statusInfo.textContent = "Gagal memuat";
+                console.error(err);
+            }
+        }
+
+        // Simpan latar saja
+        function simpanLatar() {
+            const urlHalaman = document.getElementById('urlLatarHalaman').value.trim();
+            const urlLingkaran = document.getElementById('urlLatarLingkaran').value.trim();
+            
+            if (urlHalaman) document.documentElement.style.setProperty('--bg-halaman', `url("${urlHalaman}")`);
+            if (urlLingkaran) document.documentElement.style.setProperty('--bg-lingkaran', `url("${urlLingkaran}")`);
+            
+            simpanKeSheet();
+            alert("Latar belakang berhasil disimpan!");
+        }
+
         function bukaPengaturan(e) {
             e.preventDefault();
             settingsPanel.classList.add('active');
             overlay.classList.add('active');
+            tampilkanDaftarMenu();
         }
 
-        // Tutup panel pengaturan
         function tutupPengaturan() {
             settingsPanel.classList.remove('active');
             overlay.classList.remove('active');
+            resetForm();
         }
 
-        // Pasang event klik pada ikon pengaturan
         settingsIcon.addEventListener('click', bukaPengaturan);
         closePanel.addEventListener('click', tutupPengaturan);
         overlay.addEventListener('click', tutupPengaturan);
 
-        // Fungsi perbarui posisi dan rotasi semua bintang
         function perbaruiPosisiBintang() {
             const semuaBintang = document.querySelectorAll('.menu-icon');
             const jumlah = semuaBintang.length;
@@ -621,10 +753,8 @@
             });
 
             pasangEventKlikBintang();
-            tampilkanDaftarMenu();
         }
 
-        // Pasang event klik pada setiap bintang
         function pasangEventKlikBintang() {
             document.querySelectorAll('.menu-icon').forEach(icon => {
                 icon.removeEventListener('click', klikBintang);
@@ -638,9 +768,10 @@
         }
 
         function klikBintang(e) {
-            e.preventDefault();
             const link = this.getAttribute('href');
-            const isExternal = link && link.startsWith('http');
+            if (!link || link === '#') {
+                e.preventDefault();
+            }
 
             if (!menuContainer.classList.contains('menu-open') || this.classList.contains('flying')) return;
 
@@ -655,16 +786,15 @@
                 setTimeout(() => {
                     toggleArea.style.setProperty('--glow-color', 'var(--glow-default)');
                     toggleArea.style.setProperty('--glow-rgb', 'var(--glow-rgb-default)');
-                    if (isExternal && link !== 'javascript:void(0)') window.open(link, '_blank');
+                    if (link && link !== '#') window.open(link, '_blank');
                 }, 800);
             }, 800);
         }
 
-        // Tambah menu baru
         function tambahMenu() {
             const nama = document.getElementById('namaMenu').value.trim();
-            const link = document.getElementById('linkMenu').value.trim() || 'javascript:void(0)';
-            const ikon = document.getElementById('pilihIkon').value;
+            const link = document.getElementById('linkMenu').value.trim() || '#';
+            const kodeIkon = document.getElementById('kodeIkon').value.trim() || 'fa-question-circle';
 
             if (!nama) {
                 alert('Silakan isi nama menu terlebih dahulu!');
@@ -674,46 +804,100 @@
             const bintangBaru = document.createElement('a');
             bintangBaru.className = 'menu-icon';
             bintangBaru.href = link;
+            bintangBaru.target = '_blank';
             bintangBaru.dataset.tooltip = nama;
-            bintangBaru.innerHTML = `<i class="fa ${ikon}"></i>`;
+            bintangBaru.innerHTML = `<i class="fa ${kodeIkon}"></i>`;
 
             iconsWrapper.appendChild(bintangBaru);
             perbaruiPosisiBintang();
-
-            // Kosongkan input
-            document.getElementById('namaMenu').value = '';
-            document.getElementById('linkMenu').value = '';
+            tampilkanDaftarMenu();
+            simpanKeSheet();
+            resetForm();
         }
 
-        // Hapus menu
-        function hapusMenu(elemen) {
-            if (elemen.dataset.tooltip === "Pengaturan") {
-                alert("Ikon Pengaturan tidak bisa dihapus!");
+        function editMenu(indeks) {
+            const semuaBintang = document.querySelectorAll('.menu-icon');
+            const menu = semuaBintang[indeks];
+            document.getElementById('namaMenu').value = menu.dataset.tooltip;
+            document.getElementById('linkMenu').value = menu.getAttribute('href') === '#' ? '' : menu.getAttribute('href');
+            const ikon = menu.querySelector('i').className.replace('fa ', '');
+            document.getElementById('kodeIkon').value = ikon;
+
+            tombolTambah.style.display = 'none';
+            tombolSimpanEdit.style.display = 'block';
+            indexEdit = indeks;
+        }
+
+        function simpanEdit() {
+            const nama = document.getElementById('namaMenu').value.trim();
+            const link = document.getElementById('linkMenu').value.trim() || '#';
+            const kodeIkon = document.getElementById('kodeIkon').value.trim() || 'fa-question-circle';
+
+            if (!nama) {
+                alert('Nama menu tidak boleh kosong!');
                 return;
             }
-            elemen.remove();
+
+            const semuaBintang = document.querySelectorAll('.menu-icon');
+            const menu = semuaBintang[indexEdit];
+            menu.dataset.tooltip = nama;
+            menu.href = link;
+            menu.querySelector('i').className = `fa ${kodeIkon}`;
+
             perbaruiPosisiBintang();
+            tampilkanDaftarMenu();
+            simpanKeSheet();
+            resetForm();
         }
 
-        // Tampilkan daftar menu di panel
+        function hapusMenu(indeks) {
+            const semuaBintang = document.querySelectorAll('.menu-icon');
+            const menu = semuaBintang[indeks];
+            
+            if (menu.dataset.tooltip === "Pengaturan") {
+                alert("Menu Pengaturan tidak bisa dihapus!");
+                return;
+            }
+
+            if (!confirm("Yakin ingin menghapus menu ini?")) return;
+
+            menu.remove();
+            perbaruiPosisiBintang();
+            tampilkanDaftarMenu();
+            simpanKeSheet();
+        }
+
         function tampilkanDaftarMenu() {
             daftarMenuEl.innerHTML = '';
             document.querySelectorAll('.menu-icon').forEach((item, idx) => {
                 const nama = item.dataset.tooltip;
+                const link = item.getAttribute('href') || '#';
+                const kodeIkon = item.querySelector('i').className.replace('fa ', '');
                 const baris = document.createElement('div');
                 baris.className = 'menu-item-row';
                 baris.innerHTML = `
-                    <span>${idx+1}. ${nama}</span>
-                    ${nama !== "Pengaturan" ? `<button class="remove-btn-small">&times;</button>` : ''}
+                    <div>
+                        <div>${idx+1}. ${nama}</div>
+                        <small style="color:var(--text-muted); font-size:11px;">${link} | Ikon: ${kodeIkon}</small>
+                    </div>
+                    <div class="btn-group">
+                        ${nama !== "Pengaturan" ? `<button class="edit-btn-small" title="Edit" onclick="editMenu(${idx})"><i class="fa fa-pencil"></i></button>` : ''}
+                        ${nama !== "Pengaturan" ? `<button class="remove-btn-small" title="Hapus" onclick="hapusMenu(${idx})">&times;</button>` : ''}
+                    </div>
                 `;
-                if (nama !== "Pengaturan") {
-                    baris.querySelector('.remove-btn-small').addEventListener('click', () => hapusMenu(item));
-                }
                 daftarMenuEl.appendChild(baris);
             });
         }
 
-        // Event buka/tutup menu
+        function resetForm() {
+            document.getElementById('namaMenu').value = '';
+            document.getElementById('linkMenu').value = '';
+            document.getElementById('kodeIkon').value = '';
+            tombolTambah.style.display = 'block';
+            tombolSimpanEdit.style.display = 'none';
+            indexEdit = null;
+        }
+
         toggleArea.addEventListener('click', () => {
             document.querySelectorAll('.menu-icon').forEach(i => {
                 i.classList.remove('flying');
@@ -725,7 +909,6 @@
             toggleArea.style.setProperty('--glow-rgb', 'var(--glow-rgb-default)');
         });
 
-        // Mode terang/gelap
         darkModeBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             darkModeBtn.innerHTML = document.body.classList.contains('dark-mode')
@@ -733,9 +916,8 @@
                 : '<i class="fa fa-moon-o"></i> Mode Gelap';
         });
 
-        // Inisialisasi awal
         window.addEventListener('load', () => {
-            perbaruiPosisiBintang();
+            ambilDariSheet();
         });
     </script>
 </body>
