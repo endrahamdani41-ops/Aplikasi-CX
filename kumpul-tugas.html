@@ -24,11 +24,10 @@
             <button onclick="gantiMode()" class="bg-white text-primary px-3 py-2 rounded shadow hover:bg-gray-100 flex items-center font-medium text-sm">
                 <i class="fa fa-moon-o dark:hidden mr-1"></i>
                 <i class="fa fa-sun-o hidden dark:inline mr-1"></i>
-                <span id="teks-mode">Mode Gelap</span>
+                <span id="teks-mode"></span>
             </button>
         </header>
 
-        <!-- Pilih Pertemuan -->
         <div class="bg-white dark:bg-kartu rounded-lg shadow p-5 mb-6">
             <h2 class="text-lg font-semibold mb-3">Pilih Pertemuan</h2>
             <select id="pertemuan" class="w-full border p-2 rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
@@ -40,31 +39,25 @@
         <div id="form" class="bg-white dark:bg-kartu rounded-lg shadow p-5 hidden">
             <h2 class="text-xl font-semibold text-primary mb-5">Form Pengumpulan Tugas <span id="ke"></span></h2>
 
-            <!-- 1. INPUT KELAS PERTAMA -->
             <div class="mb-4">
                 <label class="block mb-2 font-medium">Pilih Kelas</label>
                 <select id="pilihKelas" class="w-full border p-2 rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-primary">
-                    <option value="">-- Pilih Kelas --</option>
+                    <option value="">-- Memuat daftar kelas ... --</option>
                 </select>
-
             </div>
 
-            <!-- 2. INPUT NIS (SETELAH KELAS DIPILIH) -->
             <div id="blokNis" class="hidden mb-4">
-                <label class="block mb-2 font-medium">Pilih Nama Murid</label>
+                <label class="block mb-2 font-medium">Pilih NIS</label>
                 <select id="pilihNis" class="w-full border p-2 rounded bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-primary">
-                    <option value="">-- Pilih Nama Murid --</option>
+                    <option value="">-- Pilih NIS --</option>
                 </select>
-
             </div>
 
-            <!-- 3. NAMA MUNCUL OTOMATIS JIKA NIS BENAR -->
             <div id="blokNama" class="hidden mb-4">
-                <label class="block mb-2 font-medium">NIS</label>
+                <label class="block mb-2 font-medium">Nama Lengkap</label>
                 <input type="text" id="namaSiswa" readonly class="w-full border p-2 rounded bg-gray-200 dark:bg-gray-600 font-medium" placeholder="Muncul otomatis">
             </div>
 
-            <!-- 4. INPUT TUGAS -->
             <div id="blokTugas" class="hidden">
                 <div class="mb-4">
                     <label class="block mb-2 font-medium">Tautan / Link Tugas</label>
@@ -89,31 +82,30 @@
     </div>
 
     <script>
-        const URL_SKRIP = "https://script.google.com/macros/s/AKfycbzfut3OaWTIbCoU7Cfd19xeRp6Dn4U4N2Gp0hNSpyVzm0m957ta9ny1IeCKl8VlEaF2/exec";
-        let daftarSiswa = [], daftarKelasUnik = [];
+        // GANTI DENGAN URL APLIKASI WEB ANDA
+        const URL_SKRIP = "https://script.google.com/macros/s/AKfycbz4laIjiYuK77fXx_zbq7JjkQ0gRHUJR3XoeOfVeyLCP3lyUbegUKrsoLC0abpWaHHD/exec";
+        let daftarSiswa = [], daftarKelasUnik = [], dataGambar = "";
 
         function gantiMode() {
             const isDark = document.documentElement.classList.toggle("dark");
             localStorage.setItem("mode", isDark ? "gelap" : "terang");
-            document.getElementById("teks-mode").textContent = isDark ? "Mode Terang" : "Mode Gelap";
+            document.getElementById("teks-mode").textContent = isDark ? "" : "";
         }
 
         window.onload = () => {
             if (localStorage.getItem("mode") === "gelap") {
                 document.documentElement.classList.add("dark");
-                document.getElementById("teks-mode").textContent = "Mode Terang";
+                document.getElementById("teks-mode").textContent = "";
             }
             ambilDataSiswa();
         };
 
-        // Ambil semua data siswa dan daftar kelas unik
         function ambilDataSiswa() {
             fetch(URL_SKRIP)
             .then(res => res.json())
             .then(data => {
                 if (data.status === "ok") {
                     daftarSiswa = data.siswa;
-                    // Ambil daftar kelas tanpa duplikat
                     const kelasSet = new Set(daftarSiswa.map(s => s.kelas));
                     daftarKelasUnik = Array.from(kelasSet).sort();
                     const pilihKelas = document.getElementById("pilihKelas");
@@ -126,7 +118,6 @@
             .catch(() => document.getElementById("pilihKelas").innerHTML = `<option value="">Tidak terhubung ke server</option>`);
         }
 
-        // Saat pilih pertemuan → buka form
         document.getElementById("pertemuan").addEventListener("change", function() {
             if (this.value) {
                 document.getElementById("ke").textContent = this.value;
@@ -137,12 +128,10 @@
             }
         });
 
-        // Saat pilih kelas → tampilkan NIS sesuai kelas
         document.getElementById("pilihKelas").addEventListener("change", function() {
             const kelasDipilih = this.value;
             resetBagianNisKebawah();
             if (!kelasDipilih) return;
-
             const siswaDiKelas = daftarSiswa.filter(s => s.kelas === kelasDipilih);
             const pilihNis = document.getElementById("pilihNis");
             pilihNis.innerHTML = `<option value="">-- Pilih NIS --</option>`;
@@ -150,19 +139,41 @@
             document.getElementById("blokNis").classList.remove("hidden");
         });
 
-        // Saat pilih NIS → tampilkan nama dan buka input tugas
         document.getElementById("pilihNis").addEventListener("change", function() {
             const idx = this.value;
             resetBagianNamaKebawah();
             if (idx === "") return;
-
-            const siswa = daftarSiswa.filter(s => s.kelas === document.getElementById("pilihKelas").value)[idx];
+            const kelas = document.getElementById("pilihKelas").value;
+            const siswa = daftarSiswa.filter(s => s.kelas === kelas)[idx];
             document.getElementById("namaSiswa").value = siswa.nama;
             document.getElementById("blokNama").classList.remove("hidden");
             document.getElementById("blokTugas").classList.remove("hidden");
         });
 
-        // Proses kirim tugas
+        document.getElementById("gambarTugas").addEventListener("change", function(e) {
+            const file = e.target.files[0];
+            if (!file) { dataGambar = ""; document.getElementById("pratinjau").classList.add("hidden"); return; }
+            if (file.size > 1 * 1024 * 1024) { alert("Ukuran gambar maksimal 1MB!"); this.value = ""; return; }
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const img = new Image();
+                img.onload = () => {
+                    const kanvas = document.createElement("canvas");
+                    const lebarMaks = 600;
+                    const rasio = Math.min(lebarMaks / img.width, 1);
+                    kanvas.width = Math.round(img.width * rasio);
+                    kanvas.height = Math.round(img.height * rasio);
+                    const ctx = kanvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, kanvas.width, kanvas.height);
+                    dataGambar = kanvas.toDataURL("image/jpeg", 0.55);
+                    document.getElementById("hasilGambar").src = dataGambar;
+                    document.getElementById("pratinjau").classList.remove("hidden");
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
         function kirimTugas() {
             const pertemuan = document.getElementById("pertemuan").value;
             const kelas = document.getElementById("pilihKelas").value;
@@ -202,57 +213,33 @@
             .then(h => {
                 if (h.status === "ok") {
                     tampilStatus(`✅ Tugas Pertemuan ${pertemuan} atas nama ${siswa.nama} berhasil dikirim!`, "hijau");
-                    // Reset form
                     setTimeout(() => {
                         document.getElementById("pertemuan").value = "";
                         document.getElementById("form").classList.add("hidden");
                         resetForm();
-                    }, 2500);
+                    }, 3000);
                 } else {
                     tampilStatus("❌ " + h.pesan, "merah");
                 }
             })
-            .catch(err => tampilStatus("❌ Gagal terkirim: " + err.message, "merah"))
+            .catch(err => {
+                tampilStatus("❌ Gagal terkirim: Buka lewat URL aplikasi web", "merah");
+                console.error(err);
+            })
             .finally(() => {
                 tombol.disabled = false;
                 tombol.textContent = "📤 KIRIM TUGAS";
             });
         }
 
-        // Kompres gambar
-        let dataGambar = "";
-        document.getElementById("gambarTugas").addEventListener("change", function(e) {
-            const file = e.target.files[0];
-            if (!file) { dataGambar = ""; document.getElementById("pratinjau").classList.add("hidden"); return; }
-            if (file.size > 1 * 1024 * 1024) { alert("Ukuran maksimal 1MB!"); this.value = ""; return; }
-            const reader = new FileReader();
-            reader.onload = ev => {
-                const img = new Image();
-                img.onload = () => {
-                    const kanvas = document.createElement("canvas");
-                    const lebarMaks = 600;
-                    const rasio = Math.min(lebarMaks / img.width, 1);
-                    kanvas.width = Math.round(img.width * rasio);
-                    kanvas.height = Math.round(img.height * rasio);
-                    const ctx = kanvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0, kanvas.width, kanvas.height);
-                    dataGambar = kanvas.toDataURL("image/jpeg", 0.55);
-                    document.getElementById("hasilGambar").src = dataGambar;
-                    document.getElementById("pratinjau").classList.remove("hidden");
-                };
-                img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Bantuan fungsi
         function tampilStatus(teks, warna) {
             const status = document.getElementById("status");
             status.textContent = teks;
-            status.classList.remove("hidden", "text-red-500", "text-green-600", "text-blue-500", "bg-red-50", "bg-green-50", "bg-blue-50");
-            if (warna === "merah") status.classList.add("text-red-500", "bg-red-50", "dark:bg-red-900/20");
-            if (warna === "hijau") status.classList.add("text-green-600", "bg-green-50", "dark:bg-green-900/20");
-            if (warna === "biru") status.classList.add("text-blue-500", "bg-blue-50", "dark:bg-blue-900/20");
+            status.className = `mt-5 text-center font-medium p-2 rounded ${
+                warna === "merah" ? "text-red-500 bg-red-50 dark:bg-red-900/20" :
+                warna === "hijau" ? "text-green-600 bg-green-50 dark:bg-green-900/20" :
+                "text-blue-500 bg-blue-50 dark:bg-blue-900/20"
+            }`;
             status.classList.remove("hidden");
         }
 
