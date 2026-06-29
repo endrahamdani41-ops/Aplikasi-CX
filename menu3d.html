@@ -29,7 +29,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: center !important; 
             background-color: #2c5f2d;
             position: relative;
             transition: background 0.5s ease, background-image 0.5s ease;
@@ -208,28 +208,23 @@
             left: calc(50% - 37px);
             top: calc(50% - 37px);
             
-            /* Posisi awal tersembunyi di tengah logo */
             transform: translate(0px, 0px) scale(0);
             opacity: 0;
             visibility: hidden;
             
-            /* Efek membal elastis saat terbuka rapi */
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease, visibility 0.4s;
         }
 
-        /* State saat terbuka rapi melingkar */
         .menu-item.show {
             opacity: 1;
             visibility: visible;
             transform: translate(var(--x), var(--y)) scale(1);
         }
 
-        /* State khusus saat meledak mencar keluar lalu hilang */
         .menu-item.shatter-out {
             opacity: 0;
             visibility: hidden;
             transform: translate(var(--shatter-x), var(--shatter-y)) scale(0) rotate(var(--shatter-rotate, 0deg));
-            /* Transisi cepat keluar menggunakan akselerasi ledakan */
             transition: transform 0.6s cubic-bezier(0.1, 1, 0.3, 1), opacity 0.5s ease, visibility 0.5s;
         }
 
@@ -314,7 +309,6 @@
         .color-9 { background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border: 2px solid #a3e635; box-shadow: 0 8px 15px rgba(77,124,15,0.4), 0 4px 0 #3f6212; --neon: #84cc16; }
         .color-9:hover { box-shadow: 0 14px 28px rgba(77,124,15,0.6), 0 1px 0 #3f6212; }
 
-        /* EFECT RIPPLE KLIK IKON */
         .move-to-center {
             animation: luncurKeTengahLogo 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards !important;
         }
@@ -339,25 +333,26 @@
             transition: all 0.3s ease;
         }
 
-        /* === PANEL PENGATURAN === */
+        /* === PANEL PENGATURAN (PERBAIKAN: MENTOK DI ATAS) === */
         .settings-panel {
             position: fixed;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
+            top: 0; left: 50%; /* Menggunakan top: 0, bukan bottom: 0 */
+            transform: translateX(-50%) translateY(-100%); /* Sembunyikan ke atas layar */
             width: 90%; max-width: 400px;
             background: rgba(255, 255, 255, 0.98);
-            border-radius: 24px 24px 0 0;
+            border-radius: 0 0 24px 24px; /* Sudut melengkung dibalik ke bawah */
             padding: 24px;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); /* Bayangan jatuh ke bawah */
             backdrop-filter: blur(20px);
             z-index: 1000;
-            transform: translateX(-50%) translateY(100%);
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s ease;
-            max-height: 80vh;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); /* Transisi efek bounce pegas */
+            max-height: 85vh;
             overflow-y: auto;
         }
+        
+        /* Saat panel terbuka, ditarik ke posisi semula (mentok atas) */
         .settings-panel.open { 
             transform: translateX(-50%) translateY(0);
             opacity: 1;
@@ -482,13 +477,11 @@
         let daftarIkon = [];
         let efekRippleList = []; 
 
-        // VARIABEL DRAG MANUAL
         let sedangDrag = false;
         let sudutAwalPointer = 0;
         let sudutTambahan = 0; 
         let totalPergeseranPiksel = 0; 
 
-        // VARIABEL PUTAR OTOMATIS SAAT DIAM
         let timerDiam;
         let idAnimasiRotasi;
         let sedangRotasiOtomatis = false;
@@ -542,7 +535,6 @@
             } catch (e) {}
         }
 
-        // CANVAS PARTIKEL, LEDAKAN, & ASAP
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let arrayPartikel = [];
@@ -582,7 +574,6 @@
             }
         }
 
-        // CLASS UNTUK PERCIKAN API LEDAKAN (SPARKS)
         class PercikanApi {
             constructor(x, y) {
                 this.x = x;
@@ -595,14 +586,14 @@
                 this.life = 1.0;
                 this.decay = Math.random() * 0.03 + 0.02;
                 
-                const r = Math.floor(Math.random() * 55) + 200; // 200-255
-                const g = Math.floor(Math.random() * 150) + 50;  // 50-200
+                const r = Math.floor(Math.random() * 55) + 200; 
+                const g = Math.floor(Math.random() * 150) + 50;  
                 this.warna = `rgba(${r}, ${g}, 0, `;
             }
             update() {
                 this.x += this.vx;
                 this.y += this.vy;
-                this.vx *= 0.95; // Gesekan udara
+                this.vx *= 0.95; 
                 this.vy *= 0.95;
                 this.life -= this.decay;
             }
@@ -619,7 +610,6 @@
             }
         }
 
-        // CLASS UNTUK PUFF ASAP KELABU/PUTIH
         class GumpalanAsap {
             constructor(x, y) {
                 this.x = x;
@@ -629,7 +619,7 @@
                 this.vx = Math.cos(sudut) * kecepatan;
                 this.vy = Math.sin(sudut) * kecepatan;
                 this.ukuran = Math.random() * 15 + 10;
-                this.life = 0.7; // Mulai memudar lambat
+                this.life = 0.7; 
                 this.decay = Math.random() * 0.015 + 0.01;
                 this.sudutRotasi = Math.random() * Math.PI;
                 this.kecepatanPutar = (Math.random() * 0.02) - 0.01;
@@ -639,7 +629,7 @@
                 this.y += this.vy;
                 this.vx *= 0.97;
                 this.vy *= 0.97;
-                this.ukuran += 0.4; // Asap mengembang keluar
+                this.ukuran += 0.4; 
                 this.sudutRotasi += this.kecepatanPutar;
                 this.life -= this.decay;
             }
@@ -649,7 +639,6 @@
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.sudutRotasi);
                 ctx.beginPath();
-                // Gambar gumpalan asap berbentuk lingkaran fuzzy kabur
                 let gradien = ctx.createRadialGradient(0, 0, 0, 0, 0, this.ukuran);
                 gradien.addColorStop(0, `rgba(220, 220, 220, ${this.life * 0.4})`);
                 gradien.addColorStop(0.6, `rgba(180, 180, 180, ${this.life * 0.2})`);
@@ -682,13 +671,10 @@
             }
         }
 
-        // PICU BOMBARDMEN LEDAKAN UTAMA SAAT MENU DIHANCURKAN/DITUTUP
         function buatEksplorasiBesar(x, y) {
-            // Spawn partikel percikan api emas/merah
             for (let i = 0; i < 45; i++) {
                 partikelLedakan.push(new PercikanApi(x, y));
             }
-            // Spawn partikel gumpalan asap tebal mengembang
             for (let j = 0; j < 25; j++) {
                 partikelAsap.push(new GumpalanAsap(x, y));
             }
@@ -712,12 +698,10 @@
         function jalankanAnimasiPartikel() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // 1. Ambient Background Particles
             for (let i = 0; i < arrayPartikel.length; i++) {
                 arrayPartikel[i].update(); arrayPartikel[i].draw();
             }
 
-            // 2. Gumpalan Asap Ledakan
             for (let i = partikelAsap.length - 1; i >= 0; i--) {
                 partikelAsap[i].update();
                 if (partikelAsap[i].life <= 0) {
@@ -727,7 +711,6 @@
                 }
             }
 
-            // 3. Percikan Api Ledakan (Sparks)
             for (let i = partikelLedakan.length - 1; i >= 0; i--) {
                 partikelLedakan[i].update();
                 if (partikelLedakan[i].life <= 0) {
@@ -737,7 +720,6 @@
                 }
             }
 
-            // 4. Efek Shockwave Lingkaran Ikon
             for (let i = efekRippleList.length - 1; i >= 0; i--) {
                 efekRippleList[i].update();
                 if (efekRippleList[i].radius >= efekRippleList[i].radiusMaks) {
@@ -755,80 +737,66 @@
         window.addEventListener('DOMContentLoaded', () => {
             ambilDataDariSheet();
 
-// BROWSER / DOM EVENT KLIK LOGO UTAMA
-        tombolUtama.addEventListener('click', () => {
-            if (totalPergeseranPiksel > 7) return;
+            tombolUtama.addEventListener('click', () => {
+                if (totalPergeseranPiksel > 7) return;
 
-            menuTampil = !menuTampil;
-            putarSuaraMenu(menuTampil);
-            
-            const elemenIkon = document.querySelectorAll('.menu-item');
-
-            if (menuTampil) {
-                // 1. MEMBUKA MENU (Tampil melingkar rapi)
-                orbitLine.classList.add('show');
-                elemenIkon.forEach((menu, i) => {
-                    menu.classList.remove('shatter-out'); 
-                    // Kembalikan transisi halus bawaan
-                    menu.style.transition = "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease, visibility 0.4s";
-                    
-                    setTimeout(() => {
-                        if (menuTampil) menu.classList.add('show');
-                    }, i * 40); 
-                });
-                mulaiTimerDiam();
-            } else {
-                // 2. MENUTUP MENU (Mencar acak + Meledak + Asap)
-                // PENTING: Matikan rotasi SEBELUM menghitung ledakan
-                stopRotasiOtomatis();
-                orbitLine.classList.remove('show');
-
-                // Dapatkan titik pusat koordinat logo di layar
-                const batasLogo = tombolUtama.getBoundingClientRect();
-                const pusatLogoX = batasLogo.left + (batasLogo.width / 2);
-                const pusatLogoY = batasLogo.top + (batasLogo.height / 2);
-
-                // Picu partikel ledakan kembang api dan kepulan asap di canvas
-                buatEksplorasiBesar(pusatLogoX, pusatLogoY);
-
-                elemenIkon.forEach((menu) => {
-                    const xSekarang = parseFloat(menu.style.getPropertyValue('--x')) || 0;
-                    const ySekarang = parseFloat(menu.style.getPropertyValue('--y')) || 0;
-                    
-                    const panjangVektor = Math.sqrt(xSekarang * xSekarang + ySekarang * ySekarang) || 1;
-                    const arahX = xSekarang / panjangVektor;
-                    const arahY = ySekarang / panjangVektor;
-                    
-                    // Dorongan gaya hancur lempar ekstra jauh (radius keluar 250px s/d 330px)
-                    const jarakEkstraAcak = 250 + Math.random() * 80;
-                    
-                    // Deviasi sudut acak agar terpental menyebar
-                    const deviasiSudut = (Math.random() * 0.5) - 0.25; 
-                    const shatterX = Math.round((arahX + deviasiSudut) * jarakEkstraAcak);
-                    const shatterY = Math.round((arahY - deviasiSudut) * jarakEkstraAcak);
-                    
-                    // Tambahkan putaran rotasi acak saat terbang mental biar lebih dramatis
-                    const rotasiAcak = Math.floor(Math.random() * 360) - 180;
-
-                    // Suntikkan variabel CSS baru
-                    menu.style.setProperty('--shatter-x', `${shatterX}px`);
-                    menu.style.setProperty('--shatter-y', `${shatterY}px`);
-                    menu.style.setProperty('--shatter-rotate', `${rotasiAcak}deg`);
-
-                    // PENTING: Paksa reset inline style transform agar CSS class (.shatter-out) mengambil alih penuh!
-                    menu.style.transform = ''; 
-                    // Terapkan transisi khusus ledakan yang super cepat keluar
-                    menu.style.transition = "transform 0.6s cubic-bezier(0.1, 1, 0.3, 1), opacity 0.5s ease, visibility 0.5s";
-                    
-                    menu.classList.remove('show');
-                    menu.classList.add('shatter-out');
-                });
+                menuTampil = !menuTampil;
+                putarSuaraMenu(menuTampil);
                 
-                sudutTambahan = 0; 
-            }
-        });
+                const elemenIkon = document.querySelectorAll('.menu-item');
 
-            // EVENT DRAG ROTASI
+                if (menuTampil) {
+                    orbitLine.classList.add('show');
+                    elemenIkon.forEach((menu, i) => {
+                        menu.classList.remove('shatter-out'); 
+                        menu.style.transition = "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease, visibility 0.4s";
+                        
+                        setTimeout(() => {
+                            if (menuTampil) menu.classList.add('show');
+                        }, i * 40); 
+                    });
+                    mulaiTimerDiam();
+                } else {
+                    stopRotasiOtomatis();
+                    orbitLine.classList.remove('show');
+
+                    const batasLogo = tombolUtama.getBoundingClientRect();
+                    const pusatLogoX = batasLogo.left + (batasLogo.width / 2);
+                    const pusatLogoY = batasLogo.top + (batasLogo.height / 2);
+
+                    buatEksplorasiBesar(pusatLogoX, pusatLogoY);
+
+                    elemenIkon.forEach((menu) => {
+                        const xSekarang = parseFloat(menu.style.getPropertyValue('--x')) || 0;
+                        const ySekarang = parseFloat(menu.style.getPropertyValue('--y')) || 0;
+                        
+                        const panjangVektor = Math.sqrt(xSekarang * xSekarang + ySekarang * ySekarang) || 1;
+                        const arahX = xSekarang / panjangVektor;
+                        const arahY = ySekarang / panjangVektor;
+                        
+                        const jarakEkstraAcak = 250 + Math.random() * 80;
+                        
+                        const deviasiSudut = (Math.random() * 0.5) - 0.25; 
+                        const shatterX = Math.round((arahX + deviasiSudut) * jarakEkstraAcak);
+                        const shatterY = Math.round((arahY - deviasiSudut) * jarakEkstraAcak);
+                        
+                        const rotasiAcak = Math.floor(Math.random() * 360) - 180;
+
+                        menu.style.setProperty('--shatter-x', `${shatterX}px`);
+                        menu.style.setProperty('--shatter-y', `${shatterY}px`);
+                        menu.style.setProperty('--shatter-rotate', `${rotasiAcak}deg`);
+
+                        menu.style.transform = ''; 
+                        menu.style.transition = "transform 0.6s cubic-bezier(0.1, 1, 0.3, 1), opacity 0.5s ease, visibility 0.5s";
+                        
+                        menu.classList.remove('show');
+                        menu.classList.add('shatter-out');
+                    });
+                    
+                    sudutTambahan = 0; 
+                }
+            });
+
             menuContainer.addEventListener('mousedown', mulaiDrag);
             window.addEventListener('mousemove', prosesDrag);
             window.addEventListener('mouseup', selesaiDrag);
@@ -838,7 +806,6 @@
             window.addEventListener('touchend', selesaiDrag);
         });
 
-        // TIMER DIAM UNTUK ROTASI OTOMATIS
         function mulaiTimerDiam() {
             clearTimeout(timerDiam);
             if (!menuTampil || sedangDrag) return;
