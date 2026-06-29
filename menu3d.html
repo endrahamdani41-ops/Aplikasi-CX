@@ -144,11 +144,11 @@
             transform: translate(-50%, -50%) scale(0.95);
         }
 
-        /* === WADAH TEKS MELINGKAR (UKURAN DIKECILKAN AGAR TIDAK MENABRAK ICON) === */
+        /* === WADAH TEKS MELINGKAR === */
         .text-circle {
             position: absolute;
-            width: 96px; /* Dikecilkan dari 110px */
-            height: 96px; /* Dikecilkan dari 110px */
+            width: 96px; 
+            height: 96px; 
             border-radius: 50%;
             animation: putarTeks 20s linear infinite;
             top: 50%; left: 50%;
@@ -169,9 +169,8 @@
         .char {
             position: absolute;
             top: 0; left: 50%;
-            /* transform-origin dipindah ke pusat lingkaran barunya (96px / 2 = 48px) */
             transform-origin: center 48px; 
-            font-size: 8px; /* Disesuaikan sedikit agar proporsional */
+            font-size: 8px; 
             font-weight: 800;
             color: #1e40af;
             text-align: center;
@@ -209,20 +208,29 @@
             left: calc(50% - 37px);
             top: calc(50% - 37px);
             
-            /* Posisi awal bersembunyi tepat di tengah logo */
+            /* Posisi awal tersembunyi di tengah logo */
             transform: translate(0px, 0px) scale(0);
             opacity: 0;
             visibility: hidden;
             
-            /* Transisi Pop Out / Masuk perlahan */
-            transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s ease, visibility 0.5s;
+            /* Efek membal elastis saat terbuka rapi */
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease, visibility 0.4s;
         }
 
-        /* State saat ikon berhasil pop out ke luar */
+        /* State saat terbuka rapi melingkar */
         .menu-item.show {
             opacity: 1;
             visibility: visible;
             transform: translate(var(--x), var(--y)) scale(1);
+        }
+
+        /* State baru khusus saat mental mencar keluar lalu hilang */
+        .menu-item.shatter-out {
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(var(--shatter-x), var(--shatter-y)) scale(0);
+            /* Transisi cepat keluar menggunakan cubic-bezier akselerasi */
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.50, 1), opacity 0.4s ease, visibility 0.4s;
         }
 
         /* === WADAH ANIMASI MELAYANG === */
@@ -275,7 +283,7 @@
             pointer-events: none;
         }
 
-        /* WARNA GRADIEN ICON & VARIABEL WARNA SHOCKWAVE */
+        /* VARIABEL WARNA GRADASI DAN NEON SHOCKWAVE */
         .color-0 { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); border: 2px solid #fb923c; box-shadow: 0 8px 15px rgba(194,65,12,0.4), 0 4px 0 #7c2d12; --neon: #f97316; }
         .color-0:hover { box-shadow: 0 14px 28px rgba(194,65,12,0.6), 0 1px 0 #7c2d12; }
 
@@ -306,7 +314,7 @@
         .color-9 { background: linear-gradient(135deg, #84cc16 0%, #4d7c0f 100%); border: 2px solid #a3e635; box-shadow: 0 8px 15px rgba(77,124,15,0.4), 0 4px 0 #3f6212; --neon: #84cc16; }
         .color-9:hover { box-shadow: 0 14px 28px rgba(77,124,15,0.6), 0 1px 0 #3f6212; }
 
-        /* MODIFIKASI SELEKSI MENU UNTUK EFEK SHOCKWAVE KLIK */
+        /* EFECT SHOCKWAVE KLIK IKON */
         .move-to-center {
             animation: luncurKeTengahLogo 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards !important;
         }
@@ -474,11 +482,17 @@
         let daftarIkon = [];
         let efekRippleList = []; 
 
-        // === VARIABEL DRAG / GESER ROTASI ===
+        // VARIABEL DRAG MANUAL
         let sedangDrag = false;
         let sudutAwalPointer = 0;
         let sudutTambahan = 0; 
         let totalPergeseranPiksel = 0; 
+
+        // VARIABEL PUTAR OTOMATIS SAAT DIAM
+        let timerDiam;
+        let idAnimasiRotasi;
+        let sedangRotasiOtomatis = false;
+        const kecepatanRotasiOtomatis = 0.25;
 
         const menuContainer = document.getElementById('menuContainer');
         const tombolUtama = document.getElementById('tombolUtama');
@@ -500,16 +514,16 @@
                 const gainNode = audioCtx.createGain();
                 osc.type = 'sine';
                 if (apakahTerbuka) {
-                    osc.frequency.setValueAtTime(350, audioCtx.currentTime); 
-                    osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.08); 
+                    osc.frequency.setValueAtTime(300, audioCtx.currentTime); 
+                    osc.frequency.exponentialRampToValueAtTime(850, audioCtx.currentTime + 0.12); 
                 } else {
                     osc.frequency.setValueAtTime(600, audioCtx.currentTime); 
-                    osc.frequency.exponentialRampToValueAtTime(250, audioCtx.currentTime + 0.08); 
+                    osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15); 
                 }
                 gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime); 
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08); 
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15); 
                 osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
             } catch (e) { }
         }
 
@@ -528,7 +542,7 @@
             } catch (e) {}
         }
 
-        // CANVAS ENGINE
+        // CANVAS PARTIKEL
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let arrayPartikel = [];
@@ -623,8 +637,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             ambilDataDariSheet();
 
-            // EVENT KLIK LOGO UTAMA UNTUK MEKARKAN / MENARIK KEMBALI MENU
-            tombolUtama.addEventListener('click', (e) => {
+            // EVENT KLIK LOGO UTAMA
+            tombolUtama.addEventListener('click', () => {
                 if (totalPergeseranPiksel > 7) return;
 
                 menuTampil = !menuTampil;
@@ -633,19 +647,53 @@
                 const elemenIkon = document.querySelectorAll('.menu-item');
 
                 if (menuTampil) {
+                    // 1. MEMBUKA MENU (Tampil melingkar rapi seperti semula)
                     orbitLine.classList.add('show');
                     elemenIkon.forEach((menu, i) => {
-                        menu.style.transition = "transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease, visibility 0.5s";
+                        menu.classList.remove('shatter-out'); // Bersihkan sisa efek mental
+                        // Kembalikan style transisi default untuk membuka menu
+                        menu.style.transition = "transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease, visibility 0.4s";
+                        
                         setTimeout(() => {
                             if (menuTampil) menu.classList.add('show');
-                        }, i * 75);
+                        }, i * 40); 
                     });
+                    mulaiTimerDiam();
                 } else {
+                    // 2. MENUTUP MENU (Mencar keluar secara acak terlebih dahulu baru hilang)
+                    stopRotasiOtomatis();
                     orbitLine.classList.remove('show');
+
                     elemenIkon.forEach((menu) => {
-                        menu.style.transition = "all 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045)";
+                        // Ambil posisi melingkar saat ini dari CSS variable
+                        const xSekarang = parseFloat(menu.style.getPropertyValue('--x')) || 0;
+                        const ySekarang = parseFloat(menu.style.getPropertyValue('--y')) || 0;
+                        
+                        // Hitung arah dorongan (vektor) dari pusat ke posisi ikon saat ini
+                        const panjangVektor = Math.sqrt(xSekarang * xSekarang + ySekarang * ySekarang) || 1;
+                        const arahX = xSekarang / panjangVektor;
+                        const arahY = ySekarang / panjangVektor;
+                        
+                        // Berikan dorongan jarak acak ekstra jauh (radius keluar 230px s/d 280px)
+                        const jarakEkstraAcak = 230 + Math.random() * 50;
+                        
+                        // Sedikit belokkan arah mencar acak agar tidak terlalu lurus kaku
+                        const deviasiSudut = (Math.random() * 0.4) - 0.2; 
+                        const shatterX = Math.round((arahX + deviasiSudut) * jarakEkstraAcak);
+                        const shatterY = Math.round((arahY - deviasiSudut) * jarakEkstraAcak);
+
+                        // Set variabel titik tujuan ledakan akhir
+                        menu.style.setProperty('--shatter-x', `${shatterX}px`);
+                        menu.style.setProperty('--shatter-y', `${shatterY}px`);
+
+                        // Berikan transisi khusus shatter out
+                        menu.style.transition = "transform 0.5s cubic-bezier(0.25, 1, 0.50, 1), opacity 0.4s ease, visibility 0.4s";
+                        
+                        // Picu animasi mental hilangnya
                         menu.classList.remove('show');
+                        menu.classList.add('shatter-out');
                     });
+                    
                     sudutTambahan = 0; 
                 }
             });
@@ -660,6 +708,34 @@
             window.addEventListener('touchend', selesaiDrag);
         });
 
+        // TIMER DIAM UNTUK ROTASI OTOMATIS
+        function mulaiTimerDiam() {
+            clearTimeout(timerDiam);
+            if (!menuTampil || sedangDrag) return;
+            timerDiam = setTimeout(() => {
+                mulaiRotasiOtomatis();
+            }, 2500);
+        }
+
+        function mulaiRotasiOtomatis() {
+            if (sedangRotasiOtomatis) return;
+            sedangRotasiOtomatis = true;
+            
+            function animasi() {
+                if (!sedangRotasiOtomatis) return;
+                sudutTambahan += kecepatanRotasiOtomatis;
+                perbaruiPosisiMenu();
+                idAnimasiRotasi = requestAnimationFrame(animasi);
+            }
+            idAnimasiRotasi = requestAnimationFrame(animasi);
+        }
+
+        function stopRotasiOtomatis() {
+            clearTimeout(timerDiam);
+            sedangRotasiOtomatis = false;
+            cancelAnimationFrame(idAnimasiRotasi);
+        }
+
         function dapatkanSudutPointer(e) {
             const batasMenu = menuContainer.getBoundingClientRect();
             const pusatX = batasMenu.left + batasMenu.width / 2;
@@ -671,6 +747,7 @@
 
         function mulaiDrag(e) {
             if (e.target.closest('.settings-panel') || !menuTampil || e.target.closest('#tombolUtama')) return;
+            stopRotasiOtomatis();
             sedangDrag = true;
             totalPergeseranPiksel = 0;
             sudutAwalPointer = dapatkanSudutPointer(e);
@@ -687,12 +764,12 @@
             
             sudutTambahan += selisihSudut;
             sudutAwalPointer = sudutSekarang;
-            
             perbaruiPosisiMenu();
         }
 
         function selesaiDrag() {
             sedangDrag = false;
+            mulaiTimerDiam();
         }
 
         function ambilDataDariSheet(){
@@ -746,7 +823,7 @@
             const jumlahHuruf = teks.length;
             if (jumlahHuruf === 0) return;
             const sudutPerHuruf = 360 / jumlahHuruf;
-            const radius = 48; // Dipersempit ke 48px agar aman dari ikon luar
+            const radius = 48; 
             for (let i = 0; i < jumlahHuruf; i++) {
                 const huruf = document.createElement("div");
                 huruf.className = "char"; huruf.innerText = teks[i];
@@ -761,11 +838,17 @@
         function buatMenuDinamis() {
             document.querySelectorAll('.menu-item').forEach(el => el.remove());
             const wadah = document.getElementById("menuContainer");
+            const jumlah = daftarIkon.length;
+            const porsiSudut = 360 / jumlah;
 
             daftarIkon.forEach((data, indeks) => {
                 const elemenMenu = document.createElement('div');
                 elemenMenu.className = "menu-item";
                 elemenMenu.setAttribute('data-indeks', indeks);
+
+                // Set posisi default melingkar rapi di variabel awal
+                const sudutDasar = indeks * porsiSudut;
+                elemenMenu.setAttribute('data-sudut-dasar', sudutDasar);
 
                 const elemenAyun = document.createElement('a');
                 elemenAyun.className = "orbit-wrapper";
@@ -773,14 +856,18 @@
                 elemenAyun.classList.add(kelasWarna);
                 elemenAyun.href = data.link;
 
-                const durasiAcak = (3.2 + (indeks * 0.2)).toFixed(1);
-                const delayAcak = (indeks * 0.15).toFixed(2);
+                const durasiAcak = (3.0 + (Math.random() * 1.5)).toFixed(1);
+                const delayAcak = (Math.random() * 2).toFixed(2);
                 elemenAyun.style.setProperty('--durasi-float', `${durasiAcak}s`);
                 elemenAyun.style.setProperty('--delay-float', `-${delayAcak}s`);
 
                 let namaIkonBersih = data.ikon.replace('fa-solid', '').replace('fa-', '').trim();
                 elemenAyun.innerHTML = `<i class="fa-solid fa-${namaIkonBersih}"></i><span>${data.label}</span>`;
                 
+                elemenMenu.addEventListener('mouseenter', stopRotasiOtomatis);
+                elemenMenu.addEventListener('mouseleave', mulaiTimerDiam);
+                elemenMenu.addEventListener('touchstart', stopRotasiOtomatis);
+
                 elemenAyun.addEventListener('click', (e) => {
                     if (totalPergeseranPiksel > 7) { e.preventDefault(); return; }
                     e.preventDefault();
@@ -796,6 +883,7 @@
                     pemicuLedakanShockwave(pusatX, pusatY, warnaHex);
                     
                     elemenMenu.classList.add('move-to-center');
+                    stopRotasiOtomatis();
                     
                     setTimeout(() => {
                         if(data.label === "Pengaturan") {
@@ -813,34 +901,35 @@
             });
             
             perbaruiPosisiMenu();
-            
             if(menuTampil) {
                 document.querySelectorAll('.menu-item').forEach(menu => menu.classList.add('show'));
                 orbitLine.classList.add('show');
             }
         }
 
+        // FUNGSI UNTUK MENGUPDATE STRUKTUR POSISI KORDINAT (SAAT TERBUKA & DI-DRAG)
         function perbaruiPosisiMenu() {
             const elemenIkon = document.querySelectorAll('.menu-item');
-            const jumlah = elemenIkon.length;
-            if (jumlah === 0) return;
-
-            const radiusLingkaran = 145;
-            const sudutAwal = -90; 
+            const radiusOrbit = 140; 
 
             elemenIkon.forEach((elemenMenu) => {
-                const indeks = parseInt(elemenMenu.getAttribute('data-indeks'));
-                const sudut = sudutAwal + (indeks * (360 / jumlah)) + sudutTambahan;
-                const radian = sudut * Math.PI / 180;
+                // Jangan paksa hitung ulang posisi jika sedang dalam proses animasi mencar hancur
+                if (elemenMenu.classList.contains('shatter-out')) return;
+
+                const sudutDasar = parseFloat(elemenMenu.getAttribute('data-sudut-dasar'));
+                const sudutSeketika = sudutDasar + sudutTambahan;
+                const radian = sudutSeketika * Math.PI / 180;
                 
-                const x = Math.round(radiusLingkaran * Math.cos(radian));
-                const y = Math.round(radiusLingkaran * Math.sin(radian));
+                const x = Math.round(radiusOrbit * Math.cos(radian));
+                const y = Math.round(radiusOrbit * Math.sin(radian));
 
                 elemenMenu.style.setProperty('--x', `${x}px`);
                 elemenMenu.style.setProperty('--y', `${y}px`);
                 
-                if (menuTampil && sedangDrag) {
+                if (menuTampil && (sedangDrag || sedangRotasiOtomatis)) {
                     elemenMenu.style.transition = "none";
+                    elemenMenu.style.transform = `translate(${x}px, ${y}px) scale(1)`;
+                } else if (menuTampil) {
                     elemenMenu.style.transform = `translate(${x}px, ${y}px) scale(1)`;
                 }
             });
@@ -889,7 +978,10 @@
             buatEditorIkon();
         });
 
-        btnTutupPanel.addEventListener('click', () => { panelPengaturan.classList.remove('open'); });
+        btnTutupPanel.addEventListener('click', () => { 
+            panelPengaturan.classList.remove('open'); 
+            mulaiTimerDiam();
+        });
 
         btnTerapkanBg.addEventListener('click', () => {
             dapatkanDataDariEditor();
@@ -910,6 +1002,7 @@
             buatMenuDinamis(); simpanKeSheet(); 
             alert("✅ Pengaturan Tersimpan");
             panelPengaturan.classList.remove('open');
+            mulaiTimerDiam();
         });
 
         toggleMode.addEventListener('click', () => {
