@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Spiral Belah Ketupat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            yellow: '#fde047',
+                            green: '#22e27f',
+                            purple: '#d448f5',
+                            blue: '#39a9ff',
+                            orange: '#ffb726',
+                            violet: '#945bff',
+                            cyan: '#27e0e9',
+                            pink: '#ff477e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #111 0%, #000 70%);
+            z-index: -1;
+        }
+
+        .menu-container {
+            position: relative;
+            width: 580px;
+            height: 580px;
+        }
+
+        /* Tombol tengah */
+        .toggle-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #000;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+            box-shadow: 0 0 8px rgba(255,255,255,0.6);
+            transition: all 0.3s ease;
+            animation: pulse 3s ease-in-out infinite alternate;
+        }
+        .toggle-center:hover {
+            box-shadow: 0 0 15px #fff, 0 0 30px rgba(255,255,255,0.8);
+        }
+
+        /* ✅ Bentuk belah ketupat + POSISI DIKUNCI PENUH */
+        .menu-item {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            background: #000;
+            border: 2px solid currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transform-origin: center center;
+            box-shadow: 0 0 6px currentColor, 0 0 12px rgba(var(--rgb), 0.4);
+            opacity: 0;
+            pointer-events: none;
+            /* Hanya ubah cahaya, TIDAK mengubah posisi/ukuran */
+            transition: filter 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Ikon tetap lurus */
+        .menu-item i {
+            transform: rotate(-45deg);
+            transition: transform 0.2s ease;
+        }
+
+        /* ✅ Posisi & Warna SESUAI GAMBAR TERBARU */
+        .item-0 { --angle: 0deg;   --rgb: 39, 224, 233;   --color: #27e0e9; }   /* Tengah Kanan: Video */
+        .item-1 { --angle: 45deg;  --rgb: 255, 71, 126;   --color: #ff477e; }   /* Kanan Bawah: Rumah */
+        .item-2 { --angle: 90deg;  --rgb: 253, 224, 71;   --color: #fde047; }   /* Bawah Tengah: Roda Gigi */
+        .item-3 { --angle: 135deg; --rgb: 34, 226, 127;   --color: #22e27f; }   /* Kiri Bawah: Amplop */
+        .item-4 { --angle: 180deg; --rgb: 212, 72, 245;   --color: #d448f5; }   /* Tengah Kiri: Kunci */
+        .item-5 { --angle: 225deg; --rgb: 57, 169, 255;   --color: #39a9ff; }   /* Kiri Atas: Kamera */
+        .item-6 { --angle: 270deg; --rgb: 255, 183, 38;   --color: #ffb726; }   /* Atas Tengah: Gamepad */
+        .item-7 { --angle: 315deg; --rgb: 148, 91, 255;   --color: #945bff; }   /* Kanan Atas: Pengguna */
+
+        /* ✅ Efek berdenyut lembut */
+        .menu-item.active {
+            animation: glowPulse 3s ease-in-out infinite alternate;
+        }
+
+        /* ✅ Hover: hanya cahaya & ikon, kotak TETAP diam */
+        .menu-item:hover {
+            box-shadow: 0 0 12px currentColor, 0 0 24px currentColor, 0 0 40px rgba(var(--rgb), 0.6);
+            filter: brightness(1.6);
+        }
+        .menu-item:hover i {
+            transform: rotate(-45deg) scale(1.1);
+        }
+
+        /* ✅ Klik: tidak mengubah posisi kotak sama sekali */
+        .menu-item:active {
+            filter: brightness(2);
+            box-shadow: 0 0 15px currentColor, 0 0 50px currentColor;
+        }
+
+        /* ✅ Animasi Spiral Keluar */
+        .menu-item.open {
+            animation: spiralOut 0.9s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            animation-delay: calc(var(--index) * 0.08s);
+        }
+
+        @keyframes spiralOut {
+            0% {
+                top: 50%; left: 50%;
+                transform: translate(-50%, -50%) scale(0.1) rotate(45deg);
+                opacity: 0;
+            }
+            100% {
+                top: 50%; left: 50%;
+                transform: translate(
+                    calc(cos(var(--angle)) * 190px - 50%),
+                    calc(sin(var(--angle)) * 190px - 50%)
+                ) scale(1) rotate(45deg);
+                opacity: 1;
+                pointer-events: auto;
+            }
+        }
+
+        /* ✅ Animasi Spiral Masuk */
+        .menu-item.close {
+            animation: spiralIn 0.9s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+            animation-delay: calc(var(--index) * 0.08s);
+        }
+
+        @keyframes spiralIn {
+            0% {
+                top: 50%; left: 50%;
+                transform: translate(
+                    calc(cos(var(--angle)) * 190px - 50%),
+                    calc(sin(var(--angle)) * 190px - 50%)
+                ) scale(1) rotate(45deg);
+                opacity: 1;
+                pointer-events: auto;
+            }
+            100% {
+                top: 50%; left: 50%;
+                transform: translate(-50%, -50%) scale(0.1) rotate(45deg);
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        @keyframes glowPulse {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.25); }
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+            100% { box-shadow: 0 0 12px rgba(255,255,255,0.8); }
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <button id="toggleBtn" class="toggle-center">
+            <i class="fa fa-times"></i>
+        </button>
+
+        <!-- Urutan & Posisi Sesuai Gambar Terbaru -->
+        <div class="menu-item item-0" style="--index: 0; color: var(--color);">
+            <i class="fa fa-video-camera"></i>
+        </div>
+        <div class="menu-item item-1" style="--index: 1; color: var(--color);">
+            <i class="fa fa-home"></i>
+        </div>
+        <div class="menu-item item-2" style="--index: 2; color: var(--color);">
+            <i class="fa fa-cog"></i>
+        </div>
+        <div class="menu-item item-3" style="--index: 3; color: var(--color);">
+            <i class="fa fa-envelope"></i>
+        </div>
+        <div class="menu-item item-4" style="--index: 4; color: var(--color);">
+            <i class="fa fa-key"></i>
+        </div>
+        <div class="menu-item item-5" style="--index: 5; color: var(--color);">
+            <i class="fa fa-camera"></i>
+        </div>
+        <div class="menu-item item-6" style="--index: 6; color: var(--color);">
+            <i class="fa fa-gamepad"></i>
+        </div>
+        <div class="menu-item item-7" style="--index: 7; color: var(--color);">
+            <i class="fa fa-user"></i>
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleBtn');
+        const menuItems = document.querySelectorAll('.menu-item');
+        let isOpen = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isOpen = !isOpen;
+            if (isOpen) {
+                menuItems.forEach((item, idx) => {
+                    item.classList.remove('close', 'active');
+                    void item.offsetWidth;
+                    setTimeout(() => {
+                        item.classList.add('open', 'active');
+                    }, idx * 40);
+                });
+                toggleBtn.innerHTML = '<i class="fa fa-times"></i>';
+            } else {
+                menuItems.forEach((item, idx) => {
+                    item.classList.remove('open', 'active');
+                    void item.offsetWidth;
+                    setTimeout(() => {
+                        item.classList.add('close');
+                    }, idx * 40);
+                });
+                toggleBtn.innerHTML = '<i class="fa fa-bars"></i>';
+            }
+        });
+
+        // ✅ KLIK: TIDAK mengubah posisi kotak sama sekali
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const nama = item.querySelector('i').className.replace('fa fa-', '');
+                console.log('Menu dipilih:', nama);
+                alert(`Menu: ${nama}`);
+            });
+        });
+    </script>
+</body>
+</html>
