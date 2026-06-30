@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Album Kenangan Siswa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        coverBg: '#2c3e50',
+                        coverText: '#f8f5f0',
+                        coverBack: '#1a252f',
+                        paper: '#ffffff',
+                        paperBack: '#f8f8f8',
+                        text: '#222222',
+                        border: '#e0e0e0'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e5e5e5 0%, #f0f0f0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 3vw, 32px);
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 24px;
+        }
+
+        /* Kontainer Buku */
+        .book {
+            --book-width: min(90vw, 1400px);
+            --book-height: calc(var(--book-width) * 0.625);
+            width: var(--book-width);
+            height: var(--book-height);
+            position: relative;
+            perspective: 3000px;
+            transform-style: preserve-3d;
+        }
+
+        /* Semua halaman dasar */
+        .page {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            padding: clamp(25px, 3vw, 45px);
+            border: 1px solid #e8e8e8;
+            overflow: hidden;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+            background: #fff;
+        }
+
+        /* Sampul */
+        .page-cover {
+            right: 0;
+            background: transparent;
+            transform-origin: left center;
+            transform: rotateY(0deg);
+            transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
+            z-index: 20;
+            border: none;
+            padding: 0;
+        }
+
+        .cover-front {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+            color: #f8f5f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            backface-visibility: hidden;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            padding: clamp(25px, 3vw, 45px);
+        }
+
+        .cover-back {
+            position: absolute;
+            inset: 0;
+            background: #1a252f;
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+        }
+
+        /* Halaman Kiri */
+        .page-left {
+            left: 0;
+            border-right: 1px solid #ddd;
+            transform-origin: right center;
+            transform: rotateY(0deg);
+            transition: opacity 0s, transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
+            z-index: 10;
+            opacity: 0;
+        }
+
+        /* Halaman Kanan */
+        .page-right {
+            left: 50%;
+            border-left: none;
+            transform-origin: left center;
+            transform: rotateY(0deg);
+            transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
+            z-index: 5;
+        }
+
+        .page-right.flipping-next {
+            transform: rotateY(-180deg);
+            box-shadow: 
+                inset 0 0 30px rgba(0,0,0,0.12), 
+                -8px 0 20px rgba(0,0,0,0.08),
+                inset -5px 0 15px rgba(0,0,0,0.05);
+            z-index: 15;
+        }
+
+        .page-left.flipping-prev {
+            transform: rotateY(180deg);
+            box-shadow: 
+                inset 0 0 30px rgba(0,0,0,0.12), 
+                8px 0 20px rgba(0,0,0,0.08),
+                inset 5px 0 15px rgba(0,0,0,0.05);
+            z-index: 15;
+        }
+
+        .empty-box {
+            border: 1px dashed #cccccc;
+            min-height: clamp(100px, 12vw, 150px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 15px;
+            border-radius: 4px;
+            line-height: 1.6;
+            transition: all 0.2s ease;
+            font-size: clamp(13px, 1.1vw, 15px);
+        }
+
+        .empty-box:hover {
+            border-color: #888;
+            background: #fdfdfd;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(12px, 1.1vw, 14px);
+            color: #777;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(22px, 2.5vw, 28px);
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(18px, 2vw, 20px);
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #222;
+        }
+
+        p {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(14px, 1.3vw, 16px);
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .space-y-6 > * {
+            margin-top: clamp(15px, 2vw, 18px);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(12px, 1.5vw, 15px);
+        }
+
+        .page-content {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+        .page-content.active {
+            display: block;
+        }
+
+        /* Tombol Navigasi */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 40;
+            pointer-events: none;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: auto;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: none;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            font-size: 18px;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: #f8f8f8;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+        }
+
+        #prevBtn {
+            left: 20px;
+        }
+
+        #nextBtn {
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Album Kenangan Siswa</h1>
+
+    <div class="book" id="book">
+
+        <!-- Sampul Buku -->
+        <div class="page page-cover" id="cover" onclick="openBook()">
+            <div class="cover-front">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 tracking-wider">ALBUM KENANGAN</h2>
+                <div class="w-40 h-1 bg-white rounded mb-6 opacity-80"></div>
+                <p class="text-lg md:text-xl font-light mb-2">Tahun Ajaran 2025 / 2026</p>
+                <p class="text-base md:text-lg opacity-90">Kelas XII IPA 1</p>
+                <p class="text-sm mt-12 opacity-75 italic">Klik untuk membuka</p>
+            </div>
+            <div class="cover-back"></div>
+        </div>
+
+        <!-- Halaman Kiri -->
+        <div class="page page-left" id="pageLeft">
+            <div class="page-content active" id="left-1">
+                <h2>DAFTAR ISI</h2>
+                <div class="space-y-6">
+                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(1)">
+                        <span class="text-4xl font-serif font-bold text-gray-300">01</span>
+                        <div>
+                            <h3>PERTEMUAN</h3>
+                            <p class="text-sm text-gray-500 mt-0.5">Awal mula kita bertemu</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(2)">
+                        <span class="text-4xl font-serif font-bold text-gray-300">02</span>
+                        <div>
+                            <h3>KEBERSAMAAN</h3>
+                            <p class="text-sm text-gray-500 mt-0.5">Momen indah bersama</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(3)">
+                        <span class="text-4xl font-serif font-bold text-gray-300">03</span>
+                        <div>
+                            <h3>PESAN & KESAN</h3>
+                            <p class="text-sm text-gray-500 mt-0.5">Ungkapan kenangan</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(4)">
+                        <span class="text-4xl font-serif font-bold text-gray-300">04</span>
+                        <div>
+                            <h3>HARAPAN & CITA-CITA</h3>
+                            <p class="text-sm text-gray-500 mt-0.5">Mimpi masa depan</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(5)">
+                        <span class="text-4xl font-serif font-bold text-gray-300">05</span>
+                        <div>
+                            <h3>AKTIVITAS KELAS</h3>
+                            <p class="text-sm text-gray-500 mt-0.5">Kegiatan sehari-hari</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(6)">
+                        <span class="text-4xl font-serif font-bold text-gray-300">06</span>
+                        <div>
+                            <h3>PRESTASI</h3>
+                            <p class="text-sm text-gray-500 mt-0.5">Penghargaan yang diraih</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(7)">
+                        <span class="text-4xl font-serif font-bold text-gray-300">07</span>
+                        <div>
+                            <h3>FOTO BERSAMA</h3>
+                            <p class="text-sm text-gray-500 mt-0.5">Kenangan seluruh kelas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-number">- 1 -</div>
+            </div>
+
+            <div class="page-content" id="left-2">
+                <h2>KEBERSAMAAN</h2>
+                <p class="text-center text-gray-600 mb-6">❤️ Momen tawa, kerja keras, dan kebersamaan yang tak terlupakan ❤️</p>
+                <div class="grid-2 h-[calc(100%-140px)]">
+                    <div class="empty-box">Foto Kegiatan Belajar</div>
+                    <div class="empty-box">Foto Upacara Bendera</div>
+                    <div class="empty-box">Foto Ekstrakurikuler</div>
+                    <div class="empty-box">Foto Acara Sekolah</div>
+                </div>
+                <div class="page-number">- 3 -</div>
+            </div>
+
+            <div class="page-content" id="left-3">
+                <h2>HARAPAN & CITA-CITA</h2>
+                <p class="text-center text-gray-600 mb-6">❤️ Mimpi dan harapan untuk masa depan ❤️</p>
+                <div class="space-y-4 h-[calc(100%-140px)]">
+                    <div class="empty-box text-left p-4">
+                        ✨ Cita-cita Saya:<br><br>
+                        Ingin melanjutkan kuliah, menjadi dokter, guru, insinyur, atau pengusaha yang sukses.
+                    </div>
+                    <div class="empty-box text-left p-4">
+                        🎯 Harapan ke Depan:<br><br>
+                        Semoga selalu diberikan kesehatan dan kemudahan meraih impian.
+                    </div>
+                </div>
+                <div class="page-number">- 5 -</div>
+            </div>
+
+            <div class="page-content" id="left-4">
+                <h2>AKTIVITAS KELAS</h2>
+                <p class="text-center text-gray-600 mb-6">📚 Kegiatan rutin dan kegiatan tambahan di kelas</p>
+                <div class="grid-2 h-[calc(100%-140px)]">
+                    <div class="empty-box">Foto Belajar Kelompok</div>
+                    <div class="empty-box">Foto Piket Kelas</div>
+                    <div class="empty-box">Foto Lomba Kelas</div>
+                    <div class="empty-box">Foto Perayaan Hari Besar</div>
+                </div>
+                <div class="page-number">- 7 -</div>
+            </div>
+
+            <div class="page-content" id="left-5">
+                <h2>PRESTASI</h2>
+                <p class="text-center text-gray-600 mb-6">🏆 Berbagai pencapaian yang diraih selama sekolah</p>
+                <div class="space-y-4 h-[calc(100%-140px)]">
+                    <div class="empty-box text-left p-4">
+                        🥇 Prestasi Akademik:<br><br>
+                        Peringkat 1-3, nilai ujian terbaik, dan penghargaan mata pelajaran.
+                    </div>
+                    <div class="empty-box text-left p-4">
+                        ⚽ Prestasi Non-Akademik:<br><br>
+                        Lomba olahraga, seni, pidato, debat, dan kegiatan organisasi.
+                    </div>
+                </div>
+                <div class="page-number">- 9 -</div>
+            </div>
+
+            <div class="page-content" id="left-6">
+                <h2>FOTO BERSAMA</h2>
+                <p class="text-center text-gray-600 mb-6">👨‍👩‍👧‍👦 Kenangan bersama seluruh warga kelas</p>
+                <div class="empty-box h-[calc(100%-110px)]">
+                    Masukkan Foto Kelas Lengkap<br>Ukuran disarankan: 500 x 600 px
+                </div>
+                <div class="page-number">- 11 -</div>
+            </div>
+
+            <div class="page-content" id="left-7">
+                <h2>UCAPAN GURU</h2>
+                <p class="text-center text-gray-600 mb-6">📝 Pesan dan nasihat dari Bapak/Ibu Guru</p>
+                <div class="space-y-4 h-[calc(100%-140px)]">
+                    <div class="empty-box text-left p-4">
+                        Dari Wali Kelas:<br><br>
+                        "Teruslah berusaha dan jangan pernah takut bermimpi setinggi langit. Kesuksesan menanti kalian di depan."
+                    </div>
+                    <div class="empty-box text-left p-4">
+                        Dari Guru Mata Pelajaran:<br><br>
+                        "Ilmu yang kalian dapatkan adalah bekal terbaik untuk melangkah ke jenjang yang lebih tinggi."
+                    </div>
+                </div>
+                <div class="page-number">- 13 -</div>
+            </div>
+        </div>
+
+        <!-- Halaman Kanan -->
+        <div class="page page-right" id="pageRight">
+            <div class="page-content active" id="right-1">
+                <h2>PERTEMUAN</h2>
+                <p class="text-center text-gray-600 mb-6">❤️ Awal mula kita saling mengenal ❤️</p>
+                <div class="grid-2 mb-5">
+                    <div class="empty-box">Masukkan Foto Kenangan<br>di Sini</div>
+                    <div class="empty-box">Masukkan Foto Kenangan<br>di Sini</div>
+                </div>
+                <div class="empty-box text-left p-4">
+                    ✍️ Kesan Pertama:<br><br>
+                    Hari pertama masuk sekolah terasa asing, tapi berkat sambutan teman-teman yang ramah, semuanya terasa lebih menyenangkan.
+                </div>
+                <div class="page-number">- 2 -</div>
+            </div>
+
+            <div class="page-content" id="right-2">
+                <h2>PESAN & KESAN</h2>
+                <p class="text-center text-gray-600 mb-6">❤️ Ucapan untuk teman dan guru ❤️</p>
+                <div class="space-y-4 h-[calc(100%-140px)]">
+                    <div class="empty-box text-left p-4">
+                        ✍️ Pesan untuk Teman:<br><br>
+                        Terima kasih sudah menjadi keluarga kedua selama ini. Semoga kita tetap sukses dan terhubung.
+                    </div>
+                    <div class="empty-box text-left p-4">
+                        ✍️ Kesan untuk Sekolah:<br><br>
+                        Terima kasih atas ilmu, bimbingan, dan pengalaman berharga yang diberikan selama kami belajar di sini.
+                    </div>
+                </div>
+                <div class="page-number">- 4 -</div>
+            </div>
+
+            <div class="page-content" id="right-3">
+                <h2>HALAMAN KOSONG</h2>
+                <p class="text-center text-gray-600 mb-6">✍️ Tempat catatan tambahan</p>
+                <div class="empty-box h-[calc(100%-110px)]">
+                    Isi dengan cerita tambahan, foto, atau tulisan bebas
+                </div>
+                <div class="page-number">- 6 -</div>
+            </div>
+
+            <div class="page-content" id="right-4">
+                <h2>HALAMAN KOSONG</h2>
+                <p class="text-center text-gray-600 mb-6">✍️ Halaman tambahan</p>
+                <div class="empty-box h-[calc(100%-110px)]">
+                    Siap diisi konten sesuai kebutuhan
+                </div>
+                <div class="page-number">- 8 -</div>
+            </div>
+
+            <div class="page-content" id="right-5">
+                <h2>HALAMAN KOSONG</h2>
+                <p class="text-center text-gray-600 mb-6">✍️ Halaman tambahan</p>
+                <div class="empty-box h-[calc(100%-110px)]">
+                    Siap diisi konten sesuai kebutuhan
+                </div>
+                <div class="page-number">- 10 -</div>
+            </div>
+
+            <div class="page-content" id="right-6">
+                <h2>HALAMAN KOSONG</h2>
+                <p class="text-center text-gray-600 mb-6">✍️ Halaman tambahan</p>
+                <div class="empty-box h-[calc(100%-110px)]">
+                    Siap diisi konten sesuai kebutuhan
+                </div>
+                <div class="page-number">- 12 -</div>
+            </div>
+
+            <div class="page-content" id="right-7">
+                <h2>PENUTUP</h2>
+                <div class="h-[calc(100%-90px)] flex flex-col items-center justify-center text-center px-6">
+                    <p class="text-xl italic text-gray-600 leading-relaxed max-w-sm">
+                        "Kenangan ini akan selalu tersimpan rapi di hati. Sampai jumpa di jalan kesuksesan masing-masing."
+                    </p>
+                    <p class="mt-10 text-xl font-semibold text-gray-800">
+                        — Kelas XII IPA 1 —
+                    </p>
+                    <p class="text-gray-500 mt-2 text-lg">Tahun 2026</p>
+                </div>
+                <div class="page-number">- 14 -</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tombol Navigasi -->
+    <div class="nav-container" id="navButtons" style="display: none;">
+        <button id="prevBtn" class="nav-btn" title="Halaman Sebelumnya">
+            <i class="fa fa-arrow-left"></i>
+        </button>
+        <button id="nextBtn" class="nav-btn" title="Halaman Berikutnya">
+            <i class="fa fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <script>
+        let currentSpread = 1;
+        const totalSpread = 7;
+        const cover = document.getElementById('cover');
+        const leftPage = document.getElementById('pageLeft');
+        const rightPage = document.getElementById('pageRight');
+        const navButtons = document.getElementById('navButtons');
+
+        // Buka buku
+        function openBook() {
+            cover.style.transform = 'rotateY(-180deg)';
+            setTimeout(() => {
+                cover.style.zIndex = '2';
+                leftPage.style.opacity = '1';
+                navButtons.style.display = 'block';
+            }, 900);
+        }
+
+        // Tutup buku kembali ke sampul
+        function closeBook() {
+            navButtons.style.display = 'none';
+            leftPage.style.opacity = '0';
+            setTimeout(() => {
+                cover.style.transform = 'rotateY(0deg)';
+                setTimeout(() => {
+                    cover.style.zIndex = '20';
+                }, 900);
+            }, 300);
+        }
+
+        // Halaman selanjutnya
+        function goNext() {
+            if (currentSpread >= totalSpread) return;
+            rightPage.classList.add('flipping-next');
+            setTimeout(() => {
+                document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+                currentSpread++;
+                document.getElementById(`left-${currentSpread}`).classList.add('active');
+                document.getElementById(`right-${currentSpread}`).classList.add('active');
+                rightPage.classList.remove('flipping-next');
+            }, 450);
+        }
+
+        // Halaman sebelumnya / Tutup buku jika di halaman daftar isi
+        function goPrev() {
+            if (currentSpread <= 1) {
+                closeBook();
+                return;
+            }
+            leftPage.classList.add('flipping-prev');
+            setTimeout(() => {
+                document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+                currentSpread--;
+                document.getElementById(`left-${currentSpread}`).classList.add('active');
+                document.getElementById(`right-${currentSpread}`).classList.add('active');
+                leftPage.classList.remove('flipping-prev');
+            }, 450);
+        }
+
+        function goToSpread(spreadNum) {
+            if (spreadNum === currentSpread) return;
+            spreadNum > currentSpread ? goNext() : goPrev();
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', goPrev);
+        document.getElementById('nextBtn').addEventListener('click', goNext);
+    </script>
+
+</body>
+</html>
