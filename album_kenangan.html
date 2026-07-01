@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Album Kenangan Siswa</title>
+    <title>Album Kenangan Siswa - Kelas VIII-F</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
@@ -11,13 +11,14 @@
             theme: {
                 extend: {
                     colors: {
-                        coverBg: '#2c3e50',
-                        coverText: '#f8f5f0',
-                        coverBack: '#1a252f',
-                        paper: '#ffffff',
-                        paperBack: '#f8f8f8',
-                        text: '#222222',
-                        border: '#e0e0e0'
+                        coverBg: '#121826',
+                        coverText: '#ffffff',
+                        coverAccent: '#c9a227',
+                        paper: '#1a1f2e',
+                        paperBack: '#151924',
+                        text: '#e0e6f0',
+                        textMuted: '#9ca5c2',
+                        border: '#2d3446'
                     },
                     fontFamily: {
                         serif: ['Playfair Display', 'Georgia', 'serif'],
@@ -28,7 +29,7 @@
         }
     </script>
     <style type="text/tailwindcss">
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
 
         * {
             margin: 0;
@@ -37,97 +38,155 @@
         }
 
         body {
-            background: linear-gradient(135deg, #e5e5e5 0%, #f0f0f0 100%);
+            background: 
+                linear-gradient(rgba(10, 15, 30, 0.75), rgba(15, 20, 40, 0.8)),
+                url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 0;
             overflow: hidden;
         }
 
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(24px, 3vw, 32px);
-            font-weight: 700;
-            color: #222;
-            margin-bottom: 24px;
-        }
-
-        /* Kontainer Buku */
         .book {
-            --book-width: min(90vw, 1400px);
-            --book-height: calc(var(--book-width) * 0.625);
+            --book-width: min(96vw, 1600px);
+            --book-height: calc(var(--book-width) * 0.58);
             width: var(--book-width);
             height: var(--book-height);
             position: relative;
-            perspective: 3000px;
+            perspective: 3500px;
             transform-style: preserve-3d;
         }
 
-        /* Semua halaman dasar */
         .page {
             position: absolute;
             width: 50%;
             height: 100%;
-            padding: clamp(25px, 3vw, 45px);
-            border: 1px solid #e8e8e8;
+            padding: 0;
+            border: 1px solid #2d3446;
             overflow: hidden;
             backface-visibility: hidden;
             transform-style: preserve-3d;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
-            background: #fff;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
+            background: #1a1f2e;
         }
 
-        /* Sampul */
         .page-cover {
             right: 0;
-            background: transparent;
+            width: 50%;
+            height: 100%;
+            background: #121826;
             transform-origin: left center;
             transform: rotateY(0deg);
             transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
-            z-index: 20;
+            z-index: 100; 
             border: none;
             padding: 0;
+            backface-visibility: hidden;
+            pointer-events: auto;
+            cursor: pointer;
         }
 
         .cover-front {
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
-            color: #f8f5f0;
+            background: 
+                radial-gradient(circle at top left, rgba(201, 162, 39, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at bottom right, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+                linear-gradient(145deg, #121826 0%, #1b2233 50%, #0e131d 100%);
+            color: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            cursor: pointer;
             backface-visibility: hidden;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
-            padding: clamp(25px, 3vw, 45px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            padding: clamp(25px, 3vw, 50px);
+            overflow: hidden;
+            z-index: 101;
+        }
+
+        .cover-front::before,
+        .cover-front::after {
+            content: '';
+            position: absolute;
+            inset: 25px;
+            border: 1px solid rgba(201, 162, 39, 0.35);
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        .cover-front::after {
+            inset: 35px;
+            border-width: 1px 0;
+            border-style: solid none;
+        }
+
+        .divider-line {
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #c9a227, transparent);
+            margin: 20px 0;
+            opacity: 0.9;
+            box-shadow: 0 0 10px rgba(201, 162, 39, 0.25);
+        }
+
+        .cover-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: clamp(36px, 5vw, 52px);
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .cover-sub {
+            font-family: 'Playfair Display', serif;
+            font-weight: 500;
+            font-size: clamp(18px, 2.4vw, 24px);
+            color: #c5cbe0;
+        }
+
+        .cover-class {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: clamp(20px, 2.8vw, 28px);
+            color: #c9a227;
+        }
+
+        .cover-note {
+            font-weight: 400;
+            font-size: clamp(14px, 1.4vw, 16px);
+            color: rgba(255,255,255,0.6);
         }
 
         .cover-back {
             position: absolute;
             inset: 0;
-            background: #1a252f;
+            background: linear-gradient(145deg, #0e131d 0%, #121826 100%);
             transform: rotateY(180deg);
             backface-visibility: hidden;
         }
 
-        /* Halaman Kiri */
         .page-left {
             left: 0;
-            border-right: 1px solid #ddd;
+            border-right: 1px solid #2d3446;
             transform-origin: right center;
             transform: rotateY(0deg);
             transition: opacity 0s, transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
             z-index: 10;
             opacity: 0;
+            visibility: hidden;
         }
 
-        /* Halaman Kanan */
+        .page-left.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
         .page-right {
             left: 50%;
             border-left: none;
@@ -135,109 +194,201 @@
             transform: rotateY(0deg);
             transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
             z-index: 5;
+            background: #1a1f2e;
         }
 
         .page-right.flipping-next {
             transform: rotateY(-180deg);
-            box-shadow: 
-                inset 0 0 30px rgba(0,0,0,0.12), 
-                -8px 0 20px rgba(0,0,0,0.08),
-                inset -5px 0 15px rgba(0,0,0,0.05);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), -8px 0 20px rgba(0,0,0,0.3);
             z-index: 15;
         }
 
         .page-left.flipping-prev {
             transform: rotateY(180deg);
-            box-shadow: 
-                inset 0 0 30px rgba(0,0,0,0.12), 
-                8px 0 20px rgba(0,0,0,0.08),
-                inset 5px 0 15px rgba(0,0,0,0.05);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 8px 0 20px rgba(0,0,0,0.3);
             z-index: 15;
         }
 
         .empty-box {
-            border: 1px dashed #cccccc;
-            min-height: clamp(100px, 12vw, 150px);
+            border: 1px dashed #4a536b;
+            min-height: clamp(100px, 12vw, 160px);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #999;
+            color: #7a85a3;
             font-style: italic;
             text-align: center;
-            padding: 15px;
+            padding: 20px;
             border-radius: 4px;
-            line-height: 1.6;
-            transition: all 0.2s ease;
-            font-size: clamp(13px, 1.1vw, 15px);
-        }
-
-        .empty-box:hover {
-            border-color: #888;
-            background: #fdfdfd;
+            background: rgba(255,255,255,0.02);
         }
 
         .page-number {
             position: absolute;
-            bottom: 25px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: clamp(12px, 1.1vw, 14px);
-            color: #777;
+            font-size: 12px;
+            color: #647092;
+            z-index: 10;
         }
 
         h2 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(22px, 2.5vw, 28px);
+            font-size: clamp(22px, 2.6vw, 28px);
             font-weight: 700;
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 25px;
-            color: #222;
+            letter-spacing: 1px;
+            margin-bottom: 18px;
+            color: #e0e6f0;
+            position: relative;
+            z-index: 10;
         }
 
         h3 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(18px, 2vw, 20px);
+            font-size: clamp(17px, 2vw, 20px);
             font-weight: 600;
             text-transform: uppercase;
-            color: #222;
+            color: #c9a227;
         }
 
         p {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(14px, 1.3vw, 16px);
-            line-height: 1.7;
-            color: #444;
+            font-size: clamp(13px, 1.3vw, 15px);
+            line-height: 1.5;
+            color: #b0b8d1;
         }
 
         .space-y-6 > * {
-            margin-top: clamp(15px, 2vw, 18px);
+            margin-top: clamp(15px, 1.8vw, 18px);
+            position: relative;
+            z-index: 10;
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: clamp(12px, 1.5vw, 15px);
+            gap: clamp(12px, 1.5vw, 16px);
+            position: relative;
+            z-index: 10;
         }
 
         .page-content {
             width: 100%;
             height: 100%;
             display: none;
+            position: absolute;
+            inset: 0;
+            padding: clamp(40px, 4.5vw, 55px);
+            overflow: hidden;
+            z-index: 5;
         }
+        
         .page-content.active {
             display: block;
         }
 
-        /* Tombol Navigasi */
+        .student-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 18px 12px;
+            height: calc(100% - 60px);
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .student-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 11;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-frame {
+            width: 100%;
+            aspect-ratio: 4/5;
+            background: #ffffff;
+            padding: 5px 5px 12px 5px;
+            border-radius: 2px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+            margin-bottom: 5px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer; 
+            z-index: 12;
+            transition: transform 0.2s ease;
+        }
+
+        .photo-frame:hover {
+            transform: scale(1.03);
+        }
+
+        .photo-frame::after {
+            content: 'GANTI FOTO';
+            position: absolute;
+            inset: 5px 5px 12px 5px;
+            background: rgba(0,0,0,0.6);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .photo-frame:hover::after {
+            opacity: 1;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1px;
+            background: #2d3446;
+        }
+
+        .student-name {
+            font-weight: 700;
+            font-size: 13px;
+            color: #c9a227;
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+
+        .student-bio {
+            font-size: 11px;
+            color: #9ca5c2;
+            line-height: 1.2;
+        }
+
+        .student-quote {
+            font-size: 10px;
+            color: #8792b3;
+            line-height: 1.2;
+            font-style: italic;
+            padding: 0 4px;
+        }
+
         .nav-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 40;
+            z-index: 60; 
             pointer-events: none;
         }
 
@@ -245,15 +396,15 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            pointer-events: auto;
-            width: 48px;
-            height: 48px;
+            pointer-events: auto; 
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
-            background: #ffffff;
-            border: none;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-            font-size: 18px;
-            color: #333;
+            background: #252c3f;
+            border: 1px solid #343d57;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+            font-size: 20px;
+            color: #c9a227;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -261,165 +412,287 @@
             transition: all 0.2s ease;
         }
 
-        .nav-btn:hover {
-            background: #f8f8f8;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+        #prevBtn { left: 15px; }
+        #nextBtn { right: 15px; }
+    
+        .page-border-container {
+            position: absolute;
+            inset: 20px;
+            border: 2px solid #c9a227;
+            pointer-events: none; 
+            height: calc(100% - 40px);
+            width: calc(100% - 40px);
+            box-shadow: 0 0 15px rgba(201, 162, 39, 0.15);
+            z-index: 0; 
         }
-
-        #prevBtn {
-            left: 20px;
+        .page-border-container::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border: 1px solid rgba(201, 162, 39, 0.4);
         }
-
-        #nextBtn {
-            right: 20px;
+        .corner-ornament {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 3px solid #c9a227;
         }
+        .corner-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .corner-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+        .corner-br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+        
+        .corner-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #c9a227;
+            border-radius: 50%;
+        }
+        .dot-tl { top: 8px; left: 8px; }
+        .dot-tr { top: 8px; right: 8px; }
+        .dot-bl { bottom: 8px; left: 8px; }
+        .dot-br { bottom: 8px; right: 8px; }
     </style>
 </head>
 <body>
 
-    <h1>Album Kenangan Siswa</h1>
-
     <div class="book" id="book">
 
-        <!-- Sampul Buku -->
         <div class="page page-cover" id="cover" onclick="openBook()">
             <div class="cover-front">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4 tracking-wider">ALBUM KENANGAN</h2>
-                <div class="w-40 h-1 bg-white rounded mb-6 opacity-80"></div>
-                <p class="text-lg md:text-xl font-light mb-2">Tahun Ajaran 2025 / 2026</p>
-                <p class="text-base md:text-lg opacity-90">Kelas XII IPA 1</p>
-                <p class="text-sm mt-12 opacity-75 italic">Klik untuk membuka</p>
+                <h2 class="cover-title">ALBUM KENANGAN</h2>
+                <div class="divider-line"></div>
+                <p class="cover-sub mb-2">SMP NEGERI 110 JAKARTA</p>
+                <p class="cover-sub mb-2">Tahun Ajaran 2025 / 2026</p>
+                <p class="cover-class">Kelas VIII-F</p>
+                <p class="cover-note mt-12 italic">Klik untuk membuka</p>
             </div>
             <div class="cover-back"></div>
         </div>
 
-        <!-- Halaman Kiri -->
         <div class="page page-left" id="pageLeft">
+            <div class="page-border-container">
+                <div class="corner-ornament corner-tl"></div>
+                <div class="corner-ornament corner-tr"></div>
+                <div class="corner-ornament corner-bl"></div>
+                <div class="corner-ornament corner-br"></div>
+                <div class="corner-dot dot-tl"></div>
+                <div class="corner-dot dot-tr"></div>
+                <div class="corner-dot dot-bl"></div>
+                <div class="corner-dot dot-br"></div>
+            </div>
+            
             <div class="page-content active" id="left-1">
                 <h2>DAFTAR ISI</h2>
                 <div class="space-y-6">
-                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(1)">
-                        <span class="text-4xl font-serif font-bold text-gray-300">01</span>
-                        <div>
-                            <h3>PERTEMUAN</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">Awal mula kita bertemu</p>
-                        </div>
+                    <div class="flex items-center gap-6">
+                        <span class="text-4xl font-serif font-bold text-gray-600">03 - 04</span>
+                        <div><h3>DAFTAR MURID 1 - 12</h3></div>
                     </div>
-                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(2)">
-                        <span class="text-4xl font-serif font-bold text-gray-300">02</span>
-                        <div>
-                            <h3>KEBERSAMAAN</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">Momen indah bersama</p>
-                        </div>
+                    <div class="flex items-center gap-6">
+                        <span class="text-4xl font-serif font-bold text-gray-600">05 - 06</span>
+                        <div><h3>DAFTAR MURID 13 - 24</h3></div>
                     </div>
-                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(3)">
-                        <span class="text-4xl font-serif font-bold text-gray-300">03</span>
-                        <div>
-                            <h3>PESAN & KESAN</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">Ungkapan kenangan</p>
-                        </div>
+                    <div class="flex items-center gap-6">
+                        <span class="text-4xl font-serif font-bold text-gray-600">07 - 08</span>
+                        <div><h3>DAFTAR MURID 25 - 36</h3></div>
                     </div>
-                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(4)">
-                        <span class="text-4xl font-serif font-bold text-gray-300">04</span>
-                        <div>
-                            <h3>HARAPAN & CITA-CITA</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">Mimpi masa depan</p>
-                        </div>
+                    <div class="flex items-center gap-6">
+                        <span class="text-4xl font-serif font-bold text-gray-600">09 - 10</span>
+                        <div><h3>PERTEMUAN & KEBERSAMAAN</h3></div>
                     </div>
-                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(5)">
-                        <span class="text-4xl font-serif font-bold text-gray-300">05</span>
-                        <div>
-                            <h3>AKTIVITAS KELAS</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">Kegiatan sehari-hari</p>
-                        </div>
+                    <div class="flex items-center gap-6">
+                        <span class="text-4xl font-serif font-bold text-gray-600">11 - 12</span>
+                        <div><h3>PESAN & KESAN</h3></div>
                     </div>
-                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(6)">
-                        <span class="text-4xl font-serif font-bold text-gray-300">06</span>
-                        <div>
-                            <h3>PRESTASI</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">Penghargaan yang diraih</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-6 cursor-pointer hover:text-gray-600 transition-colors" onclick="goToSpread(7)">
-                        <span class="text-4xl font-serif font-bold text-gray-300">07</span>
-                        <div>
-                            <h3>FOTO BERSAMA</h3>
-                            <p class="text-sm text-gray-500 mt-0.5">Kenangan seluruh kelas</p>
-                        </div>
+                    <div class="flex items-center gap-6">
+                        <span class="text-4xl font-serif font-bold text-gray-600">13 - 14</span>
+                        <div><h3>UCAPAN GURU & PENUTUP</h3></div>
                     </div>
                 </div>
                 <div class="page-number">- 1 -</div>
             </div>
 
-            <div class="page-content" id="left-2">
-                <h2>KEBERSAMAAN</h2>
-                <p class="text-center text-gray-600 mb-6">❤️ Momen tawa, kerja keras, dan kebersamaan yang tak terlupakan ❤️</p>
-                <div class="grid-2 h-[calc(100%-140px)]">
-                    <div class="empty-box">Foto Kegiatan Belajar</div>
-                    <div class="empty-box">Foto Upacara Bendera</div>
-                    <div class="empty-box">Foto Ekstrakurikuler</div>
-                    <div class="empty-box">Foto Acara Sekolah</div>
+            <div class="page-content" id="left-3">
+                <h2>DAFTAR MURID 1 - 6</h2>
+                <div class="student-grid">
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/01.jpg" alt="Foto Siswa 1"></div>
+                        <div class="student-name">Nama Siswa 1</div>
+                        <div class="student-bio">Bogor, 01 Jan 2012</div>
+                        <div class="student-quote">"Belajar hari ini"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/02.jpg" alt="Foto Siswa 2"></div>
+                        <div class="student-name">Nama Siswa 2</div>
+                        <div class="student-bio">Bogor, 02 Jan 2012</div>
+                        <div class="student-quote">"Tidak ada usaha sia-sia"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/03.jpg" alt="Foto Siswa 3"></div>
+                        <div class="student-name">Nama Siswa 3</div>
+                        <div class="student-bio">Bogor, 03 Jan 2012</div>
+                        <div class="student-quote">"Bermimpilah setinggi langit"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/04.jpg" alt="Foto Siswa 4"></div>
+                        <div class="student-name">Nama Siswa 4</div>
+                        <div class="student-bio">Bogor, 04 Jan 2012</div>
+                        <div class="student-quote">"Langkah kecil menuju sukses"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/05.jpg" alt="Foto Siswa 5"></div>
+                        <div class="student-name">Nama Siswa 5</div>
+                        <div class="student-bio">Bogor, 05 Jan 2012</div>
+                        <div class="student-quote">"Jangan pernah menyerah"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/06.jpg" alt="Foto Siswa 6"></div>
+                        <div class="student-name">Nama Siswa 6</div>
+                        <div class="student-bio">Bogor, 06 Jan 2012</div>
+                        <div class="student-quote">"Ilmu adalah cahaya"</div>
+                    </div>
                 </div>
                 <div class="page-number">- 3 -</div>
             </div>
 
-            <div class="page-content" id="left-3">
-                <h2>HARAPAN & CITA-CITA</h2>
-                <p class="text-center text-gray-600 mb-6">❤️ Mimpi dan harapan untuk masa depan ❤️</p>
-                <div class="space-y-4 h-[calc(100%-140px)]">
-                    <div class="empty-box text-left p-4">
-                        ✨ Cita-cita Saya:<br><br>
-                        Ingin melanjutkan kuliah, menjadi dokter, guru, insinyur, atau pengusaha yang sukses.
+            <div class="page-content" id="left-5">
+                <h2>DAFTAR MURID 13 - 18</h2>
+                <div class="student-grid">
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/13.jpg" alt="Foto Siswa 13"></div>
+                        <div class="student-name">Nama Siswa 13</div>
+                        <div class="student-bio">Bogor, 13 Jan 2012</div>
+                        <div class="student-quote">"Belajar dari kesalahan"</div>
                     </div>
-                    <div class="empty-box text-left p-4">
-                        🎯 Harapan ke Depan:<br><br>
-                        Semoga selalu diberikan kesehatan dan kemudahan meraih impian.
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/14.jpg" alt="Foto Siswa 14"></div>
+                        <div class="student-name">Nama Siswa 14</div>
+                        <div class="student-bio">Bogor, 14 Jan 2012</div>
+                        <div class="student-quote">"Hidup adalah perjalanan"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/15.jpg" alt="Foto Siswa 15"></div>
+                        <div class="student-name">Nama Siswa 15</div>
+                        <div class="student-bio">Bogor, 15 Jan 2012</div>
+                        <div class="student-quote">"Akhlak lebih penting"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/16.jpg" alt="Foto Siswa 16"></div>
+                        <div class="student-name">Nama Siswa 16</div>
+                        <div class="student-bio">Bogor, 16 Jan 2012</div>
+                        <div class="student-quote">"Senyum bahasa universal"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/17.jpg" alt="Foto Siswa 17"></div>
+                        <div class="student-name">Nama Siswa 17</div>
+                        <div class="student-bio">Bogor, 17 Jan 2012</div>
+                        <div class="student-quote">"Berani bermimpi besar"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/18.jpg" alt="Foto Siswa 18"></div>
+                        <div class="student-name">Nama Siswa 18</div>
+                        <div class="student-bio">Bogor, 18 Jan 2012</div>
+                        <div class="student-quote">"Waktu sangat berharga"</div>
                     </div>
                 </div>
                 <div class="page-number">- 5 -</div>
             </div>
 
-            <div class="page-content" id="left-4">
-                <h2>AKTIVITAS KELAS</h2>
-                <p class="text-center text-gray-600 mb-6">📚 Kegiatan rutin dan kegiatan tambahan di kelas</p>
-                <div class="grid-2 h-[calc(100%-140px)]">
-                    <div class="empty-box">Foto Belajar Kelompok</div>
-                    <div class="empty-box">Foto Piket Kelas</div>
-                    <div class="empty-box">Foto Lomba Kelas</div>
-                    <div class="empty-box">Foto Perayaan Hari Besar</div>
+            <div class="page-content" id="left-7">
+                <h2>DAFTAR MURID 25 - 30</h2>
+                <div class="student-grid">
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/25.jpg" alt="Foto Siswa 25"></div>
+                        <div class="student-name">Nama Siswa 25</div>
+                        <div class="student-bio">Bogor, 25 Jan 2012</div>
+                        <div class="student-quote">"Teman baik membawa berkah"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/26.jpg" alt="Foto Siswa 26"></div>
+                        <div class="student-name">Nama Siswa 26</div>
+                        <div class="student-bio">Bogor, 26 Jan 2012</div>
+                        <div class="student-quote">"Berjuang sampai akhir"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/27.jpg" alt="Foto Siswa 27"></div>
+                        <div class="student-name">Nama Siswa 27</div>
+                        <div class="student-bio">Bogor, 27 Jan 2012</div>
+                        <div class="student-quote">"Disiplin rahasia sukses"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/28.jpg" alt="Foto Siswa 28"></div>
+                        <div class="student-name">Nama Siswa 28</div>
+                        <div class="student-bio">Bogor, 28 Jan 2012</div>
+                        <div class="student-quote">"Hargai kebersamaan"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/29.jpg" alt="Foto Siswa 29"></div>
+                        <div class="student-name">Nama Siswa 29</div>
+                        <div class="student-bio">Bogor, 29 Jan 2012</div>
+                        <div class="student-quote">"Mimpi butuh usaha besar"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/30.jpg" alt="Foto Siswa 30"></div>
+                        <div class="student-name">Nama Siswa 30</div>
+                        <div class="student-bio">Bogor, 30 Jan 2012</div>
+                        <div class="student-quote">"Semangat tak boleh padam"</div>
+                    </div>
                 </div>
                 <div class="page-number">- 7 -</div>
             </div>
 
-            <div class="page-content" id="left-5">
-                <h2>PRESTASI</h2>
-                <p class="text-center text-gray-600 mb-6">🏆 Berbagai pencapaian yang diraih selama sekolah</p>
-                <div class="space-y-4 h-[calc(100%-140px)]">
-                    <div class="empty-box text-left p-4">
-                        🥇 Prestasi Akademik:<br><br>
-                        Peringkat 1-3, nilai ujian terbaik, dan penghargaan mata pelajaran.
-                    </div>
-                    <div class="empty-box text-left p-4">
-                        ⚽ Prestasi Non-Akademik:<br><br>
-                        Lomba olahraga, seni, pidato, debat, dan kegiatan organisasi.
-                    </div>
+            <div class="page-content" id="left-9">
+                <h2>PERTEMUAN & KEBERSAMAAN</h2>
+                <p class="text-center text-gray-400 mb-6">❤️ Awal mula kita saling mengenal ❤️</p>
+                <div class="grid-2 mb-5">
+                    <div class="empty-box">Foto Perkenalan Kelas</div>
+                    <div class="empty-box">Foto Kegiatan Bersama</div>
+                    <div class="empty-box">Foto Belajar Kelompok</div>
+                    <div class="empty-box">Foto Acara Kelas</div>
                 </div>
                 <div class="page-number">- 9 -</div>
             </div>
 
-            <div class="page-content" id="left-6">
-                <h2>FOTO BERSAMA</h2>
-                <p class="text-center text-gray-600 mb-6">👨‍👩‍👧‍👦 Kenangan bersama seluruh warga kelas</p>
-                <div class="empty-box h-[calc(100%-110px)]">
-                    Masukkan Foto Kelas Lengkap<br>Ukuran disarankan: 500 x 600 px
+            <div class="page-content" id="left-11">
+                <h2>PESAN & KESAN</h2>
+                <p class="text-center text-gray-400 mb-6">❤️ Ucapan untuk teman dan guru ❤️</p>
+                <div class="space-y-4 h-[calc(100%-150px)]">
+                    <div class="empty-box text-left p-4">
+                        ✍️ Pesan untuk Teman:<br><br>
+                        Terima kasih sudah menjadi keluarga kedua selama ini. Semoga kita tetap sukses dan terhubung selamanya.
+                    </div>
+                    <div class="empty-box text-left p-4">
+                        ✍️ Kesan untuk Sekolah:<br><br>
+                        Terima kasih atas ilmu, bimbingan, dan pengalaman berharga yang diberikan selama kami belajar di sini.
+                    </div>
                 </div>
                 <div class="page-number">- 11 -</div>
             </div>
 
-            <div class="page-content" id="left-7">
+            <div class="page-content" id="left-13">
                 <h2>UCAPAN GURU</h2>
-                <p class="text-center text-gray-600 mb-6">📝 Pesan dan nasihat dari Bapak/Ibu Guru</p>
-                <div class="space-y-4 h-[calc(100%-140px)]">
+                <p class="text-center text-gray-400 mb-6">📝 Pesan dan nasihat dari Bapak/Ibu Guru</p>
+                <div class="space-y-4 h-[calc(100%-150px)]">
                     <div class="empty-box text-left p-4">
                         Dari Wali Kelas:<br><br>
                         "Teruslah berusaha dan jangan pernah takut bermimpi setinggi langit. Kesuksesan menanti kalian di depan."
@@ -433,83 +706,208 @@
             </div>
         </div>
 
-        <!-- Halaman Kanan -->
         <div class="page page-right" id="pageRight">
-            <div class="page-content active" id="right-1">
-                <h2>PERTEMUAN</h2>
-                <p class="text-center text-gray-600 mb-6">❤️ Awal mula kita saling mengenal ❤️</p>
-                <div class="grid-2 mb-5">
-                    <div class="empty-box">Masukkan Foto Kenangan<br>di Sini</div>
-                    <div class="empty-box">Masukkan Foto Kenangan<br>di Sini</div>
-                </div>
-                <div class="empty-box text-left p-4">
-                    ✍️ Kesan Pertama:<br><br>
-                    Hari pertama masuk sekolah terasa asing, tapi berkat sambutan teman-teman yang ramah, semuanya terasa lebih menyenangkan.
+            <div class="page-border-container">
+                <div class="corner-ornament corner-tl"></div>
+                <div class="corner-ornament corner-tr"></div>
+                <div class="corner-ornament corner-bl"></div>
+                <div class="corner-ornament corner-br"></div>
+                <div class="corner-dot dot-tl"></div>
+                <div class="corner-dot dot-tr"></div>
+                <div class="corner-dot dot-bl"></div>
+                <div class="corner-dot dot-br"></div>
+            </div>
+                
+            <div class="page-content active" id="right-2">
+                <h2>FOTO MURID KELAS VIII-F <br>BERSAMA WALI KELAS</h2><br>
+                <div class="empty-box h-[calc(100%-120px)]">
+                    Siap diisi konten sesuai kebutuhan
                 </div>
                 <div class="page-number">- 2 -</div>
             </div>
 
-            <div class="page-content" id="right-2">
-                <h2>PESAN & KESAN</h2>
-                <p class="text-center text-gray-600 mb-6">❤️ Ucapan untuk teman dan guru ❤️</p>
-                <div class="space-y-4 h-[calc(100%-140px)]">
-                    <div class="empty-box text-left p-4">
-                        ✍️ Pesan untuk Teman:<br><br>
-                        Terima kasih sudah menjadi keluarga kedua selama ini. Semoga kita tetap sukses dan terhubung.
+            <div class="page-content" id="right-4">
+                <h2>DAFTAR MURID 7 - 12</h2>
+                <div class="student-grid">
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/07.jpg" alt="Foto Siswa 7"></div>
+                        <div class="student-name">Nama Siswa 7</div>
+                        <div class="student-bio">Bogor, 07 Jan 2012</div>
+                        <div class="student-quote">"Bersyukur selalu"</div>
                     </div>
-                    <div class="empty-box text-left p-4">
-                        ✍️ Kesan untuk Sekolah:<br><br>
-                        Terima kasih atas ilmu, bimbingan, dan pengalaman berharga yang diberikan selama kami belajar di sini.
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/08.jpg" alt="Foto Siswa 8"></div>
+                        <div class="student-name">Nama Siswa 8</div>
+                        <div class="student-bio">Bogor, 08 Jan 2012</div>
+                        <div class="student-quote">"Kebaikan adalah investasi"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/09.jpg" alt="Foto Siswa 9"></div>
+                        <div class="student-name">Nama Siswa 9</div>
+                        <div class="student-bio">Bogor, 09 Jan 2012</div>
+                        <div class="student-quote">"Kerja keras kunci sukses"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/10.jpg" alt="Foto Siswa 10"></div>
+                        <div class="student-name">Nama Siswa 10</div>
+                        <div class="student-bio">Bogor, 10 Jan 2012</div>
+                        <div class="student-quote">"Sahabat selamanya ada"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/11.jpg" alt="Foto Siswa 11"></div>
+                        <div class="student-name">Nama Siswa 11</div>
+                        <div class="student-bio">Bogor, 11 Jan 2012</div>
+                        <div class="student-quote">"Jadilah versi terbaikmu"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/12.jpg" alt="Foto Siswa 12"></div>
+                        <div class="student-name">Nama Siswa 12</div>
+                        <div class="student-bio">Bogor, 12 Jan 2012</div>
+                        <div class="student-quote">"Masa depan di tanganmu"</div>
                     </div>
                 </div>
                 <div class="page-number">- 4 -</div>
             </div>
 
-            <div class="page-content" id="right-3">
-                <h2>HALAMAN KOSONG</h2>
-                <p class="text-center text-gray-600 mb-6">✍️ Tempat catatan tambahan</p>
-                <div class="empty-box h-[calc(100%-110px)]">
-                    Isi dengan cerita tambahan, foto, atau tulisan bebas
+            <div class="page-content" id="right-6">
+                <h2>DAFTAR MURID 19 - 24</h2>
+                <div class="student-grid">
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/19.jpg" alt="Foto Siswa 19"></div>
+                        <div class="student-name">Nama Siswa 19</div>
+                        <div class="student-bio">Bogor, 19 Jan 2012</div>
+                        <div class="student-quote">"Bantu sesama tanpa pamrih"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/20.jpg" alt="Foto Siswa 20"></div>
+                        <div class="student-name">Nama Siswa 20</div>
+                        <div class="student-bio">Bogor, 20 Jan 2012</div>
+                        <div class="student-quote">"Percaya pada dirimu"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/21.jpg" alt="Foto Siswa 21"></div>
+                        <div class="student-name">Nama Siswa 21</div>
+                        <div class="student-bio">Bogor, 21 Jan 2012</div>
+                        <div class="student-quote">"Sabar membawa ketenangan"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/22.jpg" alt="Foto Siswa 22"></div>
+                        <div class="student-name">Nama Siswa 22</div>
+                        <div class="student-bio">Bogor, 22 Jan 2012</div>
+                        <div class="student-quote">"Cinta ilmu membawa bahagia"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/23.jpg" alt="Foto Siswa 23"></div>
+                        <div class="student-name">Nama Siswa 23</div>
+                        <div class="student-bio">Bogor, 23 Jan 2012</div>
+                        <div class="student-quote">"Jadilah inspirasi"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/24.jpg" alt="Foto Siswa 24"></div>
+                        <div class="student-name">Nama Siswa 24</div>
+                        <div class="student-bio">Bogor, 24 Jan 2012</div>
+                        <div class="student-quote">"Kejujuran permata langka"</div>
+                    </div>
                 </div>
                 <div class="page-number">- 6 -</div>
             </div>
 
-            <div class="page-content" id="right-4">
-                <h2>HALAMAN KOSONG</h2>
-                <p class="text-center text-gray-600 mb-6">✍️ Halaman tambahan</p>
-                <div class="empty-box h-[calc(100%-110px)]">
-                    Siap diisi konten sesuai kebutuhan
+            <div class="page-content" id="right-8">
+                <h2>DAFTAR MURID 31 - 36</h2>
+                <div class="student-grid">
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/31.jpg" alt="Foto Siswa 31"></div>
+                        <div class="student-name">Nama Siswa 31</div>
+                        <div class="student-bio">Bogor, 31 Jan 2012</div>
+                        <div class="student-quote">"Belajar seumur hidup"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/32.jpg" alt="Foto Siswa 32"></div>
+                        <div class="student-name">Nama Siswa 32</div>
+                        <div class="student-bio">Bogor, 01 Feb 2012</div>
+                        <div class="student-quote">"Keluarga tempat pulang"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/33.jpg" alt="Foto Siswa 33"></div>
+                        <div class="student-name">Nama Siswa 33</div>
+                        <div class="student-bio">Bogor, 02 Feb 2012</div>
+                        <div class="student-quote">"Berbuat baiklah selalu"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/34.jpg" alt="Foto Siswa 34"></div>
+                        <div class="student-name">Nama Siswa 34</div>
+                        <div class="student-bio">Bogor, 03 Feb 2012</div>
+                        <div class="student-quote">"Pikiran positif hasil positif"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/35.jpg" alt="Foto Siswa 35"></div>
+                        <div class="student-name">Nama Siswa 35</div>
+                        <div class="student-bio">Bogor, 04 Feb 2012</div>
+                        <div class="student-quote">"Terima kasih kenangan indah"</div>
+                    </div>
+                    <div class="student-card">
+                        <input type="file" accept="image/*" class="hidden student-file-input">
+                        <div class="photo-frame"><img src="foto_siswa/36.jpg" alt="Foto Siswa 36"></div>
+                        <div class="student-name">Nama Siswa 36</div>
+                        <div class="student-bio">Bogor, 05 Feb 2012</div>
+                        <div class="student-quote">"Sampai jumpa sukses!"</div>
+                    </div>
                 </div>
                 <div class="page-number">- 8 -</div>
             </div>
 
-            <div class="page-content" id="right-5">
-                <h2>HALAMAN KOSONG</h2>
-                <p class="text-center text-gray-600 mb-6">✍️ Halaman tambahan</p>
-                <div class="empty-box h-[calc(100%-110px)]">
-                    Siap diisi konten sesuai kebutuhan
+            <div class="page-content" id="right-10">
+                <h2>HARAPAN & CITA-CITA</h2>
+                <p class="text-center text-gray-400 mb-6">❤️ Mimpi dan harapan untuk masa depan ❤️</p>
+                <div class="space-y-4 h-[calc(100%-150px)]">
+                    <div class="empty-box text-left p-4">
+                        ✨ Cita-cita Saya:<br><br>
+                        Ingin melanjutkan kuliah, menjadi dokter, guru, insinyur, atau pengusaha yang sukses.
+                    </div>
+                    <div class="empty-box text-left p-4">
+                        🎯 Harapan ke Depan:<br><br>
+                        Semoga selalu diberikan kesehatan dan kemudahan meraih impian.
+                    </div>
                 </div>
                 <div class="page-number">- 10 -</div>
             </div>
 
-            <div class="page-content" id="right-6">
-                <h2>HALAMAN KOSONG</h2>
-                <p class="text-center text-gray-600 mb-6">✍️ Halaman tambahan</p>
-                <div class="empty-box h-[calc(100%-110px)]">
-                    Siap diisi konten sesuai kebutuhan
+            <div class="page-content" id="right-12">
+                <h2>KEBERSAMAAN & PRESTASI</h2>
+                <p class="text-center text-gray-400 mb-6">❤️ Momen dan pencapaian kita bersama ❤️</p>
+                <div class="grid-2 h-[calc(100%-150px)]">
+                    <div class="empty-box">Foto Kegiatan Belajar</div>
+                    <div class="empty-box">Foto Upacara Bendera</div>
+                    <div class="empty-box">Foto Lomba & Prestasi</div>
+                    <div class="empty-box">Foto Acara Sekolah</div>
                 </div>
                 <div class="page-number">- 12 -</div>
             </div>
 
-            <div class="page-content" id="right-7">
+            <div class="page-content" id="right-14">
                 <h2>PENUTUP</h2>
-                <div class="h-[calc(100%-90px)] flex flex-col items-center justify-center text-center px-6">
-                    <p class="text-xl italic text-gray-600 leading-relaxed max-w-sm">
+                <div class="h-[calc(100%-100px)] flex flex-col items-center justify-center text-center px-6">
+                    <p class="text-xl italic text-gray-400 leading-relaxed max-w-lg">
                         "Kenangan ini akan selalu tersimpan rapi di hati. Sampai jumpa di jalan kesuksesan masing-masing."
                     </p>
-                    <p class="mt-10 text-xl font-semibold text-gray-800">
-                        — Kelas XII IPA 1 —
-                    </p>
+                    <p class="mt-10 text-xl font-semibold text-gray-200">— Kelas VIII-F —</p>
                     <p class="text-gray-500 mt-2 text-lg">Tahun 2026</p>
                 </div>
                 <div class="page-number">- 14 -</div>
@@ -517,7 +915,6 @@
         </div>
     </div>
 
-    <!-- Tombol Navigasi -->
     <div class="nav-container" id="navButtons" style="display: none;">
         <button id="prevBtn" class="nav-btn" title="Halaman Sebelumnya">
             <i class="fa fa-arrow-left"></i>
@@ -528,72 +925,175 @@
     </div>
 
     <script>
+        // === URL GOOGLE APPS SCRIPT WEB APP ===
+        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbyRhbVCZP19KfoEwqPDpRpbcJYj4dIUDYYoDkXo9HIOGRy_m_tUb4LS4vIokywy5QijFw/exec";
+
         let currentSpread = 1;
         const totalSpread = 7;
         const cover = document.getElementById('cover');
         const leftPage = document.getElementById('pageLeft');
         const rightPage = document.getElementById('pageRight');
         const navButtons = document.getElementById('navButtons');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
 
-        // Buka buku
         function openBook() {
             cover.style.transform = 'rotateY(-180deg)';
+            cover.style.pointerEvents = 'none'; 
             setTimeout(() => {
-                cover.style.zIndex = '2';
-                leftPage.style.opacity = '1';
+                cover.style.zIndex = '1';
+                leftPage.classList.add('active');
                 navButtons.style.display = 'block';
             }, 900);
         }
 
-        // Tutup buku kembali ke sampul
-        function closeBook() {
-            navButtons.style.display = 'none';
-            leftPage.style.opacity = '0';
-            setTimeout(() => {
-                cover.style.transform = 'rotateY(0deg)';
-                setTimeout(() => {
-                    cover.style.zIndex = '20';
-                }, 900);
-            }, 300);
-        }
-
-        // Halaman selanjutnya
         function goNext() {
             if (currentSpread >= totalSpread) return;
             rightPage.classList.add('flipping-next');
             setTimeout(() => {
                 document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
                 currentSpread++;
-                document.getElementById(`left-${currentSpread}`).classList.add('active');
-                document.getElementById(`right-${currentSpread}`).classList.add('active');
+                document.getElementById(`left-${currentSpread * 2 - 1}`).classList.add('active');
+                document.getElementById(`right-${currentSpread * 2}`).classList.add('active');
                 rightPage.classList.remove('flipping-next');
-            }, 450);
+                leftPage.classList.remove('flipping-prev');
+            }, 900);
         }
 
-        // Halaman sebelumnya / Tutup buku jika di halaman daftar isi
         function goPrev() {
-            if (currentSpread <= 1) {
-                closeBook();
-                return;
-            }
+            if (currentSpread <= 1) return;
             leftPage.classList.add('flipping-prev');
             setTimeout(() => {
                 document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
                 currentSpread--;
-                document.getElementById(`left-${currentSpread}`).classList.add('active');
-                document.getElementById(`right-${currentSpread}`).classList.add('active');
+                document.getElementById(`left-${currentSpread * 2 - 1}`).classList.add('active');
+                document.getElementById(`right-${currentSpread * 2}`).classList.add('active');
                 leftPage.classList.remove('flipping-prev');
-            }, 450);
+                rightPage.classList.remove('flipping-next');
+            }, 900);
         }
 
-        function goToSpread(spreadNum) {
-            if (spreadNum === currentSpread) return;
-            spreadNum > currentSpread ? goNext() : goPrev();
-        }
+        prevBtn.addEventListener('click', goPrev);
+        nextBtn.addEventListener('click', goNext);
 
-        document.getElementById('prevBtn').addEventListener('click', goPrev);
-        document.getElementById('nextBtn').addEventListener('click', goNext);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') goNext();
+            if (e.key === 'ArrowLeft') goPrev();
+        });
+
+        document.addEventListener('click', function(e) {
+            const frame = e.target.closest('.photo-frame');
+            if (frame) {
+                const card = frame.closest('.student-card');
+                const fileInput = card.querySelector('.student-file-input');
+                if (fileInput) {
+                    fileInput.click();
+                }
+            }
+        });
+
+ // === UPLOAD FOTO YANG LEBIH BAIK (GANTI KODE LAMA INI) ===
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('student-file-input')) {
+        const input = e.target;
+        const file = input.files[0];
+        if (!file) return;
+
+        const card = input.closest('.student-card');
+        const img = card.querySelector('.photo-frame img');
+        const studentName = card.querySelector('.student-name').textContent;
+
+        card.style.opacity = "0.5";
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            // Preview dulu di lokal
+            img.src = event.target.result;
+
+            const base64Data = event.target.result.split(',')[1];
+
+            fetch(GOOGLE_SHEETS_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "uploadFoto",
+                    idSiswa: getStudentId(card),
+                    filename: file.name,
+                    mimeType: file.type,
+                    base64: base64Data
+                })
+            })
+            .then(res => res.json())
+            .then(response => {
+                card.style.opacity = "1";
+                if (response.status === "success" && response.url) {
+                    // Update gambar dari server
+                    img.src = response.url + "&t=" + Date.now();
+                    alert(`✅ Foto ${studentName} berhasil diupdate!`);
+                } else {
+                    alert("❌ Gagal upload: " + (response.message || "Coba lagi"));
+                }
+            })
+            .catch(err => {
+                card.style.opacity = "1";
+                console.error(err);
+                alert("❌ Upload gagal. Cek koneksi atau URL GAS.");
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Helper untuk mendapatkan ID siswa
+function getStudentId(card) {
+    const img = card.querySelector('img');
+    const alt = img.getAttribute('alt') || '';
+    const match = alt.match(/Foto Siswa (\d+)/);
+    return match ? parseInt(match[1]) : 1;
+};
+
+  async function muatDataSiswa() {
+    try {
+        const response = await fetch(GOOGLE_SHEETS_API_URL + "?action=getAll");
+        const result = await response.json();
+
+        if (result.status !== "success") return;
+
+        result.data.forEach(siswa => {
+            const id = String(siswa.id).padStart(2, '0');
+            
+            // Cari gambar berdasarkan ID
+            let img = document.querySelector(`img[alt="Foto Siswa ${parseInt(siswa.id)}"]`);
+            
+            if (img) {
+                const card = img.closest('.student-card');
+                
+                // Update foto dari Google Drive
+                if (siswa.foto && siswa.foto.includes("drive.google.com")) {
+                    img.src = siswa.foto + "&t=" + Date.now();  // anti cache
+                }
+
+                // Update teks
+                if (siswa.nama) {
+                    const nameEl = card.querySelector('.student-name');
+                    if (nameEl) nameEl.textContent = siswa.nama;
+                }
+                if (siswa.ttl) {
+                    const bioEl = card.querySelector('.student-bio');
+                    if (bioEl) bioEl.textContent = siswa.ttl;
+                }
+                if (siswa.kutipan) {
+                    const quoteEl = card.querySelector('.student-quote');
+                    if (quoteEl) quoteEl.textContent = `"${siswa.kutipan}"`;
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Gagal load data dari Sheet:", error);
+    }
+}
+
+        window.addEventListener('DOMContentLoaded', muatDataSiswa);
     </script>
-
 </body>
 </html>
