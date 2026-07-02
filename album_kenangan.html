@@ -267,6 +267,25 @@
             z-index: 10;
         }
 
+        .toc-item {
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-left: -8px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .toc-item:hover {
+            background-color: rgba(201, 162, 39, 0.08);
+            transform: translateX(4px);
+        }
+
+        #coverBtn {
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -453,13 +472,35 @@
         .dot-tr { top: 8px; right: 8px; }
         .dot-bl { bottom: 8px; left: 8px; }
         .dot-br { bottom: 8px; right: 8px; }
+
+        .photo-frame.sudah-terisi::after {
+            content: none !important;
+            display: none !important;
+        }
+        .photo-frame.sudah-terisi:hover {
+            transform: none !important;
+        }
+
+        #cover {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+
+        [contenteditable="true"]:focus {
+            outline: 2px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .student-name, .student-bio, .student-quote {
+            transition: all 0.2s ease;
+        }
     </style>
 </head>
 <body>
 
     <div class="book" id="book">
 
-        <div class="page page-cover" id="cover" onclick="openBook()">
+        <div class="page page-cover" id="cover">
             <div class="cover-front">
                 <h2 class="cover-title">ALBUM KENANGAN</h2>
                 <div class="divider-line"></div>
@@ -486,27 +527,27 @@
             <div class="page-content active" id="left-1">
                 <h2>DAFTAR ISI</h2>
                 <div class="space-y-6">
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-6 toc-item" data-spread="2">
                         <span class="text-4xl font-serif font-bold text-gray-600">03 - 04</span>
                         <div><h3>DAFTAR MURID 1 - 12</h3></div>
                     </div>
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-6 toc-item" data-spread="3">
                         <span class="text-4xl font-serif font-bold text-gray-600">05 - 06</span>
                         <div><h3>DAFTAR MURID 13 - 24</h3></div>
                     </div>
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-6 toc-item" data-spread="4">
                         <span class="text-4xl font-serif font-bold text-gray-600">07 - 08</span>
                         <div><h3>DAFTAR MURID 25 - 36</h3></div>
                     </div>
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-6 toc-item" data-spread="5">
                         <span class="text-4xl font-serif font-bold text-gray-600">09 - 10</span>
                         <div><h3>PERTEMUAN & KEBERSAMAAN</h3></div>
                     </div>
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-6 toc-item" data-spread="6">
                         <span class="text-4xl font-serif font-bold text-gray-600">11 - 12</span>
                         <div><h3>PESAN & KESAN</h3></div>
                     </div>
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-6 toc-item" data-spread="7">
                         <span class="text-4xl font-serif font-bold text-gray-600">13 - 14</span>
                         <div><h3>UCAPAN GURU & PENUTUP</h3></div>
                     </div>
@@ -518,46 +559,52 @@
                 <h2>DAFTAR MURID 1 - 6</h2>
                 <div class="student-grid">
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/01.jpg" alt="Foto Siswa 1"></div>
                         <div class="student-name">Nama Siswa 1</div>
                         <div class="student-bio">Bogor, 01 Jan 2012</div>
                         <div class="student-quote">"Belajar hari ini"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/02.jpg" alt="Foto Siswa 2"></div>
                         <div class="student-name">Nama Siswa 2</div>
                         <div class="student-bio">Bogor, 02 Jan 2012</div>
                         <div class="student-quote">"Tidak ada usaha sia-sia"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/03.jpg" alt="Foto Siswa 3"></div>
                         <div class="student-name">Nama Siswa 3</div>
                         <div class="student-bio">Bogor, 03 Jan 2012</div>
                         <div class="student-quote">"Bermimpilah setinggi langit"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/04.jpg" alt="Foto Siswa 4"></div>
                         <div class="student-name">Nama Siswa 4</div>
                         <div class="student-bio">Bogor, 04 Jan 2012</div>
                         <div class="student-quote">"Langkah kecil menuju sukses"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/05.jpg" alt="Foto Siswa 5"></div>
                         <div class="student-name">Nama Siswa 5</div>
                         <div class="student-bio">Bogor, 05 Jan 2012</div>
                         <div class="student-quote">"Jangan pernah menyerah"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/06.jpg" alt="Foto Siswa 6"></div>
                         <div class="student-name">Nama Siswa 6</div>
                         <div class="student-bio">Bogor, 06 Jan 2012</div>
                         <div class="student-quote">"Ilmu adalah cahaya"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                 </div>
                 <div class="page-number">- 3 -</div>
@@ -567,46 +614,52 @@
                 <h2>DAFTAR MURID 13 - 18</h2>
                 <div class="student-grid">
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/13.jpg" alt="Foto Siswa 13"></div>
                         <div class="student-name">Nama Siswa 13</div>
                         <div class="student-bio">Bogor, 13 Jan 2012</div>
                         <div class="student-quote">"Belajar dari kesalahan"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/14.jpg" alt="Foto Siswa 14"></div>
                         <div class="student-name">Nama Siswa 14</div>
                         <div class="student-bio">Bogor, 14 Jan 2012</div>
                         <div class="student-quote">"Hidup adalah perjalanan"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/15.jpg" alt="Foto Siswa 15"></div>
                         <div class="student-name">Nama Siswa 15</div>
                         <div class="student-bio">Bogor, 15 Jan 2012</div>
                         <div class="student-quote">"Akhlak lebih penting"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/16.jpg" alt="Foto Siswa 16"></div>
                         <div class="student-name">Nama Siswa 16</div>
                         <div class="student-bio">Bogor, 16 Jan 2012</div>
                         <div class="student-quote">"Senyum bahasa universal"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/17.jpg" alt="Foto Siswa 17"></div>
                         <div class="student-name">Nama Siswa 17</div>
                         <div class="student-bio">Bogor, 17 Jan 2012</div>
                         <div class="student-quote">"Berani bermimpi besar"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/18.jpg" alt="Foto Siswa 18"></div>
                         <div class="student-name">Nama Siswa 18</div>
                         <div class="student-bio">Bogor, 18 Jan 2012</div>
                         <div class="student-quote">"Waktu sangat berharga"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                 </div>
                 <div class="page-number">- 5 -</div>
@@ -616,46 +669,52 @@
                 <h2>DAFTAR MURID 25 - 30</h2>
                 <div class="student-grid">
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/25.jpg" alt="Foto Siswa 25"></div>
                         <div class="student-name">Nama Siswa 25</div>
                         <div class="student-bio">Bogor, 25 Jan 2012</div>
                         <div class="student-quote">"Teman baik membawa berkah"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/26.jpg" alt="Foto Siswa 26"></div>
                         <div class="student-name">Nama Siswa 26</div>
                         <div class="student-bio">Bogor, 26 Jan 2012</div>
                         <div class="student-quote">"Berjuang sampai akhir"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/27.jpg" alt="Foto Siswa 27"></div>
                         <div class="student-name">Nama Siswa 27</div>
                         <div class="student-bio">Bogor, 27 Jan 2012</div>
                         <div class="student-quote">"Disiplin rahasia sukses"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/28.jpg" alt="Foto Siswa 28"></div>
                         <div class="student-name">Nama Siswa 28</div>
                         <div class="student-bio">Bogor, 28 Jan 2012</div>
                         <div class="student-quote">"Hargai kebersamaan"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/29.jpg" alt="Foto Siswa 29"></div>
                         <div class="student-name">Nama Siswa 29</div>
                         <div class="student-bio">Bogor, 29 Jan 2012</div>
                         <div class="student-quote">"Mimpi butuh usaha besar"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/30.jpg" alt="Foto Siswa 30"></div>
                         <div class="student-name">Nama Siswa 30</div>
                         <div class="student-bio">Bogor, 30 Jan 2012</div>
                         <div class="student-quote">"Semangat tak boleh padam"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                 </div>
                 <div class="page-number">- 7 -</div>
@@ -730,46 +789,52 @@
                 <h2>DAFTAR MURID 7 - 12</h2>
                 <div class="student-grid">
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/07.jpg" alt="Foto Siswa 7"></div>
                         <div class="student-name">Nama Siswa 7</div>
                         <div class="student-bio">Bogor, 07 Jan 2012</div>
                         <div class="student-quote">"Bersyukur selalu"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/08.jpg" alt="Foto Siswa 8"></div>
                         <div class="student-name">Nama Siswa 8</div>
                         <div class="student-bio">Bogor, 08 Jan 2012</div>
                         <div class="student-quote">"Kebaikan adalah investasi"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/09.jpg" alt="Foto Siswa 9"></div>
                         <div class="student-name">Nama Siswa 9</div>
                         <div class="student-bio">Bogor, 09 Jan 2012</div>
                         <div class="student-quote">"Kerja keras kunci sukses"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/10.jpg" alt="Foto Siswa 10"></div>
                         <div class="student-name">Nama Siswa 10</div>
                         <div class="student-bio">Bogor, 10 Jan 2012</div>
                         <div class="student-quote">"Sahabat selamanya ada"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/11.jpg" alt="Foto Siswa 11"></div>
                         <div class="student-name">Nama Siswa 11</div>
                         <div class="student-bio">Bogor, 11 Jan 2012</div>
                         <div class="student-quote">"Jadilah versi terbaikmu"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/12.jpg" alt="Foto Siswa 12"></div>
                         <div class="student-name">Nama Siswa 12</div>
                         <div class="student-bio">Bogor, 12 Jan 2012</div>
                         <div class="student-quote">"Masa depan di tanganmu"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                 </div>
                 <div class="page-number">- 4 -</div>
@@ -779,46 +844,52 @@
                 <h2>DAFTAR MURID 19 - 24</h2>
                 <div class="student-grid">
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/19.jpg" alt="Foto Siswa 19"></div>
                         <div class="student-name">Nama Siswa 19</div>
                         <div class="student-bio">Bogor, 19 Jan 2012</div>
                         <div class="student-quote">"Bantu sesama tanpa pamrih"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/20.jpg" alt="Foto Siswa 20"></div>
                         <div class="student-name">Nama Siswa 20</div>
                         <div class="student-bio">Bogor, 20 Jan 2012</div>
                         <div class="student-quote">"Percaya pada dirimu"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/21.jpg" alt="Foto Siswa 21"></div>
                         <div class="student-name">Nama Siswa 21</div>
                         <div class="student-bio">Bogor, 21 Jan 2012</div>
                         <div class="student-quote">"Sabar membawa ketenangan"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/22.jpg" alt="Foto Siswa 22"></div>
                         <div class="student-name">Nama Siswa 22</div>
                         <div class="student-bio">Bogor, 22 Jan 2012</div>
                         <div class="student-quote">"Cinta ilmu membawa bahagia"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/23.jpg" alt="Foto Siswa 23"></div>
                         <div class="student-name">Nama Siswa 23</div>
                         <div class="student-bio">Bogor, 23 Jan 2012</div>
                         <div class="student-quote">"Jadilah inspirasi"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/24.jpg" alt="Foto Siswa 24"></div>
                         <div class="student-name">Nama Siswa 24</div>
                         <div class="student-bio">Bogor, 24 Jan 2012</div>
                         <div class="student-quote">"Kejujuran permata langka"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                 </div>
                 <div class="page-number">- 6 -</div>
@@ -828,46 +899,52 @@
                 <h2>DAFTAR MURID 31 - 36</h2>
                 <div class="student-grid">
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/31.jpg" alt="Foto Siswa 31"></div>
                         <div class="student-name">Nama Siswa 31</div>
                         <div class="student-bio">Bogor, 31 Jan 2012</div>
                         <div class="student-quote">"Belajar seumur hidup"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/32.jpg" alt="Foto Siswa 32"></div>
                         <div class="student-name">Nama Siswa 32</div>
                         <div class="student-bio">Bogor, 01 Feb 2012</div>
                         <div class="student-quote">"Keluarga tempat pulang"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/33.jpg" alt="Foto Siswa 33"></div>
                         <div class="student-name">Nama Siswa 33</div>
                         <div class="student-bio">Bogor, 02 Feb 2012</div>
                         <div class="student-quote">"Berbuat baiklah selalu"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/34.jpg" alt="Foto Siswa 34"></div>
                         <div class="student-name">Nama Siswa 34</div>
                         <div class="student-bio">Bogor, 03 Feb 2012</div>
                         <div class="student-quote">"Pikiran positif hasil positif"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/35.jpg" alt="Foto Siswa 35"></div>
                         <div class="student-name">Nama Siswa 35</div>
                         <div class="student-bio">Bogor, 04 Feb 2012</div>
                         <div class="student-quote">"Terima kasih kenangan indah"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                     <div class="student-card">
-                        <input type="file" accept="image/*" class="hidden student-file-input">
                         <div class="photo-frame"><img src="foto_siswa/36.jpg" alt="Foto Siswa 36"></div>
                         <div class="student-name">Nama Siswa 36</div>
                         <div class="student-bio">Bogor, 05 Feb 2012</div>
                         <div class="student-quote">"Sampai jumpa sukses!"</div>
+                        <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+                        <input type="file" class="student-file-input" accept="image/*" style="display:none;">
                     </div>
                 </div>
                 <div class="page-number">- 8 -</div>
@@ -916,6 +993,9 @@
     </div>
 
     <div class="nav-container" id="navButtons" style="display: none;">
+        <button id="coverBtn" class="nav-btn" title="Kembali ke Sampul">
+            <i class="fa fa-home"></i>
+        </button>
         <button id="prevBtn" class="nav-btn" title="Halaman Sebelumnya">
             <i class="fa fa-arrow-left"></i>
         </button>
@@ -924,176 +1004,323 @@
         </button>
     </div>
 
-    <script>
+<script>
         // === URL GOOGLE APPS SCRIPT WEB APP ===
-        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbyRhbVCZP19KfoEwqPDpRpbcJYj4dIUDYYoDkXo9HIOGRy_m_tUb4LS4vIokywy5QijFw/exec";
+const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbz1G9R6WEWPoMqIUXDjzS3ZdNOcAIyREHfRAVJgxiUcO_Yn-BiZ3LKHQ4_fQBceUe63eg/exec";
 
-        let currentSpread = 1;
-        const totalSpread = 7;
-        const cover = document.getElementById('cover');
-        const leftPage = document.getElementById('pageLeft');
-        const rightPage = document.getElementById('pageRight');
-        const navButtons = document.getElementById('navButtons');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
+let currentSpread = 1;
+const totalSpread = 7;
+const cover = document.getElementById('cover');
+const leftPage = document.getElementById('pageLeft');
+const rightPage = document.getElementById('pageRight');
+const navButtons = document.getElementById('navButtons');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
 
-        function openBook() {
-            cover.style.transform = 'rotateY(-180deg)';
-            cover.style.pointerEvents = 'none'; 
-            setTimeout(() => {
-                cover.style.zIndex = '1';
-                leftPage.classList.add('active');
-                navButtons.style.display = 'block';
-            }, 900);
+// BUKA COVER
+cover.addEventListener('click', bukaCover);
+
+function bukaCover() {
+    if (cover.style.transform === 'rotateY(-180deg)') return;
+    cover.style.transform = 'rotateY(-180deg)';
+    cover.style.pointerEvents = 'none'; 
+    setTimeout(() => {
+        cover.style.zIndex = '1';
+        leftPage.classList.add('active');
+        navButtons.style.display = 'block';
+    }, 900);
+}
+
+// TUTUP BUKU, KEMBALI KE SAMPUL DEPAN
+function tutupCover() {
+    if (cover.style.transform !== 'rotateY(-180deg)') return;
+    cover.style.zIndex = '100';
+    cover.style.pointerEvents = 'none';
+    navButtons.style.display = 'none';
+    leftPage.classList.remove('active');
+    cover.style.transform = 'rotateY(0deg)';
+    setTimeout(() => {
+        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+        document.getElementById('left-1').classList.add('active');
+        document.getElementById('right-2').classList.add('active');
+        currentSpread = 1;
+        cover.style.pointerEvents = 'auto';
+    }, 900);
+}
+
+const coverBtn = document.getElementById('coverBtn');
+if (coverBtn) {
+    coverBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tutupCover();
+    });
+}
+
+// NAVIGASI LANGSUNG KE HALAMAN TERTENTU (dipakai oleh Daftar Isi)
+function goToSpread(target) {
+    if (target === currentSpread || target < 1 || target > totalSpread) return;
+    document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+    currentSpread = target;
+    document.getElementById(`left-${currentSpread * 2 - 1}`).classList.add('active');
+    document.getElementById(`right-${currentSpread * 2}`).classList.add('active');
+}
+
+// KLIK ITEM DAFTAR ISI -> LOMPAT KE HALAMAN TUJUAN
+document.addEventListener('click', function(e) {
+    const item = e.target.closest('.toc-item[data-spread]');
+    if (item) {
+        goToSpread(parseInt(item.dataset.spread, 10));
+    }
+});
+
+// NAVIGASI HALAMAN
+function goNext() {
+    if (currentSpread >= totalSpread) return;
+    rightPage.classList.add('flipping-next');
+    setTimeout(() => {
+        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+        currentSpread++;
+        document.getElementById(`left-${currentSpread * 2 - 1}`).classList.add('active');
+        document.getElementById(`right-${currentSpread * 2}`).classList.add('active');
+        rightPage.classList.remove('flipping-next');
+        leftPage.classList.remove('flipping-prev');
+    }, 900);
+}
+
+function goPrev() {
+    if (currentSpread <= 1) return;
+    leftPage.classList.add('flipping-prev');
+    setTimeout(() => {
+        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+        currentSpread--;
+        document.getElementById(`left-${currentSpread * 2 - 1}`).classList.add('active');
+        document.getElementById(`right-${currentSpread * 2}`).classList.add('active');
+        leftPage.classList.remove('flipping-prev');
+        rightPage.classList.remove('flipping-next');
+    }, 900);
+}
+
+prevBtn.addEventListener('click', goPrev);
+nextBtn.addEventListener('click', goNext);
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goNext();
+    if (e.key === 'ArrowLeft') goPrev();
+});
+
+// KUNCI / BUKA EDIT TEKS
+function kunciTotal(card) {
+    const nama = card.querySelector('.student-name');
+    const ttl = card.querySelector('.student-bio');
+    const kutipan = card.querySelector('.student-quote');
+    const btn = card.querySelector('.btn-simpan-data');
+
+    nama.setAttribute('contenteditable', 'false');
+    ttl.setAttribute('contenteditable', 'false');
+    kutipan.setAttribute('contenteditable', 'false');
+    
+    nama.style.cursor = 'default';
+    ttl.style.cursor = 'default';
+    kutipan.style.cursor = 'default';
+    nama.style.backgroundColor = 'transparent';
+    ttl.style.backgroundColor = 'transparent';
+    kutipan.style.backgroundColor = 'transparent';
+    
+    if (btn) btn.style.display = 'none';
+}
+
+function izinkanEdit(card) {
+    const nama = card.querySelector('.student-name');
+    const ttl = card.querySelector('.student-bio');
+    const kutipan = card.querySelector('.student-quote');
+    const btn = card.querySelector('.btn-simpan-data');
+
+    nama.setAttribute('contenteditable', 'true');
+    ttl.setAttribute('contenteditable', 'true');
+    kutipan.setAttribute('contenteditable', 'true');
+    
+    nama.style.cursor = 'text';
+    ttl.style.cursor = 'text';
+    kutipan.style.cursor = 'text';
+    nama.style.backgroundColor = 'rgba(255,255,255,0.15)';
+    ttl.style.backgroundColor = 'rgba(255,255,255,0.1)';
+    kutipan.style.backgroundColor = 'rgba(255,255,255,0.1)';
+    
+    if (btn) btn.style.display = 'inline-block';
+}
+
+// SIMPAN DATA KE GOOGLE SHEETS
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('btn-simpan-data')) {
+        const btn = e.target;
+        const card = btn.closest('.student-card');
+        const id = getStudentId(card);
+        const nama = card.querySelector('.student-name').textContent.trim();
+        const ttl = card.querySelector('.student-bio').textContent.trim();
+        const kutipan = card.querySelector('.student-quote').textContent.trim();
+
+        if (!nama) {
+            alert('❌ Nama tidak boleh kosong!');
+            return;
         }
 
-        function goNext() {
-            if (currentSpread >= totalSpread) return;
-            rightPage.classList.add('flipping-next');
-            setTimeout(() => {
-                document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
-                currentSpread++;
-                document.getElementById(`left-${currentSpread * 2 - 1}`).classList.add('active');
-                document.getElementById(`right-${currentSpread * 2}`).classList.add('active');
-                rightPage.classList.remove('flipping-next');
-                leftPage.classList.remove('flipping-prev');
-            }, 900);
-        }
+        btn.textContent = 'Menyimpan...';
+        btn.disabled = true;
 
-        function goPrev() {
-            if (currentSpread <= 1) return;
-            leftPage.classList.add('flipping-prev');
-            setTimeout(() => {
-                document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
-                currentSpread--;
-                document.getElementById(`left-${currentSpread * 2 - 1}`).classList.add('active');
-                document.getElementById(`right-${currentSpread * 2}`).classList.add('active');
-                leftPage.classList.remove('flipping-prev');
-                rightPage.classList.remove('flipping-next');
-            }, 900);
-        }
-
-        prevBtn.addEventListener('click', goPrev);
-        nextBtn.addEventListener('click', goNext);
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') goNext();
-            if (e.key === 'ArrowLeft') goPrev();
-        });
-
-        document.addEventListener('click', function(e) {
-            const frame = e.target.closest('.photo-frame');
-            if (frame) {
-                const card = frame.closest('.student-card');
-                const fileInput = card.querySelector('.student-file-input');
-                if (fileInput) {
-                    fileInput.click();
-                }
+        fetch(GOOGLE_SHEETS_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: 'simpanDataSiswa',
+                idSiswa: id,
+                nama: nama,
+                ttl: ttl,
+                kutipan: kutipan
+            })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status === 'success') {
+                alert('✅ Data disimpan! Tidak bisa diubah lagi.');
+                kunciTotal(card);
+            } else {
+                alert('❌ Gagal: ' + res.message);
+                btn.textContent = 'Simpan Data';
+                btn.disabled = false;
             }
+        })
+        .catch(err => {
+            alert('❌ Koneksi gagal: ' + err);
+            btn.textContent = 'Simpan Data';
+            btn.disabled = false;
         });
+    }
+});
 
- // === UPLOAD FOTO YANG LEBIH BAIK (GANTI KODE LAMA INI) ===
-document.addEventListener('change', function(e) {
-    if (e.target.classList.contains('student-file-input')) {
+// FUNGSI UPLOAD & TAMPILKAN FOTO
+function cekFoto(card) {
+    const img = card.querySelector('.photo-frame img');
+    const frame = card.querySelector('.photo-frame');
+    const input = card.querySelector('.student-file-input');
+    const sudahAda = img.src && !img.src.includes('placeholder') && img.src !== window.location.href;
+
+    if (sudahAda) {
+        frame.style.cursor = 'default';
+        frame.classList.add('sudah-terisi');
+        input.disabled = true;
+        frame.onclick = null;
+    } else {
+        frame.style.cursor = 'pointer';
+        frame.classList.remove('sudah-terisi');
+        input.disabled = false;
+    }
+}
+
+document.addEventListener('click', e => {
+    if (e.target.closest('#cover')) return;
+    const frame = e.target.closest('.photo-frame');
+    if (!frame) return;
+    const card = frame.closest('.student-card');
+    const input = card.querySelector('.student-file-input');
+    if (input && !input.disabled) input.click();
+});
+
+document.addEventListener('change', e => {
+    if (e.target.classList.contains('student-file-input') && !e.target.disabled) {
         const input = e.target;
         const file = input.files[0];
         if (!file) return;
-
         const card = input.closest('.student-card');
         const img = card.querySelector('.photo-frame img');
-        const studentName = card.querySelector('.student-name').textContent;
 
-        card.style.opacity = "0.5";
-
+        card.style.opacity = '0.5';
         const reader = new FileReader();
-        reader.onload = function(event) {
-            // Preview dulu di lokal
-            img.src = event.target.result;
-
-            const base64Data = event.target.result.split(',')[1];
-
+        reader.onload = ev => {
+            img.src = ev.target.result;
             fetch(GOOGLE_SHEETS_API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({
-                    action: "uploadFoto",
+                    action: 'uploadFoto',
                     idSiswa: getStudentId(card),
                     filename: file.name,
                     mimeType: file.type,
-                    base64: base64Data
+                    base64: ev.target.result.split(',')[1]
                 })
             })
             .then(res => res.json())
-            .then(response => {
-                card.style.opacity = "1";
-                if (response.status === "success" && response.url) {
-                    // Update gambar dari server
-                    img.src = response.url + "&t=" + Date.now();
-                    alert(`✅ Foto ${studentName} berhasil diupdate!`);
+            .then(res => {
+                card.style.opacity = '1';
+                if (res.status === 'success') {
+                    img.src = res.url + '&t=' + Date.now();
+                    alert('✅ Foto berhasil diunggah!');
+                    cekFoto(card);
                 } else {
-                    alert("❌ Gagal upload: " + (response.message || "Coba lagi"));
+                    alert('❌ Gagal unggah: ' + res.message);
                 }
             })
-            .catch(err => {
-                card.style.opacity = "1";
-                console.error(err);
-                alert("❌ Upload gagal. Cek koneksi atau URL GAS.");
+            .catch(() => {
+                card.style.opacity = '1';
+                alert('❌ Kesalahan koneksi');
             });
         };
         reader.readAsDataURL(file);
     }
 });
 
-// Helper untuk mendapatkan ID siswa
 function getStudentId(card) {
     const img = card.querySelector('img');
     const alt = img.getAttribute('alt') || '';
-    const match = alt.match(/Foto Siswa (\d+)/);
-    return match ? parseInt(match[1]) : 1;
-};
+    const cocok = alt.match(/Foto Siswa (\d+)/);
+    return cocok ? parseInt(cocok[1]) : 1;
+}
 
-  async function muatDataSiswa() {
+// MUAT DATA SISWA OTOMATIS SAAT HALAMAN DIBUKA
+async function muatDataSiswa() {
+    document.querySelectorAll('.student-card').forEach(card => {
+        izinkanEdit(card);
+    });
+
     try {
         const response = await fetch(GOOGLE_SHEETS_API_URL + "?action=getAll");
         const result = await response.json();
 
-        if (result.status !== "success") return;
+        if (result.status !== "success") {
+            console.warn("Gagal ambil data dari server, izinkan edit semua");
+            return;
+        }
 
         result.data.forEach(siswa => {
-            const id = String(siswa.id).padStart(2, '0');
-            
-            // Cari gambar berdasarkan ID
-            let img = document.querySelector(`img[alt="Foto Siswa ${parseInt(siswa.id)}"]`);
-            
-            if (img) {
-                const card = img.closest('.student-card');
-                
-                // Update foto dari Google Drive
-                if (siswa.foto && siswa.foto.includes("drive.google.com")) {
-                    img.src = siswa.foto + "&t=" + Date.now();  // anti cache
-                }
+            const img = document.querySelector(`img[alt="Foto Siswa ${siswa.id}"]`);
+            if (!img) return;
+            const card = img.closest('.student-card');
 
-                // Update teks
-                if (siswa.nama) {
-                    const nameEl = card.querySelector('.student-name');
-                    if (nameEl) nameEl.textContent = siswa.nama;
-                }
-                if (siswa.ttl) {
-                    const bioEl = card.querySelector('.student-bio');
-                    if (bioEl) bioEl.textContent = siswa.ttl;
-                }
-                if (siswa.kutipan) {
-                    const quoteEl = card.querySelector('.student-quote');
-                    if (quoteEl) quoteEl.textContent = `"${siswa.kutipan}"`;
-                }
+            if (siswa.foto && siswa.foto !== "") {
+                img.src = siswa.foto + "&t=" + Date.now();
+                img.onerror = function() {
+                    const fileId = siswa.foto.match(/[-\w]{25,}/)?.[0];
+                    if (fileId) this.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000&t=${Date.now()}`;
+                };
             }
+
+            if (siswa.nama) card.querySelector('.student-name').textContent = siswa.nama;
+            if (siswa.ttl) card.querySelector('.student-bio').textContent = siswa.ttl;
+            if (siswa.kutipan) card.querySelector('.student-quote').textContent = `"${siswa.kutipan}"`;
+
+            if (siswa.nama && siswa.nama.trim() !== "") {
+                kunciTotal(card);
+            } else {
+                izinkanEdit(card);
+            }
+
+            cekFoto(card);
         });
+
     } catch (error) {
-        console.error("Gagal load data dari Sheet:", error);
+        console.error("Error muatDataSiswa:", error);
     }
 }
 
-        window.addEventListener('DOMContentLoaded', muatDataSiswa);
-    </script>
+window.addEventListener('DOMContentLoaded', muatDataSiswa);
+</script>
 </body>
 </html>
