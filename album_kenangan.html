@@ -11,7 +11,7 @@
             theme: {
                 extend: {
                     colors: {
-                        coverBg: '#121826',
+                        coverBg: '#0a1628',
                         coverText: '#ffffff',
                         coverAccent: '#c9a227',
                         paper: '#1a1f2e',
@@ -29,7 +29,7 @@
         }
     </script>
     <style type="text/tailwindcss">
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
         * {
             margin: 0;
@@ -39,8 +39,8 @@
 
         body {
             background: 
-                linear-gradient(rgba(10, 15, 30, 0.75), rgba(15, 20, 40, 0.8)),
-                url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
+                radial-gradient(ellipse at top, rgba(30, 40, 80, 0.4) 0%, transparent 60%),
+                linear-gradient(to bottom, #0a0e1a 0%, #1a1f3a 40%, #2a2f4a 70%, #1a1f3a 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -48,6 +48,74 @@
             justify-content: center;
             padding: 0;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Bintang-bintang di langit malam */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, white, transparent),
+                radial-gradient(1px 1px at 40px 70px, white, transparent),
+                radial-gradient(1px 1px at 90px 40px, white, transparent),
+                radial-gradient(2px 2px at 130px 80px, white, transparent),
+                radial-gradient(1px 1px at 160px 120px, white, transparent),
+                radial-gradient(1px 1px at 200px 50px, white, transparent),
+                radial-gradient(2px 2px at 250px 100px, white, transparent),
+                radial-gradient(1px 1px at 300px 30px, white, transparent),
+                radial-gradient(1px 1px at 350px 150px, white, transparent),
+                radial-gradient(2px 2px at 400px 70px, white, transparent),
+                radial-gradient(1px 1px at 450px 110px, white, transparent),
+                radial-gradient(1px 1px at 500px 40px, white, transparent),
+                radial-gradient(2px 2px at 550px 90px, white, transparent),
+                radial-gradient(1px 1px at 600px 130px, white, transparent),
+                radial-gradient(1px 1px at 650px 60px, white, transparent),
+                radial-gradient(2px 2px at 700px 100px, white, transparent),
+                radial-gradient(1px 1px at 750px 30px, white, transparent),
+                radial-gradient(1px 1px at 800px 140px, white, transparent),
+                radial-gradient(2px 2px at 850px 80px, white, transparent),
+                radial-gradient(1px 1px at 900px 50px, white, transparent),
+                radial-gradient(1px 1px at 950px 120px, white, transparent),
+                radial-gradient(2px 2px at 1000px 70px, white, transparent),
+                radial-gradient(1px 1px at 1050px 100px, white, transparent),
+                radial-gradient(1px 1px at 1100px 40px, white, transparent),
+                radial-gradient(2px 2px at 1150px 130px, white, transparent),
+                radial-gradient(1px 1px at 1200px 60px, white, transparent),
+                radial-gradient(1px 1px at 1250px 90px, white, transparent),
+                radial-gradient(2px 2px at 1300px 30px, white, transparent),
+                radial-gradient(1px 1px at 1350px 110px, white, transparent),
+                radial-gradient(1px 1px at 1400px 70px, white, transparent),
+                radial-gradient(2px 2px at 1450px 140px, white, transparent),
+                radial-gradient(1px 1px at 1500px 50px, white, transparent),
+                radial-gradient(1px 1px at 1550px 100px, white, transparent),
+                radial-gradient(2px 2px at 1600px 80px, white, transparent),
+                radial-gradient(1px 1px at 1650px 120px, white, transparent),
+                radial-gradient(1px 1px at 1700px 40px, white, transparent),
+                radial-gradient(2px 2px at 1750px 90px, white, transparent),
+                radial-gradient(1px 1px at 1800px 130px, white, transparent),
+                radial-gradient(1px 1px at 1850px 60px, white, transparent),
+                radial-gradient(2px 2px at 1900px 100px, white, transparent);
+            background-size: 100% 100%;
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Pegunungan di bawah */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 35vh;
+            background: 
+                linear-gradient(to bottom, transparent 0%, #0a0e1a 100%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="none"><path d="M0,300 L0,200 L100,150 L200,180 L300,100 L400,140 L500,80 L600,120 L700,60 L800,100 L900,50 L1000,90 L1100,70 L1200,110 L1200,300 Z" fill="%231a1f3a" opacity="0.6"/><path d="M0,300 L0,220 L150,180 L300,200 L450,140 L600,170 L750,110 L900,150 L1050,100 L1200,140 L1200,300 Z" fill="%230f1428" opacity="0.8"/></svg>') bottom/cover no-repeat;
+            pointer-events: none;
+            z-index: 0;
         }
 
         .book {
@@ -58,6 +126,7 @@
             position: relative;
             perspective: 3500px;
             transform-style: preserve-3d;
+            z-index: 1;
         }
 
         .page {
@@ -77,7 +146,7 @@
             right: 0;
             width: 50%;
             height: 100%;
-            background: #121826;
+            background: #0a1628;
             transform-origin: left center;
             transform: rotateY(0deg);
             transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -89,13 +158,11 @@
             cursor: pointer;
         }
 
+        /* ===== COVER BARU - BUKU SPIRAL ELEGAN ===== */
         .cover-front {
             position: absolute;
             inset: 0;
-            background: 
-                radial-gradient(circle at top left, rgba(201, 162, 39, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at bottom right, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
-                linear-gradient(145deg, #121826 0%, #1b2233 50%, #0e131d 100%);
+            background: linear-gradient(145deg, #0d1a2e 0%, #0a1628 50%, #081220 100%);
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -103,70 +170,204 @@
             justify-content: center;
             text-align: center;
             backface-visibility: hidden;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            box-shadow: 
+                0 15px 50px rgba(0,0,0,0.8),
+                inset 0 0 80px rgba(0,0,0,0.5);
             padding: clamp(25px, 3vw, 50px);
             overflow: hidden;
             z-index: 101;
         }
 
-        .cover-front::before,
-        .cover-front::after {
+        /* Bingkai Emas Tipis */
+        .cover-front::before {
             content: '';
             position: absolute;
             inset: 25px;
-            border: 1px solid rgba(201, 162, 39, 0.35);
-            border-radius: 2px;
+            border: 1.5px solid #c9a227;
             pointer-events: none;
+            box-shadow: 
+                inset 0 0 20px rgba(201, 162, 39, 0.1),
+                0 0 15px rgba(201, 162, 39, 0.15);
         }
 
         .cover-front::after {
-            inset: 35px;
-            border-width: 1px 0;
-            border-style: solid none;
+            content: '';
+            position: absolute;
+            inset: 30px;
+            border: 0.5px solid rgba(201, 162, 39, 0.4);
+            pointer-events: none;
         }
 
+        /* Ornamen Sudut Emas - Filigree */
+        .cover-corner {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            z-index: 5;
+            opacity: 0.95;
+        }
+
+        .cover-corner-tl { top: 20px; left: 20px; }
+        .cover-corner-tr { top: 20px; right: 20px; transform: scaleX(-1); }
+        .cover-corner-bl { bottom: 20px; left: 20px; transform: scaleY(-1); }
+        .cover-corner-br { bottom: 20px; right: 20px; transform: scale(-1); }
+
+        .cover-corner svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Spiral Binding di Sisi Kiri Cover */
+        .spiral-left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 35px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .spiral-ring {
+            width: 22px;
+            height: 14px;
+            border: 2px solid #8a9ab0;
+            border-radius: 50%;
+            background: linear-gradient(to bottom, #6a7a90 0%, #a0b0c0 50%, #6a7a90 100%);
+            box-shadow: 
+                0 2px 4px rgba(0,0,0,0.6),
+                inset 0 1px 2px rgba(255,255,255,0.3);
+            position: relative;
+        }
+
+        .spiral-ring::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #1a1f2e 0%, #0a0e1a 100%);
+            border-radius: 50%;
+            border: 1px solid #2d3446;
+        }
+
+        /* Garis Dekoratif dengan Ornamen */
         .divider-line {
-            width: 200px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #c9a227, transparent);
-            margin: 20px 0;
-            opacity: 0.9;
-            box-shadow: 0 0 10px rgba(201, 162, 39, 0.25);
+            width: 220px;
+            height: 20px;
+            margin: 15px 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .divider-line::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #c9a227 20%, #c9a227 80%, transparent 100%);
+        }
+
+        .divider-line::after {
+            content: '❦';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #c9a227;
+            font-size: 16px;
+            background: #0a1628;
+            padding: 0 10px;
+        }
+
+        .divider-small {
+            width: 100px;
+            height: 15px;
+            margin: 15px 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .divider-small::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #c9a227 30%, #c9a227 70%, transparent 100%);
+        }
+
+        .divider-small::after {
+            content: '•';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #c9a227;
+            font-size: 12px;
+            background: #0a1628;
+            padding: 0 8px;
+            letter-spacing: 8px;
         }
 
         .cover-title {
             font-family: 'Playfair Display', serif;
-            font-weight: 900;
-            font-size: clamp(36px, 5vw, 52px);
-            letter-spacing: 4px;
+            font-weight: 700;
+            font-size: clamp(32px, 4.5vw, 48px);
+            letter-spacing: 6px;
             color: #ffffff;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 5;
+            line-height: 1.2;
         }
 
         .cover-sub {
-            font-family: 'Playfair Display', serif;
-            font-weight: 500;
-            font-size: clamp(18px, 2.4vw, 24px);
-            color: #c5cbe0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: clamp(14px, 1.6vw, 18px);
+            color: #d0d5e0;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 5;
         }
 
         .cover-class {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            font-size: clamp(20px, 2.8vw, 28px);
+            font-size: clamp(22px, 2.8vw, 32px);
             color: #c9a227;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+            position: relative;
+            z-index: 5;
         }
 
         .cover-note {
+            font-family: 'Cormorant Garamond', serif;
             font-weight: 400;
-            font-size: clamp(14px, 1.4vw, 16px);
-            color: rgba(255,255,255,0.6);
+            font-style: italic;
+            font-size: clamp(14px, 1.5vw, 17px);
+            color: #a0a8c0;
+            line-height: 1.6;
+            position: relative;
+            z-index: 5;
+            letter-spacing: 0.5px;
         }
 
         .cover-back {
             position: absolute;
             inset: 0;
-            background: linear-gradient(145deg, #0e131d 0%, #121826 100%);
+            background: linear-gradient(145deg, #081220 0%, #0a1628 100%);
             transform: rotateY(180deg);
             backface-visibility: hidden;
         }
@@ -619,87 +820,159 @@
         .student-name, .student-bio, .student-quote {
             transition: all 0.2s ease;
         }
-        /* =========================
-        SPIRAL NOTEBOOK TENGAH
-        ========================= */
 
-{
- 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        /* ===== REFLEKSI BUKU DI BAWAH ===== */
+        .book-reflection {
+            width: var(--book-width);
+            height: calc(var(--book-height) * 0.3);
+            margin-top: -5px;
+            background: linear-gradient(to bottom, rgba(10, 22, 40, 0.4) 0%, transparent 100%);
+            transform: scaleY(-1);
+            opacity: 0.3;
+            filter: blur(2px);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 70%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-/* WRAPPER */
-.book-wrapper {
-    position: relative;
-}
+        .book-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
 
-/* COVER */
-.cover {
-    width: 420px;
-    height: 560px;
-    background: linear-gradient(145deg, #0d1b2a, #1b263b);
-    border-radius: 8px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-    position: relative;
-    padding: 40px;
-    color: white;
-}
+        /* SPIRAL TENGAH */
+        .spiral-binding {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            pointer-events: none;
+        }
 
-/* SPIRAL - NEMPEL KE COVER */
-.spiral-binding {
-    position: absolute;
-    top: 0;
-    left: 50%;              /* TARUH DI TENGAH BUKU */
-    transform: translateX(-50%);
-    
-    width: 20px;
-    height: 100%;           /* FULL TINGGI BUKU */
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    z-index: 200;           /* biar di atas */
-    pointer-events: none;
-}
-
-/* GARIS SPIRAL */
-.spiral-binding::before {
-    content: "";
-    width: 4px;
-    height: 100%;
-    background: repeating-linear-gradient(
-        to bottom,
-        #d4af37 0px,
-        #d4af37 6px,
-        transparent 6px,
-        transparent 18px
-    );
-    border-radius: 2px;
-    box-shadow: 0 0 6px rgba(212,175,55,0.6);
-}
-
-
-
+        .spiral-binding::before {
+            content: "";
+            width: 4px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                #d4af37 0px,
+                #d4af37 6px,
+                transparent 6px,
+                transparent 18px
+            );
+            border-radius: 2px;
+            box-shadow: 0 0 6px rgba(212,175,55,0.6);
+        }
     </style>
 </head>
 <body>
-<!-- SPIRAL TENGAH -->
- <div class="book-wrapper">
-<div class="book" id="book">
-<div class="spiral-binding"></div>
-    
 
+<div class="book-wrapper">
+    <div class="book" id="book">
+        <div class="spiral-binding"></div>
+        
         <div class="page page-cover" id="cover">
             <div class="cover-front">
-                <h2 class="cover-title">ALBUM KENANGAN</h2>
+                <!-- Spiral di sisi kiri cover -->
+                <div class="spiral-left">
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+                    <div class="spiral-ring"></div>
+               ......
+                </div>
+
+                <!-- Ornamen Sudut Emas - Filigree -->
+                <div class="cover-corner cover-corner-tl">
+                    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5,5 Q5,25 15,35 Q25,45 45,45 Q35,35 30,25 Q25,15 25,5 Z" fill="none" stroke="#c9a227" stroke-width="1.5"/>
+                        <path d="M5,5 L15,5 M5,5 L5,15" stroke="#c9a227" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="2" fill="#c9a227"/>
+                        <path d="M20,20 Q25,15 30,20 Q25,25 20,20" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <path d="M8,25 Q15,20 20,25 Q15,30 8,25" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <path d="M25,8 Q20,15 25,20 Q30,15 25,8" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <circle cx="18" cy="18" r="1.5" fill="#c9a227"/>
+                        <path d="M35,10 Q40,15 35,20" fill="none" stroke="#c9a227" stroke-width="0.8"/>
+                        <path d="M10,35 Q15,40 20,35" fill="none" stroke="#c9a227" stroke-width="0.8"/>
+                    </svg>
+                </div>
+                <div class="cover-corner cover-corner-tr">
+                    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5,5 Q5,25 15,35 Q25,45 45,45 Q35,35 30,25 Q25,15 25,5 Z" fill="none" stroke="#c9a227" stroke-width="1.5"/>
+                        <path d="M5,5 L15,5 M5,5 L5,15" stroke="#c9a227" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="2" fill="#c9a227"/>
+                        <path d="M20,20 Q25,15 30,20 Q25,25 20,20" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <path d="M8,25 Q15,20 20,25 Q15,30 8,25" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <path d="M25,8 Q20,15 25,20 Q30,15 25,8" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <circle cx="18" cy="18" r="1.5" fill="#c9a227"/>
+                        <path d="M35,10 Q40,15 35,20" fill="none" stroke="#c9a227" stroke-width="0.8"/>
+                        <path d="M10,35 Q15,40 20,35" fill="none" stroke="#c9a227" stroke-width="0.8"/>
+                    </svg>
+                </div>
+                <div class="cover-corner cover-corner-bl">
+                    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5,5 Q5,25 15,35 Q25,45 45,45 Q35,35 30,25 Q25,15 25,5 Z" fill="none" stroke="#c9a227" stroke-width="1.5"/>
+                        <path d="M5,5 L15,5 M5,5 L5,15" stroke="#c9a227" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="2" fill="#c9a227"/>
+                        <path d="M20,20 Q25,15 30,20 Q25,25 20,20" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <path d="M8,25 Q15,20 20,25 Q15,30 8,25" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <path d="M25,8 Q20,15 25,20 Q30,15 25,8" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <circle cx="18" cy="18" r="1.5" fill="#c9a227"/>
+                        <path d="M35,10 Q40,15 35,20" fill="none" stroke="#c9a227" stroke-width="0.8"/>
+                        <path d="M10,35 Q15,40 20,35" fill="none" stroke="#c9a227" stroke-width="0.8"/>
+                    </svg>
+                </div>
+                <div class="cover-corner cover-corner-br">
+                    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5,5 Q5,25 15,35 Q25,45 45,45 Q35,35 30,25 Q25,15 25,5 Z" fill="none" stroke="#c9a227" stroke-width="1.5"/>
+                        <path d="M5,5 L15,5 M5,5 L5,15" stroke="#c9a227" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="2" fill="#c9a227"/>
+                        <path d="M20,20 Q25,15 30,20 Q25,25 20,20" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <path d="M8,25 Q15,20 20,25 Q15,30 8,25" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <path d="M25,8 Q20,15 25,20 Q30,15 25,8" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        <circle cx="18" cy="18" r="1.5" fill="#c9a227"/>
+                        <path d="M35,10 Q40,15 35,20" fill="none" stroke="#c9a227" stroke-width="0.8"/>
+                        <path d="M10,35 Q15,40 20,35" fill="none" stroke="#c9a227" stroke-width="0.8"/>
+                    </svg>
+                </div>
+
+                <!-- Konten Utama Cover -->
+                <h2 class="cover-title">ALBUM<br>KENANGAN</h2>
+                
                 <div class="divider-line"></div>
-                <p class="cover-sub mb-2">SMP NEGERI 110 JAKARTA</p>
-                <p class="cover-sub mb-2">Tahun Ajaran 2025 / 2026</p>
-                <p class="cover-class">Kelas VIII-F</p>
-                <p class="cover-note mt-12 italic">Klik untuk membuka</p>
+                
+                <p class="cover-sub mb-1">SMP NEGERI 110 JAKARTA</p>
+                <p class="cover-sub mb-4">Tahun Ajaran 2025 / 2026</p>
+                
+                <p class="cover-class mb-3">Kelas VIII-F</p>
+                
+                <div class="divider-small"></div>
+                
+                <p class="cover-note mt-2">Kenangan hari ini,<br>cerita indah untuk nanti.</p>
             </div>
             <div class="cover-back"></div>
         </div>
@@ -942,7 +1215,7 @@
 
             <div class="page-content" id="left-13">
                 <h2>UCAPAN GURU</h2>
-                <p class="text-center text-gray-400 mb-6">📝 Pesan dan nasihat dari Bapak/Ibu Guru</p>
+                <p class="text-center text-gray-400 mb-6"> Pesan dan nasihat dari Bapak/Ibu Guru</p>
                 <div class="space-y-4 h-[calc(100%-150px)]">
                     <div class="empty-box text-left p-4">
                         Dari Wali Kelas:<br><br>
@@ -1184,37 +1457,41 @@
         </div>
     </div>
 
-    <div class="nav-container" id="navButtons" style="display: none;">
-        <button id="coverBtn" class="nav-btn" title="Kembali ke Sampul">
-            <i class="fa fa-home"></i>
-        </button>
-        <button id="prevBtn" class="nav-btn" title="Halaman Sebelumnya">
-            <i class="fa fa-arrow-left"></i>
-        </button>
-        <button id="nextBtn" class="nav-btn" title="Halaman Berikutnya">
-            <i class="fa fa-arrow-right"></i>
-        </button>
-    </div>
+    <!-- Refleksi Buku -->
+    <div class="book-reflection"></div>
+</div>
 
-    <div class="zoom-overlay" id="zoomOverlay">
-        <div class="zoom-close" id="zoomClose"><i class="fa fa-times"></i></div>
-        <div class="zoom-frame">
-            <div class="zoom-frame-inner" id="zoomFrameInner">
-                <div class="zoom-face zoom-face-front">
-                    <img id="zoomImage" src="" alt="Foto diperbesar">
-                </div>
-                <div class="zoom-face zoom-face-back">
-                    <div class="zoom-back-name" id="zoomName"></div>
-                    <div class="zoom-back-bio" id="zoomBio"></div>
-                    <div class="zoom-back-quote" id="zoomQuote"></div>
-                    <div class="zoom-hint">Klik untuk kembali</div>
-                </div>
+<div class="nav-container" id="navButtons" style="display: none;">
+    <button id="coverBtn" class="nav-btn" title="Kembali ke Sampul">
+        <i class="fa fa-home"></i>
+    </button>
+    <button id="prevBtn" class="nav-btn" title="Halaman Sebelumnya">
+        <i class="fa fa-arrow-left"></i>
+    </button>
+    <button id="nextBtn" class="nav-btn" title="Halaman Berikutnya">
+        <i class="fa fa-arrow-right"></i>
+    </button>
+</div>
+
+<div class="zoom-overlay" id="zoomOverlay">
+    <div class="zoom-close" id="zoomClose"><i class="fa fa-times"></i></div>
+    <div class="zoom-frame">
+        <div class="zoom-frame-inner" id="zoomFrameInner">
+            <div class="zoom-face zoom-face-front">
+                <img id="zoomImage" src="" alt="Foto diperbesar">
+            </div>
+            <div class="zoom-face zoom-face-back">
+                <div class="zoom-back-name" id="zoomName"></div>
+                <div class="zoom-back-bio" id="zoomBio"></div>
+                <div class="zoom-back-quote" id="zoomQuote"></div>
+                <div class="zoom-hint">Klik untuk kembali</div>
             </div>
         </div>
     </div>
+</div>
 
 <script>
-        // === URL GOOGLE APPS SCRIPT WEB APP ===
+// === URL GOOGLE APPS SCRIPT WEB APP ===
 const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbz1G9R6WEWPoMqIUXDjzS3ZdNOcAIyREHfRAVJgxiUcO_Yn-BiZ3LKHQ4_fQBceUe63eg/exec";
 
 let currentSpread = 1;
