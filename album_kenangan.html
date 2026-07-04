@@ -6,35 +6,40 @@
     <title>Album Kenangan - SMP Negeri 110 Jakarta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        coverBg: '#0a1628',
-                        coverText: '#ffffff',
-                        coverAccent: '#c9a227',
-                        paper: '#1a1f2e',
-                        paperBack: '#151924',
-                        text: '#e0e6f0',
-                        textMuted: '#9ca5c2',
-                        border: '#2d3446'
-                    },
-                    fontFamily: {
-                        serif: ['Playfair Display', 'Georgia', 'serif'],
-                        sans: ['Inter', 'system-ui', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        :root {
+            --bg-primary: linear-gradient(to bottom, #050810 0%, #0a0e1a 40%, #1a1f3a 70%, #0f1428 100%);
+            --bg-book: #1a1f2e;
+            --bg-cover: #0a1628;
+            --text-primary: #e0e6f0;
+            --text-secondary: #b0b8d1;
+            --text-muted: #9ca5c2;
+            --accent: #c9a227;
+            --accent-soft: #e8b4a8;
+            --border: #2d3446;
+        }
+
+        body.light-mode {
+            --bg-primary: linear-gradient(to bottom, #f5f7fa 0%, #e8ecf1 40%, #dce3eb 70%, #f0f4f8 100%);
+            --bg-book: #ffffff;
+            --bg-cover: #f8f9fa;
+            --text-primary: #1a1f2e;
+            --text-secondary: #4a536b;
+            --text-muted: #647092;
+            --accent: #b8860b;
+            --accent-soft: #c9756b;
+            --border: #d0d5e0;
+        }
+
         body {
-            background: linear-gradient(to bottom, #050810 0%, #0a0e1a 40%, #1a1f3a 70%, #0f1428 100%);
+            background: var(--bg-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -44,9 +49,10 @@
             overflow-x: hidden;
             position: relative;
             font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
-        /* ===== HALAMAN LANDING ===== */
         .landing-page {
             position: fixed;
             inset: 0;
@@ -55,42 +61,43 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
-            background: linear-gradient(to bottom, #050810 0%, #0a0e1a 40%, #1a1f3a 70%, #0f1428 100%);
+            padding: 20px;
+            background: var(--bg-primary);
             overflow-y: auto;
+            transition: background 0.5s ease;
         }
 
         .landing-page.hidden { display: none; }
 
         .landing-title {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(28px, 5vw, 48px);
+            font-size: clamp(24px, 6vw, 48px);
             font-weight: 700;
-            color: #e8b4a8;
+            color: var(--accent-soft);
             text-align: center;
-            letter-spacing: 4px;
-            margin-bottom: 10px;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
             text-shadow: 0 0 20px rgba(232, 180, 168, 0.3);
             animation: fadeInDown 1s ease-out;
         }
 
         .landing-subtitle {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(14px, 2vw, 18px);
-            color: #d0d5e0;
+            font-size: clamp(12px, 3vw, 18px);
+            color: var(--text-secondary);
             text-align: center;
             letter-spacing: 2px;
-            margin-bottom: 40px;
+            margin-bottom: 8px;
             animation: fadeInDown 1s ease-out 0.2s backwards;
         }
 
         .landing-school {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(16px, 2.2vw, 22px);
-            color: #d4af37;
+            font-size: clamp(14px, 3vw, 22px);
+            color: var(--accent);
             text-align: center;
-            margin-bottom: 50px;
-            letter-spacing: 3px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
             animation: fadeInDown 1s ease-out 0.4s backwards;
         }
 
@@ -99,26 +106,26 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .kelas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            max-width: 1100px;
-            width: 100%;
-            padding: 20px;
-            animation: fadeInUp 1s ease-out 0.6s backwards;
-        }
-
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .kelas-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 1200px;
+            width: 100%;
+            padding: 10px;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+        }
+
         .kelas-card {
             position: relative;
             aspect-ratio: 3/4;
-            background: linear-gradient(145deg, #0d1a2e 0%, #0a1628 100%);
-            border: 2px solid #d4af37;
+            background: var(--bg-cover);
+            border: 2px solid var(--accent);
             border-radius: 8px;
             cursor: pointer;
             overflow: hidden;
@@ -128,61 +135,58 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 20px;
+            padding: 15px 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            -webkit-tap-highlight-color: transparent;
         }
 
         .kelas-card::before {
             content: '';
             position: absolute;
-            inset: 8px;
+            inset: 6px;
             border: 1px solid rgba(212, 175, 55, 0.4);
             border-radius: 4px;
             pointer-events: none;
         }
 
-        .kelas-card:hover {
-            transform: translateY(-10px) scale(1.03);
-            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.3);
-            border-color: #e8b4a8;
+        .kelas-card:hover, .kelas-card:active {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+            border-color: var(--accent-soft);
         }
 
-        .kelas-card:hover .kelas-icon {
-            transform: scale(1.1);
-            color: #e8b4a8;
+        .kelas-icon { 
+            font-size: clamp(28px, 5vw, 48px); 
+            color: var(--accent); 
+            margin-bottom: 10px; 
+            transition: all 0.4s ease; 
         }
 
-        .kelas-icon {
-            font-size: 48px;
-            color: #d4af37;
-            margin-bottom: 15px;
-            transition: all 0.4s ease;
-        }
+        .kelas-card:hover .kelas-icon { transform: scale(1.1); }
 
         .kelas-nama {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(28px, 3.5vw, 36px);
+            font-size: clamp(18px, 3vw, 32px);
             font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-        }
-
-        .kelas-desc {
-            font-size: 13px;
-            color: #a0a8c0;
-            line-height: 1.5;
-        }
-
-        .kelas-jumlah {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #d4af37;
+            color: var(--text-primary);
             letter-spacing: 2px;
-            text-transform: uppercase;
+            margin-bottom: 6px;
         }
 
-        /* ===== ALBUM BOOK ===== */
+        .kelas-desc { 
+            font-size: clamp(10px, 1.8vw, 13px); 
+            color: var(--text-muted); 
+            line-height: 1.3; 
+        }
+
+        .kelas-jumlah { 
+            margin-top: 8px; 
+            font-size: clamp(9px, 1.5vw, 12px); 
+            color: var(--accent); 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+        }
+
         .book-wrapper {
             position: relative;
             display: flex;
@@ -193,7 +197,7 @@
         }
 
         .book {
-            --book-width: min(96vw, 1600px);
+            --book-width: min(95vw, 1400px);
             --book-height: calc(var(--book-width) * 0.58);
             width: var(--book-width);
             height: var(--book-height);
@@ -207,28 +211,30 @@
             width: 50%;
             height: 100%;
             padding: 0;
-            border: 1px solid #2d3446;
+            border: 1px solid var(--border);
             overflow: hidden;
             backface-visibility: hidden;
             transform-style: preserve-3d;
             box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
-            background: #1a1f2e;
+            background: var(--bg-book);
+            transition: background 0.5s ease;
         }
 
         .page-cover {
             right: 0;
             width: 50%;
             height: 100%;
-            background: #0a1628;
+            background: var(--bg-cover);
             transform-origin: left center;
             transform: rotateY(0deg);
-            transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1), background 0.5s ease;
             z-index: 100; 
             border: none;
             padding: 0;
             backface-visibility: hidden;
             pointer-events: auto;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .cover-front {
@@ -243,16 +249,22 @@
             text-align: center;
             backface-visibility: hidden;
             box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 0 80px rgba(0,0,0,0.5);
-            padding: clamp(25px, 3vw, 50px);
+            padding: clamp(20px, 3vw, 50px);
             overflow: hidden;
             z-index: 101;
+        }
+
+        body.light-mode .cover-front {
+            background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 50%, #f0f2f5 100%);
+            color: #1a1f2e;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2), inset 0 0 80px rgba(0,0,0,0.05);
         }
 
         .cover-front::before {
             content: '';
             position: absolute;
-            inset: 30px;
-            border: 2px solid #d4af37;
+            inset: clamp(15px, 2vw, 30px);
+            border: 2px solid var(--accent);
             pointer-events: none;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
@@ -260,77 +272,41 @@
         .cover-front::after {
             content: '';
             position: absolute;
-            inset: 35px;
+            inset: clamp(20px, 2.5vw, 35px);
             border: 1px solid rgba(212, 175, 55, 0.5);
             pointer-events: none;
         }
 
         .floral-corner {
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: clamp(60px, 10vw, 120px);
+            height: clamp(60px, 10vw, 120px);
             z-index: 10;
             opacity: 0;
             animation: floralEnter 1.2s ease-out forwards;
         }
 
-        .floral-corner-tl { top: 20px; left: 20px; animation-delay: 0.4s; }
-        .floral-corner-tr { top: 20px; right: 20px; transform: scaleX(-1); animation-delay: 0.6s; }
-        .floral-corner-bl { bottom: 20px; left: 20px; transform: scaleY(-1); animation-delay: 0.8s; }
-        .floral-corner-br { bottom: 20px; right: 20px; transform: scale(-1); animation-delay: 1s; }
+        .floral-corner-tl { top: clamp(10px, 1.5vw, 20px); left: clamp(10px, 1.5vw, 20px); animation-delay: 0.4s; }
+        .floral-corner-tr { top: clamp(10px, 1.5vw, 20px); right: clamp(10px, 1.5vw, 20px); transform: scaleX(-1); animation-delay: 0.6s; }
+        .floral-corner-bl { bottom: clamp(10px, 1.5vw, 20px); left: clamp(10px, 1.5vw, 20px); transform: scaleY(-1); animation-delay: 0.8s; }
+        .floral-corner-br { bottom: clamp(10px, 1.5vw, 20px); right: clamp(10px, 1.5vw, 20px); transform: scale(-1); animation-delay: 1s; }
 
         @keyframes floralEnter { to { opacity: 1; } }
 
-        .floral-corner svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.4));
-        }
+        .floral-corner svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.4)); }
 
         .spiral-left {
             position: absolute;
             left: 0;
             top: 0;
             bottom: 0;
-            width: 35px;
+            width: clamp(20px, 3vw, 35px);
             z-index: 10;
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
             align-items: center;
-            padding: 20px 0;
-        }
-
-        .spiral-ring {
-            width: 22px;
-            height: 14px;
-            border: 2px solid #8a9ab0;
-            border-radius: 50%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, #a0b0c0 30%, #6a7a90 70%, rgba(0,0,0,0.3) 100%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.5), inset 0 -1px 2px rgba(0,0,0,0.4);
-            position: relative;
-            animation: ringEnter 0.6s ease-out backwards;
-        }
-
-        .spiral-ring:nth-child(n) { animation-delay: calc(0.1s + var(--i, 0) * 0.05s); }
-
-        @keyframes ringEnter {
-            from { transform: scaleX(0); opacity: 0; }
-            to { transform: scaleX(1); opacity: 1; }
-        }
-
-        .spiral-ring::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 8px;
-            background: radial-gradient(circle, #1a1f2e 0%, #0a0e1a 100%);
-            border-radius: 50%;
-            border: 1px solid #2d3446;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+            padding: clamp(10px, 2vw, 20px) 0;
         }
 
         .spiral-hole {
@@ -344,9 +320,9 @@
         }
 
         .divider-line {
-            width: 220px;
+            width: clamp(150px, 20vw, 220px);
             height: 20px;
-            margin: 15px 0;
+            margin: 10px 0;
             position: relative;
             z-index: 5;
             opacity: 0;
@@ -362,7 +338,7 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent 0%, #d4af37 20%, #d4af37 80%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, var(--accent) 20%, var(--accent) 80%, transparent 100%);
         }
 
         .divider-line::after {
@@ -371,16 +347,16 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #d4af37;
-            font-size: 16px;
-            background: #0a1628;
-            padding: 0 10px;
+            color: var(--accent);
+            font-size: clamp(12px, 1.5vw, 16px);
+            background: var(--bg-cover);
+            padding: 0 8px;
         }
 
         .divider-small {
-            width: 100px;
+            width: clamp(70px, 10vw, 100px);
             height: 15px;
-            margin: 15px 0;
+            margin: 10px 0;
             position: relative;
             z-index: 5;
             opacity: 0;
@@ -394,7 +370,7 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent 0%, #d4af37 30%, #d4af37 70%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, var(--accent) 30%, var(--accent) 70%, transparent 100%);
         }
 
         .divider-small::after {
@@ -403,19 +379,19 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #d4af37;
-            font-size: 10px;
-            background: #0a1628;
-            padding: 0 8px;
-            letter-spacing: 6px;
+            color: var(--accent);
+            font-size: clamp(8px, 1vw, 10px);
+            background: var(--bg-cover);
+            padding: 0 6px;
+            letter-spacing: 4px;
         }
 
         .cover-title {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            font-size: clamp(32px, 4.5vw, 48px);
-            letter-spacing: 6px;
-            color: #e8b4a8;
+            font-size: clamp(24px, 4vw, 48px);
+            letter-spacing: clamp(3px, 0.8vw, 6px);
+            color: var(--accent-soft);
             position: relative;
             z-index: 5;
             line-height: 1.2;
@@ -425,14 +401,19 @@
             text-shadow: 1px 1px 0 rgba(0,0,0,0.5), 2px 2px 0 rgba(0,0,0,0.3), 0 0 20px rgba(232, 180, 168, 0.3);
         }
 
+        body.light-mode .cover-title {
+            color: #8b4513;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.1), 0 0 20px rgba(139, 69, 19, 0.2);
+        }
+
         @keyframes titleEnter { to { opacity: 1; transform: translateY(0); } }
 
         .cover-sub {
             font-family: 'Inter', sans-serif;
             font-weight: 400;
-            font-size: clamp(14px, 1.6vw, 18px);
-            color: #d0d5e0;
-            letter-spacing: 2px;
+            font-size: clamp(11px, 1.4vw, 18px);
+            color: var(--text-secondary);
+            letter-spacing: clamp(1px, 0.3vw, 2px);
             position: relative;
             z-index: 5;
             opacity: 0;
@@ -444,9 +425,9 @@
         .cover-class {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
-            font-size: clamp(22px, 2.8vw, 32px);
-            color: #d4af37;
-            letter-spacing: 3px;
+            font-size: clamp(18px, 2.5vw, 32px);
+            color: var(--accent);
+            letter-spacing: clamp(2px, 0.5vw, 3px);
             position: relative;
             z-index: 5;
             opacity: 0;
@@ -460,8 +441,8 @@
             font-family: 'Cormorant Garamond', serif;
             font-weight: 400;
             font-style: italic;
-            font-size: clamp(14px, 1.5vw, 17px);
-            color: #a0a8c0;
+            font-size: clamp(12px, 1.3vw, 17px);
+            color: var(--text-muted);
             line-height: 1.6;
             position: relative;
             z-index: 5;
@@ -487,7 +468,7 @@
 
         .page-left {
             left: 0;
-            border-right: 1px solid #2d3446;
+            border-right: 1px solid var(--border);
             transform-origin: right center;
             transform: rotateY(0deg);
             transition: opacity 0s, transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -505,7 +486,7 @@
             transform: rotateY(0deg);
             transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
             z-index: 5;
-            background: #1a1f2e;
+            background: var(--bg-book);
         }
 
         .page-right.flipping-next {
@@ -521,59 +502,62 @@
         }
 
         .empty-box {
-            border: 1px dashed #4a536b;
-            min-height: clamp(100px, 12vw, 160px);
+            border: 1px dashed var(--border);
+            min-height: clamp(80px, 10vw, 160px);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #7a85a3;
+            color: var(--text-muted);
             font-style: italic;
             text-align: center;
-            padding: 20px;
+            padding: clamp(10px, 1.5vw, 20px);
             border-radius: 4px;
             background: rgba(255,255,255,0.02);
+            font-size: clamp(10px, 1.2vw, 14px);
         }
+
+        body.light-mode .empty-box { background: rgba(0,0,0,0.02); }
 
         .page-number {
             position: absolute;
-            bottom: 15px;
+            bottom: clamp(8px, 1vw, 15px);
             left: 50%;
             transform: translateX(-50%);
-            font-size: 12px;
-            color: #647092;
+            font-size: clamp(10px, 1vw, 12px);
+            color: var(--text-muted);
             z-index: 10;
         }
 
         h2 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(22px, 2.6vw, 28px);
+            font-size: clamp(16px, 2.2vw, 28px);
             font-weight: 700;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 18px;
-            color: #e0e6f0;
+            margin-bottom: clamp(10px, 1.5vw, 18px);
+            color: var(--text-primary);
             position: relative;
             z-index: 10;
         }
 
         h3 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(17px, 2vw, 20px);
+            font-size: clamp(13px, 1.6vw, 20px);
             font-weight: 600;
             text-transform: uppercase;
-            color: #c9a227;
+            color: var(--accent);
         }
 
         p {
             font-family: 'Inter', sans-serif;
-            font-size: clamp(13px, 1.3vw, 15px);
+            font-size: clamp(11px, 1.1vw, 15px);
             line-height: 1.5;
-            color: #b0b8d1;
+            color: var(--text-secondary);
         }
 
         .space-y-6 > * {
-            margin-top: clamp(15px, 1.8vw, 18px);
+            margin-top: clamp(10px, 1.5vw, 18px);
             position: relative;
             z-index: 10;
         }
@@ -581,20 +565,25 @@
         .toc-item {
             cursor: pointer;
             border-radius: 6px;
-            padding: 6px 8px;
+            padding: clamp(4px, 0.8vw, 8px);
             margin-left: -8px;
             transition: background-color 0.2s ease, transform 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .toc-item:hover {
+        .toc-item:hover, .toc-item:active {
             background-color: rgba(201, 162, 39, 0.08);
             transform: translateX(4px);
+        }
+
+        .toc-item span {
+            font-size: clamp(20px, 3vw, 36px);
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: clamp(12px, 1.5vw, 16px);
+            gap: clamp(8px, 1.2vw, 16px);
             position: relative;
             z-index: 10;
         }
@@ -605,7 +594,7 @@
             display: none;
             position: absolute;
             inset: 0;
-            padding: clamp(40px, 4.5vw, 55px);
+            padding: clamp(20px, 3.5vw, 55px);
             overflow: hidden;
             z-index: 5;
         }
@@ -616,7 +605,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 18px 12px;
+            gap: clamp(10px, 1.2vw, 18px) clamp(8px, 1vw, 12px);
             height: calc(100% - 60px);
             width: 100%;
             position: relative;
@@ -633,22 +622,25 @@
             position: relative;
             z-index: 11;
             transition: opacity 0.3s ease;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .photo-frame {
             width: 100%;
             aspect-ratio: 4/5;
             background: #ffffff;
-            padding: 5px 5px 12px 5px;
+            padding: clamp(3px, 0.5vw, 5px) clamp(3px, 0.5vw, 5px) clamp(8px, 1vw, 12px) clamp(3px, 0.5vw, 5px);
             border-radius: 2px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-            margin-bottom: 5px;
+            margin-bottom: clamp(3px, 0.5vw, 5px);
             position: relative;
             overflow: hidden;
             flex-shrink: 0;
             cursor: pointer; 
             z-index: 12;
             transition: transform 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .photo-frame:hover { transform: scale(1.03); }
@@ -659,7 +651,7 @@
             inset: 5px 5px 12px 5px;
             background: rgba(0,0,0,0.6);
             color: #ffffff;
-            font-size: 10px;
+            font-size: clamp(8px, 0.9vw, 10px);
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -680,24 +672,31 @@
 
         .student-name {
             font-weight: 700;
-            font-size: 13px;
-            color: #c9a227;
+            font-size: clamp(10px, 1.1vw, 13px);
+            color: var(--accent);
             margin-bottom: 2px;
             line-height: 1.2;
         }
 
-        .student-bio {
-            font-size: 11px;
-            color: #9ca5c2;
-            line-height: 1.2;
-        }
+        .student-bio { font-size: clamp(8px, 0.9vw, 11px); color: var(--text-muted); line-height: 1.2; }
 
         .student-quote {
-            font-size: 10px;
-            color: #8792b3;
+            font-size: clamp(8px, 0.8vw, 10px);
+            color: var(--text-muted);
             line-height: 1.2;
             font-style: italic;
             padding: 0 4px;
+        }
+
+        .btn-simpan-data {
+            margin-top: clamp(4px, 0.8vw, 10px); 
+            padding: clamp(4px, 0.6vw, 6px) clamp(8px, 1vw, 12px); 
+            background: #2c3e50; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: clamp(9px, 0.9vw, 12px);
         }
 
         .nav-container {
@@ -715,41 +714,72 @@
             top: 50%;
             transform: translateY(-50%);
             pointer-events: auto; 
-            width: 52px;
-            height: 52px;
+            width: clamp(40px, 5vw, 52px);
+            height: clamp(40px, 5vw, 52px);
             border-radius: 50%;
-            background: #252c3f;
-            border: 1px solid #343d57;
+            background: var(--bg-book);
+            border: 1px solid var(--border);
             box-shadow: 0 2px 12px rgba(0,0,0,0.4);
-            font-size: 20px;
-            color: #c9a227;
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--accent);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        #prevBtn { left: 15px; }
-        #nextBtn { right: 15px; }
-        #backToLanding { 
-            top: 15px; 
-            left: 15px; 
-            transform: none;
+        body.light-mode .nav-btn { box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+
+        .nav-btn:hover, .nav-btn:active { transform: translateY(-50%) scale(1.1); }
+
+        #prevBtn { left: clamp(8px, 1vw, 15px); }
+        #nextBtn { right: clamp(8px, 1vw, 15px); }
+        #backToLanding { top: clamp(8px, 1vw, 15px); left: clamp(8px, 1vw, 15px); transform: none; }
+        #coverBtn { top: clamp(8px, 1vw, 15px); left: 50%; transform: translateX(-50%); }
+
+        .feature-buttons {
+            position: fixed;
+            top: clamp(8px, 1vw, 15px);
+            right: clamp(8px, 1vw, 15px);
+            display: flex;
+            gap: clamp(6px, 1vw, 10px);
+            z-index: 70;
+            pointer-events: auto;
         }
-        #coverBtn {
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
+
+        .feature-btn {
+            width: clamp(38px, 4.5vw, 48px);
+            height: clamp(38px, 4.5vw, 48px);
+            border-radius: 50%;
+            background: var(--bg-book);
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+            color: var(--accent);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(14px, 1.8vw, 18px);
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            -webkit-tap-highlight-color: transparent;
         }
+
+        body.light-mode .feature-btn { box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+
+        .feature-btn:hover, .feature-btn:active { transform: scale(1.1); box-shadow: 0 4px 20px rgba(201, 162, 39, 0.4); }
+
+        .feature-btn.active { background: var(--accent); color: #ffffff; }
 
         .page-border-container {
             position: absolute;
-            inset: 20px;
-            border: 2px solid #c9a227;
+            inset: clamp(10px, 1.5vw, 20px);
+            border: 2px solid var(--accent);
             pointer-events: none; 
-            height: calc(100% - 40px);
-            width: calc(100% - 40px);
+            height: calc(100% - clamp(20px, 3vw, 40px));
+            width: calc(100% - clamp(20px, 3vw, 40px));
             box-shadow: 0 0 15px rgba(201, 162, 39, 0.15);
             z-index: 0; 
         }
@@ -761,9 +791,9 @@
         }
         .corner-ornament {
             position: absolute;
-            width: 16px;
-            height: 16px;
-            border: 3px solid #c9a227;
+            width: clamp(10px, 1.2vw, 16px);
+            height: clamp(10px, 1.2vw, 16px);
+            border: 3px solid var(--accent);
         }
         .corner-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
         .corner-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
@@ -772,9 +802,9 @@
         
         .corner-dot {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background-color: #c9a227;
+            width: clamp(3px, 0.4vw, 4px);
+            height: clamp(3px, 0.4vw, 4px);
+            background-color: var(--accent);
             border-radius: 50%;
         }
         .dot-tl { top: 8px; left: 8px; }
@@ -782,7 +812,7 @@
         .dot-bl { bottom: 8px; left: 8px; }
         .dot-br { bottom: 8px; right: 8px; }
 
-        .photo-frame.sudah-terisi::after { content: 'LIHAT FOTO'; font-size: 10px; }
+        .photo-frame.sudah-terisi::after { content: 'LIHAT FOTO'; font-size: clamp(8px, 0.9vw, 10px); }
         .photo-frame.sudah-terisi:hover { transform: none !important; }
         .photo-frame.sudah-terisi { cursor: zoom-in; }
 
@@ -798,17 +828,17 @@
             visibility: hidden;
             transition: opacity 0.25s ease;
             cursor: zoom-out;
-            padding: 40px;
+            padding: 20px;
         }
         .zoom-overlay.active { opacity: 1; visibility: visible; }
         .zoom-frame {
-            width: min(60vw, 420px);
+            width: min(80vw, 420px);
             aspect-ratio: 4/5;
             perspective: 2000px;
             transform: scale(1);
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .zoom-overlay.active .zoom-frame { transform: scale(1.3); }
+        .zoom-overlay.active .zoom-frame { transform: scale(1.2); }
         .zoom-frame-inner {
             position: relative;
             width: 100%;
@@ -855,35 +885,35 @@
         .zoom-back-name {
             font-family: 'Playfair Display', serif;
             font-weight: 800;
-            font-size: clamp(22px, 3vw, 30px);
-            color: #c9a227;
+            font-size: clamp(18px, 4vw, 30px);
+            color: var(--accent);
             line-height: 1.25;
             margin-bottom: 14px;
         }
         .zoom-back-bio {
-            font-size: clamp(15px, 1.8vw, 18px);
+            font-size: clamp(13px, 2.5vw, 18px);
             color: #dbe1f0;
             line-height: 1.5;
             margin-bottom: 18px;
         }
         .zoom-back-quote {
             font-style: italic;
-            font-size: clamp(14px, 1.7vw, 17px);
+            font-size: clamp(12px, 2vw, 17px);
             color: #a8b1cf;
             line-height: 1.6;
             max-width: 90%;
         }
         .zoom-hint {
             margin-top: 14px;
-            font-size: 12px;
+            font-size: clamp(10px, 1.5vw, 12px);
             letter-spacing: 1px;
             color: #647092;
             text-transform: uppercase;
         }
         .zoom-close {
             position: absolute;
-            top: 24px;
-            right: 32px;
+            top: 15px;
+            right: 15px;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -895,6 +925,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #cover { pointer-events: auto !important; cursor: pointer !important; }
@@ -925,7 +956,7 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 20px;
+            width: clamp(12px, 1.5vw, 20px);
             height: 100%;
             display: flex;
             align-items: center;
@@ -936,7 +967,7 @@
 
         .spiral-binding::before {
             content: "";
-            width: 4px;
+            width: clamp(3px, 0.4vw, 4px);
             height: 100%;
             background: repeating-linear-gradient(
                 to bottom,
@@ -949,7 +980,6 @@
             box-shadow: 0 0 6px rgba(212,175,55,0.6);
         }
 
-        /* Stars */
         .stars-container {
             position: fixed;
             inset: 0;
@@ -964,6 +994,8 @@
             animation: twinkle var(--duration) ease-in-out infinite;
             animation-delay: var(--delay);
         }
+
+        body.light-mode .star { opacity: 0 !important; }
 
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(1); }
@@ -985,30 +1017,416 @@
             z-index: 0;
         }
 
+        body.light-mode .aurora-bg { opacity: 0; }
+
         @keyframes aurora {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        .slideshow-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease;
+        }
+        .slideshow-overlay.active { opacity: 1; visibility: visible; }
+
+        .slideshow-container {
+            position: relative;
+            width: 95vw;
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slideshow-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 60px rgba(0,0,0,0.8);
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .slideshow-image.active { opacity: 1; }
+
+        .slideshow-caption {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(14px, 2.5vw, 20px);
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            padding: 8px 20px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            max-width: 90%;
+        }
+
+        .slideshow-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .slideshow-btn {
+            width: clamp(40px, 8vw, 50px);
+            height: clamp(40px, 8vw, 50px);
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #ffffff;
+            font-size: clamp(16px, 3vw, 20px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .slideshow-btn:hover, .slideshow-btn:active {
+            background: rgba(201, 162, 39, 0.4);
+            transform: scale(1.1);
+        }
+
+        .slideshow-counter {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #ffffff;
+            font-size: clamp(12px, 2vw, 16px);
+            background: rgba(0,0,0,0.5);
+            padding: 6px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .slideshow-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: clamp(40px, 8vw, 50px);
+            height: clamp(40px, 8vw, 50px);
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #ffffff;
+            font-size: clamp(18px, 3vw, 24px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .slideshow-close:hover, .slideshow-close:active {
+            background: rgba(255,0,0,0.4);
+            transform: scale(1.1);
+        }
+
+        .music-player {
+            position: fixed;
+            bottom: clamp(10px, 2vw, 20px);
+            right: clamp(10px, 2vw, 20px);
+            background: var(--bg-book);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: clamp(6px, 1vw, 10px) clamp(10px, 1.5vw, 20px);
+            display: flex;
+            align-items: center;
+            gap: clamp(6px, 1vw, 12px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            z-index: 80;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode .music-player { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+
+        .music-player:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(201, 162, 39, 0.3); }
+
+        .music-btn {
+            width: clamp(32px, 5vw, 40px);
+            height: clamp(32px, 5vw, 40px);
+            border-radius: 50%;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(12px, 1.8vw, 16px);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .music-btn:hover, .music-btn:active { transform: scale(1.1); box-shadow: 0 0 15px rgba(201, 162, 39, 0.5); }
+
+        .music-info {
+            color: var(--text-primary);
+            font-size: clamp(10px, 1.5vw, 13px);
+            max-width: clamp(80px, 15vw, 150px);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .music-info .music-title { font-weight: 600; color: var(--accent); }
+
+        .music-visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 20px;
+        }
+
+        .music-bar {
+            width: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            animation: musicBar 0.8s ease-in-out infinite;
+        }
+
+        .music-bar:nth-child(1) { animation-delay: 0s; height: 30%; }
+        .music-bar:nth-child(2) { animation-delay: 0.2s; height: 60%; }
+        .music-bar:nth-child(3) { animation-delay: 0.4s; height: 40%; }
+        .music-bar:nth-child(4) { animation-delay: 0.6s; height: 70%; }
+
+        @keyframes musicBar {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+
+        .music-player.paused .music-bar { animation-play-state: paused; }
+
+        .pdf-loading {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .pdf-loading.active { opacity: 1; visibility: visible; }
+
+        .pdf-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(201, 162, 39, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .pdf-text {
+            color: #ffffff;
+            font-size: clamp(14px, 2vw, 18px);
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 2px;
+        }
+
+        .pdf-progress {
+            margin-top: 15px;
+            width: 200px;
+            max-width: 80vw;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .pdf-progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .kelas-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; }
+            .student-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .kelas-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 10px; }
+            .kelas-card { padding: 15px 10px; }
+            .book { --book-width: 95vw; --book-height: calc(var(--book-width) * 0.65); }
+            .student-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
+            .feature-buttons { top: auto; bottom: clamp(70px, 10vw, 90px); right: clamp(10px, 2vw, 20px); }
+            .music-player { bottom: clamp(10px, 2vw, 20px); }
+            .nav-btn { width: 44px; height: 44px; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .landing-page { padding: 15px 10px; }
+            .kelas-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .kelas-card { padding: 12px 8px; }
+            .book { --book-width: 98vw; --book-height: calc(var(--book-width) * 0.7); }
+            .page-content { padding: clamp(15px, 4vw, 30px); }
+            .student-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); gap: 8px 6px; }
+            .floral-corner { width: 50px; height: 50px; }
+            .floral-corner-tl { top: 10px; left: 10px; }
+            .floral-corner-tr { top: 10px; right: 10px; }
+            .floral-corner-bl { bottom: 10px; left: 10px; }
+            .floral-corner-br { bottom: 10px; right: 10px; }
+            .spiral-left { width: 18px; }
+            .spiral-hole { width: 10px; height: 10px; left: 4px; }
+            .nav-btn { width: 38px; height: 38px; font-size: 14px; }
+            .feature-btn { width: 36px; height: 36px; font-size: 14px; }
+            .music-player { padding: 6px 10px; }
+            .music-info { max-width: 80px; }
+            .zoom-frame { width: 90vw; }
+            .slideshow-container { width: 98vw; height: 75vh; }
+        }
+
+        @media (max-width: 360px) {
+            .kelas-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .kelas-nama { font-size: 16px; }
+            .book { --book-width: 100vw; --book-height: calc(var(--book-width) * 0.75); }
+            .student-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            .landing-page { padding: 10px; }
+            .landing-title { font-size: 24px; margin-bottom: 5px; }
+            .landing-subtitle, .landing-school { font-size: 12px; margin-bottom: 5px; }
+            .kelas-grid { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+            .kelas-card { padding: 8px 5px; }
+            .kelas-icon { font-size: 24px; margin-bottom: 5px; }
+            .kelas-nama { font-size: 14px; }
+            .kelas-desc, .kelas-jumlah { font-size: 9px; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .kelas-card:hover { transform: none; }
+            .kelas-card:active { transform: scale(0.98); }
+            .photo-frame:hover { transform: none; }
+            .photo-frame:active { transform: scale(0.98); }
+            .nav-btn:hover, .nav-btn:active { transform: translateY(-50%) scale(1.1); }
+            .feature-btn:hover, .feature-btn:active { transform: scale(1.1); }
+        }
+
+        @media print {
+            .nav-container, .feature-buttons, .music-player, .stars-container, .aurora-bg,
+            .book-reflection, .spiral-binding, .zoom-overlay, .slideshow-overlay, .pdf-loading, .landing-page {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .book-wrapper { display: block !important; width: 100% !important; }
+            .book { width: 100% !important; height: auto !important; perspective: none !important; }
+            .page {
+                position: relative !important;
+                width: 100% !important;
+                height: auto !important;
+                page-break-after: always;
+                break-after: page;
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                background: white !important;
+            }
+            .page-cover { position: relative !important; width: 100% !important; height: auto !important; transform: none !important; }
+            .cover-front { position: relative !important; height: 100vh !important; page-break-after: always; }
+            .page-left, .page-right {
+                position: relative !important;
+                width: 100% !important;
+                height: auto !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                transform: none !important;
+                display: block !important;
+                page-break-after: always;
+                break-after: page;
+            }
+            .page-content {
+                position: relative !important;
+                display: block !important;
+                height: auto !important;
+                min-height: 100vh;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .student-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                grid-template-rows: auto !important;
+                height: auto !important;
+                gap: 15px !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .student-card {
+                height: auto !important;
+                min-height: 280px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .photo-frame { aspect-ratio: 4/5; height: 200px !important; }
+            .student-name { font-size: 12px !important; }
+            .student-bio, .student-quote { font-size: 10px !important; }
+            .btn-simpan-data, .student-file-input { display: none !important; }
+            .empty-box {
+                min-height: 120px !important;
+                border: 2px dashed #ccc !important;
+                background: #f9f9f9 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            h2 { font-size: 20px !important; margin-bottom: 15px !important; page-break-after: avoid; break-after: avoid; }
+            .page-number { position: relative !important; bottom: auto !important; margin-top: 20px; text-align: center; }
+            .grid-2 { grid-template-columns: 1fr 1fr !important; gap: 15px !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+        }
     </style>
 </head>
 <body>
-    <!-- Background Effects -->
     <div class="aurora-bg"></div>
     <div class="stars-container" id="starsContainer"></div>
 
-    <!-- ===== HALAMAN LANDING PEMILIH KELAS ===== -->
     <div class="landing-page" id="landingPage">
         <h1 class="landing-title">ALBUM KENANGAN</h1>
         <p class="landing-subtitle">SMP NEGERI 110 JAKARTA</p>
         <p class="landing-school">Tahun Ajaran 2025 / 2026</p>
-        
-        <div class="kelas-grid" id="kelasGrid">
-            <!-- Kelas cards akan di-generate oleh JavaScript -->
-        </div>
+        <div class="kelas-grid" id="kelasGrid"></div>
     </div>
 
-    <!-- ===== ALBUM BOOK ===== -->
     <div class="book-wrapper" id="bookWrapper" style="display: none;">
         <div class="book" id="book">
             <div class="spiral-binding"></div>
@@ -1017,7 +1435,6 @@
                 <div class="cover-front">
                     <div class="spiral-left" id="spiralLeft"></div>
 
-                    <!-- Floral Corner Ornaments -->
                     <div class="floral-corner floral-corner-tl">
                         <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                             <g fill="none" stroke="#e8b4a8" stroke-width="1.5">
@@ -1029,8 +1446,6 @@
                                 <path d="M 85,35 Q 95,25 100,30 Q 95,45 85,40" fill="#c9a59a" opacity="0.7"/>
                                 <path d="M 30,85 Q 20,95 25,100 Q 40,95 35,85" fill="#c9a59a" opacity="0.7"/>
                                 <path d="M 80,80 Q 90,90 95,85 Q 90,70 80,75" fill="#c9a59a" opacity="0.7"/>
-                                <path d="M 35,35 Q 30,30 25,25" stroke="#b8958a" stroke-width="2"/>
-                                <path d="M 85,35 Q 90,30 95,25" stroke="#b8958a" stroke-width="2"/>
                             </g>
                             <path d="M 50,55 Q 60,50 70,55 Q 65,65 60,70 Q 55,65 50,55" fill="#f5d5c8" opacity="0.9"/>
                             <circle cx="60" cy="60" r="6" fill="#f8e5d8"/>
@@ -1047,8 +1462,6 @@
                                 <path d="M 85,35 Q 95,25 100,30 Q 95,45 85,40" fill="#c9a59a" opacity="0.7"/>
                                 <path d="M 30,85 Q 20,95 25,100 Q 40,95 35,85" fill="#c9a59a" opacity="0.7"/>
                                 <path d="M 80,80 Q 90,90 95,85 Q 90,70 80,75" fill="#c9a59a" opacity="0.7"/>
-                                <path d="M 35,35 Q 30,30 25,25" stroke="#b8958a" stroke-width="2"/>
-                                <path d="M 85,35 Q 90,30 95,25" stroke="#b8958a" stroke-width="2"/>
                             </g>
                             <path d="M 50,55 Q 60,50 70,55 Q 65,65 60,70 Q 55,65 50,55" fill="#f5d5c8" opacity="0.9"/>
                             <circle cx="60" cy="60" r="6" fill="#f8e5d8"/>
@@ -1065,8 +1478,6 @@
                                 <path d="M 85,35 Q 95,25 100,30 Q 95,45 85,40" fill="#c9a59a" opacity="0.7"/>
                                 <path d="M 30,85 Q 20,95 25,100 Q 40,95 35,85" fill="#c9a59a" opacity="0.7"/>
                                 <path d="M 80,80 Q 90,90 95,85 Q 90,70 80,75" fill="#c9a59a" opacity="0.7"/>
-                                <path d="M 35,35 Q 30,30 25,25" stroke="#b8958a" stroke-width="2"/>
-                                <path d="M 85,35 Q 90,30 95,25" stroke="#b8958a" stroke-width="2"/>
                             </g>
                             <path d="M 50,55 Q 60,50 70,55 Q 65,65 60,70 Q 55,65 50,55" fill="#f5d5c8" opacity="0.9"/>
                             <circle cx="60" cy="60" r="6" fill="#f8e5d8"/>
@@ -1083,8 +1494,6 @@
                                 <path d="M 85,35 Q 95,25 100,30 Q 95,45 85,40" fill="#c9a59a" opacity="0.7"/>
                                 <path d="M 30,85 Q 20,95 25,100 Q 40,95 35,85" fill="#c9a59a" opacity="0.7"/>
                                 <path d="M 80,80 Q 90,90 95,85 Q 90,70 80,75" fill="#c9a59a" opacity="0.7"/>
-                                <path d="M 35,35 Q 30,30 25,25" stroke="#b8958a" stroke-width="2"/>
-                                <path d="M 85,35 Q 90,30 95,25" stroke="#b8958a" stroke-width="2"/>
                             </g>
                             <path d="M 50,55 Q 60,50 70,55 Q 65,65 60,70 Q 55,65 50,55" fill="#f5d5c8" opacity="0.9"/>
                             <circle cx="60" cy="60" r="6" fill="#f8e5d8"/>
@@ -1102,7 +1511,6 @@
                 <div class="cover-back"></div>
             </div>
 
-            <!-- Halaman Kiri -->
             <div class="page page-left" id="pageLeft">
                 <div class="page-border-container">
                     <div class="corner-ornament corner-tl"></div>
@@ -1185,7 +1593,7 @@
                             Terima kasih sudah menjadi keluarga kedua selama ini. Semoga kita tetap sukses dan terhubung selamanya.
                         </div>
                         <div class="empty-box text-left p-4">
-                            ️ Kesan untuk Sekolah:<br><br>
+                            ✍️ Kesan untuk Sekolah:<br><br>
                             Terima kasih atas ilmu, bimbingan, dan pengalaman berharga yang diberikan selama kami belajar di sini.
                         </div>
                     </div>
@@ -1194,7 +1602,7 @@
 
                 <div class="page-content" id="left-13">
                     <h2>UCAPAN GURU</h2>
-                    <p class="text-center text-gray-400 mb-6">📝 Pesan dan nasihat dari Bapak/Ibu Guru</p>
+                    <p class="text-center text-gray-400 mb-6"> Pesan dan nasihat dari Bapak/Ibu Guru</p>
                     <div class="space-y-4 h-[calc(100%-150px)]">
                         <div class="empty-box text-left p-4">
                             Dari Wali Kelas:<br><br>
@@ -1209,7 +1617,6 @@
                 </div>
             </div>
 
-            <!-- Halaman Kanan -->
             <div class="page page-right" id="pageRight">
                 <div class="page-border-container">
                     <div class="corner-ornament corner-tl"></div>
@@ -1308,6 +1715,38 @@
         </button>
     </div>
 
+    <div class="feature-buttons" id="featureButtons" style="display: none;">
+        <button class="feature-btn" id="btnTheme" title="Ganti Tema">
+            <i class="fa fa-moon-o"></i>
+        </button>
+        <button class="feature-btn" id="btnSlideshow" title="Slideshow">
+            <i class="fa fa-film"></i>
+        </button>
+        <button class="feature-btn" id="btnExportPDF" title="Export PDF">
+            <i class="fa fa-file-pdf-o"></i>
+        </button>
+    </div>
+
+    <div class="music-player paused" id="musicPlayer" style="display: none;">
+        <button class="music-btn" id="musicToggle">
+            <i class="fa fa-play"></i>
+        </button>
+        <div class="music-info">
+            <div class="music-title">Kenangan VIII-F</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Background Music</div>
+        </div>
+        <div class="music-visualizer">
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://drive.google.com/uc?export=download&id=1I9m7e45CwwD4rluju9R0Y0RItlMrVB56" type="audio/mpeg">
+    </audio>
+
     <div class="zoom-overlay" id="zoomOverlay">
         <div class="zoom-close" id="zoomClose"><i class="fa fa-times"></i></div>
         <div class="zoom-frame">
@@ -1325,61 +1764,93 @@
         </div>
     </div>
 
+    <div class="slideshow-overlay" id="slideshowOverlay">
+        <button class="slideshow-close" id="slideshowClose"><i class="fa fa-times"></i></button>
+        <div class="slideshow-counter" id="slideshowCounter">1 / 1</div>
+        <div class="slideshow-container">
+            <img class="slideshow-image active" id="slideshowImage" src="" alt="Slideshow">
+            <div class="slideshow-caption" id="slideshowCaption">Foto Kegiatan</div>
+        </div>
+        <div class="slideshow-controls">
+            <button class="slideshow-btn" id="slideshowPrev"><i class="fa fa-chevron-left"></i></button>
+            <button class="slideshow-btn" id="slideshowPlayPause"><i class="fa fa-pause"></i></button>
+            <button class="slideshow-btn" id="slideshowNext"><i class="fa fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <div class="pdf-loading" id="pdfLoading">
+        <div class="pdf-spinner"></div>
+        <div class="pdf-text">Mengekspor PDF...</div>
+        <div class="pdf-progress">
+            <div class="pdf-progress-bar" id="pdfProgressBar"></div>
+        </div>
+    </div>
+
 <script>
 // =================================================================
-// ===== KONFIGURASI KELAS - EDIT DI SINI UNTUK SETIAP KELAS =====
+// KONFIGURASI
 // =================================================================
-
 const KELAS_LIST = [
     { kode: 'VIII-A', nama: 'VIII-A', icon: '🌟', jumlah: 36, tagline: 'Kelas Penuh Semangat' },
     { kode: 'VIII-B', nama: 'VIII-B', icon: '🎯', jumlah: 36, tagline: 'Kelas Kreatif & Inovatif' },
     { kode: 'VIII-C', nama: 'VIII-C', icon: '🎨', jumlah: 36, tagline: 'Kelas Seni & Budaya' },
-    { kode: 'VIII-D', nama: 'VIII-D', icon: '⭐', jumlah: 36, tagline: 'Kelas Sains & Teknologi' },
+    { kode: 'VIII-D', nama: 'VIII-D', icon: '🔬', jumlah: 36, tagline: 'Kelas Sains & Teknologi' },
     { kode: 'VIII-E', nama: 'VIII-E', icon: '📚', jumlah: 36, tagline: 'Kelas Literasi & Wawasan' },
-    { kode: 'VIII-F', nama: 'VIII-F', icon: '⭐', jumlah: 36, tagline: 'Kelas Berprestasi' }
+    { kode: 'VIII-F', nama: 'VIII-F', icon: '⭐', jumlah: 35, tagline: 'Kelas Berprestasi' }
 ];
 
-// Data siswa per kelas - EDIT NAMA, TTL, KUTIPAN DI SINI
-// Format: { nama: '...', ttl: '...', kutipan: '...' }
-const DATA_SISWA = {
-    'VIII-A': generateDefaultSiswa('VIII-A'),
-    'VIII-B': generateDefaultSiswa('VIII-B'),
-    'VIII-C': generateDefaultSiswa('VIII-C'),
-    'VIII-D': generateDefaultSiswa('VIII-D'),
-    'VIII-E': generateDefaultSiswa('VIII-E'),
-    'VIII-F': generateDefaultSiswa('VIII-F')
-};
-
-// Fungsi helper untuk generate data default (bisa diedit manual nanti)
-function generateDefaultSiswa(kelasNama) {
-    const siswa = [];
+const DATA_SISWA = {};
+KELAS_LIST.forEach(k => {
+    DATA_SISWA[k.kode] = [];
     for (let i = 1; i <= 36; i++) {
         const num = String(i).padStart(2, '0');
-        siswa.push({
+        DATA_SISWA[k.kode].push({
             id: i,
             nama: `Nama Siswa ${i}`,
             ttl: `Bogor, ${num} Jan 2012`,
             kutipan: `"Kutipan inspiratif siswa ${i}"`,
-            foto: `foto_siswa/${kelasNama}/${num}.jpg`
+            foto: `foto_siswa/${k.nama}/${num}.jpg`
         });
     }
-    return siswa;
-}
+});
 
-// =================================================================
-// ===== VARIABEL GLOBAL =====
-// =================================================================
+const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbxTkAFYoHJ_7WrlHifHVtfuHefqx1yjVUHq2LUFAmdgtTVhgdVAs98DcagDnRBt-5sVqQ/exec";
 
 let currentKelas = null;
 let currentSpread = 1;
 const totalSpread = 7;
 
-const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbwnEy_gVv_e_2MvoBQrlO9jo3QzX34YkxJV-jqFltr3EiCLzz71isUQlOFIOF22Mf_cqw/exec";
+// =================================================================
+// HELPER: KONVERSI URL GOOGLE DRIVE
+// =================================================================
+function konversiUrlDrive(url) {
+    if (!url) return url;
+    if (url.startsWith('data:') || url.startsWith('blob:')) return url;
+    
+    let fileId = null;
+    let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) fileId = match[1];
+    
+    if (!fileId) {
+        match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (match) fileId = match[1];
+    }
+    
+    if (!fileId) {
+        match = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) fileId = match[1];
+    }
+    
+    if (fileId) {
+        return `https://lh3.googleusercontent.com/d/${fileId}=w800`;
+    }
+    
+    return url;
+}
 
 // =================================================================
-// ===== INISIALISASI HALAMAN LANDING =====
+// INISIALISASI LANDING
 // =================================================================
-
 function initLandingPage() {
     const grid = document.getElementById('kelasGrid');
     grid.innerHTML = '';
@@ -1403,30 +1874,30 @@ function pilihKelas(kodeKelas) {
     currentKelas = KELAS_LIST.find(k => k.kode === kodeKelas);
     if (!currentKelas) return;
     
-    // Sembunyikan landing, tampilkan album
     document.getElementById('landingPage').classList.add('hidden');
     document.getElementById('bookWrapper').style.display = 'flex';
+    document.getElementById('featureButtons').style.display = 'flex';
+    document.getElementById('musicPlayer').style.display = 'flex';
     
-    // Update judul cover
     document.getElementById('coverKelasNama').textContent = `Kelas ${currentKelas.nama}`;
     document.getElementById('fotoKelasTitle').textContent = `KELAS ${currentKelas.nama}`;
     document.getElementById('penutupKelas').textContent = `— Kelas ${currentKelas.nama} —`;
     
-    // Generate kartu siswa
     generateStudentCards();
-    
-    // Muat data dari server
     muatDataSiswa();
+    
+    document.querySelector('.music-title').textContent = `Kenangan ${currentKelas.nama}`;
 }
 
 function kembaliKeLanding() {
     document.getElementById('bookWrapper').style.display = 'none';
+    document.getElementById('featureButtons').style.display = 'none';
+    document.getElementById('musicPlayer').style.display = 'none';
     document.getElementById('landingPage').classList.remove('hidden');
     document.getElementById('navButtons').style.display = 'none';
     currentKelas = null;
     currentSpread = 1;
     
-    // Reset book
     const cover = document.getElementById('cover');
     cover.style.transform = 'rotateY(0deg)';
     cover.style.zIndex = '100';
@@ -1436,14 +1907,14 @@ function kembaliKeLanding() {
     document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
     document.getElementById('left-1').classList.add('active');
     document.getElementById('right-2').classList.add('active');
+    
+    const audio = document.getElementById('bgMusic');
+    audio.pause();
+    document.getElementById('musicPlayer').classList.add('paused');
+    document.getElementById('musicToggle').innerHTML = '<i class="fa fa-play"></i>';
 }
 
-// =================================================================
-// ===== GENERATE KARTU SISWA =====
-// =================================================================
-
 function createStudentCardHTML(siswa) {
-    const num = String(siswa.id).padStart(2, '0');
     return `
         <div class="student-card" data-id="${siswa.id}">
             <div class="photo-frame">
@@ -1452,7 +1923,7 @@ function createStudentCardHTML(siswa) {
             <div class="student-name" contenteditable="true">${siswa.nama}</div>
             <div class="student-bio" contenteditable="true">${siswa.ttl}</div>
             <div class="student-quote" contenteditable="true">${siswa.kutipan}</div>
-            <button class="btn-simpan-data" style="margin-top:10px; padding:6px 12px; background:#2c3e50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Simpan Data</button>
+            <button class="btn-simpan-data">Simpan Data</button>
             <input type="file" class="student-file-input" accept="image/*" style="display:none;">
         </div>
     `;
@@ -1460,43 +1931,19 @@ function createStudentCardHTML(siswa) {
 
 function generateStudentCards() {
     if (!currentKelas) return;
-    
     const siswaList = DATA_SISWA[currentKelas.kode];
     
-    // Grid 1-6
-    document.getElementById('grid-siswa-1-6').innerHTML = 
-        siswaList.slice(0, 6).map(createStudentCardHTML).join('');
-    
-    // Grid 7-12
-    document.getElementById('grid-siswa-7-12').innerHTML = 
-        siswaList.slice(6, 12).map(createStudentCardHTML).join('');
-    
-    // Grid 13-18
-    document.getElementById('grid-siswa-13-18').innerHTML = 
-        siswaList.slice(12, 18).map(createStudentCardHTML).join('');
-    
-    // Grid 19-24
-    document.getElementById('grid-siswa-19-24').innerHTML = 
-        siswaList.slice(18, 24).map(createStudentCardHTML).join('');
-    
-    // Grid 25-30
-    document.getElementById('grid-siswa-25-30').innerHTML = 
-        siswaList.slice(24, 30).map(createStudentCardHTML).join('');
-    
-    // Grid 31-36
-    document.getElementById('grid-siswa-31-36').innerHTML = 
-        siswaList.slice(30, 36).map(createStudentCardHTML).join('');
+    document.getElementById('grid-siswa-1-6').innerHTML = siswaList.slice(0, 6).map(createStudentCardHTML).join('');
+    document.getElementById('grid-siswa-7-12').innerHTML = siswaList.slice(6, 12).map(createStudentCardHTML).join('');
+    document.getElementById('grid-siswa-13-18').innerHTML = siswaList.slice(12, 18).map(createStudentCardHTML).join('');
+    document.getElementById('grid-siswa-19-24').innerHTML = siswaList.slice(18, 24).map(createStudentCardHTML).join('');
+    document.getElementById('grid-siswa-25-30').innerHTML = siswaList.slice(24, 30).map(createStudentCardHTML).join('');
+    document.getElementById('grid-siswa-31-36').innerHTML = siswaList.slice(30, 36).map(createStudentCardHTML).join('');
 }
-
-// =================================================================
-// ===== STARS & SPIRAL =====
-// =================================================================
 
 function createStars() {
     const container = document.getElementById('starsContainer');
-    const starCount = 150;
-    
-    for (let i = 0; i < starCount; i++) {
+    for (let i = 0; i < 150; i++) {
         const star = document.createElement('div');
         star.className = 'star';
         const size = Math.random() * 3 + 1;
@@ -1519,10 +1966,6 @@ function createSpiralHoles() {
         spiralLeft.appendChild(hole);
     }
 }
-
-// =================================================================
-// ===== COVER & NAVIGATION =====
-// =================================================================
 
 function bukaCover() {
     const cover = document.getElementById('cover');
@@ -1587,9 +2030,409 @@ function goPrev() {
     }, 900);
 }
 
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    const btn = document.getElementById('btnTheme');
+    btn.innerHTML = isLight ? '<i class="fa fa-sun-o"></i>' : '<i class="fa fa-moon-o"></i>';
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+
+function loadTheme() {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'light') {
+        document.body.classList.add('light-mode');
+        document.getElementById('btnTheme').innerHTML = '<i class="fa fa-sun-o"></i>';
+    }
+}
+
+function toggleMusic() {
+    const audio = document.getElementById('bgMusic');
+    const player = document.getElementById('musicPlayer');
+    const btn = document.getElementById('musicToggle');
+    
+    if (audio.paused) {
+        audio.play().then(() => {
+            player.classList.remove('paused');
+            btn.innerHTML = '<i class="fa fa-pause"></i>';
+        }).catch(err => {
+            alert('⚠️ Tidak dapat memutar musik.');
+            console.error(err);
+        });
+    } else {
+        audio.pause();
+        player.classList.add('paused');
+        btn.innerHTML = '<i class="fa fa-play"></i>';
+    }
+}
+
+const SLIDESHOW_PHOTOS = {
+    'VIII-A': [{ url: 'foto_kegiatan/VIII-A/1.jpg', caption: 'Perkenalan Kelas VIII-A' }],
+    'VIII-B': [{ url: 'foto_kegiatan/VIII-B/1.jpg', caption: 'Perkenalan Kelas VIII-B' }],
+    'VIII-C': [{ url: 'foto_kegiatan/VIII-C/1.jpg', caption: 'Perkenalan Kelas VIII-C' }],
+    'VIII-D': [{ url: 'foto_kegiatan/VIII-D/1.jpg', caption: 'Perkenalan Kelas VIII-D' }],
+    'VIII-E': [{ url: 'foto_kegiatan/VIII-E/1.jpg', caption: 'Perkenalan Kelas VIII-E' }],
+    'VIII-F': [{ url: 'foto_kegiatan/VIII-F/1.jpg', caption: 'Perkenalan Kelas VIII-F' }]
+};
+
+let slideshowImages = [];
+let slideshowIndex = 0;
+let slideshowInterval = null;
+let isPlaying = false;
+
+function openSlideshow() {
+    if (!currentKelas) return;
+    slideshowImages = SLIDESHOW_PHOTOS[currentKelas.kode] || [];
+    
+    if (slideshowImages.length === 0) {
+        alert('📸 Belum ada foto slideshow untuk kelas ini.');
+        return;
+    }
+    
+    slideshowIndex = 0;
+    updateSlideshow();
+    document.getElementById('slideshowOverlay').classList.add('active');
+    startSlideshow();
+}
+
+function updateSlideshow() {
+    if (slideshowImages.length === 0) return;
+    const img = document.getElementById('slideshowImage');
+    const caption = document.getElementById('slideshowCaption');
+    const counter = document.getElementById('slideshowCounter');
+    
+    img.src = slideshowImages[slideshowIndex].url;
+    img.onerror = function() {
+        this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect fill="%232d3446" width="800" height="600"/><text x="400" y="300" text-anchor="middle" fill="%239ca5c2" font-size="24">Foto belum tersedia</text></svg>';
+    };
+    caption.textContent = slideshowImages[slideshowIndex].caption;
+    counter.textContent = `${slideshowIndex + 1} / ${slideshowImages.length}`;
+}
+
+function startSlideshow() {
+    isPlaying = true;
+    document.getElementById('slideshowPlayPause').innerHTML = '<i class="fa fa-pause"></i>';
+    slideshowInterval = setInterval(() => {
+        slideshowIndex = (slideshowIndex + 1) % slideshowImages.length;
+        updateSlideshow();
+    }, 4000);
+}
+
+function stopSlideshow() {
+    isPlaying = false;
+    document.getElementById('slideshowPlayPause').innerHTML = '<i class="fa fa-play"></i>';
+    clearInterval(slideshowInterval);
+}
+
+function closeSlideshow() {
+    stopSlideshow();
+    document.getElementById('slideshowOverlay').classList.remove('active');
+}
+
 // =================================================================
-// ===== STUDENT DATA FUNCTIONS =====
+// FITUR: EXPORT PDF (LENGKAP DIPERBAIKI)
 // =================================================================
+async function exportPDF() {
+    if (!currentKelas) {
+        alert('❌ Pilih kelas terlebih dahulu!');
+        return;
+    }
+    
+    if (typeof html2canvas === 'undefined') {
+        alert('❌ Library html2canvas tidak dimuat. Periksa koneksi internet Anda.');
+        return;
+    }
+    
+    const siswaList = DATA_SISWA[currentKelas.kode];
+    let fotoTerisi = 0;
+    
+    siswaList.forEach(siswa => {
+        const card = document.querySelector(`.student-card[data-id="${siswa.id}"]`);
+        if (card) {
+            const img = card.querySelector('.photo-frame img');
+            if (img && img.src && !img.src.includes('placeholder') && img.src !== window.location.href && !img.src.includes('foto_siswa/')) {
+                fotoTerisi++;
+            }
+        }
+    });
+    
+    if (fotoTerisi < siswaList.length) {
+        const konfirmasi = confirm(
+            `⚠️ PERINGATAN EXPORT PDF\n\n` +
+            `Hanya ${fotoTerisi} dari ${siswaList.length} foto siswa yang sudah terisi.\n\n` +
+            `PDF akan tetap dibuat dengan placeholder untuk foto kosong.\n\n` +
+            `Lanjutkan?`
+        );
+        if (!konfirmasi) return;
+    }
+    
+    const loading = document.getElementById('pdfLoading');
+    const progressBar = document.getElementById('pdfProgressBar');
+    let pdfContainer = null;
+    
+    try {
+        loading.classList.add('active');
+        progressBar.style.width = '10%';
+        
+        await document.fonts.ready;
+        const images = document.querySelectorAll('img');
+        await Promise.all(Array.from(images).map(img => {
+            if (img.complete) return;
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        }));
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        pdfContainer = document.createElement('div');
+        pdfContainer.id = 'pdf-temp-container';
+        pdfContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 100vw;
+            width: 1120px;
+            background: #ffffff;
+            font-family: 'Playfair Display', Georgia, serif;
+            z-index: -9999;
+            opacity: 0.01;
+            pointer-events: none;
+        `;
+        document.body.appendChild(pdfContainer);
+        
+        progressBar.style.width = '20%';
+        
+        const coverPage = document.createElement('div');
+        coverPage.style.cssText = `
+            width: 1120px;
+            height: 794px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f1729 100%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid #d4af37;
+            position: relative;
+            box-sizing: border-box;
+        `;
+        coverPage.innerHTML = `
+            <div style="position: absolute; top: 30px; left: 30px; right: 30px; bottom: 30px; border: 2px solid rgba(212, 175, 55, 0.5);"></div>
+            <h1 style="font-size: 64px; color: #e8b4a8; letter-spacing: 8px; margin-bottom: 30px; font-weight: 700;">ALBUM KENANGAN</h1>
+            <div style="width: 300px; height: 2px; background: #d4af37; margin: 30px 0;"></div>
+            <p style="font-size: 24px; color: #d0d5e0; letter-spacing: 3px; margin: 15px 0;">SMP NEGERI 110 JAKARTA</p>
+            <p style="font-size: 24px; color: #d0d5e0; letter-spacing: 3px; margin: 15px 0;">Tahun Ajaran 2025 / 2026</p>
+            <p style="font-size: 42px; color: #d4af37; margin-top: 40px; letter-spacing: 4px; font-weight: 700;">Kelas ${currentKelas.nama}</p>
+            <p style="font-size: 18px; color: #9ca5c2; margin-top: 60px; font-style: italic;">Kenangan hari ini, cerita indah untuk nanti</p>
+        `;
+        pdfContainer.appendChild(coverPage);
+        
+        progressBar.style.width = '30%';
+        
+        const pages = [
+            { title: 'DAFTAR MURID 1 - 6', siswa: siswaList.slice(0, 6), pageNum: 3 },
+            { title: 'DAFTAR MURID 7 - 12', siswa: siswaList.slice(6, 12), pageNum: 4 },
+            { title: 'DAFTAR MURID 13 - 18', siswa: siswaList.slice(12, 18), pageNum: 5 },
+            { title: 'DAFTAR MURID 19 - 24', siswa: siswaList.slice(18, 24), pageNum: 6 },
+            { title: 'DAFTAR MURID 25 - 30', siswa: siswaList.slice(24, 30), pageNum: 7 },
+            { title: 'DAFTAR MURID 31 - 36', siswa: siswaList.slice(30, 36), pageNum: 8 }
+        ];
+        
+        for (let i = 0; i < pages.length; i++) {
+            const page = document.createElement('div');
+            page.style.cssText = `
+                width: 1120px;
+                height: 794px;
+                background: #ffffff;
+                padding: 40px;
+                position: relative;
+                color: #1a1f2e;
+                box-sizing: border-box;
+            `;
+            
+            let siswaHTML = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">';
+            
+            pages[i].siswa.forEach(s => {
+                const card = document.querySelector(`.student-card[data-id="${s.id}"]`);
+                let nama = s.nama, ttl = s.ttl, kutipan = s.kutipan;
+                let fotoSrc = '';
+                
+                if (card) {
+                    const nameEl = card.querySelector('.student-name');
+                    const bioEl = card.querySelector('.student-bio');
+                    const quoteEl = card.querySelector('.student-quote');
+                    const imgEl = card.querySelector('.photo-frame img');
+                    
+                    if (nameEl) nama = nameEl.textContent.trim();
+                    if (bioEl) ttl = bioEl.textContent.trim();
+                    if (quoteEl) kutipan = quoteEl.textContent.trim();
+                    
+                    if (imgEl && imgEl.src && !imgEl.src.includes('foto_siswa/') && imgEl.src !== window.location.href) {
+                        // KONVERSI URL DRIVE
+                        fotoSrc = konversiUrlDrive(imgEl.src);
+                    }
+                }
+                
+                const fotoHTML = fotoSrc 
+                    ? `<img src="${fotoSrc}" crossorigin="anonymous" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block;">`
+                    : `<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 14px; font-weight: 600;">Foto ${String(s.id).padStart(2, '0')}</div>`;
+                
+                siswaHTML += `
+                    <div style="text-align: center; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 2px solid #e0e6f0; page-break-inside: avoid;">
+                        <div style="width: 100%; height: 200px; margin-bottom: 8px; overflow: hidden; border-radius: 4px;">
+                            ${fotoHTML}
+                        </div>
+                        <div style="font-weight: 700; color: #1e3a5f; font-size: 14px; margin-bottom: 4px; min-height: 20px;">${nama}</div>
+                        <div style="font-size: 11px; color: #647092; margin-bottom: 4px; min-height: 14px;">${ttl}</div>
+                        <div style="font-size: 10px; color: #9ca5c2; font-style: italic; min-height: 14px;">${kutipan}</div>
+                    </div>
+                `;
+            });
+            siswaHTML += '</div>';
+            
+            page.innerHTML = `
+                <h2 style="font-size: 28px; text-align: center; color: #1e3a5f; margin: 0 0 15px 0; font-weight: 700; letter-spacing: 2px; border-bottom: 3px solid #d4af37; padding-bottom: 10px;">${pages[i].title}</h2>
+                ${siswaHTML}
+                <div style="position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); color: #9ca5c2; font-size: 13px;">- ${pages[i].pageNum} -</div>
+            `;
+            pdfContainer.appendChild(page);
+            progressBar.style.width = `${30 + (i + 1) * 8}%`;
+        }
+        
+        const closingPage = document.createElement('div');
+        closingPage.style.cssText = `
+            width: 1120px;
+            height: 794px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f1729 100%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 8px solid #d4af37;
+            position: relative;
+            box-sizing: border-box;
+        `;
+        closingPage.innerHTML = `
+            <div style="position: absolute; top: 30px; left: 30px; right: 30px; bottom: 30px; border: 2px solid rgba(212, 175, 55, 0.5);"></div>
+            <p style="font-size: 24px; font-style: italic; color: #d0d5e0; max-width: 800px; line-height: 1.8;">
+                "Kenangan ini akan selalu tersimpan rapi di hati. Sampai jumpa di jalan kesuksesan masing-masing."
+            </p>
+            <p style="font-size: 32px; font-weight: 700; color: #ffffff; margin-top: 40px; letter-spacing: 3px;">— Kelas ${currentKelas.nama} —</p>
+            <p style="font-size: 20px; color: #9ca5c2; margin-top: 20px;">Tahun 2026</p>
+        `;
+        pdfContainer.appendChild(closingPage);
+        
+        progressBar.style.width = '80%';
+        
+        // PRELOAD SEMUA GAMBAR DI CONTAINER PDF
+        const imgElements = pdfContainer.querySelectorAll('img');
+        console.log(`⏳ Preloading ${imgElements.length} gambar...`);
+        
+        await Promise.all(Array.from(imgElements).map((img, idx) => {
+            return new Promise((resolve) => {
+                if (img.complete && img.naturalWidth > 0) {
+                    console.log(`✅ Gambar ${idx + 1} sudah loaded`);
+                    resolve();
+                    return;
+                }
+                
+                const timeout = setTimeout(() => {
+                    console.warn(`⚠️ Gambar ${idx + 1} timeout: ${img.src}`);
+                    resolve();
+                }, 10000);
+                
+                img.onload = () => {
+                    clearTimeout(timeout);
+                    console.log(`✅ Gambar ${idx + 1} berhasil dimuat`);
+                    resolve();
+                };
+                
+                img.onerror = () => {
+                    clearTimeout(timeout);
+                    console.warn(`❌ Gambar ${idx + 1} gagal: ${img.src}`);
+                    const parent = img.parentElement;
+                    if (parent) {
+                        parent.innerHTML = `<div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 12px; font-weight: 600; text-align: center; padding: 10px;">Foto Tidak Tersedia</div>`;
+                    }
+                    resolve();
+                };
+                
+                const currentSrc = img.src;
+                img.src = currentSrc + (currentSrc.includes('?') ? '&' : '?') + 't=' + Date.now();
+            });
+        }));
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('✅ Semua gambar selesai dipreload');
+        
+        progressBar.style.width = '85%';
+        
+        const canvasList = [];
+        const children = pdfContainer.children;
+        
+        for (let i = 0; i < children.length; i++) {
+            const canvas = await html2canvas(children[i], {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                width: 1120,
+                height: 794,
+                windowWidth: 1120,
+                windowHeight: 794,
+                imageTimeout: 15000,
+                removeContainer: true,
+                foreignObjectRendering: true,
+                onclone: function(clonedDoc) {
+                    clonedDoc.querySelectorAll('img').forEach(img => {
+                        img.setAttribute('crossorigin', 'anonymous');
+                    });
+                }
+            });
+            canvasList.push(canvas);
+            progressBar.style.width = `${85 + (i + 1) * 2}%`;
+        }
+        
+        const jsPDF = window.jspdf.jsPDF || window.jspdf;
+        const pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'px',
+            format: [1120, 794],
+            compress: true
+        });
+        
+        canvasList.forEach((canvas, index) => {
+            if (index > 0) pdf.addPage([1120, 794], 'landscape');
+            const imgData = canvas.toDataURL('image/jpeg', 0.92);
+            pdf.addImage(imgData, 'JPEG', 0, 0, 1120, 794);
+        });
+        
+        pdf.save(`Album_Kenangan_${currentKelas.nama}_2026.pdf`);
+        
+        progressBar.style.width = '100%';
+        
+        setTimeout(() => {
+            if (pdfContainer && pdfContainer.parentNode) {
+                pdfContainer.parentNode.removeChild(pdfContainer);
+            }
+            loading.classList.remove('active');
+            alert('✅ PDF berhasil diekspor!\n\nFile: Album_Kenangan_' + currentKelas.nama + '_2026.pdf');
+        }, 500);
+        
+    } catch (err) {
+        console.error('Error export PDF:', err);
+        if (pdfContainer && pdfContainer.parentNode) {
+            pdfContainer.parentNode.removeChild(pdfContainer);
+        }
+        loading.classList.remove('active');
+        alert('❌ Gagal mengekspor PDF\n\nError: ' + err.message);
+    }
+}
 
 function kunciTotal(card) {
     const nama = card.querySelector('.student-name');
@@ -1645,7 +2488,6 @@ function cekFoto(card) {
         frame.style.cursor = 'default';
         frame.classList.add('sudah-terisi');
         input.disabled = true;
-        frame.onclick = null;
     } else {
         frame.style.cursor = 'pointer';
         frame.classList.remove('sudah-terisi');
@@ -1672,39 +2514,60 @@ function tutupZoomFoto() {
     document.body.style.overflow = '';
 }
 
-// =================================================================
-// ===== EVENT LISTENERS =====
-// =================================================================
+async function muatDataSiswa() {
+    if (!currentKelas) return;
+    
+    document.querySelectorAll('.student-card').forEach(card => {
+        izinkanEdit(card);
+    });
+
+    try {
+        const response = await fetch(GOOGLE_SHEETS_API_URL + "?action=getAll&kelas=" + currentKelas.kode);
+        const result = await response.json();
+
+        if (result.status !== "success") {
+            console.warn("Gagal ambil data dari server");
+            return;
+        }
+
+        result.data.forEach(siswa => {
+            const card = document.querySelector(`.student-card[data-id="${siswa.id}"]`);
+            if (!card) return;
+            const img = card.querySelector('.photo-frame img');
+
+            if (siswa.foto && siswa.foto !== "") {
+                img.src = siswa.foto + "&t=" + Date.now();
+            }
+
+            if (siswa.nama) card.querySelector('.student-name').textContent = siswa.nama;
+            if (siswa.ttl) card.querySelector('.student-bio').textContent = siswa.ttl;
+            if (siswa.kutipan) card.querySelector('.student-quote').textContent = `"${siswa.kutipan}"`;
+
+            if (siswa.nama && siswa.nama.trim() !== "") {
+                kunciTotal(card);
+            } else {
+                izinkanEdit(card);
+            }
+
+            cekFoto(card);
+        });
+
+    } catch (error) {
+        console.error("Error muatDataSiswa:", error);
+    }
+}
 
 document.addEventListener('click', function(e) {
-    // Cover click
-    if (e.target.closest('#cover')) {
-        bukaCover();
-        return;
-    }
+    if (e.target.closest('#cover')) { bukaCover(); return; }
+    if (e.target.closest('#backToLanding')) { kembaliKeLanding(); return; }
+    if (e.target.closest('#coverBtn')) { e.stopPropagation(); tutupCover(); return; }
     
-    // Back to landing
-    if (e.target.closest('#backToLanding')) {
-        kembaliKeLanding();
-        return;
-    }
-    
-    // Cover button
-    if (e.target.closest('#coverBtn')) {
-        e.stopPropagation();
-        tutupCover();
-        return;
-    }
-    
-    // TOC items
     const tocItem = e.target.closest('.toc-item[data-spread]');
     if (tocItem) {
         goToSpread(parseInt(tocItem.dataset.spread, 10));
         return;
     }
     
-    // Photo frame
-    if (e.target.closest('#cover')) return;
     const frame = e.target.closest('.photo-frame');
     if (frame) {
         const card = frame.closest('.student-card');
@@ -1717,7 +2580,6 @@ document.addEventListener('click', function(e) {
         return;
     }
     
-    // Save button
     if (e.target.classList.contains('btn-simpan-data')) {
         const btn = e.target;
         const card = btn.closest('.student-card');
@@ -1726,10 +2588,7 @@ document.addEventListener('click', function(e) {
         const ttl = card.querySelector('.student-bio').textContent.trim();
         const kutipan = card.querySelector('.student-quote').textContent.trim();
 
-        if (!nama) {
-            alert('❌ Nama tidak boleh kosong!');
-            return;
-        }
+        if (!nama) { alert('❌ Nama tidak boleh kosong!'); return; }
 
         btn.textContent = 'Menyimpan...';
         btn.disabled = true;
@@ -1749,7 +2608,7 @@ document.addEventListener('click', function(e) {
         .then(res => res.json())
         .then(res => {
             if (res.status === 'success') {
-                alert('✅ Data disimpan! Tidak bisa diubah lagi.');
+                alert('✅ Data disimpan!');
                 kunciTotal(card);
             } else {
                 alert('❌ Gagal: ' + res.message);
@@ -1766,14 +2625,26 @@ document.addEventListener('click', function(e) {
     }
 });
 
+document.getElementById('btnTheme').addEventListener('click', toggleTheme);
+document.getElementById('btnSlideshow').addEventListener('click', openSlideshow);
+document.getElementById('btnExportPDF').addEventListener('click', exportPDF);
+document.getElementById('musicToggle').addEventListener('click', toggleMusic);
+
+document.getElementById('slideshowClose').addEventListener('click', closeSlideshow);
+document.getElementById('slideshowPrev').addEventListener('click', () => {
+    slideshowIndex = (slideshowIndex - 1 + slideshowImages.length) % slideshowImages.length;
+    updateSlideshow();
+});
+document.getElementById('slideshowNext').addEventListener('click', () => {
+    slideshowIndex = (slideshowIndex + 1) % slideshowImages.length;
+    updateSlideshow();
+});
+document.getElementById('slideshowPlayPause').addEventListener('click', () => {
+    if (isPlaying) stopSlideshow(); else startSlideshow();
+});
+
 document.getElementById('prevBtn').addEventListener('click', goPrev);
 document.getElementById('nextBtn').addEventListener('click', goNext);
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') goNext();
-    if (e.key === 'ArrowLeft') goPrev();
-    if (e.key === 'Escape') tutupZoomFoto();
-});
 
 document.getElementById('zoomOverlay').addEventListener('click', tutupZoomFoto);
 document.getElementById('zoomFrameInner').addEventListener('click', (e) => {
@@ -1783,6 +2654,15 @@ document.getElementById('zoomFrameInner').addEventListener('click', (e) => {
 document.getElementById('zoomClose').addEventListener('click', (e) => {
     e.stopPropagation();
     tutupZoomFoto();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goNext();
+    if (e.key === 'ArrowLeft') goPrev();
+    if (e.key === 'Escape') {
+        tutupZoomFoto();
+        closeSlideshow();
+    }
 });
 
 document.addEventListener('change', e => {
@@ -1822,69 +2702,28 @@ document.addEventListener('change', e => {
             })
             .catch(() => {
                 card.style.opacity = '1';
-                alert(' Kesalahan koneksi');
+                alert('❌ Kesalahan koneksi');
             });
         };
         reader.readAsDataURL(file);
     }
 });
 
-async function muatDataSiswa() {
-    if (!currentKelas) return;
-    
-    document.querySelectorAll('.student-card').forEach(card => {
-        izinkanEdit(card);
-    });
-
-    try {
-        const response = await fetch(GOOGLE_SHEETS_API_URL + "?action=getAll&kelas=" + currentKelas.kode);
-        const result = await response.json();
-
-        if (result.status !== "success") {
-            console.warn("Gagal ambil data dari server, izinkan edit semua");
-            return;
-        }
-
-        result.data.forEach(siswa => {
-            const card = document.querySelector(`.student-card[data-id="${siswa.id}"]`);
-            if (!card) return;
-            const img = card.querySelector('.photo-frame img');
-
-            if (siswa.foto && siswa.foto !== "") {
-                img.src = siswa.foto + "&t=" + Date.now();
-                img.onerror = function() {
-                    const fileId = siswa.foto.match(/[-\w]{25,}/)?.[0];
-                    if (fileId) this.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000&t=${Date.now()}`;
-                };
-            }
-
-            if (siswa.nama) card.querySelector('.student-name').textContent = siswa.nama;
-            if (siswa.ttl) card.querySelector('.student-bio').textContent = siswa.ttl;
-            if (siswa.kutipan) card.querySelector('.student-quote').textContent = `"${siswa.kutipan}"`;
-
-            if (siswa.nama && siswa.nama.trim() !== "") {
-                kunciTotal(card);
-            } else {
-                izinkanEdit(card);
-            }
-
-            cekFoto(card);
-        });
-
-    } catch (error) {
-        console.error("Error muatDataSiswa:", error);
-    }
-}
-
-// =================================================================
-// ===== INIT =====
-// =================================================================
-
 window.addEventListener('DOMContentLoaded', () => {
     createStars();
     createSpiralHoles();
     initLandingPage();
+    loadTheme();
 });
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(() => {
+        createStars();
+        createSpiralHoles();
+        initLandingPage();
+        loadTheme();
+    }, 100);
+}
 </script>
 </body>
 </html>
