@@ -420,14 +420,16 @@ function render(){
             <span class="teks">${ekskul1 || "-"}</span>
             <select id="ex1_${i}" onchange="perubahanData()">
                 <option value="" ${!d[5]?"selected":""}>Tidak Ikut</option>
+                <option ${d[5]=="Hadroh"?"selected":""}>Hadroh</option>
                 <option ${d[5]=="Futsal"?"selected":""}>Futsal</option>
-                <option ${d[5]=="Paskib"?"selected":""}>Paskib</option>
+                <option ${d[5]=="Paskibra"?"selected":""}>Paskibra</option>
                 <option ${d[5]=="Pramuka"?"selected":""}>Pramuka</option>
                 <option ${d[5]=="PMR"?"selected":""}>PMR</option>
                 <option ${d[5]=="Tari"?"selected":""}>Tari</option>
                 <option ${d[5]=="Silat"?"selected":""}>Silat</option>
                 <option ${d[5]=="Taekwondo"?"selected":""}>Taekwondo</option>
                 <option ${d[5]=="Tahsin"?"selected":""}>Tahsin</option>
+                <option ${d[5]=="Basket"?"selected":""}>Basket</option>
                 <option ${d[5]=="Drumband"?"selected":""}>Drumband</option>
             </select>
         </td>
@@ -446,15 +448,18 @@ function render(){
             <span class="teks">${ekskul2 || "-"}</span>
             <select id="ex2_${i}" onchange="perubahanData()">
                 <option value="" ${!d[7]?"selected":""}>Tidak Ikut</option>
-                <option ${d[7]=="Futsal"?"selected":""}>Futsal</option>
-                <option ${d[7]=="Paskib"?"selected":""}>Paskib</option>
-                <option ${d[7]=="Pramuka"?"selected":""}>Pramuka</option>
-                <option ${d[7]=="PMR"?"selected":""}>PMR</option>
-                <option ${d[7]=="Tari"?"selected":""}>Tari</option>
-                <option ${d[7]=="Silat"?"selected":""}>Silat</option>
-                <option ${d[7]=="Taekwondo"?"selected":""}>Taekwondo</option>
-                <option ${d[7]=="Tahsin"?"selected":""}>Tahsin</option>
-                <option ${d[7]=="Drumband"?"selected":""}>Drumband</option>
+                <option ${d[5]=="Hadroh"?"selected":""}>Hadroh</option>
+                <option ${d[5]=="Futsal"?"selected":""}>Futsal</option>
+                <option ${d[5]=="Paskibra"?"selected":""}>Paskibra</option>
+                <option ${d[5]=="Pramuka"?"selected":""}>Pramuka</option>
+                <option ${d[5]=="PMR"?"selected":""}>PMR</option>
+                <option ${d[5]=="Tari"?"selected":""}>Tari</option>
+                <option ${d[5]=="Silat"?"selected":""}>Silat</option>
+                <option ${d[5]=="Taekwondo"?"selected":""}>Taekwondo</option>
+                <option ${d[5]=="Tahsin"?"selected":""}>Tahsin</option>
+                <option ${d[5]=="Basket"?"selected":""}>Basket</option>
+                <option ${d[5]=="Drumband"?"selected":""}>Drumband</option>
+
             </select>
         </td>
         
