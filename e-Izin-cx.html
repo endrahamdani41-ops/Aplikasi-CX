@@ -24,21 +24,28 @@
         th { background: #1e1b4b; color: #a5b4fc; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .hidden-section { display: none !important; }
         
-        input, select, textarea { 
+        input, select { 
             background: #0f172a !important; 
             border: 1px solid rgba(255,255,255,0.1) !important; 
             color: white !important; 
             border-radius: 0.75rem; 
-            text-align: center;
+            text-align: center; 
             outline: none; 
         }
-        
-        input::placeholder, 
-        textarea::placeholder {
-            text-align: center;
-        }
+        input::placeholder { text-align: center; }
 
-        #filterContainer { display: none; justify-content: center; align-items: center; gap: 1rem; width: 100%; margin: 2.8rem auto 2.2rem auto; flex-wrap: wrap; }
+        textarea {
+            background: #0f172a !important; 
+            border: 1px solid rgba(255,255,255,0.1) !important; 
+            color: white !important; 
+            border-radius: 0.75rem; 
+            text-align: left; 
+            padding: 1rem;
+            outline: none; 
+        }
+        textarea::placeholder { text-align: center; }
+
+        #filterContainer { display: none; justify-content: center; align-items: center; gap: 1rem; width: 100%; margin: 2.8rem auto 2.2rem auto; }
         .font-mono-custom { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.3px; }
         .swal2-popup { background: #0f172a !important; color: white !important; border-radius: 2rem !important; }
         .col-kelas { background: rgba(99, 102, 241, 0.07); font-weight: 800; color: #818cf8; }
@@ -47,16 +54,18 @@
 </head>
 <body class="p-4 flex flex-col items-center">
 
+    <!-- Halaman Login -->
     <div id="loginPage" class="w-full max-w-[340px] mt-12">
         <div class="glass p-10 rounded-[2.5rem] text-center login-glow shadow-2xl">
             <img src="https://i.ibb.co.com/MDTybQJn/LOGO-CX-OK.png" class="w-20 mx-auto mb-6">
-            <h1 class="text-2xl font-black italic mb-8 text-indigo-400 uppercase tracking-widest leading-tight">E - I Z I N</h1>
-			<h2 class="text-1xl font-black italic mb-8 text-indigo-400 uppercase tracking-widest leading-tight">SMPN 110 JAKARTA</h2>
+            <h1 class="text-2xl font-black italic mb-2 text-indigo-400 uppercase tracking-widest leading-tight">E - I Z I N</h1>
+			<h2 class="text-xl font-black italic mb-8 text-indigo-400 uppercase tracking-widest leading-tight">SMPN 110 JAKARTA</h2>
             <input type="password" id="loginInput" placeholder="KODE AKSES" class="uppercase text-lg w-full h-14 mb-4">
             <button onclick="handleLogin()" class="btn-3d w-full h-14 rounded-xl">MASUK SISTEM</button>
         </div>
     </div>
 
+    <!-- Halaman Siswa -->
     <div id="studentPage" class="hidden-section w-full max-w-md space-y-6 mt-10">
         <div class="glass p-6 rounded-[2.5rem] text-center border-b-4 border-indigo-500 shadow-2xl">
             <h2 class="text-xl font-black italic uppercase" id="studentTitle">-</h2>
@@ -71,7 +80,7 @@
                     <option value="Izin">IZIN</option>
                 </select>
                 <input type="text" id="inputOrtu" placeholder="Nama Orang Tua / Wali" class="h-14 w-full capitalize" required>
-                <textarea id="inputKet" placeholder="Keterangan (contoh: Demam/Acara Keluarga)" rows="3" class="w-full p-4 lowercase"></textarea>
+                <textarea id="inputKet" placeholder="Keterangan (contoh: Demam/Acara Keluarga)" rows="3" class="w-full lowercase" required></textarea>
                 <button type="button" onclick="previewSurat()" id="btnKirimSiswa" class="btn-3d w-full h-14 rounded-xl">KIRIM IZIN</button>
             </form>
         </div>
@@ -87,6 +96,7 @@
         <button onclick="location.reload()" class="w-full text-rose-400 font-bold text-xs mt-2 italic">KELUAR</button>
     </div>
 
+    <!-- Dashboard Utama -->
     <div id="mainDashboard" class="hidden-section w-full max-w-6xl space-y-6">
         <div class="glass p-8 rounded-[2.5rem] text-center border-b-4 border-indigo-500 shadow-2xl relative overflow-hidden">
             <h2 class="text-2xl font-black italic uppercase text-white mb-1" id="userTitle">-</h2>
@@ -113,14 +123,6 @@
                 <option value="semester">1 SEMESTER</option>
                 <option value="all">SEMUA DATA</option>
             </select>
-            <button id="btnToggleKelas" onclick="toggleViewAllKelas()" 
-                    class="hidden-section px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-xl text-[11px] font-bold text-white transition-all">
-                👁️ LIHAT SEMUA
-            </button>
-            <button onclick="refreshData()" 
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-[11px] font-bold text-white transition-all">
-                🔄 REFRESH
-            </button>
         </div>
 
         <div id="view-content" class="pb-10">
@@ -131,7 +133,7 @@
                 </div>
                 <div class="table-container shadow-2xl">
                     <table id="tableToday">
-                        <thead><tr><th>NO</th><th>NIS</th><th>WAKTU LAPOR</th><th>KELAS</th><th>NAMA SISWA</th><th>ALASAN</th><th>ORANG TUA</th><th>KETERANGAN</th></tr></thead>
+                        <thead><tr><th>NO</th><th>WAKTU LAPOR</th><th>NIS</th><th>NAMA SISWA</th><th>ALASAN</th><th>ORANG TUA</th><th>KETERANGAN</th></tr></thead>
                         <tbody id="todayTableBody"></tbody>
                     </table>
                 </div>
@@ -153,127 +155,27 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_072tj1J5AbsdJux5LSYC218-Q4g1gfSau4bV6NzRAq_6-nqKQ9FeJIjzC8bp8lmr4w/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx1hezaxLSjQe48McV7tb5b6LJQQbe4Ka8qWiFNyYHc5Fr1pLj3CRRTpQclZwEasTk/exec"; 
         let cloudData = { izin: [], alpha: [], siswa: [], override: {}, izin_detail: [] };
         let userAktif = null;
-        let viewAllKelas = false;
 
-        // ========== HELPER FUNCTIONS ==========
-        function parseTimestamp(ts) {
-            if (!ts) return new Date(NaN);
-            if (ts instanceof Date) return ts;
-            
-            const str = String(ts).trim();
-            
-            // Format 1: Indonesia dengan spasi (10/07/2026 7:19:03 atau 10/07/2026 07:19:03)
-            const idMatch = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
-            if (idMatch) {
-                const [, day, month, year, hour = '0', minute = '0', second = '0'] = idMatch;
-                const date = new Date(
-                    parseInt(year), 
-                    parseInt(month) - 1, 
-                    parseInt(day), 
-                    parseInt(hour), 
-                    parseInt(minute), 
-                    parseInt(second)
-                );
-                console.log(`✅ Parse Indonesia: "${str}" →`, date);
-                return date;
-            }
-            
-            // Format 2: Indonesia tanpa waktu (10/07/2026)
-            const idDateOnly = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-            if (idDateOnly) {
-                const [, day, month, year] = idDateOnly;
-                const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-                console.log(`✅ Parse Indonesia (date only): "${str}" →`, date);
-                return date;
-            }
-            
-            // Format 3: ISO string (2026-07-10T07:19:03.000Z)
-            if (str.includes('T')) {
-                const d = new Date(str);
-                if (!isNaN(d.getTime())) {
-                    console.log(`✅ Parse ISO: "${str}" →`, d);
-                    return d;
-                }
-            }
-            
-            // Format 4: Google Sheets date object (sudah Date)
-            const fallback = new Date(str);
-            if (!isNaN(fallback.getTime())) {
-                console.log(`✅ Parse fallback: "${str}" →`, fallback);
-                return fallback;
-            }
-            
-            console.warn(`⚠️ Tidak bisa parse: "${str}"`);
-            return new Date(NaN);
-        }
-
-        function formatTanggalIndo(date) {
-            if (isNaN(date.getTime())) return '-';
-            
-            const bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-            const d = String(date.getDate()).padStart(2, '0');
-            const m = bulan[date.getMonth()];
-            const y = date.getFullYear();
-            const h = String(date.getHours()).padStart(2, '0');
-            const min = String(date.getMinutes()).padStart(2, '0');
-            
-            return `${d} ${m} ${y}, ${h}:${min}`;
-        }
-
-        function isSameDay(d1, d2) {
-            return d1.getFullYear() === d2.getFullYear() &&
-                   d1.getMonth() === d2.getMonth() &&
-                   d1.getDate() === d2.getDate();
-        }
-
-        // ========== LOGIN ==========
         async function handleLogin() {
             const pass = document.getElementById('loginInput').value.trim().toUpperCase();
-            
-            if(!pass) {
-                return Swal.fire('Peringatan', 'Masukkan kode akses', 'warning');
-            }
-            
-            console.log('🔍 Mencoba login dengan password:', pass);
-            console.log('📡 SCRIPT_URL:', SCRIPT_URL);
-            
-            Swal.fire({
-                title: 'Sabar ya!',
-                text: 'Sedang memproses login...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
-            
+            if(!pass) return;
+            Swal.fire({title: 'Sabar ya !', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
             try {
-                const url = `${SCRIPT_URL}?action=login&username=${encodeURIComponent(pass)}&_=${Date.now()}`;
-                console.log(' Request URL:', url);
-                
-                const response = await fetch(url);
-                console.log('📥 Response status:', response.status);
-                
-                const data = await response.json();
-                console.log('📦 Response data:', data);
-                
+                const res = await fetch(`${SCRIPT_URL}?action=login&username=${pass}`);
+                const data = await res.json();
                 if (data.status === "success") {
-                    userAktif = {
-                        nis: data.user.nis || '',
-                        nama: data.user.nama || '',
-                        kelas: data.user.kelas || '',
-                        role: data.user.role || ''
-                    };
-                    
-                    console.log('✅ Login berhasil!', userAktif);
-                    
+                    userAktif = data.user;
+                    // Menyimpan NIP wali kelas secara dinamis jika diset dari spreadsheet kolom NIS
+                    userAktif.nip = data.user.nis || "-"; 
                     Swal.close();
                     document.getElementById('loginPage').classList.add('hidden-section');
                     
                     if (userAktif.role !== 'walikelas' && userAktif.role !== 'piket') {
                         document.getElementById('studentPage').classList.remove('hidden-section');
-                        document.getElementById('studentTitle').innerText = userAktif.nama || 'Siswa';
-                        
+                        document.getElementById('studentTitle').innerText = userAktif.nama;
                         if(data.sudahIzin) {
                             document.getElementById('formContainer').classList.add('hidden-section');
                             document.getElementById('statusSudahIzin').classList.remove('hidden-section');
@@ -281,358 +183,98 @@
                     } else {
                         await syncData();
                         document.getElementById('mainDashboard').classList.remove('hidden-section');
-                        document.getElementById('userTitle').innerText = userAktif.nama || 'User';
+                        document.getElementById('userTitle').innerText = userAktif.nama;
                         document.getElementById('userSub').innerText = `${userAktif.role.toUpperCase()} | ${userAktif.kelas}`;
                         changeMode('today');
                     }
                     lucide.createIcons();
-                    
-                } else {
-                    console.error('❌ Login gagal:', data.message);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: data.message || 'Kode Akses Salah',
-                        footer: `<small style="color:#888">Password: ${pass}<br>Response: ${JSON.stringify(data)}</small>`
-                    });
-                }
-            } catch (e) {
-                console.error('💥 Login error:', e);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Gagal terhubung ke server',
-                    footer: `<small style="color:#888">Detail: ${e.message}</small>`
-                });
-            }
+                } else { Swal.fire('Gagal', 'Kode Akses Salah', 'error'); }
+            } catch (e) { Swal.fire('Error', 'Gagal terhubung ke server', 'error'); }
         }
 
-        // ========== SYNC DATA ==========
         async function syncData() {
             try {
-                console.log('🔄 Syncing data...');
-                console.log('📡 URL:', SCRIPT_URL);
-                
-                const res = await fetch(SCRIPT_URL + '?_=' + Date.now());
+                const res = await fetch(SCRIPT_URL);
+                if (!res.ok) throw new Error("Koneksi gagal");
                 cloudData = await res.json();
-                
-                console.log('📦 Data diterima:', cloudData);
-                console.log('📊 Jumlah izin_detail:', cloudData.izin_detail?.length || 0);
-                
-                if (cloudData.status === 'error') {
-                    throw new Error(cloudData.message);
-                }
-                
-                cloudData.izin = cloudData.izin || [];
-                cloudData.alpha = cloudData.alpha || [];
-                cloudData.siswa = cloudData.siswa || [];
-                cloudData.override = cloudData.override || {};
-                cloudData.izin_detail = cloudData.izin_detail || [];
-                
-                // Debug: Log semua data izin_detail
-                console.log('📋 Detail izin_detail:');
-                cloudData.izin_detail.forEach((item, idx) => {
-                    console.log(`  [${idx}] ${item.nama} | Kelas: ${item.kelas} | Timestamp: "${item.timestamp}"`);
-                    const parsed = parseTimestamp(item.timestamp);
-                    console.log(`      → Parsed: ${parsed} | Valid: ${!isNaN(parsed.getTime())}`);
-                });
-                
                 applyFilters();
             } catch (e) {
-                console.error('❌ Sync error:', e);
-                Swal.fire('Error', 'Gagal memuat data: ' + e.message, 'error');
+                Swal.fire('Gagal Sinkronisasi', 'Gagal memuat data terbaru dari Google Sheets.', 'warning');
             }
         }
 
-        // ========== REFRESH DATA ==========
-        async function refreshData() {
-            console.log('🔄 Manual refresh...');
-            Swal.fire({
-                title: 'Refreshing...',
-                timer: 1000,
-                showConfirmButton: false,
-                didOpen: () => Swal.showLoading()
-            });
-            
-            await syncData();
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Data diperbarui!',
-                timer: 1000,
-                showConfirmButton: false
-            });
-        }
-
-        // ========== PREVIEW SURAT ==========
         function previewSurat() {
             const al = document.getElementById('inputAlasan').value;
             const or = document.getElementById('inputOrtu').value;
             const ke = document.getElementById('inputKet').value;
-            
-            if(!al || !or) {
-                return Swal.fire('Peringatan', 'Lengkapi data Alasan dan Orang Tua', 'warning');
-            }
-            
-            if(!userAktif || !userAktif.nama) {
-                return Swal.fire('Error', 'Data user tidak ditemukan. Silakan login ulang.', 'error');
-            }
-            
-            const tgl = new Date().toLocaleDateString('id-ID', { 
-                day: 'numeric', month: 'long', year: 'numeric' 
-            });
-            
-            const alasanText = al.toLowerCase();
-            const keteranganText = ke || '-';
-            
-            const konten = `
-                <div class="surat-text" style="font-family: 'Times New Roman', serif; font-size: 14px;">
-                    <p style="text-align: right; margin-bottom: 30px;">Jakarta, ${tgl}</p>
-                    <p style="margin-bottom: 10px;">Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p>
-                    <p style="margin-top: 20px; margin-bottom: 10px;">Dengan hormat,</p>
-                    <p style="margin-bottom: 10px;">Saya orang tua/wali dari:</p>
-                    <div style="margin-left: 20px; margin-bottom: 20px;">
-                        <p>NIS : <strong>${userAktif.nis || '-'}</strong></p>
-                        <p>Nama : <strong>${userAktif.nama}</strong></p>
-                        <p>Kelas : <strong>${userAktif.kelas}</strong></p>
-                    </div>
-                    <p style="margin-bottom: 10px;">Memberitahukan bahwa anak kami tidak dapat mengikuti kegiatan belajar mengajar pada hari ini karena <strong>${alasanText}${keteranganText !== '-' ? ' (' + keteranganText + ')' : ''}</strong>.</p>
-                    <p style="margin-top: 20px; margin-bottom: 10px;">Demikian surat izin ini kami sampaikan. Atas perhatian dan kebijaksanaannya, kami ucapkan terima kasih.</p>
-                    <p style="margin-top: 30px; margin-bottom: 60px;">Hormat kami,<br>Orang Tua/Wali</p>
-                    <p style="margin-top: 40px;"><strong>${or.toUpperCase()}</strong></p>
-                </div>
-            `;
-            
-            Swal.fire({ 
-                title: 'Konfirmasi Izin', 
-                html: konten, 
-                showCancelButton: true, 
-                confirmButtonText: 'Kirim Sekarang', 
-                cancelButtonText: 'Batal',
-                confirmButtonColor: '#6366f1',
-                cancelButtonColor: '#6b7280',
-                width: '600px'
-            }).then((res) => { 
-                if(res.isConfirmed) submitIzin(); 
-            });
+            if(!al || !or || !ke) return Swal.fire('Peringatan', 'Lengkapi seluruh data formulir terlebih dahulu', 'warning');
+            const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const konten = `<div class="surat-text"><p>Jakarta, ${tgl}</p><br><p>Yth. Bapak/Ibu Wali Kelas ${userAktif.kelas}<br>di Tempat</p><br><p>Dengan hormat,</p><p>Saya orang tua dari:</p><p><br><b>Nama : ${userAktif.nama}<br>Kelas : ${userAktif.kelas}</b></p><br><p>Memberitahukan bahwa anak kami tidak dapat sekolah hari ini karena <b>${al.toLowerCase()} ${ke || '-'}</b>.</p><p>Demikian surat ini kami sampaikan. Terima kasih.</p><br><p>Hormat kami,<br><br><b>${or.toUpperCase()}</b></p></div>`;
+            Swal.fire({ title: 'Konfirmasi Izin', html: konten, showCancelButton: true, confirmButtonText: 'Kirim Sekarang', confirmButtonColor: '#6366f1' }).then((res) => { if(res.isConfirmed) submitIzin(); });
         }
 
-        // ========== SUBMIT IZIN ==========
         async function submitIzin() {
-            if(!userAktif || !userAktif.nama) {
-                return Swal.fire('Error', 'Session expired. Login ulang.', 'error')
-                    .then(() => location.reload());
-            }
-            
-            const payload = { 
-                nis: userAktif.nis || '',
-                nama: userAktif.nama, 
-                alasan: document.getElementById('inputAlasan').value, 
-                orangtua: document.getElementById('inputOrtu').value.trim(), 
-                keterangan: document.getElementById('inputKet').value.trim() || '-', 
-                kelas: userAktif.kelas
-            };
-            
-            console.log('📤 Submitting:', payload);
-            
-            Swal.fire({
-                title: 'Mengirim...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
-            
+            const payload = { nama: userAktif.nama, alasan: document.getElementById('inputAlasan').value, orangtua: document.getElementById('inputOrtu').value, keterangan: document.getElementById('inputKet').value || '-', kelas: userAktif.kelas, petugas: userAktif.nama };
+            Swal.fire({title: 'Mengirim...', didOpen: () => Swal.showLoading()});
             try {
-                const formData = new FormData();
-                formData.append('data', JSON.stringify(payload));
-                
-                const response = await fetch(SCRIPT_URL, { 
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                console.log('📥 Response:', result);
-                
-                if (result.status === 'success') {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!', 
-                        text: 'Izin telah terkirim.',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                    location.reload();
-                } else {
-                    Swal.fire('Gagal', result.message || 'Terjadi kesalahan', 'error');
-                }
-                
-            } catch (error) {
-                console.error(' Submit Error:', error);
-                Swal.fire('Error', 'Gagal mengirim data: ' + error.message, 'error');
-            }
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const r = await res.json();
+                if(r.status === "success") {
+                    Swal.fire('Berhasil', 'Izin telah terkirim.', 'success').then(() => location.reload());
+                } else { Swal.fire('Gagal', r.message, 'error'); }
+            } catch (e) { Swal.fire('Error', 'Gagal kirim data', 'error'); }
         }
 
-        // ========== FILTER & RENDER ==========
-        function applyFilters() { 
-            renderTodayTable(); 
-            renderRekapTable(); 
-        }
-
-        function toggleViewAllKelas() {
-            viewAllKelas = !viewAllKelas;
-            const btn = document.getElementById('btnToggleKelas');
-            
-            if (viewAllKelas) {
-                btn.innerText = ' HANYA KELAS SAYA';
-                btn.classList.remove('bg-purple-600');
-                btn.classList.add('bg-gray-600');
-                console.log('👁️ Mode: Lihat semua kelas');
-            } else {
-                btn.innerText = '👁️ LIHAT SEMUA';
-                btn.classList.remove('bg-gray-600');
-                btn.classList.add('bg-purple-600');
-                console.log(' Mode: Hanya kelas ' + userAktif.kelas);
-            }
-            
-            applyFilters();
-        }
+        function applyFilters() { renderTodayTable(); renderRekapTable(); }
 
         function renderTodayTable() {
             const gradeVal = document.getElementById('gradeFilter').value;
             const timeVal = document.getElementById('timeFilter').value;
             const now = new Date();
-            
-            console.log(' Render Today Table');
-            console.log(' User:', userAktif);
-            console.log(' Total izin_detail:', cloudData.izin_detail.length);
-            console.log('🔀 viewAllKelas:', viewAllKelas);
-            
             let list = cloudData.izin_detail.filter(i => {
-                // Modifikasi: Tambah kondisi viewAllKelas
-                const rMatch = viewAllKelas ? true : 
-                    (userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') 
-                        ? true 
-                        : i.kelas === userAktif.kelas;
-                
-                console.log(`🔎 Cek ${i.nama} (${i.kelas}): rMatch=${rMatch}`);
-                
-                let gMatch = (userAktif.role === 'piket' && gradeVal !== 'ALL') 
-                    ? i.kelas.startsWith(gradeVal) 
-                    : true;
-                
-                const iDate = parseTimestamp(i.timestamp);
-                if (isNaN(iDate.getTime())) {
-                    console.log(`⚠️ Timestamp invalid: ${i.timestamp}`);
-                    return false;
-                }
-                
+                const rMatch = (userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : i.kelas === userAktif.kelas;
+                let gMatch = (userAktif.role === 'piket' && gradeVal !== 'ALL') ? i.kelas.startsWith(gradeVal) : true;
+                const iDate = new Date(i.timestamp);
                 let tMatch = true;
                 const dDays = (now - iDate) / (1000 * 60 * 60 * 24);
-                
-                if (timeVal === 'today') tMatch = isSameDay(iDate, now);
-                else if (timeVal === 'week') tMatch = dDays <= 7 && dDays >= 0;
-                else if (timeVal === 'month') tMatch = dDays <= 30 && dDays >= 0;
-                else if (timeVal === 'semester') tMatch = dDays <= 180 && dDays >= 0;
-                else if (timeVal === 'all') tMatch = true;
-                
-                console.log(`  → tMatch=${tMatch} (timeVal=${timeVal}, dDays=${dDays.toFixed(2)})`);
-                
+                if (timeVal === 'today') tMatch = iDate.toDateString() === now.toDateString();
+                else if (timeVal === 'week') tMatch = dDays <= 7;
+                else if (timeVal === 'month') tMatch = dDays <= 30;
                 return rMatch && gMatch && tMatch;
             });
             
-            console.log(`✅ Data yang tampil: ${list.length} record`);
+            list.sort((a, b) => a.kelas.localeCompare(b.kelas, undefined, {numeric: true}) || a.nama.localeCompare(b.nama) || new Date(b.timestamp) - new Date(a.timestamp));
             
-            list.sort((a, b) => {
-                const k = a.kelas.localeCompare(b.kelas, undefined, {numeric: true});
-                if (k !== 0) return k;
-                const n = a.nama.localeCompare(b.nama);
-                if (n !== 0) return n;
-                return parseTimestamp(b.timestamp) - parseTimestamp(a.timestamp);
-            });
-            
-            const tbody = document.getElementById('todayTableBody');
-            
-            if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-10 text-slate-500">
-                    <div class="flex flex-col items-center gap-2">
-                        <span class="text-2xl">📭</span>
-                        <span>Tidak ada data izin untuk kelas <b>${viewAllKelas ? 'semua kelas' : userAktif.kelas}</b></span>
-                        <span class="text-[10px]">Filter waktu: ${timeVal.toUpperCase()}</span>
-                    </div>
-                </td></tr>`;
-                return;
-            }
-            
-            tbody.innerHTML = list.map((i, idx) => {
-                const iDate = parseTimestamp(i.timestamp);
-                const ts = formatTanggalIndo(iDate);
-                
-                return `<tr>
-                    <td>${idx+1}</td>
-                    <td class="font-mono-custom text-[10px]">${i.nis || '-'}</td>
-                    <td class="font-mono-custom text-[10px]">${ts}</td>
-                    <td class="col-kelas">${i.kelas}</td>
-                    <td class="font-bold text-left">${i.nama}</td>
-                    <td><span class="px-2 py-1 rounded bg-indigo-500/10 text-indigo-300 text-[10px]">${i.alasan}</span></td>
-                    <td class="capitalize">${i.orangtua}</td>
-                    <td class="text-left text-[10px] italic truncate max-w-[150px]">${i.keterangan || '-'}</td>
-                </tr>`;
-            }).join('');
+            document.getElementById('todayTableBody').innerHTML = list.length ? list.map((i, idx) => {
+                const ts = new Date(i.timestamp).toLocaleString('id-ID', {day:'2-digit', month:'short', year: 'numeric', hour:'2-digit', minute:'2-digit'}).replace(/\./g, ':');
+                // Mengambil NIS siswa secara dinamis dari cloudData.siswa
+                const matchedSiswa = cloudData.siswa.find(s => s.nama === i.nama);
+                const nisDisplay = matchedSiswa ? matchedSiswa.nis : '-';
+                return `<tr><td>${idx+1}</td><td class="font-mono-custom text-[10px]">${ts}</td><td class="col-kelas">${nisDisplay}</td><td class="font-bold text-left">${i.nama}</td><td><span class="px-2 py-1 rounded bg-indigo-500/10 text-indigo-300 text-[10px]">${i.alasan}</span></td><td class="capitalize">${i.orangtua}</td><td class="text-left text-[10px] italic truncate max-w-[150px]">${i.keterangan || '-'}</td></tr>`;
+            }).join('') : '<tr><td colspan="7" class="py-10 text-slate-500">Data Tidak Tersedia</td></tr>';
         }
 
         function renderRekapTable() {
             const fv = document.getElementById('gradeFilter').value;
             const isP = userAktif.role === 'piket';
-            document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>NIS</th><th>KELAS</th><th>NAMA SISWA</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isP ? '' : '<th>AKSI</th>'}</tr>`;
-            
+            document.getElementById('rekapHead').innerHTML = `<tr><th>NO</th><th>NIS</th><th>NAMA SISWA</th><th>S</th><th>I</th><th>A</th><th>TOTAL</th>${isP ? '' : '<th>AKSI</th>'}</tr>`;
             let list = cloudData.siswa.filter(s => {
                 if(s.role === 'piket' || s.role === 'walikelas') return false;
-                
-                // Modifikasi: Tambah kondisi viewAllKelas
-                const rm = viewAllKelas ? true : 
-                    (userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') 
-                        ? true 
-                        : s.kelas === userAktif.kelas;
-                
+                const rm = (userAktif.role === 'piket' || userAktif.kelas === 'ADMIN110') ? true : s.kelas === userAktif.kelas;
                 const gm = (userAktif.role === 'piket' && fv !== 'ALL') ? s.kelas.startsWith(fv) : true;
                 return rm && gm;
             });
-            
             list.sort((a, b) => a.kelas.localeCompare(b.kelas, undefined, {numeric: true}) || a.nama.localeCompare(b.nama));
-            
-            if (list.length === 0) {
-                document.getElementById('rekapTableBody').innerHTML = `<tr><td colspan="${isP ? 8 : 9}" class="py-10 text-slate-500">Data Tidak Tersedia</td></tr>`;
-                return;
-            }
-            
             document.getElementById('rekapTableBody').innerHTML = list.map((s, idx) => {
                 let sv = cloudData.izin.filter(i => i.nama === s.nama && i.alasan === 'Sakit').length;
                 let iv = cloudData.izin.filter(i => i.nama === s.nama && i.alasan === 'Izin').length;
                 let av = cloudData.alpha.filter(a => a.nama === s.nama).length;
-                
-                if (cloudData.override && cloudData.override[s.nama]) {
+                if (cloudData.override[s.nama]) {
                     const o = cloudData.override[s.nama];
-                    sv = (o.sakit !== "" && o.sakit !== undefined) ? parseInt(o.sakit) : sv;
-                    iv = (o.izin !== "" && o.izin !== undefined) ? parseInt(o.izin) : iv;
-                    av = (o.alpha !== "" && o.alpha !== undefined) ? parseInt(o.alpha) : av;
+                    sv = o.sakit !== "" ? o.sakit : sv; iv = o.izin !== "" ? o.izin : iv; av = o.alpha !== "" ? o.alpha : av;
                 }
-                
-                sv = isNaN(sv) ? 0 : sv;
-                iv = isNaN(iv) ? 0 : iv;
-                av = isNaN(av) ? 0 : av;
                 const total = parseInt(sv) + parseInt(iv) + parseInt(av);
-                
-                return `<tr>
-                    <td>${idx+1}</td>
-                    <td class="font-mono-custom">${s.nis || '-'}</td>
-                    <td class="col-kelas">${s.kelas}</td>
-                    <td class="text-left font-bold">${s.nama}</td>
-                    <td class="text-blue-400">${sv}</td>
-                    <td class="text-amber-400">${iv}</td>
-                    <td class="text-rose-500">${av}</td>
-                    <td class="bg-indigo-500/10 font-bold">${total}</td>
-                    ${isP ? '' : `<td><button onclick="editData('${s.nama.replace(/'/g, "\\'")}',${sv},${iv},${av})" class="bg-indigo-600/30 px-3 py-1 rounded-lg text-[10px]">EDIT</button></td>`}
-                </tr>`;
+                return `<tr><td>${idx+1}</td><td class="col-kelas">${s.nis || '-'}</td><td class="text-left font-bold">${s.nama}</td><td class="text-blue-400">${sv}</td><td class="text-amber-400">${iv}</td><td class="text-rose-500">${av}</td><td class="bg-indigo-500/10 font-bold">${total}</td>${isP ? '' : `<td><button onclick="editData('${s.nama}',${sv},${iv},${av})" class="bg-indigo-600/30 px-3 py-1 rounded-lg text-[10px] font-bold hover:bg-indigo-600/60 transition-all">EDIT</button></td>`}</tr>`;
             }).join('');
         }
 
@@ -640,80 +282,108 @@
             document.querySelectorAll('#view-content > div').forEach(d => d.classList.add('hidden-section'));
             document.getElementById(`section-${m}`).classList.remove('hidden-section');
             const fb = document.getElementById('filterContainer');
-            
             if (m === 'today' || m === 'rekap') {
                 fb.style.display = 'flex';
                 document.getElementById('gradeFilter').style.display = (userAktif.role === 'walikelas') ? 'none' : 'block';
                 document.getElementById('timeFilter').style.display = (m === 'rekap') ? 'none' : 'block';
-                
-                // Tampilkan tombol toggle untuk walikelas
-                const btnToggle = document.getElementById('btnToggleKelas');
-                if (userAktif.role === 'walikelas') {
-                    btnToggle.classList.remove('hidden-section');
-                } else {
-                    btnToggle.classList.add('hidden-section');
-                }
-            } else {
-                fb.style.display = 'none';
-            }
+            } else fb.style.display = 'none';
             lucide.createIcons();
         }
+
+        // --- CUSTOM CETAK PDF PREMIUM ---
 
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
-            const isT = !document.getElementById('section-today').classList.contains('hidden-section');
-            doc.text(isT ? "LAPORAN IZIN TERINCI" : "REKAP ABSENSI", 105, 15, { align: "center" });
-            doc.autoTable({ html: isT ? '#tableToday' : '#tableRekap', startY: 25, styles: { fontSize: 7 } });
-            doc.save(`IZIN_110_${Date.now()}.pdf`);
+            const isTodayMode = !document.getElementById('section-today').classList.contains('hidden-section');
+            
+            // 1. JUDUL & SUB-JUDUL KELAS
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            const judul = isTodayMode ? "LAPORAN IZIN TERINCI SISWA" : "REKAPITULASI ABSENSI SISWA";
+            doc.text(judul, 105, 14, { align: "center" });
+            
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            const subKelas = userAktif.role === 'walikelas' ? `KELAS: ${userAktif.kelas}` : "Semua Tingkatan Kelas";
+            doc.text(subKelas, 105, 20, { align: "center" });
+
+            // 2. GENERATE TABEL (MENAMPILKAN GARIS & BARIS RAPAT)
+            doc.autoTable({ 
+                html: isTodayMode ? '#tableToday' : '#tableRekap', 
+                startY: 27, 
+                theme: 'grid', // MENAMPILKAN GARIS TABEL (BORDER) SECARA JELAS
+                styles: { 
+                    fontSize: 8, 
+                    halign: 'center', 
+                    valign: 'middle',
+                    cellPadding: 1.5, // Tetap mempertahankan kerapatan baris tabel
+                    lineColor: [148, 163, 184], // Warna garis abu-abu tipis (slate-400) agar terlihat rapi
+                    lineWidth: 0.1 // Ketebalan garis tabel
+                },
+                headStyles: { fillColor: [30, 27, 75], textColor: [165, 180, 252], fontStyle: 'bold' },
+                columns: isTodayMode ? [0,1,2,3,4,5,6] : [0,1,2,3,4,5,6]
+            });
+
+            // 3. TANDA TANGAN & TANGGAL DI BAWAH TABEL
+            const finalY = doc.lastAutoTable.finalY + 8; 
+            const tglSekarang = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            // Koordinat horizontal sisi kanan
+            const rightX = 145; 
+
+            doc.setFontSize(10);
+            doc.text(`Jakarta, ${tglSekarang}`, rightX, finalY);
+            doc.text("Wali Kelas,", rightX, finalY + 5);
+            
+            doc.setFont("helvetica", "bold");
+            doc.text(userAktif.nama, rightX, finalY + 18); 
+            
+            doc.setFont("helvetica", "normal");
+            const NIP_Display = (userAktif.role === 'walikelas' && userAktif.nip && userAktif.nip !== userAktif.kelas) ? userAktif.nip : "-";
+            doc.text(`NIP. ${NIP_Display}`, rightX, finalY + 23);
+
+            // Simpan File Dokumen
+            doc.save(`E-IZIN_110_KELAS_${userAktif.kelas || 'ALL'}_${Date.now()}.pdf`);
         }
 
+
         async function editData(n, s, i, a) {
-            try {
-                const { value: r } = await Swal.fire({ 
-                    title: `Edit: ${n}`, 
-                    html: `<input id="s" type="number" value="${s}" class="swal2-input"><input id="i" type="number" value="${i}" class="swal2-input"><input id="a" type="number" value="${a}" class="swal2-input">`, 
-                    preConfirm: () => {
-                        const sVal = document.getElementById('s').value;
-                        const iVal = document.getElementById('i').value;
-                        const aVal = document.getElementById('a').value;
-                        if (sVal === '' || iVal === '' || aVal === '') {
-                            Swal.showValidationMessage('Semua field harus diisi!');
-                            return false;
-                        }
-                        return [parseInt(sVal), parseInt(iVal), parseInt(aVal)];
-                    }
-                });
-                
-                if (r) {
-                    Swal.fire({title:'Menyimpan...', didOpen:()=>Swal.showLoading()});
+            const { value: r } = await Swal.fire({ 
+                title: `Pembaruan Absen`,
+                html: `
+                    <div style="font-size:12px; font-weight:800; color:#818cf8; text-align:left; margin-bottom:4px; padding-left:8px;">${n.toUpperCase()}</div>
+                    <hr style="border-color:rgba(255,255,255,0.1); margin-bottom:15px;">
+                    <div style="text-align: left; font-size: 11px; font-weight:600; margin-bottom: 4px; padding-left: 8px; color: #60a5fa;">Jumlah Sakit (S) :</div>
+                    <input id="s" type="number" value="${s}" class="swal2-input" style="margin: 0 0 12px 0; width:100%; height:40px; font-size:14px;">
                     
-                    const formData = new FormData();
-                    formData.append('data', JSON.stringify({ 
-                        action: 'override', 
-                        nama: n, 
-                        sakit: r[0], 
-                        izin: r[1], 
-                        alpha: r[2] 
-                    }));
+                    <div style="text-align: left; font-size: 11px; font-weight:600; margin-bottom: 4px; padding-left: 8px; color: #fbbf24;">Jumlah Izin (I) :</div>
+                    <input id="i" type="number" value="${i}" class="swal2-input" style="margin: 0 0 12px 0; width:100%; height:40px; font-size:14px;">
                     
-                    const res = await fetch(SCRIPT_URL, { 
-                        method: 'POST', 
-                        body: formData,
-                        redirect: 'follow'
-                    });
-                    const result = await res.json();
-                    
-                    if (result.status === 'success') {
+                    <div style="text-align: left; font-size: 11px; font-weight:600; margin-bottom: 4px; padding-left: 8px; color: #f87171;">Jumlah Alpha (A) :</div>
+                    <input id="a" type="number" value="${a}" class="swal2-input" style="margin: 0; width:100%; height:40px; font-size:14px;">
+                `, 
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#4f46e5',
+                preConfirm: () => [
+                    document.getElementById('s').value, 
+                    document.getElementById('i').value, 
+                    document.getElementById('a').value
+                ] 
+            });
+            
+            if (r) {
+                Swal.fire({title:'Menyimpan ke Server...', allowOutsideClick: false, didOpen:()=>Swal.showLoading()});
+                try {
+                    const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'override', nama: n, sakit: r[0], izin: r[1], alpha: r[2] }) });
+                    const resJson = await response.json();
+                    if(resJson.status === "success") {
                         await syncData();
-                        Swal.fire('Berhasil', 'Data diperbarui', 'success');
-                    } else {
-                        Swal.fire('Gagal', result.message || 'Gagal memperbarui data', 'error');
-                    }
-                }
-            } catch (e) {
-                console.error('❌ Edit error:', e);
-                Swal.fire('Error', 'Gagal mengedit data', 'error');
+                        Swal.fire('Berhasil', 'Data kehadiran berhasil diperbarui.', 'success');
+                    } else { throw new Error("Gagal"); }
+                } catch(e) { Swal.fire('Gagal', 'Terjadi kesalahan sistem saat memperbarui data.', 'error'); }
             }
         }
     </script>
