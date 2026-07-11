@@ -39,7 +39,7 @@
             border: 1px solid rgba(255,255,255,0.1) !important; 
             color: white !important; 
             border-radius: 0.75rem; 
-            text-align: left; 
+            text-align: center; 
             padding: 1rem;
             outline: none; 
         }
@@ -79,8 +79,9 @@
                     <option value="Sakit">SAKIT</option>
                     <option value="Izin">IZIN</option>
                 </select>
-                <input type="text" id="inputOrtu" placeholder="Nama Orang Tua / Wali" class="h-14 w-full capitalize" required>
                 <textarea id="inputKet" placeholder="Keterangan (contoh: Demam/Acara Keluarga)" rows="3" class="w-full lowercase" required></textarea>
+             
+                <input type="text" id="inputOrtu" placeholder="Nama Orang Tua / Wali" class="h-14 w-full capitalize" required>
                 <button type="button" onclick="previewSurat()" id="btnKirimSiswa" class="btn-3d w-full h-14 rounded-xl">KIRIM IZIN</button>
             </form>
         </div>
@@ -292,6 +293,7 @@
 
         // --- CUSTOM CETAK PDF PREMIUM ---
 
+    // --- CUSTOM CETAK PDF PREMIUM (GARIS TEGAS & BARIS RAPAT) ---
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
@@ -308,20 +310,26 @@
             const subKelas = userAktif.role === 'walikelas' ? `KELAS: ${userAktif.kelas}` : "Semua Tingkatan Kelas";
             doc.text(subKelas, 105, 20, { align: "center" });
 
-            // 2. GENERATE TABEL (MENAMPILKAN GARIS & BARIS RAPAT)
+            // 2. GENERATE TABEL (MENAMPILKAN GARIS HITAM TEGAS & BARIS RAPAT)
             doc.autoTable({ 
                 html: isTodayMode ? '#tableToday' : '#tableRekap', 
                 startY: 27, 
-                theme: 'grid', // MENAMPILKAN GARIS TABEL (BORDER) SECARA JELAS
+                theme: 'grid', // Mengaktifkan grid garis kotak penuh
                 styles: { 
                     fontSize: 8, 
                     halign: 'center', 
                     valign: 'middle',
-                    cellPadding: 1.5, // Tetap mempertahankan kerapatan baris tabel
-                    lineColor: [148, 163, 184], // Warna garis abu-abu tipis (slate-400) agar terlihat rapi
-                    lineWidth: 0.1 // Ketebalan garis tabel
+                    cellPadding: 1.5, // Menjaga ukuran baris tetap rapat dan tidak renggang
+                    lineColor: [0, 0, 0], // Mengubah warna garis menjadi hitam pekat (RGB: 0, 0, 0)
+                    lineWidth: 0.3 // Menaikkan ketebalan garis agar terlihat tebal dan jelas saat dicetak
                 },
-                headStyles: { fillColor: [30, 27, 75], textColor: [165, 180, 252], fontStyle: 'bold' },
+                headStyles: { 
+                    fillColor: [30, 27, 75], 
+                    textColor: [255, 255, 255], // Mengubah teks header jadi putih bersih agar lebih kontras
+                    fontStyle: 'bold',
+                    lineColor: [0, 0, 0],
+                    lineWidth: 0.3
+                },
                 columns: isTodayMode ? [0,1,2,3,4,5,6] : [0,1,2,3,4,5,6]
             });
 
