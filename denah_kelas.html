@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Denah Kelas - Google Sheets</title>
+    <title>Denah Tempat Duduk Kelas - SMPN 110 Jakarta</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -72,97 +72,81 @@
         .header {
             background: var(--bg-header);
             color: var(--text-header);
-            padding: 25px;
+            padding: 20px 20px 30px 20px;
             text-align: center;
             position: relative;
         }
 
-        .header h1 { font-size: 1.5rem; margin-bottom: 5px; }
-        .header p { opacity: 0.9; font-size: 0.9rem; }
+        .header h1 { font-size: 1.4rem; margin-bottom: 5px; font-weight: 700; }
+        .header h2 { font-size: 1rem; font-weight: 400; opacity: 0.9; margin-bottom: 10px; }
+
+        .connection-status {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
+        .connection-status.disconnected { background: rgba(239, 68, 68, 0.9); }
+
+        /* Wrapper untuk tombol di header */
+        .header-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .header-btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+        }
+
+        .header-btn.btn-save { background: var(--success); }
+        .header-btn.btn-save:hover { background: #059669; transform: translateY(-2px); }
+        .header-btn.btn-save:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+        
+        .header-btn.btn-load { background: #3b82f6; }
+        .header-btn.btn-load:hover { background: #2563eb; transform: translateY(-2px); }
+        .header-btn.btn-load:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
 
         .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             background: rgba(255,255,255,0.2);
             border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
         }
 
         .theme-toggle:hover { background: rgba(255,255,255,0.3); transform: rotate(20deg); }
 
-        .config-section {
-            padding: 15px 20px;
-            background: var(--bg-stats);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .config-section label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-main);
-            font-size: 0.9rem;
-        }
-
-        .config-section input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
-            background: var(--input-bg);
-            color: var(--text-main);
-            font-family: monospace;
-            font-size: 0.85rem;
-        }
-
-        .config-section input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .action-bar {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            padding: 15px;
-            background: var(--bg-stats);
-            border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
-        }
-
-        .btn-action {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-save { background: var(--success); color: white; }
-        .btn-save:hover { background: #059669; transform: translateY(-2px); }
-        .btn-save:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
-        
-        .btn-load { background: #3b82f6; color: white; }
-        .btn-load:hover { background: #2563eb; transform: translateY(-2px); }
-        .btn-load:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
-
         .loading {
             display: inline-block;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -335,11 +319,29 @@
         }
         .stats-bar strong { color: var(--primary); font-size: 1.1rem; margin-left: 5px; }
 
+        /* Responsive untuk HP */
+        @media (max-width: 600px) {
+            .header { padding-top: 60px; }
+            .connection-status {
+                position: absolute;
+                top: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .header-controls {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+            }
+            .header-btn span { display: none; } /* Sembunyikan teks tombol di HP, hanya icon */
+            .header-btn { padding: 8px 10px; }
+        }
+
         @media print {
             body { background: white; padding: 0; }
             .app-container { box-shadow: none; max-width: 100%; }
-            .header { background: white; color: black; border-bottom: 2px solid #000; }
-            .theme-toggle, .action-bar, .modal-overlay, .stats-bar, .config-section, .status-message { display: none !important; }
+            .header { background: white; color: black; border-bottom: 2px solid #000; padding: 10px; }
+            .header-controls, .modal-overlay, .stats-bar, .connection-status { display: none !important; }
             .seat { border: 1px solid #000; background: white !important; }
             .seat.hidden { display: none !important; }
             .seat-num { background: #000; color: #fff; }
@@ -351,23 +353,21 @@
 
 <div class="app-container">
     <div class="header">
-        <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
-        <h1>📍 Denah Tempat Duduk Kelas</h1>
-        <p>Layout 5x8 | Sinkronisasi Google Sheets</p>
-    </div>
+        <div id="connectionStatus" class="connection-status">Checking...</div>
+        
+        <!-- Tombol dipindahkan ke sini -->
+        <div class="header-controls">
+            <button class="header-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">
+                💾 <span></span>
+            </button>
+            <button class="header-btn btn-load" id="btnLoad" onclick="loadFromGoogleSheet()" title="Load dari Google Sheets">
+                📥 <span></span>
+            </button>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
+        </div>
 
-    <div class="config-section">
-        <label for="scriptUrl">🔗 Google Apps Script Web App URL:</label>
-        <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/AKfycbyrZiGslMJOCQLiwYmjPRlQgjeBmzMi30impJVDiiKJ0m4M7JSbSHD-1wTrrsBL8v-4oQ/exec">
-    </div>
-
-    <div class="action-bar">
-        <button class="btn-action btn-save" id="btnSave" onclick="saveToGoogleSheet()">
-            💾 Simpan ke Google Sheets
-        </button>
-        <button class="btn-action btn-load" id="btnLoad" onclick="loadFromGoogleSheet()">
-             Load dari Google Sheets
-        </button>
+        <h1>Denah Tempat Duduk Kelas</h1>
+        <h2>SMPN 110 Jakarta</h2>
     </div>
 
     <div id="statusMessage" class="status-message"></div>
@@ -383,6 +383,7 @@
     </div>
 </div>
 
+<!-- Modal Input Data -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
         <h3 id="modalTitle">Input Data Siswa</h3>
@@ -404,6 +405,12 @@
 </div>
 
 <script>
+    // ============================================
+    // 🔧 KONFIGURASI - GANTI URL INI SEKALI SAJA
+    // ============================================
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6lVXt6mH3WzpM-g2a-3t5-xnmQOXkSrmR0xJVhClW1CAMIR6vytfu92g0aGMc9e0d9w/exec';
+    // ============================================
+    
     const TOTAL_ROWS = 5;
     const TOTAL_COLS = 8;
     const MAX_ACTIVE_SEATS = 36;
@@ -415,9 +422,6 @@
         const saved = localStorage.getItem('denah_5x8_data');
         if (saved) dataSiswa = JSON.parse(saved);
         
-        const savedUrl = localStorage.getItem('denah_script_url');
-        if (savedUrl) document.getElementById('scriptUrl').value = savedUrl;
-        
         const savedTheme = localStorage.getItem('denah_theme');
         if (savedTheme === 'dark') {
             document.body.classList.add('dark-mode');
@@ -425,13 +429,36 @@
         }
         
         renderDenah();
+        checkConnection();
     };
+
+    async function checkConnection() {
+        const statusEl = document.getElementById('connectionStatus');
+        if (!SCRIPT_URL || SCRIPT_URL.includes('GANTI_DENGAN_URL')) {
+            statusEl.textContent = '⚠️ URL Belum Dikonfigurasi';
+            statusEl.className = 'connection-status disconnected';
+            return;
+        }
+        try {
+            const response = await fetch(SCRIPT_URL + '?action=test');
+            const result = await response.json();
+            if (result.result === 'success') {
+                statusEl.textContent = '✅ Terhubung';
+                statusEl.className = 'connection-status connected';
+            } else {
+                statusEl.textContent = '❌ Error';
+                statusEl.className = 'connection-status disconnected';
+            }
+        } catch (error) {
+            statusEl.textContent = '❌ Offline';
+            statusEl.className = 'connection-status disconnected';
+        }
+    }
 
     function toggleTheme() {
         const body = document.body;
         const btn = document.querySelector('.theme-toggle');
         body.classList.toggle('dark-mode');
-        
         if (body.classList.contains('dark-mode')) {
             btn.textContent = '☀️';
             localStorage.setItem('denah_theme', 'dark');
@@ -456,34 +483,27 @@
         for (let r = 0; r < TOTAL_ROWS; r++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'row-wrapper';
-
             for (let c = 0; c < TOTAL_COLS; c += 2) {
                 const pairDiv = document.createElement('div');
                 pairDiv.className = 'pair-wrapper';
-
                 const idxLeft = r * TOTAL_COLS + c;
                 const idxRight = r * TOTAL_COLS + c + 1;
-
                 pairDiv.appendChild(createSeat(idxLeft));
                 pairDiv.appendChild(createSeat(idxRight));
-
                 rowDiv.appendChild(pairDiv);
             }
             container.appendChild(rowDiv);
         }
-
         filledCount = Object.keys(dataSiswa).length;
         document.getElementById('stFilled').innerText = filledCount;
     }
 
     function createSeat(index) {
         const seat = document.createElement('div');
-        
         if (index >= MAX_ACTIVE_SEATS) {
             seat.className = 'seat hidden';
             return seat;
         }
-
         seat.className = 'seat';
         if (dataSiswa[index]) seat.classList.add('filled');
 
@@ -509,7 +529,6 @@
             icon.innerText = '+';
             seat.appendChild(icon);
         }
-
         seat.onclick = () => openModal(index);
         return seat;
     }
@@ -563,11 +582,7 @@
 
         if (!name) return alert('Nama siswa wajib diisi!');
 
-        dataSiswa[activeIndex] = {
-            name: name,
-            photo: isImgShown ? imgSrc : null
-        };
-
+        dataSiswa[activeIndex] = { name: name, photo: isImgShown ? imgSrc : null };
         localStorage.setItem('denah_5x8_data', JSON.stringify(dataSiswa));
         closeModal();
         renderDenah();
@@ -590,36 +605,25 @@
         if (e.key === 'Enter') saveData();
     });
 
-    document.getElementById('scriptUrl').addEventListener('change', function() {
-        localStorage.setItem('denah_script_url', this.value);
-    });
-
     async function saveToGoogleSheet() {
-        const scriptUrl = document.getElementById('scriptUrl').value.trim();
-        
-        if (!scriptUrl) {
-            alert('⚠️ Masukkan Google Apps Script Web App URL terlebih dahulu!');
-            document.getElementById('scriptUrl').focus();
+        if (!SCRIPT_URL || SCRIPT_URL.includes('GANTI_DENGAN_URL')) {
+            alert('⚠️ URL Google Apps Script belum dikonfigurasi!');
             return;
         }
-
         const btnSave = document.getElementById('btnSave');
         const originalText = btnSave.innerHTML;
         btnSave.disabled = true;
-        btnSave.innerHTML = '<span class="loading"></span> Menyimpan...';
+        btnSave.innerHTML = '<span class="loading"></span>';
 
         try {
             localStorage.setItem('denah_5x8_data', JSON.stringify(dataSiswa));
-
-            await fetch(scriptUrl, {
+            await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'save', ...dataSiswa })
             });
-
             showStatus('✅ Data berhasil disimpan ke Google Sheets!', true);
-            
         } catch (error) {
             console.error('Error:', error);
             showStatus('❌ Gagal menyimpan: ' + error.message, false);
@@ -630,32 +634,26 @@
     }
 
     async function loadFromGoogleSheet() {
-        const scriptUrl = document.getElementById('scriptUrl').value.trim();
-        
-        if (!scriptUrl) {
-            alert('⚠️ Masukkan Google Apps Script Web App URL terlebih dahulu!');
-            document.getElementById('scriptUrl').focus();
+        if (!SCRIPT_URL || SCRIPT_URL.includes('GANTI_DENGAN_URL')) {
+            alert('⚠️ URL Google Apps Script belum dikonfigurasi!');
             return;
         }
-
         const btnLoad = document.getElementById('btnLoad');
         const originalText = btnLoad.innerHTML;
         btnLoad.disabled = true;
-        btnLoad.innerHTML = '<span class="loading"></span> Loading...';
+        btnLoad.innerHTML = '<span class="loading"></span>';
 
         try {
-            const response = await fetch(scriptUrl + '?action=load');
+            const response = await fetch(SCRIPT_URL + '?action=load');
             const result = await response.json();
-
             if (result.result === 'success' && result.data) {
                 dataSiswa = result.data;
                 localStorage.setItem('denah_5x8_data', JSON.stringify(dataSiswa));
                 renderDenah();
                 showStatus(`✅ Data berhasil dimuat! ${result.count} siswa ditemukan.`, true);
             } else {
-                showStatus(' Gagal memuat data: ' + (result.message || 'Unknown error'), false);
+                showStatus('❌ Gagal memuat data: ' + (result.message || 'Unknown error'), false);
             }
-
         } catch (error) {
             console.error('Error:', error);
             showStatus('❌ Gagal memuat: ' + error.message, false);
