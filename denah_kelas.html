@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denah Kelas - Google Sheets</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --success: #10b981;
+            --bg-page: #f3f4f6;
+            --bg-container: #ffffff;
+            --bg-header: #4f46e5;
+            --text-header: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --bg-stats: #f9fafb;
+            --border-color: #e5e7eb;
+            --seat-empty: #e5e7eb;
+            --seat-filled-bg: #ffffff;
+            --seat-filled-border: #10b981;
+            --seat-name-bg: rgba(0, 0, 0, 0.6);
+            --seat-name-color: #ffffff;
+            --modal-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-border: #d1d5db;
+            --shadow: 0 20px 50px rgba(0,0,0,0.1);
+            --gap-pair: 10px;
+            --gap-group: 30px;
+            --seat-w: 100px;
+            --seat-h: 120px;
+        }
+
+        body.dark-mode {
+            --bg-page: #0f172a;
+            --bg-container: #1e293b;
+            --bg-header: #312e81;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --bg-stats: #334155;
+            --border-color: #475569;
+            --seat-empty: #334155;
+            --seat-filled-bg: #1e293b;
+            --seat-name-bg: rgba(0, 0, 0, 0.75);
+            --modal-bg: #1e293b;
+            --input-bg: #0f172a;
+            --input-border: #475569;
+            --shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body {
+            background: var(--bg-page);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .app-container {
+            background: var(--bg-container);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 1200px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--bg-header);
+            color: var(--text-header);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 { font-size: 1.5rem; margin-bottom: 5px; }
+        .header p { opacity: 0.9; font-size: 0.9rem; }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover { background: rgba(255,255,255,0.3); transform: rotate(20deg); }
+
+        .config-section {
+            padding: 15px 20px;
+            background: var(--bg-stats);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .config-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .config-section input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .config-section input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            padding: 15px;
+            background: var(--bg-stats);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save { background: var(--success); color: white; }
+        .btn-save:hover { background: #059669; transform: translateY(-2px); }
+        .btn-save:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+        
+        .btn-load { background: #3b82f6; color: white; }
+        .btn-load:hover { background: #2563eb; transform: translateY(-2px); }
+        .btn-load:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .status-message {
+            padding: 12px 20px;
+            margin: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            font-weight: 600;
+        }
+
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            display: block;
+            border-left: 4px solid var(--success);
+        }
+
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+            border-left: 4px solid #ef4444;
+        }
+
+        .denah-scroll-area {
+            width: 100%;
+            overflow-x: auto;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .denah-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            min-width: max-content;
+        }
+
+        .row-wrapper { display: flex; gap: var(--gap-group); }
+        .pair-wrapper { display: flex; gap: var(--gap-pair); }
+
+        .seat {
+            width: var(--seat-w);
+            height: var(--seat-h);
+            background: var(--seat-empty);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .seat.hidden { visibility: hidden; pointer-events: none; }
+
+        .seat:hover:not(.hidden) {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+            border-color: var(--primary);
+        }
+
+        .seat.filled {
+            border-color: var(--seat-filled-border);
+            background: var(--seat-filled-bg);
+        }
+
+        .seat-num {
+            position: absolute;
+            top: 6px; left: 6px;
+            background: var(--primary);
+            color: white;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .seat-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .seat-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--seat-name-bg);
+            color: var(--seat-name-color);
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 4px 2px;
+            word-break: break-word;
+            line-height: 1.2;
+            font-weight: 600;
+            z-index: 5;
+        }
+
+        .empty-icon { 
+            font-size: 2rem; 
+            color: var(--text-muted); 
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7); z-index: 100;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        
+        .modal-box {
+            background: var(--modal-bg);
+            padding: 30px; border-radius: 16px;
+            width: 90%; max-width: 380px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            color: var(--text-main);
+        }
+
+        .modal-box h3 { margin-bottom: 20px; color: var(--text-main); }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .form-group input[type="text"] { 
+            width: 100%; padding: 10px; border: 1px solid var(--input-border); 
+            border-radius: 8px; outline: none;
+            background: var(--input-bg);
+            color: var(--text-main);
+        }
+        .form-group input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.2); }
+        
+        .preview-img { 
+            width: 100px; height: 120px;
+            border-radius: 8px; 
+            object-fit: cover; margin-top: 10px; display: none; 
+            border: 2px solid var(--primary); 
+        }
+        .preview-img.show { display: block; }
+
+        .btn-row { display: flex; gap: 10px; margin-top: 25px; }
+        .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: var(--input-border); color: var(--text-main); }
+
+        .stats-bar {
+            display: flex; justify-content: center; gap: 30px;
+            padding: 15px; background: var(--bg-stats); border-top: 1px solid var(--border-color);
+            font-size: 0.85rem; color: var(--text-muted);
+        }
+        .stats-bar strong { color: var(--primary); font-size: 1.1rem; margin-left: 5px; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .app-container { box-shadow: none; max-width: 100%; }
+            .header { background: white; color: black; border-bottom: 2px solid #000; }
+            .theme-toggle, .action-bar, .modal-overlay, .stats-bar, .config-section, .status-message { display: none !important; }
+            .seat { border: 1px solid #000; background: white !important; }
+            .seat.hidden { display: none !important; }
+            .seat-num { background: #000; color: #fff; }
+            .denah-scroll-area { overflow: visible; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
+        <h1>📍 Denah Tempat Duduk Kelas</h1>
+        <p>Layout 5x8 | Sinkronisasi Google Sheets</p>
+    </div>
+
+    <div class="config-section">
+        <label for="scriptUrl">🔗 Google Apps Script Web App URL:</label>
+        <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/AKfycbyrZiGslMJOCQLiwYmjPRlQgjeBmzMi30impJVDiiKJ0m4M7JSbSHD-1wTrrsBL8v-4oQ/exec">
+    </div>
+
+    <div class="action-bar">
+        <button class="btn-action btn-save" id="btnSave" onclick="saveToGoogleSheet()">
+            💾 Simpan ke Google Sheets
+        </button>
+        <button class="btn-action btn-load" id="btnLoad" onclick="loadFromGoogleSheet()">
+             Load dari Google Sheets
+        </button>
+    </div>
+
+    <div id="statusMessage" class="status-message"></div>
+
+    <div class="denah-scroll-area">
+        <div class="denah-area" id="denahArea"></div>
+    </div>
+
+    <div class="stats-bar">
+        <span>Total Slot: <strong>40</strong></span>
+        <span>Aktif: <strong>36</strong></span>
+        <span>Terisi: <strong id="stFilled">0</strong></span>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal-box">
+        <h3 id="modalTitle">Input Data Siswa</h3>
+        <div class="form-group">
+            <label>Nama Lengkap Siswa</label>
+            <input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>Foto Siswa (Opsional)</label>
+            <input type="file" id="inpPhoto" accept="image/*" onchange="handlePreview(this)">
+            <img id="imgPreview" class="preview-img">
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveData()">Simpan</button>
+            <button class="btn btn-danger" onclick="deleteData()">Hapus</button>
+            <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const TOTAL_ROWS = 5;
+    const TOTAL_COLS = 8;
+    const MAX_ACTIVE_SEATS = 36;
+    
+    let dataSiswa = {};
+    let activeIndex = null;
+
+    window.onload = () => {
+        const saved = localStorage.getItem('denah_5x8_data');
+        if (saved) dataSiswa = JSON.parse(saved);
+        
+        const savedUrl = localStorage.getItem('denah_script_url');
+        if (savedUrl) document.getElementById('scriptUrl').value = savedUrl;
+        
+        const savedTheme = localStorage.getItem('denah_theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.theme-toggle').textContent = '☀️';
+        }
+        
+        renderDenah();
+    };
+
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.querySelector('.theme-toggle');
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+            btn.textContent = '☀️';
+            localStorage.setItem('denah_theme', 'dark');
+        } else {
+            btn.textContent = '🌙';
+            localStorage.setItem('denah_theme', 'light');
+        }
+    }
+
+    function showStatus(message, isSuccess) {
+        const statusEl = document.getElementById('statusMessage');
+        statusEl.textContent = message;
+        statusEl.className = 'status-message ' + (isSuccess ? 'success' : 'error');
+        setTimeout(() => { statusEl.className = 'status-message'; }, 5000);
+    }
+
+    function renderDenah() {
+        const container = document.getElementById('denahArea');
+        container.innerHTML = '';
+        let filledCount = 0;
+
+        for (let r = 0; r < TOTAL_ROWS; r++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row-wrapper';
+
+            for (let c = 0; c < TOTAL_COLS; c += 2) {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'pair-wrapper';
+
+                const idxLeft = r * TOTAL_COLS + c;
+                const idxRight = r * TOTAL_COLS + c + 1;
+
+                pairDiv.appendChild(createSeat(idxLeft));
+                pairDiv.appendChild(createSeat(idxRight));
+
+                rowDiv.appendChild(pairDiv);
+            }
+            container.appendChild(rowDiv);
+        }
+
+        filledCount = Object.keys(dataSiswa).length;
+        document.getElementById('stFilled').innerText = filledCount;
+    }
+
+    function createSeat(index) {
+        const seat = document.createElement('div');
+        
+        if (index >= MAX_ACTIVE_SEATS) {
+            seat.className = 'seat hidden';
+            return seat;
+        }
+
+        seat.className = 'seat';
+        if (dataSiswa[index]) seat.classList.add('filled');
+
+        const num = document.createElement('div');
+        num.className = 'seat-num';
+        num.innerText = index + 1;
+        seat.appendChild(num);
+
+        if (dataSiswa[index]) {
+            if (dataSiswa[index].photo) {
+                const img = document.createElement('img');
+                img.className = 'seat-photo';
+                img.src = dataSiswa[index].photo;
+                seat.appendChild(img);
+            }
+            const name = document.createElement('div');
+            name.className = 'seat-name';
+            name.innerText = dataSiswa[index].name;
+            seat.appendChild(name);
+        } else {
+            const icon = document.createElement('div');
+            icon.className = 'empty-icon';
+            icon.innerText = '+';
+            seat.appendChild(icon);
+        }
+
+        seat.onclick = () => openModal(index);
+        return seat;
+    }
+
+    function openModal(index) {
+        activeIndex = index;
+        const modal = document.getElementById('modal');
+        const inpName = document.getElementById('inpName');
+        const imgPrev = document.getElementById('imgPreview');
+        const inpPhoto = document.getElementById('inpPhoto');
+
+        document.getElementById('modalTitle').innerText = `Edit Kursi No. ${index + 1}`;
+        
+        if (dataSiswa[index]) {
+            inpName.value = dataSiswa[index].name;
+            if (dataSiswa[index].photo) {
+                imgPrev.src = dataSiswa[index].photo;
+                imgPrev.classList.add('show');
+            } else {
+                imgPrev.classList.remove('show');
+            }
+        } else {
+            inpName.value = '';
+            imgPrev.classList.remove('show');
+        }
+        inpPhoto.value = ''; 
+        modal.classList.add('active');
+        setTimeout(() => inpName.focus(), 100);
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+    }
+
+    function handlePreview(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById('imgPreview');
+                img.src = e.target.result;
+                img.classList.add('show');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function saveData() {
+        const name = document.getElementById('inpName').value.trim();
+        const imgSrc = document.getElementById('imgPreview').src;
+        const isImgShown = document.getElementById('imgPreview').classList.contains('show');
+
+        if (!name) return alert('Nama siswa wajib diisi!');
+
+        dataSiswa[activeIndex] = {
+            name: name,
+            photo: isImgShown ? imgSrc : null
+        };
+
+        localStorage.setItem('denah_5x8_data', JSON.stringify(dataSiswa));
+        closeModal();
+        renderDenah();
+    }
+
+    function deleteData() {
+        if (confirm('Yakin ingin menghapus data di kursi ini?')) {
+            delete dataSiswa[activeIndex];
+            localStorage.setItem('denah_5x8_data', JSON.stringify(dataSiswa));
+            closeModal();
+            renderDenah();
+        }
+    }
+
+    document.getElementById('modal').onclick = (e) => {
+        if (e.target.id === 'modal') closeModal();
+    };
+
+    document.getElementById('inpName').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') saveData();
+    });
+
+    document.getElementById('scriptUrl').addEventListener('change', function() {
+        localStorage.setItem('denah_script_url', this.value);
+    });
+
+    async function saveToGoogleSheet() {
+        const scriptUrl = document.getElementById('scriptUrl').value.trim();
+        
+        if (!scriptUrl) {
+            alert('⚠️ Masukkan Google Apps Script Web App URL terlebih dahulu!');
+            document.getElementById('scriptUrl').focus();
+            return;
+        }
+
+        const btnSave = document.getElementById('btnSave');
+        const originalText = btnSave.innerHTML;
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<span class="loading"></span> Menyimpan...';
+
+        try {
+            localStorage.setItem('denah_5x8_data', JSON.stringify(dataSiswa));
+
+            await fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'save', ...dataSiswa })
+            });
+
+            showStatus('✅ Data berhasil disimpan ke Google Sheets!', true);
+            
+        } catch (error) {
+            console.error('Error:', error);
+            showStatus('❌ Gagal menyimpan: ' + error.message, false);
+        } finally {
+            btnSave.disabled = false;
+            btnSave.innerHTML = originalText;
+        }
+    }
+
+    async function loadFromGoogleSheet() {
+        const scriptUrl = document.getElementById('scriptUrl').value.trim();
+        
+        if (!scriptUrl) {
+            alert('⚠️ Masukkan Google Apps Script Web App URL terlebih dahulu!');
+            document.getElementById('scriptUrl').focus();
+            return;
+        }
+
+        const btnLoad = document.getElementById('btnLoad');
+        const originalText = btnLoad.innerHTML;
+        btnLoad.disabled = true;
+        btnLoad.innerHTML = '<span class="loading"></span> Loading...';
+
+        try {
+            const response = await fetch(scriptUrl + '?action=load');
+            const result = await response.json();
+
+            if (result.result === 'success' && result.data) {
+                dataSiswa = result.data;
+                localStorage.setItem('denah_5x8_data', JSON.stringify(dataSiswa));
+                renderDenah();
+                showStatus(`✅ Data berhasil dimuat! ${result.count} siswa ditemukan.`, true);
+            } else {
+                showStatus(' Gagal memuat data: ' + (result.message || 'Unknown error'), false);
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            showStatus('❌ Gagal memuat: ' + error.message, false);
+        } finally {
+            btnLoad.disabled = false;
+            btnLoad.innerHTML = originalText;
+        }
+    }
+</script>
+
+</body>
+</html>
