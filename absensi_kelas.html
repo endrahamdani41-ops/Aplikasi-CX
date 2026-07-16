@@ -110,29 +110,35 @@
             font-weight: 700;
             transition: color 0.3s ease;
         }
+
+        /* ===== SUSUNAN BARU: 2 KOLOM ===== */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: 1fr 1fr; /* Hanya 2 kolom */
+            gap: 12px 30px;
             margin-bottom: 15px;
-            padding: 10px;
+            padding: 12px 15px;
             background: var(--bg-info-grid);
             border-radius: 6px;
             transition: background 0.3s ease;
         }
         .form-group {
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* Label & Input SEJAJAR */
+            align-items: center;
+            gap: 8px;
         }
         .form-group label {
-            margin-bottom: 3px;
+            min-width: 110px; /* Lebar label tetap agar rapi */
             font-weight: 600;
             color: var(--text-label);
             font-size: 14px;
             transition: color 0.3s ease;
+            flex-shrink: 0;
         }
         .form-group input {
-            padding: 6px 8px;
+            flex: 1; /* Input mengisi sisa ruang */
+            padding: 8px 10px;
             border: 1px solid var(--border-input);
             border-radius: 4px;
             font-size: 14px;
@@ -148,6 +154,7 @@
         .form-group input::placeholder {
             color: #9e9e9e;
         }
+
         .button-group {
             display: flex;
             gap: 6px;
@@ -391,28 +398,33 @@
             }
         }
         
-        @media screen and (max-width: 1366px) {
-            .info-grid { grid-template-columns: repeat(2, 1fr); }
-            .col-nama { width: 120px; }
+        @media screen and (max-width: 768px) {
+            .info-grid { grid-template-columns: 1fr; }
+            .form-group { flex-direction: column; align-items: flex-start; }
+            .form-group label { min-width: auto; }
+            .form-group input { width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>DAFTAR HADIR PESERTA DIDIK</h1>
-        
+        <h1>SMP NEGERI 110 JAKARTA<br>DAFTAR HADIR PESERTA DIDIK</h1>
+        <br>
         <div class="info-grid">
+            <!-- KOLOM KIRI -->
             <div class="form-group">
                 <label>Mata Pelajaran:</label>
                 <input type="text" id="mapel" placeholder="Masukkan Mata Pelajaran">
             </div>
             <div class="form-group">
-                <label>Kelas/Semester:</label>
-                <input type="text" id="kelas" placeholder="VIII-D / Ganjil">
-            </div>
-            <div class="form-group">
                 <label>Bulan:</label>
                 <input type="text" id="bulan" placeholder="Contoh: Januari 2026">
+            </div>
+
+            <!-- KOLOM KANAN -->
+            <div class="form-group">
+                <label>Kelas/Semester:</label>
+                <input type="text" id="kelas" placeholder="VIII-D / Ganjil">
             </div>
             <div class="form-group">
                 <label>Tahun Pelajaran:</label>
@@ -423,13 +435,13 @@
         <div id="status" class="status"></div>
 
         <div class="button-group">
-            <button class="btn-info" onclick="loadSiswaFromSheet()">📥 Muat Siswa</button>
+            <button class="btn-info" onclick="loadSiswaFromSheet()">📥 Muat Siswa & Tanggal</button>
             <button class="btn-primary" onclick="tambahTanggal()">+ Tanggal</button>
             <button class="btn-warning" onclick="kurangiTanggal()">- Tanggal</button>
             <button class="btn-success" onclick="hitungKehadiran()">📊 Hitung</button>
             <button class="btn-primary" onclick="window.print()">🖨️ Cetak</button>
             <button class="btn-danger" onclick="resetData()">🔄 Reset</button>
-            <button class="btn-success" onclick="uploadToCloud()">☁️ Upload</button>
+            <button class="btn-success" onclick="uploadToCloud()">☁️ Upload Semua</button>
             <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()">🌙 Dark</button>
         </div>
 
@@ -457,7 +469,7 @@
             <div class="signature">
                 <p>Menyetujui,<br>Kepala Sekolah</p>
                 <div class="signature-line">
-                    <strong>Is Ratna Sarningrum, S.Pd., M.M.</strong>
+                    <strong>Iis Ratna Sariningrum, S.Pd., M.M.</strong>
                     <span>NIP. 197010311994122001</span>
                 </div>
             </div>
@@ -472,7 +484,7 @@
     </div>
 
     <script>
-        const GAS_URL_ENCODED = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4X3dHWnVMZXptTWR0NUtsM1N0WnZhRkFkT3hhWmhzdXV4bW5BQmt4T1BmMHJXODZkVjZaWjI4NmtDaV9DY3NUUnNudy9leGVj";
+        const GAS_URL_ENCODED = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6WEhNOHlydXYxSXZzdlE2d1pWMzdrVlBucEtIdTJyQURJc2tmdXJjQTY2MUpvR0Qxc1N0WkRxSG9jbzQ5SGtoTkE5SjE0dy9leGVj";
         
         let daftarSiswa = [];
         let jumlahTanggal = 0;
@@ -539,37 +551,12 @@
             el.textContent = message;
             if (type !== 'loading') {
                 setTimeout(() => { el.style.display = 'none'; }, 3000);
+            } else {
+                el.style.display = 'block';
             }
         }
 
-        async function loadSiswaFromSheet() {
-            const url = getGASUrl();
-            if (!url) {
-                showStatus("⚠️ URL Apps Script tidak valid!", "error");
-                return;
-            }
-
-            showStatus("⏳ Mengunduh data siswa...", "loading");
-
-            try {
-                const response = await fetch(url + "?action=getSiswa");
-                const result = await response.json();
-
-                if (result.status === 'ok' && result.data && result.data.length > 0) {
-                    daftarSiswa = result.data;
-                    daftarSiswa.forEach(s => {
-                        if (!s.hadir) s.hadir = [];
-                    });
-                    renderTabel();
-                    showStatus("✅ Berhasil memuat " + daftarSiswa.length + " siswa!", "success");
-                } else {
-                    showStatus("⚠️ Sheet 'Siswa' kosong.", "error");
-                }
-            } catch(err) {
-                showStatus("❌ Gagal load data: " + err.message, "error");
-            }
-        }
-
+        // ===== FUNGSI UPLOAD DENGAN TANGGAL =====
         async function uploadToCloud() {
             const url = getGASUrl();
             if (!url) {
@@ -582,11 +569,12 @@
                 return;
             }
 
-            if (!confirm("Upload data ke Google Sheets?")) return;
+            if (!confirm("Upload data siswa, absensi, DAN label tanggal ke Google Sheets?")) return;
 
-            showStatus("⏳ Mengupload data...", "loading");
+            showStatus("⏳ Mengupload semua data...", "loading");
 
             try {
+                // 1. Simpan Data Siswa
                 await fetch(url, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -597,6 +585,7 @@
                     })
                 });
 
+                // 2. Kirim data lengkap TERMASUK daftar tanggal yang diedit
                 const absensiData = {
                     mapel: document.getElementById("mapel").value,
                     kelas: document.getElementById("kelas").value,
@@ -616,9 +605,50 @@
                     })
                 });
 
-                showStatus("✅ Data berhasil diupload!", "success");
+                showStatus("✅ Data & Label Tanggal berhasil diupload!", "success");
             } catch(err) {
-                showStatus("❌ Gagal upload", "error");
+                showStatus("❌ Gagal upload: " + err.message, "error");
+            }
+        }
+
+        // ===== FUNGSI LOAD DATA LENGKAP (SISWA + TANGGAL) =====
+        async function loadSiswaFromSheet() {
+            const url = getGASUrl();
+            if (!url) {
+                showStatus("⚠️ URL Apps Script tidak valid!", "error");
+                return;
+            }
+
+            showStatus("⏳ Mengunduh data siswa & tanggal...", "loading");
+
+            try {
+                const response = await fetch(url + "?action=getLengkap");
+                const result = await response.json();
+
+                if (result.status === 'ok') {
+                    // Muat data siswa
+                    daftarSiswa = result.dataSiswa || [];
+                    daftarSiswa.forEach(s => { if (!s.hadir) s.hadir = []; });
+
+                    // Muat label tanggal yang sudah disimpan
+                    daftarTanggal = result.daftarTanggal || [];
+                    jumlahTanggal = daftarTanggal.length;
+
+                    // Isi info lain
+                    if(result.info) {
+                        document.getElementById("mapel").value = result.info.mapel || "";
+                        document.getElementById("kelas").value = result.info.kelas || "";
+                        document.getElementById("bulan").value = result.info.bulan || "";
+                        document.getElementById("tapel").value = result.info.tapel || "";
+                    }
+
+                    renderTabel();
+                    showStatus("✅ Berhasil memuat " + daftarSiswa.length + " siswa & tanggal!", "success");
+                } else {
+                    showStatus("⚠️ Data tidak ditemukan.", "error");
+                }
+            } catch(err) {
+                showStatus("❌ Gagal load data: " + err.message, "error");
             }
         }
 
@@ -626,22 +656,22 @@
             const tbody = document.getElementById("isiTabel");
             const header = document.querySelector("#tabelAbsensi thead tr");
             
+            // Hapus kolom tanggal lama
             const existingCols = header.querySelectorAll('.col-tgl');
             existingCols.forEach(col => col.remove());
 
+            // Tambah kolom tanggal baru dengan label yang tersimpan
             const ringkasanCol = header.querySelector('th:nth-child(5)');
             for(let i = 0; i < jumlahTanggal; i++) {
                 const th = document.createElement('th');
                 th.className = 'col-tgl';
                 
-                // Membuat input yang bisa diedit di dalam header
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.className = 'input-tgl-header';
                 input.value = daftarTanggal[i] || (i + 1);
                 input.title = "Klik untuk mengedit tanggal";
                 
-                // Simpan perubahan saat user selesai mengedit (tekan Enter atau klik di luar)
                 input.addEventListener('change', function() {
                     daftarTanggal[i] = this.value.trim();
                     saveToLocal();
@@ -657,7 +687,7 @@
                     <tr>
                         <td colspan="9" style="text-align: center; padding: 30px; color: var(--empty-text);">
                             <strong>📋 Belum Ada Data Siswa</strong><br>
-                            <span>Klik tombol "📥 Muat Siswa" untuk mengambil data</span>
+                            <span>Klik tombol "📥 Muat Siswa & Tanggal" untuk mengambil data</span>
                         </td>
                     </tr>
                 `;
@@ -715,6 +745,7 @@
             });
 
             renderTabel();
+            saveToLocal();
             showStatus("✅ Tanggal ditambahkan", "success");
         }
 
@@ -731,6 +762,7 @@
             });
 
             renderTabel();
+            saveToLocal();
             showStatus("✅ Tanggal dihapus", "success");
         }
 
@@ -740,6 +772,7 @@
             else if (val.toUpperCase() === "I") daftarSiswa[idx].hadir[tgl] = "I";
             else if (val.toUpperCase() === "A") daftarSiswa[idx].hadir[tgl] = "A";
             else daftarSiswa[idx].hadir[tgl] = ceklis;
+            saveToLocal();
         }
 
         function hitungKehadiran() {
@@ -782,6 +815,7 @@
             document.getElementById("tapel").value = "";
             
             renderTabel();
+            saveToLocal();
             showStatus("🔄 Data direset", "success");
         }
 
