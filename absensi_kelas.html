@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Hadir Peserta Didik</title>
+    <style>
+        /* ===== CSS VARIABLES - LIGHT MODE ===== */
+        :root {
+            --bg-body: #f0f2f5;
+            --bg-container: #ffffff;
+            --bg-input: #ffffff;
+            --bg-table-header: #263238;
+            --bg-table-row-even: #f5f5f5;
+            --bg-table-row-hover: #e3f2fd;
+            --bg-btn-group: #e3f2fd;
+            --bg-info-grid: #f8f9fa;
+            --bg-input-focus: #fff9c4;
+            --text-main: #212121;
+            --text-label: #424242;
+            --text-table-header: #ffffff;
+            --text-table-cell: #212121;
+            --border-color: #bdbdbd;
+            --border-input: #e0e0e0;
+            --border-signature: #424242;
+            --shadow-color: rgba(0,0,0,0.1);
+            --btn-primary: #1976d2;
+            --btn-success: #388e3c;
+            --btn-warning: #f57c00;
+            --btn-danger: #d32f2f;
+            --btn-info: #00897b;
+            --btn-text: #ffffff;
+            --status-success-bg: #c8e6c9;
+            --status-success-text: #2e7d32;
+            --status-error-bg: #ffcdd2;
+            --status-error-text: #c62828;
+            --status-loading-bg: #fff9c4;
+            --status-loading-text: #f57f17;
+            --empty-text: #757575;
+            --signature-name: #1a237e;
+            --signature-nip: #616161;
+            --title-color: #1a237e;
+        }
+
+        /* ===== CSS VARIABLES - DARK MODE ===== */
+        body.dark-mode {
+            --bg-body: #0f1419;
+            --bg-container: #1a2332;
+            --bg-input: #243447;
+            --bg-table-header: #0d1b2a;
+            --bg-table-row-even: #1e2d3d;
+            --bg-table-row-hover: #2c4a6e;
+            --bg-btn-group: #1e2d3d;
+            --bg-info-grid: #1e2d3d;
+            --bg-input-focus: #3d5a80;
+            --text-main: #e0e0e0;
+            --text-label: #b0bec5;
+            --text-table-header: #ffffff;
+            --text-table-cell: #e0e0e0;
+            --border-color: #37474f;
+            --border-input: #455a64;
+            --border-signature: #90a4ae;
+            --shadow-color: rgba(0,0,0,0.4);
+            --btn-primary: #1565c0;
+            --btn-success: #2e7d32;
+            --btn-warning: #ef6c00;
+            --btn-danger: #c62828;
+            --btn-info: #00695c;
+            --btn-text: #ffffff;
+            --status-success-bg: #1b5e20;
+            --status-success-text: #c8e6c9;
+            --status-error-bg: #b71c1c;
+            --status-error-text: #ffcdd2;
+            --status-loading-bg: #e65100;
+            --status-loading-text: #fff9c4;
+            --empty-text: #90a4ae;
+            --signature-name: #64b5f6;
+            --signature-nip: #b0bec5;
+            --title-color: #64b5f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: var(--bg-body);
+            padding: 10px;
+            overflow-x: hidden;
+            color: var(--text-main);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            background: var(--bg-container);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--title-color);
+            font-size: 20px;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--bg-info-grid);
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 3px;
+            font-weight: 600;
+            color: var(--text-label);
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .form-group input {
+            padding: 6px 8px;
+            border: 1px solid var(--border-input);
+            border-radius: 4px;
+            font-size: 14px;
+            background: var(--bg-input);
+            color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--btn-primary);
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+        }
+        .form-group input::placeholder {
+            color: #9e9e9e;
+        }
+        .button-group {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 10px;
+            background: var(--bg-btn-group);
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: var(--btn-text);
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            filter: brightness(1.1);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .btn-primary { background: var(--btn-primary); }
+        .btn-success { background: var(--btn-success); }
+        .btn-warning { background: var(--btn-warning); }
+        .btn-danger { background: var(--btn-danger); }
+        .btn-info { background: var(--btn-info); }
+        .btn-dark { 
+            background: #424242; 
+            color: white;
+        }
+        body.dark-mode .btn-dark {
+            background: #fdd835;
+            color: #212121;
+        }
+        
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 3px 2px;
+            text-align: center;
+            white-space: nowrap;
+            color: var(--text-table-cell);
+            transition: all 0.3s ease;
+        }
+        th {
+            background: var(--bg-table-header);
+            color: var(--text-table-header);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        tr:nth-child(even) { background: var(--bg-table-row-even); }
+        tr:hover { background: var(--bg-table-row-hover); }
+        
+        .col-no { width: 25px; min-width: 25px; }
+        .col-nis { width: 50px; min-width: 50px; }
+        .col-nama { width: 140px; min-width: 140px; text-align: left; padding-left: 5px; }
+        .col-lp { width: 25px; min-width: 25px; }
+        .col-tgl { width: 32px; min-width: 32px; padding: 2px !important; }
+        .col-ringkasan { width: 35px; min-width: 35px; }
+        .col-jumlah { width: 40px; min-width: 40px; }
+        .col-persen { width: 50px; min-width: 50px; }
+        
+        /* Style untuk input header tanggal yang bisa diedit */
+        .input-tgl-header {
+            width: 100%;
+            border: 1px dashed rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.1);
+            color: var(--text-table-header);
+            text-align: center;
+            font-size: 9px;
+            font-weight: 600;
+            padding: 2px 0;
+            outline: none;
+            border-radius: 2px;
+            transition: all 0.2s;
+        }
+        .input-tgl-header:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.8);
+        }
+        .input-tgl-header:focus {
+            background: rgba(255,255,255,0.9);
+            color: #212121;
+            border-color: var(--btn-primary);
+        }
+        body.dark-mode .input-tgl-header {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.05);
+            color: #e0e0e0;
+        }
+        body.dark-mode .input-tgl-header:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.6);
+        }
+        body.dark-mode .input-tgl-header:focus {
+            background: #243447;
+            color: #e0e0e0;
+            border-color: #64b5f6;
+        }
+
+        .input-hadir {
+            width: 100%;
+            border: none;
+            text-align: center;
+            background: transparent;
+            font-size: 14px;
+            padding: 2px;
+            color: var(--text-table-cell);
+        }
+        .input-hadir:focus {
+            background: var(--bg-input-focus);
+            outline: none;
+        }
+        
+        .status {
+            padding: 8px 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .status.success {
+            background: var(--status-success-bg);
+            color: var(--status-success-text);
+            border: 1px solid var(--status-success-text);
+            display: block;
+        }
+        .status.error {
+            background: var(--status-error-bg);
+            color: var(--status-error-text);
+            border: 1px solid var(--status-error-text);
+            display: block;
+        }
+        .status.loading {
+            background: var(--status-loading-bg);
+            color: var(--status-loading-text);
+            border: 1px solid var(--status-loading-text);
+            display: block;
+        }
+        
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 20px 0;
+        }
+        .signature {
+            text-align: center;
+            width: 40%;
+            font-size: 14px;
+            color: var(--text-main);
+            transition: color 0.3s ease;
+        }
+        .signature-line {
+            margin-top: 60px;
+            padding-top: 5px;
+        }
+        .signature-line strong {
+            display: block;
+            color: var(--signature-name);
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .signature-line span {
+            color: var(--signature-nip);
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        /* Scrollbar styling untuk dark mode */
+        body.dark-mode .table-wrapper::-webkit-scrollbar {
+            height: 10px;
+        }
+        body.dark-mode .table-wrapper::-webkit-scrollbar-track {
+            background: var(--bg-container);
+            border-radius: 5px;
+        }
+        body.dark-mode .table-wrapper::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 5px;
+        }
+        body.dark-mode .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--text-label);
+        }
+
+        @media print {
+            body { 
+                background: white !important; 
+                padding: 5px;
+                color: black !important;
+            }
+            .container { 
+                padding: 10px; 
+                box-shadow: none;
+                background: white !important;
+            }
+            .button-group, .status { display: none !important; }
+            table { font-size: 14px; }
+            th, td { 
+                padding: 2px 1px; 
+                color: black !important;
+                border-color: black !important;
+            }
+            th {
+                background: #263238 !important;
+                color: white !important;
+            }
+            .col-nama { width: 120px; }
+            .col-tgl { width: 25px; }
+            .signature, .signature-line, .signature-line strong, .signature-line span, #tanggalTtd {
+                color: black !important;
+            }
+            .input-tgl-header {
+                border: none !important;
+                background: transparent !important;
+                color: white !important;
+                font-weight: bold !important;
+            }
+            h1 { color: black !important; }
+            .form-group label, .form-group input {
+                color: black !important;
+            }
+        }
+        
+        @media screen and (max-width: 1366px) {
+            .info-grid { grid-template-columns: repeat(2, 1fr); }
+            .col-nama { width: 120px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DAFTAR HADIR PESERTA DIDIK</h1>
+        
+        <div class="info-grid">
+            <div class="form-group">
+                <label>Mata Pelajaran:</label>
+                <input type="text" id="mapel" placeholder="Masukkan Mata Pelajaran">
+            </div>
+            <div class="form-group">
+                <label>Kelas/Semester:</label>
+                <input type="text" id="kelas" placeholder="VIII-D / Ganjil">
+            </div>
+            <div class="form-group">
+                <label>Bulan:</label>
+                <input type="text" id="bulan" placeholder="Contoh: Januari 2026">
+            </div>
+            <div class="form-group">
+                <label>Tahun Pelajaran:</label>
+                <input type="text" id="tapel" placeholder="2025/2026">
+            </div>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="button-group">
+            <button class="btn-info" onclick="loadSiswaFromSheet()">📥 Muat Siswa</button>
+            <button class="btn-primary" onclick="tambahTanggal()">+ Tanggal</button>
+            <button class="btn-warning" onclick="kurangiTanggal()">- Tanggal</button>
+            <button class="btn-success" onclick="hitungKehadiran()">📊 Hitung</button>
+            <button class="btn-primary" onclick="window.print()">🖨️ Cetak</button>
+            <button class="btn-danger" onclick="resetData()">🔄 Reset</button>
+            <button class="btn-success" onclick="uploadToCloud()">☁️ Upload</button>
+            <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()">🌙 Dark</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="tabelAbsensi">
+                <thead>
+                    <tr>
+                        <th class="col-no">NO.</th>
+                        <th class="col-nis">NIS</th>
+                        <th class="col-nama">NAMA MURID</th>
+                        <th class="col-lp">L/P</th>
+                        <!-- Kolom tanggal akan ditambahkan di sini -->
+                        <th class="col-ringkasan">SAKIT</th>
+                        <th class="col-ringkasan">IZIN</th>
+                        <th class="col-ringkasan">ALPA</th>
+                        <th class="col-jumlah">JUMLAH</th>
+                        <th class="col-persen">PROSENTASE</th>
+                    </tr>
+                </thead>
+                <tbody id="isiTabel"></tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <div class="signature">
+                <p>Menyetujui,<br>Kepala Sekolah</p>
+                <div class="signature-line">
+                    <strong>Is Ratna Sarningrum, S.Pd., M.M.</strong>
+                    <span>NIP. 197010311994122001</span>
+                </div>
+            </div>
+            <div class="signature">
+                <p>Jakarta, <span id="tanggalTtd">.......................</span><br>Guru Mata Pelajaran</p>
+                <div class="signature-line">
+                    <strong>Endra Triyanto Hamdani, S.Kom</strong>
+                    <span>NIP. 197601042014121003</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL_ENCODED = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4X3dHWnVMZXptTWR0NUtsM1N0WnZhRkFkT3hhWmhzdXV4bW5BQmt4T1BmMHJXODZkVjZaWjI4NmtDaV9DY3NUUnNudy9leGVj";
+        
+        let daftarSiswa = [];
+        let jumlahTanggal = 0;
+        let daftarTanggal = [];
+
+        function getGASUrl() {
+            try {
+                return atob(GAS_URL_ENCODED);
+            } catch(e) {
+                return "";
+            }
+        }
+
+        // ===== DARK MODE FUNCTIONS =====
+        function toggleDarkMode() {
+            const body = document.body;
+            const btn = document.getElementById("btnDarkMode");
+            
+            body.classList.toggle("dark-mode");
+            
+            if (body.classList.contains("dark-mode")) {
+                btn.innerHTML = "☀️ Light";
+                localStorage.setItem("darkMode", "true");
+            } else {
+                btn.innerHTML = "🌙 Dark";
+                localStorage.setItem("darkMode", "false");
+            }
+        }
+
+        function loadDarkMode() {
+            const saved = localStorage.getItem("darkMode");
+            const btn = document.getElementById("btnDarkMode");
+            
+            if (saved === "true") {
+                document.body.classList.add("dark-mode");
+                btn.innerHTML = "☀️ Light";
+            } else {
+                btn.innerHTML = "🌙 Dark";
+            }
+        }
+
+        function formatTanggalLengkap(date) {
+            const namaBulan = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+            const d = date.getDate();
+            const m = namaBulan[date.getMonth()];
+            const y = date.getFullYear();
+            return `${d} ${m} ${y}`;
+        }
+
+        function setTanggalTtd() {
+            const today = new Date();
+            const tglElement = document.getElementById("tanggalTtd");
+            if (tglElement) {
+                tglElement.textContent = formatTanggalLengkap(today);
+            }
+        }
+
+        function showStatus(message, type) {
+            const el = document.getElementById("status");
+            el.className = "status " + type;
+            el.textContent = message;
+            if (type !== 'loading') {
+                setTimeout(() => { el.style.display = 'none'; }, 3000);
+            }
+        }
+
+        async function loadSiswaFromSheet() {
+            const url = getGASUrl();
+            if (!url) {
+                showStatus("⚠️ URL Apps Script tidak valid!", "error");
+                return;
+            }
+
+            showStatus("⏳ Mengunduh data siswa...", "loading");
+
+            try {
+                const response = await fetch(url + "?action=getSiswa");
+                const result = await response.json();
+
+                if (result.status === 'ok' && result.data && result.data.length > 0) {
+                    daftarSiswa = result.data;
+                    daftarSiswa.forEach(s => {
+                        if (!s.hadir) s.hadir = [];
+                    });
+                    renderTabel();
+                    showStatus("✅ Berhasil memuat " + daftarSiswa.length + " siswa!", "success");
+                } else {
+                    showStatus("⚠️ Sheet 'Siswa' kosong.", "error");
+                }
+            } catch(err) {
+                showStatus("❌ Gagal load data: " + err.message, "error");
+            }
+        }
+
+        async function uploadToCloud() {
+            const url = getGASUrl();
+            if (!url) {
+                showStatus("⚠️ URL tidak valid!", "error");
+                return;
+            }
+
+            if (daftarSiswa.length === 0) {
+                showStatus("⚠️ Tidak ada data!", "error");
+                return;
+            }
+
+            if (!confirm("Upload data ke Google Sheets?")) return;
+
+            showStatus("⏳ Mengupload data...", "loading");
+
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        action: 'saveSiswa',
+                        data: JSON.stringify(daftarSiswa)
+                    })
+                });
+
+                const absensiData = {
+                    mapel: document.getElementById("mapel").value,
+                    kelas: document.getElementById("kelas").value,
+                    bulan: document.getElementById("bulan").value,
+                    tapel: document.getElementById("tapel").value,
+                    daftarTanggal: daftarTanggal,
+                    absensiData: daftarSiswa.map(s => ({nis: s.noInduk, hadir: s.hadir}))
+                };
+
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        action: 'saveAbsensi',
+                        data: JSON.stringify(absensiData)
+                    })
+                });
+
+                showStatus("✅ Data berhasil diupload!", "success");
+            } catch(err) {
+                showStatus("❌ Gagal upload", "error");
+            }
+        }
+
+        function renderTabel() {
+            const tbody = document.getElementById("isiTabel");
+            const header = document.querySelector("#tabelAbsensi thead tr");
+            
+            const existingCols = header.querySelectorAll('.col-tgl');
+            existingCols.forEach(col => col.remove());
+
+            const ringkasanCol = header.querySelector('th:nth-child(5)');
+            for(let i = 0; i < jumlahTanggal; i++) {
+                const th = document.createElement('th');
+                th.className = 'col-tgl';
+                
+                // Membuat input yang bisa diedit di dalam header
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'input-tgl-header';
+                input.value = daftarTanggal[i] || (i + 1);
+                input.title = "Klik untuk mengedit tanggal";
+                
+                // Simpan perubahan saat user selesai mengedit (tekan Enter atau klik di luar)
+                input.addEventListener('change', function() {
+                    daftarTanggal[i] = this.value.trim();
+                    saveToLocal();
+                });
+                
+                th.appendChild(input);
+                header.insertBefore(th, ringkasanCol);
+            }
+
+            tbody.innerHTML = "";
+            if (daftarSiswa.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 30px; color: var(--empty-text);">
+                            <strong>📋 Belum Ada Data Siswa</strong><br>
+                            <span>Klik tombol "📥 Muat Siswa" untuk mengambil data</span>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            daftarSiswa.forEach((siswa, idx) => {
+                const tr = document.createElement("tr");
+                
+                let cells = `
+                    <td>${idx + 1}</td>
+                    <td>${siswa.noInduk}</td>
+                    <td class="col-nama">${siswa.nama}</td>
+                    <td>${siswa.jk}</td>
+                `;
+
+                for(let t = 0; t < jumlahTanggal; t++) {
+                    const val = siswa.hadir[t] || "✓";
+                    cells += `<td><input type="text" class="input-hadir" maxlength="1" value="${val}" 
+                        onchange="ubahHadir(${idx}, ${t}, this.value)"></td>`;
+                }
+
+                cells += `
+                    <td id="s-${idx}">0</td>
+                    <td id="i-${idx}">0</td>
+                    <td id="a-${idx}">0</td>
+                    <td id="jml-${idx}">0</td>
+                    <td id="prsn-${idx}">0%</td>
+                `;
+
+                tr.innerHTML = cells;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function tambahTanggal() {
+            if (daftarSiswa.length === 0) {
+                showStatus("⚠️ Load data siswa dulu!", "error");
+                return;
+            }
+            if (jumlahTanggal >= 24) {
+                showStatus("⚠️ Maksimal 24 kolom agar muat layar!", "error");
+                return;
+            }
+
+            jumlahTanggal++;
+            const today = new Date();
+            const d = String(today.getDate()).padStart(2, '0');
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            daftarTanggal.push(`${d}/${m}`);
+
+            daftarSiswa.forEach(s => {
+                if (!s.hadir) s.hadir = [];
+                s.hadir.push("✓");
+            });
+
+            renderTabel();
+            showStatus("✅ Tanggal ditambahkan", "success");
+        }
+
+        function kurangiTanggal() {
+            if (jumlahTanggal <= 0) {
+                showStatus("⚠️ Tidak ada tanggal!", "error");
+                return;
+            }
+
+            jumlahTanggal--;
+            daftarTanggal.pop();
+            daftarSiswa.forEach(s => {
+                if (s.hadir) s.hadir.pop();
+            });
+
+            renderTabel();
+            showStatus("✅ Tanggal dihapus", "success");
+        }
+
+        function ubahHadir(idx, tgl, val) {
+            const ceklis = "✓";
+            if (val.toUpperCase() === "S") daftarSiswa[idx].hadir[tgl] = "S";
+            else if (val.toUpperCase() === "I") daftarSiswa[idx].hadir[tgl] = "I";
+            else if (val.toUpperCase() === "A") daftarSiswa[idx].hadir[tgl] = "A";
+            else daftarSiswa[idx].hadir[tgl] = ceklis;
+        }
+
+        function hitungKehadiran() {
+            if (daftarSiswa.length === 0) {
+                showStatus("⚠️ Tidak ada data!", "error");
+                return;
+            }
+
+            daftarSiswa.forEach((siswa, idx) => {
+                let s = 0, i = 0, a = 0, h = 0;
+                
+                siswa.hadir.forEach(k => {
+                    if (k === "S") s++;
+                    else if (k === "I") i++;
+                    else if (k === "A") a++;
+                    else h++;
+                });
+
+                const persen = jumlahTanggal > 0 ? Math.round((h / jumlahTanggal) * 100) : 0;
+
+                document.getElementById(`s-${idx}`).textContent = s;
+                document.getElementById(`i-${idx}`).textContent = i;
+                document.getElementById(`a-${idx}`).textContent = a;
+                document.getElementById(`jml-${idx}`).textContent = h;
+                document.getElementById(`prsn-${idx}`).textContent = persen + "%";
+            });
+
+            showStatus("✅ Perhitungan selesai!", "success");
+        }
+
+        function resetData() {
+            if (!confirm("Hapus semua data lokal?")) return;
+            
+            daftarSiswa = [];
+            jumlahTanggal = 0;
+            daftarTanggal = [];
+            document.getElementById("mapel").value = "";
+            document.getElementById("kelas").value = "";
+            document.getElementById("bulan").value = "";
+            document.getElementById("tapel").value = "";
+            
+            renderTabel();
+            showStatus("🔄 Data direset", "success");
+        }
+
+        window.onload = function() {
+            loadDarkMode();
+            setTanggalTtd();
+            
+            const saved = localStorage.getItem("absensi_data");
+            if (saved) {
+                const data = JSON.parse(saved);
+                daftarSiswa = data.siswa || [];
+                jumlahTanggal = data.jumlahTanggal || 0;
+                daftarTanggal = data.daftarTanggal || [];
+                document.getElementById("mapel").value = data.mapel || "";
+                document.getElementById("kelas").value = data.kelas || "";
+                document.getElementById("bulan").value = data.bulan || "";
+                document.getElementById("tapel").value = data.tapel || "";
+                
+                if (daftarSiswa.length > 0) {
+                    renderTabel();
+                }
+            }
+        };
+
+        function saveToLocal() {
+            const data = {
+                siswa: daftarSiswa,
+                jumlahTanggal: jumlahTanggal,
+                daftarTanggal: daftarTanggal,
+                mapel: document.getElementById("mapel").value,
+                kelas: document.getElementById("kelas").value,
+                bulan: document.getElementById("bulan").value,
+                tapel: document.getElementById("tapel").value
+            };
+            localStorage.setItem("absensi_data", JSON.stringify(data));
+        }
+
+        document.addEventListener('change', saveToLocal);
+        document.addEventListener('input', saveToLocal);
+    </script>
+</body>
+</html>
