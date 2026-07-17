@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Daftar Hadir Peserta Didik - SMP Negeri 110 Jakarta</title>
     <style>
         /* ✅ VARIABEL UTAMA: DEFAULT LANGSUNG MODE GELAP */
@@ -54,19 +54,20 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background: var(--bg-page);
             color: var(--text-primary);
-            padding: 24px;
+            padding: 12px;
             min-height: 100vh;
             transition: all 0.3s ease;
         }
 
         .container {
             max-width: 1800px;
-            width: 98%;
+            width: 100%;
             margin: 0 auto;
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -79,74 +80,39 @@
         .header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 28px;
+            padding: 20px 16px 16px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
         }
 
         .header h2 {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 500;
             opacity: 0.95;
+            margin-bottom: 12px;
         }
 
-        .content {
-            padding: 20px 24px;
-        }
-
-        .status-box {
-            position: absolute;
-            top: 12px;
-            right: 64px;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-            display: none;
-            border: none;
-            box-shadow: var(--shadow-md);
-            z-index: 999;
-            color: #FFFFFF !important;
-        }
-
-        .status-box.success {
-            background: rgba(0, 154, 41, 0.95);
-            display: block;
-        }
-
-        .status-box.error {
-            background: rgba(217, 43, 43, 0.95);
-            display: block;
-        }
-
-        .status-box.loading {
-            background: rgba(204, 100, 0, 0.95);
-            display: block;
-        }
-
-        /* ✅ TOMBOL IKON DI KANAN ATAS */
+        /* ✅ TOMBOL IKON DIPINDAH KE BAWAH JUDUL */
         .action-bar {
-            position: absolute;
-            top: 12px;
-            right: 12px;
             display: flex;
+            justify-content: center;
             gap: 8px;
             z-index: 998;
         }
 
         button {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             padding: 0;
             border: none;
             border-radius: 8px;
-            font-size: 17px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
@@ -154,6 +120,7 @@
             justify-content: center;
             color: white;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            flex-shrink: 0;
         }
 
         button:hover {
@@ -162,7 +129,7 @@
         }
 
         button:active {
-            transform: translateY(0);
+            transform: scale(0.95);
         }
 
         /* WARNA BERBEDA SETIAP TOMBOL */
@@ -181,34 +148,71 @@
         .btn-dark { background: #FFC53D; color: #1D2129; }
         .btn-dark:hover { background: #F5BA2E; }
 
+        .status-box {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            display: none;
+            border: none;
+            box-shadow: var(--shadow-md);
+            z-index: 999;
+            color: #FFFFFF !important;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        .status-box.success {
+            background: rgba(0, 154, 41, 0.95);
+            display: block;
+        }
+
+        .status-box.error {
+            background: rgba(217, 43, 43, 0.95);
+            display: block;
+        }
+
+        .status-box.loading {
+            background: rgba(204, 100, 0, 0.95);
+            display: block;
+        }
+
+        .content {
+            padding: 16px 12px;
+        }
+
         .info-section {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
-            padding: 18px;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 14px;
             background: var(--bg-table-header);
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .form-item {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
         .form-item label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
 
-        .form-item select {
-            padding: 10px 14px;
+        .form-item select, .form-item input {
+            padding: 10px 12px;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             font-size: 14px;
@@ -216,9 +220,15 @@
             color: var(--text-primary);
             transition: all 0.2s ease;
             cursor: pointer;
+            width: 100%;
         }
 
-        .form-item select:focus {
+        .form-item input[readonly] {
+            cursor: default;
+            opacity: 0.9;
+        }
+
+        .form-item select:focus, .form-item input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
@@ -226,20 +236,22 @@
 
         .table-container {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             width: 100%;
         }
 
         table {
             width: 100%;
+            min-width: 800px;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         th, td {
-            padding: 10px 6px;
+            padding: 8px 4px;
             text-align: center;
             border-bottom: 1px solid var(--border);
             vertical-align: middle;
@@ -249,11 +261,12 @@
             background: var(--bg-table-header);
             font-weight: 600;
             color: var(--text-secondary);
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
             position: sticky;
             top: 0;
+            z-index: 10;
         }
 
         tbody tr {
@@ -265,26 +278,22 @@
             background: var(--bg-table-alt);
         }
 
-        tbody tr:hover {
-            background: var(--primary-light);
-        }
-
-        .col-no { width: 40px; min-width: 40px; }
-        .col-nis { width: 60px; min-width: 60px; }
-        .col-nama { width: 200px; min-width: 200px; text-align: left; padding-left: 10px; }
-        .col-lp { width: 40px; min-width: 40px; }
-        .col-tgl { width: 38px; min-width: 38px; padding: 3px; }
-        .col-stat { width: 55px; min-width: 55px; }
-        .col-jumlah { width: 65px; min-width: 65px; }
-        .col-persen { width: 75px; min-width: 75px; font-weight: 600; color: var(--primary); }
+        .col-no { width: 35px; min-width: 35px; }
+        .col-nis { width: 50px; min-width: 50px; }
+        .col-nama { width: 160px; min-width: 160px; text-align: left; padding-left: 8px; }
+        .col-lp { width: 35px; min-width: 35px; }
+        .col-tgl { width: 32px; min-width: 32px; padding: 2px; }
+        .col-stat { width: 45px; min-width: 45px; }
+        .col-jumlah { width: 55px; min-width: 55px; }
+        .col-persen { width: 60px; min-width: 60px; font-weight: 600; color: var(--primary); }
 
         .input-tgl-header {
             width: 100%;
-            padding: 3px 1px;
+            padding: 2px 1px;
             border: 1px solid transparent;
             background: transparent;
             color: inherit;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             text-align: center;
             border-radius: 4px;
@@ -299,10 +308,10 @@
 
         .input-hadir {
             width: 100%;
-            padding: 5px 1px;
+            padding: 4px 1px;
             border: 1px solid transparent;
             background: transparent;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             text-align: center;
             border-radius: 4px;
@@ -318,19 +327,20 @@
 
         .footer-section {
             display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            padding: 0 20px 24px;
-            font-size: 14px;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 24px;
+            padding: 0 10px 16px;
+            font-size: 13px;
         }
 
         .signature-block {
             text-align: center;
-            min-width: 260px;
+            min-width: auto;
         }
 
         .signature-title {
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             color: var(--text-secondary);
         }
 
@@ -339,17 +349,67 @@
             color: var(--primary);
             display: block;
             margin-bottom: 4px;
+            font-size: 14px;
         }
 
         .signature-nip {
             color: var(--text-tertiary);
-            font-size: 13px;
+            font-size: 12px;
+        }
+
+        /* ✅ TAMPILAN TABLET & KOMPUTER */
+        @media (min-width: 768px) {
+            body {
+                padding: 24px;
+            }
+
+            .header {
+                padding: 28px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .header h2 {
+                font-size: 18px;
+                margin-bottom: 16px;
+            }
+
+            button {
+                width: 40px;
+                height: 40px;
+                font-size: 17px;
+            }
+
+            .info-section {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 16px;
+                padding: 18px;
+                margin-top: 10px;
+            }
+
+            table {
+                font-size: 13px;
+                min-width: auto;
+            }
+
+            .footer-section {
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 0 20px 24px;
+                font-size: 14px;
+            }
+
+            .signature-block {
+                min-width: 260px;
+            }
         }
 
         @media print {
             body { background: white; padding: 0; }
             .container { box-shadow: none; border-radius: 0; max-width: 100%; width: 100%; }
-            .header { background: #165DFF !important; color: white !important; }
+            .header { background: #165DFF !important; color: white !important; padding: 20px; }
             .action-bar, .status-box { display: none !important; }
             .info-section { border: none; background: white; }
             th { background: #F7F8FA !important; color: #1D2129 !important; }
@@ -358,44 +418,32 @@
             .col-persen { color: #165DFF !important; }
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
-
-        @media (max-width: 768px) {
-            body { padding: 12px; }
-            .content { padding: 16px; }
-            .info-section { grid-template-columns: 1fr; }
-            .footer-section { flex-direction: column; gap: 30px; align-items: center; }
-            .action-bar { top: 8px; right: 8px; }
-            .status-box { right: 60px; }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- ✅ TOMBOL IKON DI KANAN ATAS -->
-        <div class="action-bar">
-            <button class="btn-primary" onclick="tambahTanggal()" title="Tambah Tanggal">➕</button>
-            <button class="btn-warning" onclick="kurangiTanggal()" title="Kurangi Tanggal">➖</button>
-            <button class="btn-secondary" onclick="window.print()" title="Cetak Dokumen">🖨️</button>
-            <button class="btn-success" onclick="simpanKeSheet()" title="Simpan Data">💾</button>
-            <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()" title="Ubah Mode">☀️</button>
-        </div>
-
         <div id="status" class="status-box"></div>
 
         <div class="header">
             <h1>SMP NEGERI 110 JAKARTA</h1>
             <h2>DAFTAR HADIR PESERTA DIDIK</h2>
-            <h2>TAHUN PELAJARAN 2025/2026</h2><br>
+            <!-- ✅ TOMBOL IKON SUDAH DIPINDAH KE SINI -->
+            <div class="action-bar">
+                <button class="btn-primary" onclick="tambahTanggal()" title="Tambah Tanggal">➕</button>
+                <button class="btn-warning" onclick="kurangiTanggal()" title="Kurangi Tanggal">➖</button>
+                <button class="btn-secondary" onclick="window.print()" title="Cetak Dokumen">🖨️</button>
+                <button class="btn-success" onclick="simpanKeSheet()" title="Simpan Data">💾</button>
+                <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()" title="Ubah Mode">☀️</button>
+            </div>
         </div>
 
         <div class="content">
             <div class="info-section">
                 <div class="form-item">
                     <label>Mata Pelajaran</label>
-                    <!-- ✅ DAFTAR MAPEL SESUAI KURIKULUM MERDEKA SMP -->
                     <select id="mapel">
                         <option value="">-- Pilih Mata Pelajaran --</option>
-
+                        <optgroup label="Kelompok Wajib">
                             <option>Pendidikan Agama dan Budi Pekerti</option>
                             <option>Pendidikan Pancasila</option>
                             <option>Bahasa Indonesia</option>
@@ -403,11 +451,28 @@
                             <option>Ilmu Pengetahuan Alam</option>
                             <option>Ilmu Pengetahuan Sosial</option>
                             <option>Bahasa Inggris</option>
+                            <option>Seni Rupa</option>
+                            <option>Seni Musik</option>
+                            <option>Seni Tari</option>
+                            <option>Seni Teater</option>
                             <option>Pendidikan Jasmani, Olahraga, dan Kesehatan</option>
-                            <option>Informatika</option>
-                            <option>Seni Budaya dan Keterampilan</option>
-                            <option>Bimbingan Konseling</option>
- 
+                            <option>Prakarya</option>
+                            <option>Teknologi Informasi dan Komunikasi</option>
+                            <option>Bahasa Daerah</option>
+                        </optgroup>
+                        <optgroup label="Kelompok Pilihan">
+                            <option>Bahasa Asing Lainnya</option>
+                            <option>Ekonomi</option>
+                            <option>Geografi</option>
+                            <option>Sejarah</option>
+                            <option>Sosiologi</option>
+                            <option>Fisika</option>
+                            <option>Kimia</option>
+                            <option>Biologi</option>
+                            <option>Komputer dan Informatika</option>
+                            <option>Kewirausahaan</option>
+                            <option>Pendidikan Lingkungan Hidup</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="form-item">
@@ -415,6 +480,10 @@
                     <select id="kelas">
                         <option value="">-- Pilih Kelas --</option>
                     </select>
+                </div>
+                <div class="form-item">
+                    <label>Tahun Pelajaran</label>
+                    <input type="text" id="tapel" readonly>
                 </div>
                 <div class="form-item">
                     <label>Periode Bulan</label>
@@ -452,7 +521,7 @@
                     </thead>
                     <tbody id="isiTabel">
                         <tr>
-                            <td colspan="9" style="padding: 40px; color: var(--text-tertiary);">Silakan pilih kelas untuk memuat data</td>
+                            <td colspan="9" style="padding: 40px 10px; color: var(--text-tertiary);">Silakan pilih kelas untuk memuat data</td>
                         </tr>
                     </tbody>
                 </table>
@@ -474,11 +543,27 @@
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyugPcgnCDzFhcUB5kW-3WZ-P27EN1Qdn0Lc_0K4G5M9EqPetCF_BtKDajYvff-8JiQsg/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzXUhm8yRuv1I6wZV37kVPnpKHu2rADI3kfurcA661JoGD1sStZDqI8mo49HkhNA9J14w/exec";
         
         let daftarSiswa = [];
         let jumlahTanggal = 0;
         let daftarTanggal = [];
+
+        // ✅ FUNGSI OTOMATIS TAHUN PELAJARAN
+        function setTahunPelajaranOtomatis() {
+            const sekarang = new Date();
+            const tahun = sekarang.getFullYear();
+            const bulan = sekarang.getMonth() + 1; // 1-12
+            
+            let tapel;
+            if (bulan >= 1 && bulan <= 6) {
+                tapel = `${tahun - 1} / ${tahun}`;
+            } else {
+                tapel = `${tahun} / ${tahun + 1}`;
+            }
+            
+            document.getElementById("tapel").value = tapel;
+        }
 
         // ✅ FUNGSI TOMBOL MODE
         function toggleDarkMode() {
@@ -513,6 +598,7 @@
         }
 
         window.onload = async function() {
+            setTahunPelajaranOtomatis();
             setTanggalTtd();
             try {
                 const res = await fetch(`${GAS_URL}?action=AmbilDaftarKelas`);
@@ -557,11 +643,12 @@
                         const lama = hAbsen.daftarSiswa?.find(x => x.noInduk === s.noInduk);
                         s.hadir = lama?.hadir || Array(jumlahTanggal).fill("✓");
                     });
-                    // Mengisi kembali pilihan yang tersimpan
                     const mapelSelect = document.getElementById("mapel");
                     const bulanSelect = document.getElementById("bulan");
+                    const tapelInput = document.getElementById("tapel");
                     if (hAbsen.info?.mapel) mapelSelect.value = hAbsen.info.mapel;
                     if (hAbsen.info?.bulan) bulanSelect.value = hAbsen.info.bulan;
+                    if (hAbsen.info?.tapel) tapelInput.value = hAbsen.info.tapel;
                 } else {
                     jumlahTanggal = 0; daftarTanggal = [];
                     daftarSiswa.forEach(s => s.hadir = []);
@@ -581,6 +668,7 @@
                 const data = {
                     mapel: document.getElementById("mapel").value,
                     kelasPilihan: kelas,
+                    tapel: document.getElementById("tapel").value,
                     bulan: document.getElementById("bulan").value,
                     daftarTanggal: daftarTanggal,
                     daftarSiswa: daftarSiswa
@@ -616,7 +704,7 @@
 
             tbody.innerHTML = "";
             if (daftarSiswa.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="padding: 40px; color: var(--text-tertiary);">Silakan pilih kelas untuk memuat data</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="padding: 40px 10px; color: var(--text-tertiary);">Silakan pilih kelas untuk memuat data</td></tr>`;
                 return;
             }
 
