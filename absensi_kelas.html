@@ -16,7 +16,7 @@
             --text-primary: #E5E6EB;
             --text-secondary: #C9CDD4;
             --text-tertiary: #86909C;
-            --border: #303133;
+            --border: #454647;
             --bg-page: #121212;
             --bg-card: #1E1E1E;
             --bg-table-header: #2C2C2C;
@@ -39,7 +39,7 @@
             --text-primary: #1D2129;
             --text-secondary: #4E5969;
             --text-tertiary: #86909C;
-            --border: #E5E6EB;
+            --border: #C9CDD4;
             --bg-page: #F2F3F5;
             --bg-card: #FFFFFF;
             --bg-table-header: #F7F8FA;
@@ -98,7 +98,6 @@
             margin-bottom: 12px;
         }
 
-        /* ✅ TOMBOL IKON DIPINDAH KE BAWAH JUDUL */
         .action-bar {
             display: flex;
             justify-content: center;
@@ -112,13 +111,14 @@
             padding: 0;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 20px;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: #FFFFFF;
+            font-weight: bold;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             flex-shrink: 0;
         }
@@ -132,7 +132,6 @@
             transform: scale(0.95);
         }
 
-        /* WARNA BERBEDA SETIAP TOMBOL */
         .btn-primary { background: #4080FF; }
         .btn-primary:hover { background: #2970F2; }
 
@@ -145,8 +144,8 @@
         .btn-success { background: #00B42A; }
         .btn-success:hover { background: #009A29; }
 
-        .btn-dark { background: #FFC53D; color: #1D2129; }
-        .btn-dark:hover { background: #F5BA2E; }
+        .btn-dark { background: #60A5FA; color: #FFFFFF; }
+        .btn-dark:hover { background: #3B82F6; }
 
         .status-box {
             position: absolute;
@@ -223,7 +222,7 @@
             width: 100%;
         }
 
-        .form-item input[readonly] {
+        .form-item input[readonly], .form-item select[readonly] {
             cursor: default;
             opacity: 0.9;
         }
@@ -248,12 +247,13 @@
             min-width: 800px;
             border-collapse: collapse;
             font-size: 12px;
+            border: 1px solid var(--border);
         }
 
         th, td {
             padding: 8px 4px;
             text-align: center;
-            border-bottom: 1px solid var(--border);
+            border: 1px solid var(--border);
             vertical-align: middle;
         }
 
@@ -357,7 +357,6 @@
             font-size: 12px;
         }
 
-        /* ✅ TAMPILAN TABLET & KOMPUTER */
         @media (min-width: 768px) {
             body {
                 padding: 24px;
@@ -379,7 +378,7 @@
             button {
                 width: 40px;
                 height: 40px;
-                font-size: 17px;
+                font-size: 22px;
             }
 
             .info-section {
@@ -412,7 +411,8 @@
             .header { background: #165DFF !important; color: white !important; padding: 20px; }
             .action-bar, .status-box { display: none !important; }
             .info-section { border: none; background: white; }
-            th { background: #F7F8FA !important; color: #1D2129 !important; }
+            th { background: #F7F8FA !important; color: #1D2129 !important; border: 1px solid #333 !important; }
+            td { border: 1px solid #333 !important; }
             .input-tgl-header { border: none !important; font-weight: bold; }
             .input-hadir { border: none !important; }
             .col-persen { color: #165DFF !important; }
@@ -425,15 +425,14 @@
         <div id="status" class="status-box"></div>
 
         <div class="header">
-            <h1>SMPN 110 JAKARTA</h1>
-            <h2>DAFTAR HADIR</h2>
-            <!-- ✅ TOMBOL IKON SUDAH DIPINDAH KE SINI -->
+            <h1>SMP NEGERI 110 JAKARTA</h1>
+            <h2>DAFTAR HADIR PESERTA DIDIK</h2>
             <div class="action-bar">
                 <button class="btn-primary" onclick="tambahTanggal()" title="Tambah Tanggal">➕</button>
                 <button class="btn-warning" onclick="kurangiTanggal()" title="Kurangi Tanggal">➖</button>
                 <button class="btn-secondary" onclick="window.print()" title="Cetak Dokumen">🖨️</button>
                 <button class="btn-success" onclick="simpanKeSheet()" title="Simpan Data">💾</button>
-                <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()" title="Ubah Mode">☀️</button>
+                <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()" title="Ubah Tampilan">🔆</button>
             </div>
         </div>
 
@@ -443,18 +442,16 @@
                     <label>Mata Pelajaran</label>
                     <select id="mapel">
                         <option value="">-- Pilih Mata Pelajaran --</option>
-
-                            <option>Pendidikan Agama dan BP</option>
-                            <option>Pendidikan Pancasila</option>
-                            <option>Bahasa Indonesia</option>
-                            <option>Matematika</option>
-                            <option>Ilmu Pengetahuan Alam</option>
-                            <option>Ilmu Pengetahuan Sosial</option>
-                            <option>Bahasa Inggris</option>
-                            <option>PJOK</option>
-                            <option>Informatika</option>
-                            <option>Bimbinan Konseling</option>
-
+                        <option>Pendidikan Agama dan Budi Pekerti</option>
+                        <option>Pendidikan Pancasila</option>
+                        <option>Bahasa Indonesia</option>
+                        <option>Matematika</option>
+                        <option>Ilmu Pengetahuan Alam</option>
+                        <option>Ilmu Pengetahuan Sosial</option>
+                        <option>Bahasa Inggris</option>
+                        <option>Pendidikan Jasmani, Olahraga, dan Kesehatan</option>
+                        <option>Informatika</option>
+                        <option>Bimbingan Konseling</option>
                     </select>
                 </div>
                 <div class="form-item">
@@ -462,10 +459,6 @@
                     <select id="kelas">
                         <option value="">-- Pilih Kelas --</option>
                     </select>
-                </div>
-                <div class="form-item">
-                    <label>Tahun Pelajaran</label>
-                    <input type="text" id="tapel" readonly>
                 </div>
                 <div class="form-item">
                     <label>Periode Bulan</label>
@@ -478,8 +471,13 @@
                     </select>
                 </div>
                 <div class="form-item">
+                    <label>Tahun Pelajaran</label>
+                    <input type="text" id="tapel" readonly>
+                </div>
+                <div class="form-item">
                     <label>Semester</label>
-                    <select id="semester">
+                    <!-- ✅ TIDAK BISA DIUBAH MANUAL -->
+                    <select id="semester" readonly>
                         <option value="Ganjil">Ganjil</option>
                         <option value="Genap">Genap</option>
                     </select>
@@ -531,23 +529,42 @@
         let jumlahTanggal = 0;
         let daftarTanggal = [];
 
-        // ✅ FUNGSI OTOMATIS TAHUN PELAJARAN
         function setTahunPelajaranOtomatis() {
             const sekarang = new Date();
             const tahun = sekarang.getFullYear();
-            const bulan = sekarang.getMonth() + 1; // 1-12
+            const bulan = sekarang.getMonth() + 1;
             
+            // Atur Tahun Pelajaran
             let tapel;
             if (bulan >= 1 && bulan <= 6) {
                 tapel = `${tahun - 1} / ${tahun}`;
             } else {
                 tapel = `${tahun} / ${tahun + 1}`;
             }
-            
             document.getElementById("tapel").value = tapel;
+
+            // ✅ ATUR SEMESTER OTOMATIS & TIDAK BISA DIUBAH
+            const selectSemester = document.getElementById("semester");
+            if (bulan >= 7 && bulan <= 12) {
+                selectSemester.value = "Ganjil";
+            } else {
+                selectSemester.value = "Genap";
+            }
         }
 
-        // ✅ FUNGSI TOMBOL MODE
+        // Blokir perubahan manual pada dropdown Semester
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectSemester = document.getElementById("semester");
+            selectSemester.addEventListener("mousedown", function(e) {
+                e.preventDefault();
+                return false;
+            });
+            selectSemester.addEventListener("keydown", function(e) {
+                e.preventDefault();
+                return false;
+            });
+        });
+
         function toggleDarkMode() {
             const body = document.body;
             const btn = document.getElementById("btnDarkMode");
@@ -557,7 +574,7 @@
             if (body.classList.contains("light-mode")) {
                 btn.innerHTML = "🌙";
             } else {
-                btn.innerHTML = "☀️";
+                btn.innerHTML = "🔆";
             }
         }
 
@@ -628,9 +645,11 @@
                     const mapelSelect = document.getElementById("mapel");
                     const bulanSelect = document.getElementById("bulan");
                     const tapelInput = document.getElementById("tapel");
+                    const semesterSelect = document.getElementById("semester");
                     if (hAbsen.info?.mapel) mapelSelect.value = hAbsen.info.mapel;
                     if (hAbsen.info?.bulan) bulanSelect.value = hAbsen.info.bulan;
                     if (hAbsen.info?.tapel) tapelInput.value = hAbsen.info.tapel;
+                    // Jangan ubah semester saat memuat data lama, tetap pakai otomatis
                 } else {
                     jumlahTanggal = 0; daftarTanggal = [];
                     daftarSiswa.forEach(s => s.hadir = []);
@@ -652,6 +671,7 @@
                     kelasPilihan: kelas,
                     tapel: document.getElementById("tapel").value,
                     bulan: document.getElementById("bulan").value,
+                    semester: document.getElementById("semester").value,
                     daftarTanggal: daftarTanggal,
                     daftarSiswa: daftarSiswa
                 };
