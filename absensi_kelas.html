@@ -5,727 +5,695 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Hadir Peserta Didik - SMP Negeri 110 Jakarta</title>
     <style>
+        /* ✅ VARIABEL UTAMA: DEFAULT LANGSUNG MODE GELAP */
         :root {
-            --bg-body: #f0f2f5;
-            --bg-container: #ffffff;
-            --bg-input: #ffffff;
-            --bg-table-header: #263238;
-            --bg-table-row-even: #f5f5f5;
-            --bg-table-row-hover: #e3f2fd;
-            --bg-btn-group: #e3f2fd;
-            --bg-info-grid: #f8f9fa;
-            --bg-input-focus: #fff9c4;
-            --text-main: #212121;
-            --text-label: #424242;
-            --text-table-header: #ffffff;
-            --text-table-cell: #212121;
-            --border-color: #bdbdbd;
-            --border-input: #e0e0e0;
-            --border-signature: #424242;
-            --shadow-color: rgba(0,0,0,0.1);
-            --btn-primary: #1976d2;
-            --btn-success: #388e3c;
-            --btn-warning: #f57c00;
-            --btn-danger: #d32f2f;
-            --btn-info: #00897b;
-            --btn-text: #ffffff;
-            --status-success-bg: #c8e6c9;
-            --status-success-text: #2e7d32;
-            --status-error-bg: #ffcdd2;
-            --status-error-text: #c62828;
-            --status-loading-bg: #fff9c4;
-            --status-loading-text: #f57f17;
-            --empty-text: #757575;
-            --signature-name: #1a237e;
-            --signature-nip: #616161;
-            --title-color: #1a237e;
+            --primary: #4080FF;
+            --primary-light: #1D2C4A;
+            --secondary: #00B4AA;
+            --success: #27C347;
+            --warning: #FF8A3D;
+            --danger: #F65C5C;
+            --text-primary: #E5E6EB;
+            --text-secondary: #C9CDD4;
+            --text-tertiary: #86909C;
+            --border: #303133;
+            --bg-page: #121212;
+            --bg-card: #1E1E1E;
+            --bg-table-header: #2C2C2C;
+            --bg-table-row: #1E1E1E;
+            --bg-table-alt: #252525;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+            --radius: 12px;
+            --radius-sm: 8px;
         }
 
-        body.dark-mode {
-            --bg-body: #0f1419;
-            --bg-container: #1a2332;
-            --bg-input: #243447;
-            --bg-table-header: #0d1b2a;
-            --bg-table-row-even: #1e2d3d;
-            --bg-table-row-hover: #2c4a6e;
-            --bg-btn-group: #1e2d3d;
-            --bg-info-grid: #1e2d3d;
-            --bg-input-focus: #3d5a80;
-            --text-main: #e0e0e0;
-            --text-label: #b0bec5;
-            --text-table-header: #ffffff;
-            --text-table-cell: #e0e0e0;
-            --border-color: #37474f;
-            --border-input: #455a64;
-            --border-signature: #90a4ae;
-            --shadow-color: rgba(0,0,0,0.4);
-            --btn-primary: #1565c0;
-            --btn-success: #2e7d32;
-            --btn-warning: #ef6c00;
-            --btn-danger: #c62828;
-            --btn-info: #00695c;
-            --btn-text: #ffffff;
-            --status-success-bg: #1b5e20;
-            --status-success-text: #c8e6c9;
-            --status-error-bg: #b71c1c;
-            --status-error-text: #ffcdd2;
-            --status-loading-bg: #e65100;
-            --status-loading-text: #fff9c4;
-            --empty-text: #90a4ae;
-            --signature-name: #64b5f6;
-            --signature-nip: #b0bec5;
-            --title-color: #64b5f6;
+        /* ✅ VARIABEL MODE TERANG */
+        body.light-mode {
+            --primary: #165DFF;
+            --primary-light: #E8F3FF;
+            --secondary: #0FC6C2;
+            --success: #00B42A;
+            --warning: #FF7D00;
+            --danger: #F53F3F;
+            --text-primary: #1D2129;
+            --text-secondary: #4E5969;
+            --text-tertiary: #86909C;
+            --border: #E5E6EB;
+            --bg-page: #F2F3F5;
+            --bg-card: #FFFFFF;
+            --bg-table-header: #F7F8FA;
+            --bg-table-row: #FFFFFF;
+            --bg-table-alt: #F7F8FA;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background: var(--bg-body);
-            padding: 10px;
-            overflow-x: hidden;
-            color: var(--text-main);
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        .container {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-            background: var(--bg-container);
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px var(--shadow-color);
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 15px;
-            color: var(--title-color);
-            font-size: 22px;
-            font-weight: 700;
-            transition: color 0.3s ease;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 15px;
-            color: var(--title-color);
-            font-size: 20px;
-            font-weight: 700;
-            transition: color 0.3s ease;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 30px;
-            margin-bottom: 15px;
-            padding: 12px 15px;
-            background: var(--bg-info-grid);
-            border-radius: 6px;
-            transition: background 0.3s ease;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 8px;
-        }
-        .form-group label {
-            min-width: 110px;
-            font-weight: 600;
-            color: var(--text-label);
-            font-size: 14px;
-            transition: color 0.3s ease;
-            flex-shrink: 0;
-        }
-        .form-group input, .form-group select {
-            flex: 1;
-            padding: 8px 10px;
-            border: 1px solid var(--border-input);
-            border-radius: 4px;
-            font-size: 14px;
-            background: var(--bg-input);
-            color: var(--text-main);
+        body {
+            background: var(--bg-page);
+            color: var(--text-primary);
+            padding: 24px;
+            min-height: 100vh;
             transition: all 0.3s ease;
         }
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--btn-primary);
-            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
-        }
-        .form-group input::placeholder {
-            color: #9e9e9e;
+
+        .container {
+            max-width: 1800px;
+            width: 98%;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .button-group {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 10px;
-            background: var(--bg-btn-group);
-            border-radius: 6px;
-            transition: background 0.3s ease;
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 28px;
+            text-align: center;
         }
-        button {
-            padding: 6px 12px;
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .header h2 {
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 20px 24px;
+        }
+
+        .status-box {
+            position: absolute;
+            top: 12px;
+            right: 64px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            display: none;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-            color: var(--btn-text);
+            box-shadow: var(--shadow-md);
+            z-index: 999;
+            color: #FFFFFF !important;
         }
+
+        .status-box.success {
+            background: rgba(0, 154, 41, 0.95);
+            display: block;
+        }
+
+        .status-box.error {
+            background: rgba(217, 43, 43, 0.95);
+            display: block;
+        }
+
+        .status-box.loading {
+            background: rgba(204, 100, 0, 0.95);
+            display: block;
+        }
+
+        /* ✅ TOMBOL IKON DI KANAN ATAS */
+        .action-bar {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 998;
+        }
+
+        button {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
         button:hover {
             transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-            filter: brightness(1.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
+
         button:active {
             transform: translateY(0);
         }
-        .btn-primary { background: var(--btn-primary); }
-        .btn-success { background: var(--btn-success); }
-        .btn-warning { background: var(--btn-warning); }
-        .btn-danger { background: var(--btn-danger); }
-        .btn-info { background: var(--btn-info); }
-        .btn-dark { 
-            background: #424242; 
-            color: white;
-        }
-        body.dark-mode .btn-dark {
-            background: #fdd835;
-            color: #212121;
-        }
-        
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
+
+        /* WARNA BERBEDA SETIAP TOMBOL */
+        .btn-primary { background: #4080FF; }
+        .btn-primary:hover { background: #2970F2; }
+
+        .btn-warning { background: #FF9A2E; }
+        .btn-warning:hover { background: #F58A1A; }
+
+        .btn-secondary { background: #722ED1; }
+        .btn-secondary:hover { background: #5F24B2; }
+
+        .btn-success { background: #00B42A; }
+        .btn-success:hover { background: #009A29; }
+
+        .btn-dark { background: #FFC53D; color: #1D2129; }
+        .btn-dark:hover { background: #F5BA2E; }
+
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
             margin-bottom: 20px;
+            padding: 18px;
+            background: var(--bg-table-header);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-top: 10px;
         }
+
+        .form-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-item label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-item select {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .form-item select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 13px;
         }
+
         th, td {
-            border: 1px solid var(--border-color);
-            padding: 3px 2px;
+            padding: 10px 6px;
             text-align: center;
-            white-space: nowrap;
-            color: var(--text-table-cell);
-            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
         }
+
         th {
             background: var(--bg-table-header);
-            color: var(--text-table-header);
             font-weight: 600;
-            font-size: 14px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            position: sticky;
+            top: 0;
         }
-        tr:nth-child(even) { background: var(--bg-table-row-even); }
-        tr:hover { background: var(--bg-table-row-hover); }
-        
-        .col-no { width: 25px; min-width: 25px; }
-        .col-nis { width: 50px; min-width: 50px; }
-        .col-nama { width: 180px; min-width: 180px; text-align: left; padding-left: 5px; }
-        .col-lp { width: 35px; min-width: 35px; }
-        .col-tgl { width: 32px; min-width: 32px; padding: 2px !important; }
-        .col-ringkasan { width: 45px; min-width: 45px; }
-        .col-jumlah { width: 50px; min-width: 50px; }
-        .col-persen { width: 60px; min-width: 60px; }
-        
+
+        tbody tr {
+            background: var(--bg-table-row);
+            transition: background 0.15s ease;
+        }
+
+        tbody tr:nth-child(even) {
+            background: var(--bg-table-alt);
+        }
+
+        tbody tr:hover {
+            background: var(--primary-light);
+        }
+
+        .col-no { width: 40px; min-width: 40px; }
+        .col-nis { width: 60px; min-width: 60px; }
+        .col-nama { width: 200px; min-width: 200px; text-align: left; padding-left: 10px; }
+        .col-lp { width: 40px; min-width: 40px; }
+        .col-tgl { width: 38px; min-width: 38px; padding: 3px; }
+        .col-stat { width: 55px; min-width: 55px; }
+        .col-jumlah { width: 65px; min-width: 65px; }
+        .col-persen { width: 75px; min-width: 75px; font-weight: 600; color: var(--primary); }
+
         .input-tgl-header {
             width: 100%;
-            border: 1px dashed rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.1);
-            color: var(--text-table-header);
-            text-align: center;
-            font-size: 10px;
+            padding: 3px 1px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: inherit;
+            font-size: 11px;
             font-weight: 600;
-            padding: 2px 0;
-            outline: none;
-            border-radius: 2px;
+            text-align: center;
+            border-radius: 4px;
             transition: all 0.2s;
         }
-        .input-tgl-header:hover {
-            background: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.8);
-        }
-        .input-tgl-header:focus {
-            background: rgba(255,255,255,0.9);
-            color: #212121;
-            border-color: var(--btn-primary);
-        }
-        body.dark-mode .input-tgl-header {
-            border-color: rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.05);
-            color: #e0e0e0;
-        }
-        body.dark-mode .input-tgl-header:hover {
-            background: rgba(255,255,255,0.15);
-            border-color: rgba(255,255,255,0.6);
-        }
-        body.dark-mode .input-tgl-header:focus {
-            background: #243447;
-            color: #e0e0e0;
-            border-color: #64b5f6;
+
+        .input-tgl-header:hover, .input-tgl-header:focus {
+            border-color: var(--primary);
+            background: var(--bg-card);
+            outline: none;
         }
 
         .input-hadir {
             width: 100%;
-            border: none;
-            text-align: center;
+            padding: 5px 1px;
+            border: 1px solid transparent;
             background: transparent;
             font-size: 14px;
-            padding: 2px;
-            color: var(--text-table-cell);
-            outline: none;
-        }
-        .input-hadir:focus {
-            background: var(--bg-input-focus);
-            outline: none;
-        }
-        
-        .status {
-            padding: 8px 12px;
-            margin: 10px 0;
+            font-weight: 600;
+            text-align: center;
             border-radius: 4px;
-            display: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            color: var(--text-primary);
+            transition: all 0.2s;
         }
-        .status.success {
-            background: var(--status-success-bg);
-            color: var(--status-success-text);
-            border: 1px solid var(--status-success-text);
-            display: block;
+
+        .input-hadir:focus {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            outline: none;
         }
-        .status.error {
-            background: var(--status-error-bg);
-            color: var(--status-error-text);
-            border: 1px solid var(--status-error-text);
-            display: block;
-        }
-        .status.loading {
-            background: var(--status-loading-bg);
-            color: var(--status-loading-text);
-            border: 1px solid var(--status-loading-text);
-            display: block;
-        }
-        
-        .footer {
+
+        .footer-section {
             display: flex;
             justify-content: space-between;
             margin-top: 30px;
-            padding: 20px 0;
-        }
-        .signature {
-            text-align: center;
-            width: 40%;
+            padding: 0 20px 24px;
             font-size: 14px;
-            color: var(--text-main);
-            transition: color 0.3s ease;
-        }
-        .signature-line {
-            margin-top: 60px;
-            padding-top: 5px;
-        }
-        .signature-line strong {
-            display: block;
-            color: var(--signature-name);
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-        .signature-line span {
-            color: var(--signature-nip);
-            font-size: 14px;
-            transition: color 0.3s ease;
         }
 
-        body.dark-mode .table-wrapper::-webkit-scrollbar {
-            height: 10px;
+        .signature-block {
+            text-align: center;
+            min-width: 260px;
         }
-        body.dark-mode .table-wrapper::-webkit-scrollbar-track {
-            background: var(--bg-container);
-            border-radius: 5px;
+
+        .signature-title {
+            margin-bottom: 50px;
+            color: var(--text-secondary);
         }
-        body.dark-mode .table-wrapper::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 5px;
+
+        .signature-name {
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 4px;
         }
-        body.dark-mode .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: var(--text-label);
+
+        .signature-nip {
+            color: var(--text-tertiary);
+            font-size: 13px;
         }
 
         @media print {
-            body { 
-                background: white !important; 
-                padding: 5px;
-                color: black !important;
-            }
-            .container { 
-                padding: 10px; 
-                box-shadow: none;
-                background: white !important;
-            }
-            .button-group, .status { display: none !important; }
-            table { font-size: 13px; }
-            th, td { 
-                padding: 2px 1px; 
-                color: black !important;
-                border-color: black !important;
-            }
-            th {
-                background: #263238 !important;
-                color: white !important;
-            }
-            .col-nama { width: 160px; }
-            .col-tgl { width: 28px; }
-            .signature, .signature-line, .signature-line strong, .signature-line span, #tanggalTtd {
-                color: black !important;
-            }
-            .input-tgl-header {
-                border: none !important;
-                background: transparent !important;
-                color: white !important;
-                font-weight: bold !important;
-                font-size: 9px !important;
-            }
-            .input-hadir { color: black !important; }
-            h1, h2 { color: black !important; }
-            .form-group label, .form-group input, .form-group select {
-                color: black !important;
-            }
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border-radius: 0; max-width: 100%; width: 100%; }
+            .header { background: #165DFF !important; color: white !important; }
+            .action-bar, .status-box { display: none !important; }
+            .info-section { border: none; background: white; }
+            th { background: #F7F8FA !important; color: #1D2129 !important; }
+            .input-tgl-header { border: none !important; font-weight: bold; }
+            .input-hadir { border: none !important; }
+            .col-persen { color: #165DFF !important; }
+            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
-        
-        @media screen and (max-width: 768px) {
-            .info-grid { grid-template-columns: 1fr; }
-            .form-group { flex-direction: column; align-items: flex-start; }
-            .form-group label { min-width: auto; }
-            .form-group input, .form-group select { width: 100%; }
+
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .content { padding: 16px; }
+            .info-section { grid-template-columns: 1fr; }
+            .footer-section { flex-direction: column; gap: 30px; align-items: center; }
+            .action-bar { top: 8px; right: 8px; }
+            .status-box { right: 60px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>SMP NEGERI 110 JAKARTA</h2>
-        <h1>DAFTAR HADIR PESERTA DIDIK</h1>
-        
-        <div class="info-grid">
-            <div class="form-group">
-                <label>Mata Pelajaran:</label>
-                <input type="text" id="mapel" placeholder="Masukkan Mata Pelajaran">
-            </div>
-            <div class="form-group">
-                <label>Kelas:</label>
-                <select id="kelas">
-                    <option value="">-- Pilih Kelas --</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Bulan:</label>
-                <input type="text" id="bulan" placeholder="Contoh: Juli 2026">
-            </div>
-            <div class="form-group">
-                <label>Semester:</label>
-                <select id="semester">
-                    <option value="Ganjil">Ganjil</option>
-                    <option value="Genap">Genap</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Tahun Pelajaran:</label>
-                <input type="text" id="tapel" placeholder="2025/2026">
-            </div>
+        <!-- ✅ TOMBOL IKON DI KANAN ATAS -->
+        <div class="action-bar">
+            <button class="btn-primary" onclick="tambahTanggal()" title="Tambah Tanggal">➕</button>
+            <button class="btn-warning" onclick="kurangiTanggal()" title="Kurangi Tanggal">➖</button>
+            <button class="btn-secondary" onclick="window.print()" title="Cetak Dokumen">🖨️</button>
+            <button class="btn-success" onclick="simpanKeSheet()" title="Simpan Data">💾</button>
+            <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()" title="Ubah Mode">☀️</button>
         </div>
 
-        <div id="status" class="status"></div>
+        <div id="status" class="status-box"></div>
 
-        <div class="button-group">
-            <button class="btn-info" onclick="loadSiswaFromSheet()">📥 Muat Data Kelas</button>
-            <button class="btn-primary" onclick="tambahTanggal()">+ Tanggal</button>
-            <button class="btn-warning" onclick="kurangiTanggal()">- Tanggal</button>
-            <button class="btn-success" onclick="hitungKehadiran()">📊 Hitung</button>
-            <button class="btn-primary" onclick="window.print()">🖨️ Cetak</button>
-            <button class="btn-success" onclick="simpanKeSheet()">💾 Simpan ke Sheet</button>
-            <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()">☀️ Light</button>
+        <div class="header">
+            <h1>SMP NEGERI 110 JAKARTA</h1>
+            <h2>DAFTAR HADIR PESERTA DIDIK</h2>
+            <h2>TAHUN PELAJARAN 2025/2026</h2><br>
         </div>
 
-        <div class="table-wrapper">
-            <table id="tabelAbsensi">
-                <thead>
-                    <tr>
-                        <th class="col-no">NO.</th>
-                        <th class="col-nis">NIS</th>
-                        <th class="col-nama">NAMA MURID</th>
-                        <th class="col-lp">L/P</th>
-                        <th class="col-ringkasan">SAKIT</th>
-                        <th class="col-ringkasan">IZIN</th>
-                        <th class="col-ringkasan">ALPA</th>
-                        <th class="col-jumlah">JUMLAH</th>
-                        <th class="col-persen">PROSENTASE</th>
-                    </tr>
-                </thead>
-                <tbody id="isiTabel"></tbody>
-            </table>
-        </div>
+        <div class="content">
+            <div class="info-section">
+                <div class="form-item">
+                    <label>Mata Pelajaran</label>
+                    <!-- ✅ DAFTAR MAPEL SESUAI KURIKULUM MERDEKA SMP -->
+                    <select id="mapel">
+                        <option value="">-- Pilih Mata Pelajaran --</option>
 
-        <div class="footer">
-            <div class="signature">
-                <p>Menyetujui,<br>Kepala Sekolah</p>
-                <div class="signature-line">
-                    <strong>Iis Ratna Sariningrum, S.Pd., M.M.</strong>
-                    <span>NIP. 197010311994122001</span>
+                            <option>Pendidikan Agama dan Budi Pekerti</option>
+                            <option>Pendidikan Pancasila</option>
+                            <option>Bahasa Indonesia</option>
+                            <option>Matematika</option>
+                            <option>Ilmu Pengetahuan Alam</option>
+                            <option>Ilmu Pengetahuan Sosial</option>
+                            <option>Bahasa Inggris</option>
+                            <option>Pendidikan Jasmani, Olahraga, dan Kesehatan</option>
+                            <option>Informatika</option>
+                            <option>Seni Budaya dan Keterampilan</option>
+                            <option>Bimbingan Konseling</option>
+ 
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label>Kelas</label>
+                    <select id="kelas">
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label>Periode Bulan</label>
+                    <select id="bulan">
+                        <option value="">-- Pilih Periode --</option>
+                        <option>Januari s.d Maret</option>
+                        <option>April s.d. Juni</option>
+                        <option>Juli s.d. Agustus</option>
+                        <option>September s.d. Desember</option>
+                    </select>
+                </div>
+                <div class="form-item">
+                    <label>Semester</label>
+                    <select id="semester">
+                        <option value="Ganjil">Ganjil</option>
+                        <option value="Genap">Genap</option>
+                    </select>
                 </div>
             </div>
-            <div class="signature">
-                <p>Jakarta, <span id="tanggalTtd">.......................</span><br>Guru Mata Pelajaran</p>
-                <div class="signature-line">
-                    <strong>Endra Triyanto Hamdani, S.Kom</strong>
-                    <span>NIP. 197601042014121003</span>
+
+            <div class="table-container">
+                <table id="tabelAbsensi">
+                    <thead>
+                        <tr>
+                            <th class="col-no">No</th>
+                            <th class="col-nis">NIS</th>
+                            <th class="col-nama">Nama Lengkap</th>
+                            <th class="col-lp">L/P</th>
+                            <th class="col-stat">Sakit</th>
+                            <th class="col-stat">Izin</th>
+                            <th class="col-stat">Alpa</th>
+                            <th class="col-jumlah">Hadir</th>
+                            <th class="col-persen">Persen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="isiTabel">
+                        <tr>
+                            <td colspan="9" style="padding: 40px; color: var(--text-tertiary);">Silakan pilih kelas untuk memuat data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="footer-section">
+                <div class="signature-block">
+                    <div class="signature-title">Menyetujui,<br>Kepala Sekolah</div>
+                    <span class="signature-name">Iis Ratna Sariningrum, S.Pd., M.M.</span>
+                    <span class="signature-nip">NIP. 197010311994122001</span>
+                </div>
+                <div class="signature-block">
+                    <div class="signature-title">Jakarta, <span id="tanggalTtd"></span><br>Guru Mata Pelajaran</div>
+                    <span class="signature-name">Endra Triyanto Hamdani, S.Kom</span>
+                    <span class="signature-nip">NIP. 197601042014121003</span>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ===== GANTI DENGAN URL WEB APP BARU ANDA =====
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyY3tkCU91Fa-1o59GcAvHt37VYXRHiKZXxWpttg49hsPK-PsjK7XDmCUuSsXKsa-V4Mw/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbyugPcgnCDzFhcUB5kW-3WZ-P27EN1Qdn0Lc_0K4G5M9EqPetCF_BtKDajYvff-8JiQsg/exec";
         
         let daftarSiswa = [];
         let jumlahTanggal = 0;
         let daftarTanggal = [];
 
+        // ✅ FUNGSI TOMBOL MODE
         function toggleDarkMode() {
             const body = document.body;
             const btn = document.getElementById("btnDarkMode");
-            body.classList.toggle("dark-mode");
-            btn.innerHTML = body.classList.contains("dark-mode") ? "☀️ Light" : "🌙 Dark";
+            
+            body.classList.toggle("light-mode");
+
+            if (body.classList.contains("light-mode")) {
+                btn.innerHTML = "🌙";
+            } else {
+                btn.innerHTML = "☀️";
+            }
         }
 
         function formatTanggalLengkap(date) {
             const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const d = date.getDate();
-            const m = namaBulan[date.getMonth()];
-            const y = date.getFullYear();
-            return `${d} ${m} ${y}`;
+            return `${date.getDate()} ${namaBulan[date.getMonth()]} ${date.getFullYear()}`;
         }
 
         function setTanggalTtd() {
-            const tglElement = document.getElementById("tanggalTtd");
-            if (tglElement) tglElement.textContent = formatTanggalLengkap(new Date());
+            const el = document.getElementById("tanggalTtd");
+            if (el) el.textContent = formatTanggalLengkap(new Date());
         }
 
-        function showStatus(message, type) {
+        function showStatus(msg, jenis) {
             const el = document.getElementById("status");
-            el.className = "status " + type;
-            el.textContent = message;
-            if (type !== 'loading') setTimeout(() => el.style.display = 'none', 3000);
-            else el.style.display = 'block';
+            el.className = `status-box ${jenis}`;
+            el.textContent = msg;
+            el.style.display = "block";
+            if (jenis !== 'loading') setTimeout(() => el.style.display = 'none', 4000);
         }
 
-        // ===== MUAT DAFTAR KELAS OTOMATIS DARI SHEET SISWA =====
         window.onload = async function() {
             setTanggalTtd();
             try {
                 const res = await fetch(`${GAS_URL}?action=AmbilDaftarKelas`);
                 const hasil = await res.json();
                 if (hasil.status === "ok") {
-                    const selectKelas = document.getElementById("kelas");
-                    hasil.daftarKelas.forEach(kelas => {
+                    const select = document.getElementById("kelas");
+                    hasil.daftarKelas.forEach(k => {
                         const opt = document.createElement("option");
-                        opt.value = kelas;
-                        opt.textContent = kelas;
-                        selectKelas.appendChild(opt);
+                        opt.value = k;
+                        opt.textContent = k;
+                        select.appendChild(opt);
                     });
-                } else {
-                    showStatus("⚠️ " + hasil.pesan, "error");
+                    select.addEventListener("change", async () => {
+                        if (select.value) {
+                            await loadSiswaDariSheet();
+                            hitungKehadiran();
+                        } else {
+                            daftarSiswa = []; jumlahTanggal = 0; daftarTanggal = [];
+                            renderTabel();
+                        }
+                    });
                 }
-            } catch (err) {
-                showStatus("❌ Gagal memuat daftar kelas: " + err.message, "error");
-            }
+            } catch (e) { showStatus("Gagal memuat daftar kelas: " + e.message, "error"); }
         };
 
-        // ===== MUAT DATA SISWA DAN ABSENSI BERDASARKAN KELAS =====
-        async function loadSiswaFromSheet() {
-            const kelasPilih = document.getElementById("kelas").value;
-            if (!kelasPilih) return showStatus("⚠️ Pilih kelas terlebih dahulu!", "error");
-
-            showStatus("⏳ Mengambil data siswa...", "loading");
+        async function loadSiswaDariSheet() {
+            const kelas = document.getElementById("kelas").value;
+            showStatus(`Memuat data kelas ${kelas}...`, "loading");
             try {
-                // Ambil daftar siswa lengkap dari lembar Siswa
-                const resSiswa = await fetch(`${GAS_URL}?action=AmbilSiswaKelas&kelasPilihan=${kelasPilih}`);
-                const hasilSiswa = await resSiswa.json();
-                if (hasilSiswa.status !== "ok") throw hasilSiswa.pesan;
+                const rSiswa = await fetch(`${GAS_URL}?action=AmbilSiswaKelas&kelasPilihan=${kelas}`);
+                const hSiswa = await rSiswa.json();
+                if (hSiswa.status !== "ok") throw hSiswa.pesan;
 
-                // Cek apakah sudah ada data absensi tersimpan
-                const resAbsen = await fetch(`${GAS_URL}?action=AmbilAbsensi&kelasPilihan=${kelasPilih}`);
-                const hasilAbsen = await resAbsen.json();
+                const rAbsen = await fetch(`${GAS_URL}?action=AmbilAbsensi&kelasPilihan=${kelas}`);
+                const hAbsen = await rAbsen.json();
 
-                daftarSiswa = hasilSiswa.daftarSiswa;
-                if (hasilAbsen.status === "ok") {
-                    daftarTanggal = hasilAbsen.daftarTanggal || [];
+                daftarSiswa = hSiswa.daftarSiswa;
+                if (hAbsen.status === "ok") {
+                    daftarTanggal = hAbsen.daftarTanggal || [];
                     jumlahTanggal = daftarTanggal.length;
-                    // Gabungkan data absensi lama dengan siswa baru
-                    daftarSiswa.forEach((siswa, idx) => {
-                        const dataLama = hasilAbsen.daftarSiswa?.find(s => s.noInduk === siswa.noInduk);
-                        siswa.hadir = dataLama?.hadir || Array(jumlahTanggal).fill("✓");
+                    daftarSiswa.forEach(s => {
+                        const lama = hAbsen.daftarSiswa?.find(x => x.noInduk === s.noInduk);
+                        s.hadir = lama?.hadir || Array(jumlahTanggal).fill("✓");
                     });
-                    document.getElementById("mapel").value = hasilAbsen.info?.mapel || "";
-                    document.getElementById("bulan").value = hasilAbsen.info?.bulan || "";
-                    document.getElementById("tapel").value = hasilAbsen.info?.tapel || "";
+                    // Mengisi kembali pilihan yang tersimpan
+                    const mapelSelect = document.getElementById("mapel");
+                    const bulanSelect = document.getElementById("bulan");
+                    if (hAbsen.info?.mapel) mapelSelect.value = hAbsen.info.mapel;
+                    if (hAbsen.info?.bulan) bulanSelect.value = hAbsen.info.bulan;
                 } else {
-                    jumlahTanggal = 0;
-                    daftarTanggal = [];
+                    jumlahTanggal = 0; daftarTanggal = [];
                     daftarSiswa.forEach(s => s.hadir = []);
                 }
-
                 renderTabel();
-                showStatus(`✅ Data kelas ${kelasPilih} berhasil dimuat lengkap!`, "success");
-            } catch (err) {
-                showStatus("❌ Kesalahan: " + err, "error");
-            }
+                hitungKehadiran();
+                showStatus(`Data kelas ${kelas} berhasil dimuat!`, "success");
+            } catch (e) { showStatus("Kesalahan: " + e, "error"); }
         }
 
-        // ===== SIMPAN DATA KE SHEET (Nama & JK diambil ulang dari Siswa) =====
         async function simpanKeSheet() {
-            const kelasPilih = document.getElementById("kelas").value;
-            if (!kelasPilih) return showStatus("⚠️ Pilih kelas terlebih dahulu!", "error");
-            if (daftarSiswa.length === 0) return showStatus("⚠️ Muat data kelas dulu!", "error");
-            if (!confirm(`Simpan semua data kelas ${kelasPilih}?`)) return;
-
-            showStatus("⏳ Menyimpan data lengkap ke Sheet...", "loading");
+            const kelas = document.getElementById("kelas").value;
+            if (!kelas) return showStatus("Pilih kelas terlebih dahulu!", "error");
+            if (!confirm(`Simpan semua data absensi kelas ${kelas}?`)) return;
+            showStatus("Menyimpan data...", "loading");
             try {
-                const dataKirim = {
+                const data = {
                     mapel: document.getElementById("mapel").value,
-                    kelasPilihan: kelasPilih,
+                    kelasPilihan: kelas,
                     bulan: document.getElementById("bulan").value,
-                    tapel: document.getElementById("tapel").value,
                     daftarTanggal: daftarTanggal,
                     daftarSiswa: daftarSiswa
                 };
-
                 const res = await fetch(GAS_URL, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    body: `action=SimpanSemua&data=${encodeURIComponent(JSON.stringify(dataKirim))}`
+                    body: `action=SimpanSemua&data=${encodeURIComponent(JSON.stringify(data))}`
                 });
-
                 const hasil = await res.json();
-                if (hasil.status === "ok") {
-                    showStatus(`✅ ${hasil.pesan}`, "success");
-                } else {
-                    showStatus("⚠️ " + hasil.pesan, "error");
-                }
-            } catch (err) {
-                showStatus("❌ Gagal simpan: " + err.message, "error");
-            }
+                showStatus(hasil.pesan, hasil.status === "ok" ? "success" : "error");
+            } catch (e) { showStatus("Gagal menyimpan: " + e.message, "error"); }
         }
 
         function renderTabel() {
             const tbody = document.getElementById("isiTabel");
-            const header = document.querySelector("#tabelAbsensi thead tr");
-            
-            // Hapus kolom tanggal lama
-            header.querySelectorAll('.col-tgl').forEach(col => col.remove());
-            const posisiSisip = header.querySelector('th:nth-child(5)');
+            const thead = document.querySelector("#tabelAbsensi thead tr");
+            thead.querySelectorAll(".col-tgl").forEach(c => c.remove());
+            const posSisip = thead.querySelector("th:nth-child(5)");
 
-            // Tambah kolom tanggal baru
-            for(let i = 0; i < jumlahTanggal; i++) {
-                const th = document.createElement('th');
-                th.className = 'col-tgl';
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'input-tgl-header';
-                input.value = daftarTanggal[i] || "";
-                input.placeholder = "Tgl";
-                input.addEventListener('change', e => daftarTanggal[i] = e.target.value.trim());
-                th.appendChild(input);
-                header.insertBefore(th, posisiSisip);
+            for (let i = 0; i < jumlahTanggal; i++) {
+                const th = document.createElement("th");
+                th.className = "col-tgl";
+                const inp = document.createElement("input");
+                inp.type = "text";
+                inp.className = "input-tgl-header";
+                inp.value = daftarTanggal[i] || "";
+                inp.placeholder = "Tgl";
+                inp.addEventListener("change", e => daftarTanggal[i] = e.target.value.trim());
+                th.appendChild(inp);
+                thead.insertBefore(th, posSisip);
             }
 
-            // Isi baris siswa
             tbody.innerHTML = "";
             if (daftarSiswa.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:30px;">📋 Pilih kelas lalu klik "Muat Data Kelas"</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="padding: 40px; color: var(--text-tertiary);">Silakan pilih kelas untuk memuat data</td></tr>`;
                 return;
             }
 
             daftarSiswa.forEach((siswa, idx) => {
                 const tr = document.createElement("tr");
-                let sel = `
+                let html = `
                     <td>${idx + 1}</td>
                     <td>${siswa.noInduk}</td>
                     <td class="col-nama">${siswa.nama}</td>
                     <td>${siswa.jk}</td>
                 `;
-                for(let t = 0; t < jumlahTanggal; t++) {
-                    const val = siswa.hadir?.[t] || "✓";
-                    sel += `<td><input type="text" class="input-hadir" maxlength="1" value="${val}" 
-                        onchange="ubahAbsen(${idx}, ${t}, this.value)"></td>`;
+                for (let t = 0; t < jumlahTanggal; t++) {
+                    html += `<td class="col-tgl"><input type="text" class="input-hadir" maxlength="1" value="${siswa.hadir?.[t] || "✓"}" onchange="ubahAbsen(${idx}, ${t}, this.value)"></td>`;
                 }
-                sel += `
+                html += `
                     <td id="s-${idx}">0</td>
                     <td id="i-${idx}">0</td>
                     <td id="a-${idx}">0</td>
                     <td id="jml-${idx}">0</td>
                     <td id="prsn-${idx}">0%</td>
                 `;
-                tr.innerHTML = sel;
+                tr.innerHTML = html;
                 tbody.appendChild(tr);
             });
         }
 
         function tambahTanggal() {
-            if (daftarSiswa.length === 0) return showStatus("⚠️ Muat data kelas dulu!", "error");
-            if (jumlahTanggal >= 24) return showStatus("⚠️ Maksimal 24 kolom tanggal!", "error");
-            
+            if (daftarSiswa.length === 0) return showStatus("Muat data kelas dulu!", "error");
+            if (jumlahTanggal >= 24) return showStatus("Maksimal 24 kolom tanggal!", "error");
             jumlahTanggal++;
             const tgl = new Date();
-            daftarTanggal.push(`${String(tgl.getDate()).padStart(2,'0')}/${String(tgl.getMonth()+1).padStart(2,'0')}`);
-            daftarSiswa.forEach(s => {
-                if (!s.hadir) s.hadir = [];
-                s.hadir.push("✓");
-            });
-            renderTabel();
-            showStatus("✅ Tanggal ditambahkan, jangan lupa simpan!", "success");
+            const fmt = `${String(tgl.getDate()).padStart(2,'0')}/${String(tgl.getMonth()+1).padStart(2,'0')}`;
+            daftarTanggal.push(fmt);
+            daftarSiswa.forEach(s => s.hadir ? s.hadir.push("✓") : s.hadir = ["✓"]);
+            renderTabel(); hitungKehadiran();
+            showStatus(`Tanggal ditambahkan: ${fmt}`, "success");
         }
 
         function kurangiTanggal() {
-            if (jumlahTanggal <= 0) return showStatus("⚠️ Tidak ada tanggal!", "error");
-            jumlahTanggal--;
-            daftarTanggal.pop();
+            if (jumlahTanggal <= 0) return showStatus("Tidak ada tanggal untuk dihapus!", "error");
+            jumlahTanggal--; daftarTanggal.pop();
             daftarSiswa.forEach(s => s.hadir?.pop());
-            renderTabel();
-            showStatus("✅ Tanggal dihapus, jangan lupa simpan!", "success");
+            renderTabel(); hitungKehadiran();
+            showStatus("Tanggal terakhir dihapus", "success");
         }
 
         function ubahAbsen(idx, tgl, val) {
             const v = val.trim().toUpperCase();
             daftarSiswa[idx].hadir[tgl] = ["S","I","A"].includes(v) ? v : "✓";
+            hitungKehadiran();
         }
 
         function hitungKehadiran() {
-            if (daftarSiswa.length === 0) return showStatus("⚠️ Tidak ada data siswa!", "error");
-            daftarSiswa.forEach((siswa, idx) => {
-                let s=i=a=h=0;
-                (siswa.hadir || []).forEach(k => {
-                    if (k==="S") s++; else if (k==="I") i++; else if (k==="A") a++; else h++;
+            if (daftarSiswa.length === 0) return;
+            daftarSiswa.forEach((s, idx) => {
+                let sVal = 0, iVal = 0, aVal = 0, hVal = 0;
+                const totalHari = s.hadir?.length || 0;
+
+                (s.hadir || []).forEach(k => {
+                    if (k === "S") sVal++;
+                    else if (k === "I") iVal++;
+                    else if (k === "A") aVal++;
+                    else hVal++;
                 });
-                const persen = jumlahTanggal ? Math.round((h/jumlahTanggal)*100) : 0;
-                document.getElementById(`s-${idx}`).textContent = s;
-                document.getElementById(`i-${idx}`).textContent = i;
-                document.getElementById(`a-${idx}`).textContent = a;
-                document.getElementById(`jml-${idx}`).textContent = h;
+
+                let persen = 0;
+                if (totalHari > 0) {
+                    persen = Math.round((hVal / totalHari) * 100);
+                    if (persen > 100) persen = 100;
+                }
+
+                document.getElementById(`s-${idx}`).textContent = sVal;
+                document.getElementById(`i-${idx}`).textContent = iVal;
+                document.getElementById(`a-${idx}`).textContent = aVal;
+                document.getElementById(`jml-${idx}`).textContent = hVal;
                 document.getElementById(`prsn-${idx}`).textContent = persen + "%";
             });
-            showStatus("✅ Perhitungan selesai!", "success");
         }
     </script>
 </body>
