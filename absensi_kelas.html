@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Daftar Hadir Peserta Didik - SMP Negeri 110 Jakarta</title>
+    <title>Daftar Hadir - SMPN 110 Jakarta</title>
     <style>
-        /* ✅ VARIABEL UTAMA: DEFAULT LANGSUNG MODE GELAP */
         :root {
             --primary: #4080FF;
-            --primary-light: #1D2C4A;
+            --primary-light: rgba(64, 128, 255, 0.12);
+            --primary-glow: rgba(64, 128, 255, 0.25);
             --secondary: #00B4AA;
             --success: #27C347;
             --warning: #FF8A3D;
@@ -16,22 +16,27 @@
             --text-primary: #E5E6EB;
             --text-secondary: #C9CDD4;
             --text-tertiary: #86909C;
-            --border: #454647;
+            --border: #3A3A3C;
+            --border-light: #2C2C2E;
             --bg-page: #121212;
-            --bg-card: #1E1E1E;
-            --bg-table-header: #2C2C2C;
-            --bg-table-row: #1E1E1E;
-            --bg-table-alt: #252525;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-            --radius: 12px;
-            --radius-sm: 8px;
+            --bg-card: #1A1A1B;
+            --bg-input: #242426;
+            --bg-table-header: #242426;
+            --bg-table-row: #1A1A1B;
+            --bg-table-alt: #202022;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.35);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+            --shadow-focus: 0 0 0 4px rgba(64, 128, 255, 0.2);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --radius-full: 999px;
         }
 
-        /* ✅ VARIABEL MODE TERANG */
         body.light-mode {
             --primary: #165DFF;
-            --primary-light: #E8F3FF;
+            --primary-light: rgba(22, 93, 255, 0.1);
+            --primary-glow: rgba(22, 93, 255, 0.15);
             --secondary: #0FC6C2;
             --success: #00B42A;
             --warning: #FF7D00;
@@ -39,14 +44,18 @@
             --text-primary: #1D2129;
             --text-secondary: #4E5969;
             --text-tertiary: #86909C;
-            --border: #C9CDD4;
-            --bg-page: #F2F3F5;
+            --border: #E5E6EB;
+            --border-light: #F2F3F5;
+            --bg-page: #F7F8FA;
             --bg-card: #FFFFFF;
+            --bg-input: #F7F8FA;
             --bg-table-header: #F7F8FA;
             --bg-table-row: #FFFFFF;
             --bg-table-alt: #F7F8FA;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+            --shadow-focus: 0 0 0 4px rgba(22, 93, 255, 0.15);
         }
 
         * {
@@ -60,463 +69,380 @@
         body {
             background: var(--bg-page);
             color: var(--text-primary);
-            padding: 12px;
+            padding: 16px;
             min-height: 100vh;
             transition: all 0.3s ease;
+            position: relative;
+            overflow-x: hidden; /* Hanya kunci geser kiri-kanan halaman utama */
+            overflow-y: auto;   /* ✅ BISA DIGESER ATAS-BAWAH */
+        }
+        body::before {
+            content: '';
+            position: fixed; /* Tetap di belakang saat digulir */
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, var(--primary-glow) 0%, transparent 60%);
+            opacity: 0.6;
+            pointer-events: none;
         }
 
         .container {
             max-width: 1800px;
             width: 100%;
             margin: 0 auto;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
             transition: all 0.3s ease;
             position: relative;
+            padding-bottom: 40px; /* Beri ruang di bawah */
         }
+
+        .verifikasi-nrk {
+            padding: 52px 36px;
+            text-align: center;
+            max-width: 380px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .verifikasi-nrk::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(64,128,255,0.08), transparent);
+            transition: left 0.7s ease;
+        }
+        .verifikasi-nrk:hover::before {
+            left: 100%;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .verifikasi-nrk h2 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        .verifikasi-nrk h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            margin: 12px auto 0;
+            border-radius: 2px;
+        }
+
+        .verifikasi-nrk .form-item {
+            margin-top: 28px;
+            margin-bottom: 28px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .verifikasi-nrk label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .verifikasi-nrk input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .verifikasi-nrk input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 5px var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .btn-cek {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary), #2970F2);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(64, 128, 255, 0.35);
+        }
+        .btn-cek:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(64, 128, 255, 0.45); }
+        .btn-cek:active { transform: translateY(0); }
+
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            max-width: 400px;
+            width: calc(100% - 48px);
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+            border: 1px solid var(--border-light);
+        }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast.success { background: rgba(39,195,71,0.12); border-left: 4px solid var(--success); color: #D1FAE5; }
+        .toast.error { background: rgba(246,92,92,0.12); border-left: 4px solid var(--danger); color: #FECDD3; }
+        body.light-mode .toast.success { background: #ECFDF3; color: #065F46; }
+        body.light-mode .toast.error { background: #FEECEC; color: #991B1B; }
 
         .header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 20px 16px 16px;
+            padding: 28px 20px 20px;
             text-align: center;
+            display: none;
+            border-radius: var(--radius) var(--radius) 0 0;
+            position: sticky; /* Tetap di atas saat digulir */
+            top: 0;
+            z-index: 100;
         }
+        .header h1 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+        .header h2 { font-size: 17px; font-weight: 500; opacity: 0.98; margin-bottom: 24px; }
 
-        .header h1 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: 0.3px;
-        }
-
-        .header h2 {
-            font-size: 15px;
-            font-weight: 500;
-            opacity: 0.95;
-            margin-bottom: 12px;
-        }
-
-        .action-bar {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            z-index: 998;
-        }
-
-        button {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            border: none;
-            border-radius: 8px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: #FFFFFF;
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            flex-shrink: 0;
-        }
-
-        button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        button:active {
-            transform: scale(0.95);
-        }
-
+        .action-bar { display: flex; justify-content: center; gap: 10px; display: none; flex-wrap: wrap; }
+        button { width: 42px; height: 42px; border: none; border-radius: var(--radius-full); font-size: 20px; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; color: #FFF; box-shadow: var(--shadow-sm); }
+        button:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
         .btn-primary { background: #4080FF; }
-        .btn-primary:hover { background: #2970F2; }
-
         .btn-warning { background: #FF9A2E; }
-        .btn-warning:hover { background: #F58A1A; }
-
         .btn-secondary { background: #722ED1; }
-        .btn-secondary:hover { background: #5F24B2; }
-
         .btn-success { background: #00B42A; }
-        .btn-success:hover { background: #009A29; }
-
-        .btn-dark { background: #60A5FA; color: #FFFFFF; }
-        .btn-dark:hover { background: #3B82F6; }
+        .btn-dark { background: #60A5FA; }
 
         .status-box {
-            position: absolute;
-            top: 12px;
+            position: fixed; /* Tetap terlihat di atas */
+            top: 90px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-size: 12px;
+            padding: 8px 16px;
+            border-radius: var(--radius-full);
+            font-size: 13px;
             font-weight: 600;
             display: none;
-            border: none;
             box-shadow: var(--shadow-md);
             z-index: 999;
-            color: #FFFFFF !important;
-            max-width: 80%;
-            text-align: center;
+            color: #FFF;
+            backdrop-filter: blur(8px);
         }
+        .status-box.success { background: rgba(0,154,41,0.9); }
+        .status-box.error { background: rgba(217,43,43,0.9); }
+        .status-box.loading { background: rgba(204,100,0,0.9); }
 
-        .status-box.success {
-            background: rgba(0, 154, 41, 0.95);
-            display: block;
-        }
-
-        .status-box.error {
-            background: rgba(217, 43, 43, 0.95);
-            display: block;
-        }
-
-        .status-box.loading {
-            background: rgba(204, 100, 0, 0.95);
-            display: block;
-        }
-
-        .content {
-            padding: 16px 12px;
-        }
-
+        .content { padding: 24px 20px; display: none; }
         .info-section {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding: 14px;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 20px;
             background: var(--bg-table-header);
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
-            margin-top: 8px;
+            margin-top: 12px;
         }
+        .form-item { display: flex; flex-direction: column; gap: 6px; }
+        .form-item label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; }
+        .form-item select, .form-item input { padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; background: var(--bg-input); color: var(--text-primary); }
+        .form-item input[readonly] { opacity: 0.9; }
+        .form-item select:focus, .form-item input:focus { outline: none; border-color: var(--primary); box-shadow: var(--shadow-focus); }
 
-        .form-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .form-item label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.2px;
-        }
-
-        .form-item select, .form-item input {
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            background: var(--bg-card);
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .form-item input[readonly], .form-item select[readonly] {
-            cursor: default;
-            opacity: 0.9;
-        }
-
-        .form-item select:focus, .form-item input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-
+        /* ✅ AREA TABEL BISA DIGESER KE SEMUA ARAH */
         .table-container {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            overflow-x: auto; /* Geser kiri-kanan */
+            overflow-y: auto; /* ✅ GESER ATAS-BAWAH */
+            max-height: calc(100vh - 320px); /* Batas tinggi agar tidak melebihi layar */
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
-            margin-bottom: 20px;
-            width: 100%;
+            margin-bottom: 24px;
+            -webkit-overflow-scrolling: touch; /* Halus di HP */
         }
+        table { width: 100%; min-width: 800px; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px 6px; text-align: center; border: 1px solid var(--border); }
+        th { background: var(--bg-table-header); font-weight: 600; color: var(--text-secondary); position: sticky; top: 0; z-index: 10; }
+        tbody tr { background: var(--bg-table-row); }
+        tbody tr:nth-child(even) { background: var(--bg-table-alt); }
 
-        table {
-            width: 100%;
-            min-width: 800px;
-            border-collapse: collapse;
-            font-size: 12px;
-            border: 1px solid var(--border);
-        }
+        .col-no { width: 40px; }
+        .col-nis { width: 55px; }
+        .col-nama { width: 180px; text-align: left; padding-left: 10px; }
+        .col-lp { width: 40px; }
+        .col-tgl { width: 36px; padding: 4px; }
+        .col-stat { width: 50px; }
+        .col-jumlah { width: 60px; }
+        .col-persen { width: 65px; font-weight: 700; color: var(--primary); }
 
-        th, td {
-            padding: 8px 4px;
-            text-align: center;
-            border: 1px solid var(--border);
-            vertical-align: middle;
-        }
+        .input-tgl-header { width: 100%; padding: 4px 2px; border-radius: 6px; border: none; background: transparent; color: inherit; font-size: 11px; font-weight: 600; text-align: center; }
+        .input-hadir { width: 100%; padding: 6px 2px; border-radius: 6px; border: none; background: transparent; color: inherit; font-size: 14px; font-weight: 600; text-align: center; }
+        .input-hadir:focus { outline: none; background: var(--primary-light); }
 
-        th {
-            background: var(--bg-table-header);
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.2px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        tbody tr {
-            background: var(--bg-table-row);
-            transition: background 0.15s ease;
-        }
-
-        tbody tr:nth-child(even) {
-            background: var(--bg-table-alt);
-        }
-
-        .col-no { width: 35px; min-width: 35px; }
-        .col-nis { width: 50px; min-width: 50px; }
-        .col-nama { width: 160px; min-width: 160px; text-align: left; padding-left: 8px; }
-        .col-lp { width: 35px; min-width: 35px; }
-        .col-tgl { width: 32px; min-width: 32px; padding: 2px; }
-        .col-stat { width: 45px; min-width: 45px; }
-        .col-jumlah { width: 55px; min-width: 55px; }
-        .col-persen { width: 60px; min-width: 60px; font-weight: 600; color: var(--primary); }
-
-        .input-tgl-header {
-            width: 100%;
-            padding: 2px 1px;
-            border: 1px solid transparent;
-            background: transparent;
-            color: inherit;
-            font-size: 10px;
-            font-weight: 600;
-            text-align: center;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        .input-tgl-header:hover, .input-tgl-header:focus {
-            border-color: var(--primary);
-            background: var(--bg-card);
-            outline: none;
-        }
-
-        .input-hadir {
-            width: 100%;
-            padding: 4px 1px;
-            border: 1px solid transparent;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-            border-radius: 4px;
-            color: var(--text-primary);
-            transition: all 0.2s;
-        }
-
-        .input-hadir:focus {
-            border-color: var(--primary);
-            background: var(--primary-light);
-            outline: none;
-        }
-
-        .footer-section {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            margin-top: 24px;
-            padding: 0 10px 16px;
-            font-size: 13px;
-        }
-
-        .signature-block {
-            text-align: center;
-            min-width: auto;
-        }
-
-        .signature-title {
-            margin-bottom: 40px;
-            color: var(--text-secondary);
-        }
-
-        .signature-name {
-            font-weight: 700;
-            color: var(--primary);
-            display: block;
-            margin-bottom: 4px;
-            font-size: 14px;
-        }
-
-        .signature-nip {
-            color: var(--text-tertiary);
-            font-size: 12px;
-        }
+        .footer-section { display: flex; flex-direction: column; gap: 32px; margin-top: 32px; padding: 0 16px 24px; font-size: 14px; display: none; }
+        .signature-block { text-align: center; }
+        .signature-title { margin-bottom: 48px; color: var(--text-secondary); font-weight: 500; }
+        .signature-name { font-weight: 700; color: var(--primary); display: block; margin-bottom: 6px; font-size: 15px; }
+        .signature-nip { color: var(--text-tertiary); font-size: 13px; }
 
         @media (min-width: 768px) {
-            body {
-                padding: 24px;
-            }
-
-            .header {
-                padding: 28px;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .header h2 {
-                font-size: 18px;
-                margin-bottom: 16px;
-            }
-
-            button {
-                width: 40px;
-                height: 40px;
-                font-size: 22px;
-            }
-
-            .info-section {
-                grid-template-columns: repeat(5, 1fr);
-                gap: 16px;
-                padding: 18px;
-                margin-top: 10px;
-            }
-
-            table {
-                font-size: 13px;
-                min-width: auto;
-            }
-
-            .footer-section {
-                flex-direction: row;
-                justify-content: space-between;
-                padding: 0 20px 24px;
-                font-size: 14px;
-            }
-
-            .signature-block {
-                min-width: 260px;
-            }
-        }
-
-        @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; border-radius: 0; max-width: 100%; width: 100%; }
-            .header { background: #165DFF !important; color: white !important; padding: 20px; }
-            .action-bar, .status-box { display: none !important; }
-            .info-section { border: none; background: white; }
-            th { background: #F7F8FA !important; color: #1D2129 !important; border: 1px solid #333 !important; }
-            td { border: 1px solid #333 !important; }
-            .input-tgl-header { border: none !important; font-weight: bold; }
-            .input-hadir { border: none !important; }
-            .col-persen { color: #165DFF !important; }
-            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { padding: 32px; }
+            .verifikasi-nrk { padding: 56px 40px; max-width: 400px; }
+            .info-section { grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 24px; }
+            .footer-section { flex-direction: row; justify-content: space-between; padding: 0 24px 32px; }
+            .table-container { max-height: calc(100vh - 280px); }
         }
     </style>
 </head>
 <body>
+    <div id="toast" class="toast error">
+        <span class="toast-icon">⚠️</span>
+        <span class="toast-text" id="toastText">NRK tidak ditemukan!</span>
+    </div>
+
     <div class="container">
         <div id="status" class="status-box"></div>
 
-        <div class="header">
-            <h1>SMP NEGERI 110 JAKARTA</h1>
-            <h2>DAFTAR HADIR PESERTA DIDIK</h2>
-            <div class="action-bar">
-                <button class="btn-primary" onclick="tambahTanggal()" title="Tambah Tanggal">➕</button>
-                <button class="btn-warning" onclick="kurangiTanggal()" title="Kurangi Tanggal">➖</button>
-                <button class="btn-secondary" onclick="window.print()" title="Cetak Dokumen">🖨️</button>
-                <button class="btn-success" onclick="simpanKeSheet()" title="Simpan Data">💾</button>
-                <button class="btn-dark" id="btnDarkMode" onclick="toggleDarkMode()" title="Ubah Tampilan">🔆</button>
+        <div id="halamanVerifikasi" class="verifikasi-nrk">
+            <h2>Verifikasi Akses</h2>
+            <div class="form-item">
+                <label>Masukkan NRK / NIP Anda</label>
+                <input type="text" id="inputNRK" placeholder="Contoh: 186043" autocomplete="off">
             </div>
+            <button class="btn-cek" onclick="cekNRK()">Masuk ke Absensi</button>
         </div>
 
-        <div class="content">
-            <div class="info-section">
-                <div class="form-item">
-                    <label>Mata Pelajaran</label>
-                    <select id="mapel">
-                        <option value="">-- Pilih Mata Pelajaran --</option>
-                        <option>Pendidikan Agama dan Budi Pekerti</option>
-                        <option>Pendidikan Pancasila</option>
-                        <option>Bahasa Indonesia</option>
-                        <option>Matematika</option>
-                        <option>Ilmu Pengetahuan Alam</option>
-                        <option>Ilmu Pengetahuan Sosial</option>
-                        <option>Bahasa Inggris</option>
-                        <option>Pendidikan Jasmani, Olahraga, dan Kesehatan</option>
-                        <option>Informatika</option>
-                        <option>Bimbingan Konseling</option>
-                    </select>
-                </div>
-                <div class="form-item">
-                    <label>Kelas</label>
-                    <select id="kelas">
-                        <option value="">-- Pilih Kelas --</option>
-                    </select>
-                </div>
-                <div class="form-item">
-                    <label>Periode Bulan</label>
-                    <select id="bulan">
-                        <option value="">-- Pilih Periode --</option>
-                        <option>Januari s.d Maret</option>
-                        <option>April s.d. Juni</option>
-                        <option>Juli s.d. Agustus</option>
-                        <option>September s.d. Desember</option>
-                    </select>
-                </div>
-                <div class="form-item">
-                    <label>Tahun Pelajaran</label>
-                    <input type="text" id="tapel" readonly>
-                </div>
-                <div class="form-item">
-                    <label>Semester</label>
-                    <!-- ✅ TIDAK BISA DIUBAH MANUAL -->
-                    <select id="semester" readonly>
-                        <option value="Ganjil">Ganjil</option>
-                        <option value="Genap">Genap</option>
-                    </select>
+        <div id="halamanUtama" style="display: none;">
+            <div class="header">
+                <h1>SMPN 110 JAKARTA</h1>
+                <h2>DAFTAR HADIR MURID</h2>
+                <div class="action-bar">
+                    <button class="btn-primary" onclick="tambahTanggal()" title="Tambah Tanggal">➕</button>
+                    <button class="btn-warning" onclick="kurangiTanggal()" title="Kurangi Tanggal">➖</button>
+                    <button class="btn-secondary" onclick="window.print()" title="Cetak">🖨️</button>
+                    <button class="btn-success" onclick="simpanKeSheet()" title="Simpan">💾</button>
+                    <button class="btn-dark" onclick="toggleDarkMode()" title="Tampilan">🔆</button>
                 </div>
             </div>
 
-            <div class="table-container">
-                <table id="tabelAbsensi">
-                    <thead>
-                        <tr>
-                            <th class="col-no">No</th>
-                            <th class="col-nis">NIS</th>
-                            <th class="col-nama">Nama Lengkap</th>
-                            <th class="col-lp">L/P</th>
-                            <th class="col-stat">Sakit</th>
-                            <th class="col-stat">Izin</th>
-                            <th class="col-stat">Alpa</th>
-                            <th class="col-jumlah">Hadir</th>
-                            <th class="col-persen">Persen</th>
-                        </tr>
-                    </thead>
-                    <tbody id="isiTabel">
-                        <tr>
-                            <td colspan="9" style="padding: 40px 10px; color: var(--text-tertiary);">Silakan pilih kelas untuk memuat data</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="footer-section">
-                <div class="signature-block">
-                    <div class="signature-title">Menyetujui,<br>Kepala Sekolah</div>
-                    <span class="signature-name">Iis Ratna Sariningrum, S.Pd., M.M.</span>
-                    <span class="signature-nip">NIP. 197010311994122001</span>
+            <div class="content">
+                <div class="info-section">
+                    <div class="form-item">
+                        <label>Mata Pelajaran</label>
+                        <input type="text" id="mapel" readonly>
+                    </div>
+                    <div class="form-item">
+                        <label>Nama Guru</label>
+                        <input type="text" id="namaGuru" readonly>
+                    </div>
+                    <div class="form-item">
+                        <label>Semester</label>
+                        <select id="semester" readonly>
+                            <option value="Ganjil">Ganjil</option>
+                            <option value="Genap">Genap</option>
+                        </select>
+                    </div>
+                    <div class="form-item">
+                        <label>Periode Bulan</label>
+                        <input type="text" id="bulan" readonly>
+                    </div>
+                    <div class="form-item">
+                        <label>Tahun Pelajaran</label>
+                        <input type="text" id="tapel" readonly>
+                    </div>
+                    <div class="form-item">
+                        <label>Kelas</label>
+                        <select id="kelas">
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="7A">7A</option>
+                            <option value="7B">7B</option>
+                            <option value="7C">7</option>
+                            <option value="7D">7D</option>
+                            <option value="7E">7E</option>
+                            <option value="7F">7F</option>
+                            <option value="8A">8A</option>
+                            <option value="8B">8B</option>
+                            <option value="8C">8C</option>
+                            <option value="8D">8D</option>
+                            <option value="8E">8E</option>
+                            <option value="8F">8F</option>
+                            <option value="9A">9A</option>
+                            <option value="9B">9B</option>
+                            <option value="9C">9C</option>
+                            <option value="9D">9D</option>
+                            <option value="9E">9E</option>
+                            <option value="9F">9F</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="signature-block">
-                    <div class="signature-title">Jakarta, <span id="tanggalTtd"></span><br>Guru Mata Pelajaran</div>
-                    <span class="signature-name">Endra Triyanto Hamdani, S.Kom</span>
-                    <span class="signature-nip">NIP. 197601042014121003</span>
+
+                <div class="table-container">
+                    <table id="tabelAbsensi">
+                        <thead>
+                            <tr>
+                                <th class="col-no">No</th>
+                                <th class="col-nis">NIS</th>
+                                <th class="col-nama">Nama Lengkap</th>
+                                <th class="col-lp">L/P</th>
+                                <th class="col-stat">Sakit</th>
+                                <th class="col-stat">Izin</th>
+                                <th class="col-stat">Alpa</th>
+                                <th class="col-jumlah">Hadir</th>
+                                <th class="col-persen">Persen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="isiTabel">
+                            <tr><td colspan="9" style="padding:48px 16px;color:var(--text-tertiary);">Silakan pilih kelas untuk memulai</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="footer-section">
+                    <div class="signature-block">
+                        <div class="signature-title">Menyetujui,<br>Kepala Sekolah</div>
+                        <span class="signature-name">Iis Ratna Sariningrum, S.Pd., M.M.</span>
+                        <span class="signature-nip">NIP. 197010311994122001</span>
+                    </div>
+                    <div class="signature-block">
+                        <div class="signature-title">Jakarta, <span id="tanggalTtd"></span><br>Guru Mata Pelajaran</div>
+                        <span class="signature-name" id="ttdNamaGuru"></span>
+                        <span class="signature-nip" id="ttdNipGuru"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -524,68 +450,100 @@
 
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyugPcgnCDzFhcUB5kW-3WZ-P27EN1Qdn0Lc_0K4G5M9EqPetCF_BtKDajYvff-8JiQsg/exec";
-        
-        let daftarSiswa = [];
-        let jumlahTanggal = 0;
-        let daftarTanggal = [];
+        let daftarSiswa = [], jumlahTanggal = 0, daftarTanggal = [], dataGuruSaatIni = null;
+
+        const daftarGuruAwal = {
+            "186043": { nama: "Endra Triyanto Hamdani, S.Kom", nip: "NIP. 197601042014121003", mapel: "Informatika" },
+            "186044": { nama: "Ahmad Fauzi, S.Pd.", nip: "NIP. 197503121998021004", mapel: "Pendidikan Agama" },
+            "197807222001012007": { nama: "Sri Wahyuni, S.Pd.", nip: "NIP. 197807222001012007", mapel: "Pendidikan Pancasila" },
+            "197905152002031005": { nama: "Budi Santoso, S.Si.", nip: "NIP. 197905152002031005", mapel: "Matematika" },
+            "198009032003042009": { nama: "Dewi Lestari, S.Si.", nip: "NIP. 198009032003042009", mapel: "IPA" }
+        };
+
+        function tampilkanNotifikasi(pesan, jenis = "error", durasi = 3500) {
+            const toast = document.getElementById("toast");
+            const toastText = document.getElementById("toastText");
+            toast.className = `toast ${jenis}`;
+            toastText.textContent = pesan;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), durasi);
+        }
+
+        async function cekNRK() {
+            const input = document.getElementById("inputNRK").value.trim();
+            if (!input) return tampilkanNotifikasi("Masukkan NRK terlebih dahulu!");
+
+            try {
+                const res = await fetch(`${GAS_URL}?action=AmbilDataGuru&nrk=${encodeURIComponent(input)}`);
+                const hasil = await res.json();
+
+                if (hasil.status === "ok" && hasil.dataGuru) {
+                    dataGuruSaatIni = hasil.dataGuru;
+                    tampilkanNotifikasi("Verifikasi berhasil!", "success");
+                    lanjutKeUtama();
+                    return;
+                }
+
+                if (!daftarGuruAwal[input]) return tampilkanNotifikasi("NRK tidak ditemukan!");
+                dataGuruSaatIni = daftarGuruAwal[input];
+
+                await fetch(GAS_URL, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: `action=SimpanDataGuru&nrk=${encodeURIComponent(input)}&nama=${encodeURIComponent(dataGuruSaatIni.nama)}&nip=${encodeURIComponent(dataGuruSaatIni.nip)}&mapel=${encodeURIComponent(dataGuruSaatIni.mapel)}`
+                });
+                tampilkanNotifikasi("Data tersimpan ke database!", "success");
+                lanjutKeUtama();
+
+            } catch {
+                if (daftarGuruAwal[input]) {
+                    dataGuruSaatIni = daftarGuruAwal[input];
+                    tampilkanNotifikasi("Mode luring aktif", "success");
+                    lanjutKeUtama();
+                } else {
+                    tampilkanNotifikasi("NRK tidak ditemukan & server tidak terhubung!");
+                }
+            }
+        }
+
+        function lanjutKeUtama() {
+            document.getElementById("halamanVerifikasi").style.display = "none";
+            document.getElementById("halamanUtama").style.display = "block";
+            document.getElementById("mapel").value = dataGuruSaatIni.mapel;
+            document.getElementById("namaGuru").value = dataGuruSaatIni.nama;
+            document.getElementById("ttdNamaGuru").textContent = dataGuruSaatIni.nama;
+            document.getElementById("ttdNipGuru").textContent = dataGuruSaatIni.nip;
+            setPeriodeBulanOtomatis();
+            setTahunPelajaranOtomatis();
+            setTanggalTtd();
+            document.querySelector(".header").style.display = "block";
+            document.querySelector(".action-bar").style.display = "flex";
+            document.querySelector(".content").style.display = "block";
+            document.querySelector(".footer-section").style.display = "flex";
+        }
+
+        function setPeriodeBulanOtomatis() {
+            const b = new Date().getMonth() + 1;
+            const p = b <=3 ? "Januari–Maret" : b <=6 ? "April–Juni" : b <=9 ? "Juli–September" : "Oktober–Desember";
+            document.getElementById("bulan").value = p;
+        }
 
         function setTahunPelajaranOtomatis() {
-            const sekarang = new Date();
-            const tahun = sekarang.getFullYear();
-            const bulan = sekarang.getMonth() + 1;
-            
-            // Atur Tahun Pelajaran
-            let tapel;
-            if (bulan >= 1 && bulan <= 6) {
-                tapel = `${tahun - 1} / ${tahun}`;
-            } else {
-                tapel = `${tahun} / ${tahun + 1}`;
-            }
-            document.getElementById("tapel").value = tapel;
-
-            // ✅ ATUR SEMESTER OTOMATIS & TIDAK BISA DIUBAH
-            const selectSemester = document.getElementById("semester");
-            if (bulan >= 7 && bulan <= 12) {
-                selectSemester.value = "Ganjil";
-            } else {
-                selectSemester.value = "Genap";
-            }
+            const t = new Date().getFullYear(), b = new Date().getMonth() + 1;
+            document.getElementById("tapel").value = b <=6 ? `${t-1}/${t}` : `${t}/${t+1}`;
+            document.getElementById("semester").value = b >=7 && b <=12 ? "Ganjil" : "Genap";
         }
-
-        // Blokir perubahan manual pada dropdown Semester
-        document.addEventListener("DOMContentLoaded", function() {
-            const selectSemester = document.getElementById("semester");
-            selectSemester.addEventListener("mousedown", function(e) {
-                e.preventDefault();
-                return false;
-            });
-            selectSemester.addEventListener("keydown", function(e) {
-                e.preventDefault();
-                return false;
-            });
-        });
 
         function toggleDarkMode() {
-            const body = document.body;
-            const btn = document.getElementById("btnDarkMode");
-            
-            body.classList.toggle("light-mode");
-
-            if (body.classList.contains("light-mode")) {
-                btn.innerHTML = "🌙";
-            } else {
-                btn.innerHTML = "🔆";
-            }
+            document.body.classList.toggle("light-mode");
         }
 
-        function formatTanggalLengkap(date) {
-            const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            return `${date.getDate()} ${namaBulan[date.getMonth()]} ${date.getFullYear()}`;
+        function formatTanggalLengkap(d) {
+            const nm = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+            return `${d.getDate()} ${nm[d.getMonth()]} ${d.getFullYear()}`;
         }
-
         function setTanggalTtd() {
-            const el = document.getElementById("tanggalTtd");
-            if (el) el.textContent = formatTanggalLengkap(new Date());
+            document.getElementById("tanggalTtd").textContent = formatTanggalLengkap(new Date());
         }
 
         function showStatus(msg, jenis) {
@@ -593,160 +551,116 @@
             el.className = `status-box ${jenis}`;
             el.textContent = msg;
             el.style.display = "block";
-            if (jenis !== 'loading') setTimeout(() => el.style.display = 'none', 4000);
+            if (jenis !== "loading") setTimeout(() => el.style.display = "none", 4000);
         }
 
         window.onload = async function() {
-            setTahunPelajaranOtomatis();
-            setTanggalTtd();
+            const selectKelas = document.getElementById("kelas");
             try {
                 const res = await fetch(`${GAS_URL}?action=AmbilDaftarKelas`);
                 const hasil = await res.json();
-                if (hasil.status === "ok") {
-                    const select = document.getElementById("kelas");
+                if (hasil.status === "ok" && hasil.daftarKelas) {
+                    selectKelas.innerHTML = `<option value="">-- Pilih Kelas --</option>`;
                     hasil.daftarKelas.forEach(k => {
                         const opt = document.createElement("option");
-                        opt.value = k;
-                        opt.textContent = k;
-                        select.appendChild(opt);
-                    });
-                    select.addEventListener("change", async () => {
-                        if (select.value) {
-                            await loadSiswaDariSheet();
-                            hitungKehadiran();
-                        } else {
-                            daftarSiswa = []; jumlahTanggal = 0; daftarTanggal = [];
-                            renderTabel();
-                        }
+                        opt.value = k; opt.textContent = k;
+                        selectKelas.appendChild(opt);
                     });
                 }
-            } catch (e) { showStatus("Gagal memuat daftar kelas: " + e.message, "error"); }
+            } catch {}
+            selectKelas.addEventListener("change", () => selectKelas.value && loadSiswaDariSheet());
         };
 
         async function loadSiswaDariSheet() {
             const kelas = document.getElementById("kelas").value;
-            showStatus(`Memuat data kelas ${kelas}...`, "loading");
+            showStatus(`Memuat ${kelas}...`, "loading");
             try {
-                const rSiswa = await fetch(`${GAS_URL}?action=AmbilSiswaKelas&kelasPilihan=${kelas}`);
-                const hSiswa = await rSiswa.json();
-                if (hSiswa.status !== "ok") throw hSiswa.pesan;
-
-                const rAbsen = await fetch(`${GAS_URL}?action=AmbilAbsensi&kelasPilihan=${kelas}`);
-                const hAbsen = await rAbsen.json();
-
-                daftarSiswa = hSiswa.daftarSiswa;
-                if (hAbsen.status === "ok") {
-                    daftarTanggal = hAbsen.daftarTanggal || [];
+                const rS = await fetch(`${GAS_URL}?action=AmbilSiswaKelas&kelasPilihan=${kelas}`);
+                const hS = await rS.json();
+                const rA = await fetch(`${GAS_URL}?action=AmbilAbsensi&kelasPilihan=${kelas}`);
+                const hA = await rA.json();
+                daftarSiswa = hS.daftarSiswa || [];
+                if (hA.status === "ok") {
+                    daftarTanggal = hA.daftarTanggal || [];
                     jumlahTanggal = daftarTanggal.length;
-                    daftarSiswa.forEach(s => {
-                        const lama = hAbsen.daftarSiswa?.find(x => x.noInduk === s.noInduk);
-                        s.hadir = lama?.hadir || Array(jumlahTanggal).fill("✓");
-                    });
-                    const mapelSelect = document.getElementById("mapel");
-                    const bulanSelect = document.getElementById("bulan");
-                    const tapelInput = document.getElementById("tapel");
-                    const semesterSelect = document.getElementById("semester");
-                    if (hAbsen.info?.mapel) mapelSelect.value = hAbsen.info.mapel;
-                    if (hAbsen.info?.bulan) bulanSelect.value = hAbsen.info.bulan;
-                    if (hAbsen.info?.tapel) tapelInput.value = hAbsen.info.tapel;
-                    // Jangan ubah semester saat memuat data lama, tetap pakai otomatis
+                    daftarSiswa.forEach(s => s.hadir = hA.daftarSiswa?.find(x => x.noInduk === s.noInduk)?.hadir || Array(jumlahTanggal).fill("✓"));
                 } else {
                     jumlahTanggal = 0; daftarTanggal = [];
                     daftarSiswa.forEach(s => s.hadir = []);
                 }
-                renderTabel();
-                hitungKehadiran();
-                showStatus(`Data kelas ${kelas} berhasil dimuat!`, "success");
-            } catch (e) { showStatus("Kesalahan: " + e, "error"); }
+                renderTabel(); hitungKehadiran();
+                showStatus(`Data ${kelas} dimuat!`, "success");
+            } catch {
+                showStatus("Gagal memuat, coba lagi nanti", "error");
+            }
         }
 
         async function simpanKeSheet() {
             const kelas = document.getElementById("kelas").value;
-            if (!kelas) return showStatus("Pilih kelas terlebih dahulu!", "error");
-            if (!confirm(`Simpan semua data absensi kelas ${kelas}?`)) return;
-            showStatus("Menyimpan data...", "loading");
+            if (!kelas) return showStatus("Pilih kelas dulu!", "error");
+            if (!confirm(`Simpan absensi ${kelas}?`)) return;
+            showStatus("Menyimpan...", "loading");
             try {
                 const data = {
+                    nrk: document.getElementById("inputNRK").value.trim(),
                     mapel: document.getElementById("mapel").value,
+                    namaGuru: document.getElementById("namaGuru").value,
+                    nipGuru: dataGuruSaatIni.nip,
                     kelasPilihan: kelas,
                     tapel: document.getElementById("tapel").value,
                     bulan: document.getElementById("bulan").value,
                     semester: document.getElementById("semester").value,
-                    daftarTanggal: daftarTanggal,
-                    daftarSiswa: daftarSiswa
+                    daftarTanggal, daftarSiswa
                 };
                 const res = await fetch(GAS_URL, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
                     body: `action=SimpanSemua&data=${encodeURIComponent(JSON.stringify(data))}`
                 });
                 const hasil = await res.json();
                 showStatus(hasil.pesan, hasil.status === "ok" ? "success" : "error");
-            } catch (e) { showStatus("Gagal menyimpan: " + e.message, "error"); }
+            } catch {
+                showStatus("Gagal simpan, coba lagi", "error");
+            }
         }
 
         function renderTabel() {
             const tbody = document.getElementById("isiTabel");
             const thead = document.querySelector("#tabelAbsensi thead tr");
             thead.querySelectorAll(".col-tgl").forEach(c => c.remove());
-            const posSisip = thead.querySelector("th:nth-child(5)");
-
-            for (let i = 0; i < jumlahTanggal; i++) {
-                const th = document.createElement("th");
-                th.className = "col-tgl";
-                const inp = document.createElement("input");
-                inp.type = "text";
-                inp.className = "input-tgl-header";
-                inp.value = daftarTanggal[i] || "";
-                inp.placeholder = "Tgl";
+            const pos = thead.querySelector("th:nth-child(5)");
+            for (let i=0; i<jumlahTanggal; i++) {
+                const th = document.createElement("th"); th.className = "col-tgl";
+                const inp = document.createElement("input"); inp.type = "text"; inp.className = "input-tgl-header"; inp.value = daftarTanggal[i];
                 inp.addEventListener("change", e => daftarTanggal[i] = e.target.value.trim());
-                th.appendChild(inp);
-                thead.insertBefore(th, posSisip);
+                th.appendChild(inp); thead.insertBefore(th, pos);
             }
-
             tbody.innerHTML = "";
-            if (daftarSiswa.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" style="padding: 40px 10px; color: var(--text-tertiary);">Silakan pilih kelas untuk memuat data</td></tr>`;
+            if (!daftarSiswa.length) {
+                tbody.innerHTML = `<tr><td colspan="9" style="padding:48px 16px;color:var(--text-tertiary);">Silakan pilih kelas atau tambah tanggal</td></tr>`;
                 return;
             }
-
-            daftarSiswa.forEach((siswa, idx) => {
+            daftarSiswa.forEach((s, idx) => {
                 const tr = document.createElement("tr");
-                let html = `
-                    <td>${idx + 1}</td>
-                    <td>${siswa.noInduk}</td>
-                    <td class="col-nama">${siswa.nama}</td>
-                    <td>${siswa.jk}</td>
-                `;
-                for (let t = 0; t < jumlahTanggal; t++) {
-                    html += `<td class="col-tgl"><input type="text" class="input-hadir" maxlength="1" value="${siswa.hadir?.[t] || "✓"}" onchange="ubahAbsen(${idx}, ${t}, this.value)"></td>`;
-                }
-                html += `
-                    <td id="s-${idx}">0</td>
-                    <td id="i-${idx}">0</td>
-                    <td id="a-${idx}">0</td>
-                    <td id="jml-${idx}">0</td>
-                    <td id="prsn-${idx}">0%</td>
-                `;
-                tr.innerHTML = html;
-                tbody.appendChild(tr);
+                let html = `<td>${idx+1}</td><td>${s.noInduk||"-"}</td><td class="col-nama">${s.nama||"-"}</td><td>${s.jk||"-"}</td>`;
+                for (let t=0; t<jumlahTanggal; t++) html += `<td class="col-tgl"><input type="text" class="input-hadir" maxlength="1" value="${s.hadir?.[t]||"✓"}" onchange="ubahAbsen(${idx},${t},this.value)"></td>`;
+                html += `<td id="s-${idx}">0</td><td id="i-${idx}">0</td><td id="a-${idx}">0</td><td id="jml-${idx}">0</td><td id="prsn-${idx}">0%</td>`;
+                tr.innerHTML = html; tbody.appendChild(tr);
             });
         }
 
         function tambahTanggal() {
-            if (daftarSiswa.length === 0) return showStatus("Muat data kelas dulu!", "error");
-            if (jumlahTanggal >= 24) return showStatus("Maksimal 24 kolom tanggal!", "error");
+            if (jumlahTanggal >= 24) return showStatus("Maksimal 24 kolom!", "error");
             jumlahTanggal++;
-            const tgl = new Date();
-            const fmt = `${String(tgl.getDate()).padStart(2,'0')}/${String(tgl.getMonth()+1).padStart(2,'0')}`;
+            const fmt = `${String(new Date().getDate()).padStart(2,"0")}/${String(new Date().getMonth()+1).padStart(2,"0")}`;
             daftarTanggal.push(fmt);
-            daftarSiswa.forEach(s => s.hadir ? s.hadir.push("✓") : s.hadir = ["✓"]);
+            daftarSiswa.forEach(s => s.hadir ? s.hadir.push("✓") : s.hadir = Array(jumlahTanggal).fill("✓"));
             renderTabel(); hitungKehadiran();
-            showStatus(`Tanggal ditambahkan: ${fmt}`, "success");
+            showStatus(`Ditambah: ${fmt}`, "success");
         }
 
         function kurangiTanggal() {
-            if (jumlahTanggal <= 0) return showStatus("Tidak ada tanggal untuk dihapus!", "error");
+            if (!jumlahTanggal) return showStatus("Belum ada tanggal!", "error");
             jumlahTanggal--; daftarTanggal.pop();
             daftarSiswa.forEach(s => s.hadir?.pop());
             renderTabel(); hitungKehadiran();
@@ -754,37 +668,26 @@
         }
 
         function ubahAbsen(idx, tgl, val) {
-            const v = val.trim().toUpperCase();
-            daftarSiswa[idx].hadir[tgl] = ["S","I","A"].includes(v) ? v : "✓";
+            daftarSiswa[idx].hadir[tgl] = ["S","I","A"].includes(val.trim().toUpperCase()) ? val.trim().toUpperCase() : "✓";
             hitungKehadiran();
         }
 
         function hitungKehadiran() {
-            if (daftarSiswa.length === 0) return;
             daftarSiswa.forEach((s, idx) => {
-                let sVal = 0, iVal = 0, aVal = 0, hVal = 0;
-                const totalHari = s.hadir?.length || 0;
-
-                (s.hadir || []).forEach(k => {
-                    if (k === "S") sVal++;
-                    else if (k === "I") iVal++;
-                    else if (k === "A") aVal++;
-                    else hVal++;
+                let S=0, I=0, A=0, H=0;
+                (s.hadir||[]).forEach(k => {
+                    if (k==="S") S++; else if (k==="I") I++; else if (k==="A") A++; else H++;
                 });
-
-                let persen = 0;
-                if (totalHari > 0) {
-                    persen = Math.round((hVal / totalHari) * 100);
-                    if (persen > 100) persen = 100;
-                }
-
-                document.getElementById(`s-${idx}`).textContent = sVal;
-                document.getElementById(`i-${idx}`).textContent = iVal;
-                document.getElementById(`a-${idx}`).textContent = aVal;
-                document.getElementById(`jml-${idx}`).textContent = hVal;
-                document.getElementById(`prsn-${idx}`).textContent = persen + "%";
+                const p = s.hadir?.length ? Math.round((H/s.hadir.length)*100) : 0;
+                document.getElementById(`s-${idx}`).textContent = S;
+                document.getElementById(`i-${idx}`).textContent = I;
+                document.getElementById(`a-${idx}`).textContent = A;
+                document.getElementById(`jml-${idx}`).textContent = H;
+                document.getElementById(`prsn-${idx}`).textContent = p + "%";
             });
         }
+
+        document.getElementById("inputNRK").addEventListener("keydown", e => e.key === "Enter" && cekNRK());
     </script>
 </body>
 </html>
