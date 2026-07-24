@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aplikasi Guru Wali</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,6 +21,15 @@
         select {
             color: #e2e8f0 !important;
             font-weight: 500 !important;
+        }
+        /* Perbaikan khusus layar kecil */
+        @media (max-width: 640px) {
+            h1 { font-size: 1.1rem !important; }
+            .tab-btn { font-size: 0.8rem !important; padding: 0.4rem 0.6rem !important; }
+            h2 { font-size: 1.1rem !important; }
+            input, select, textarea, button { font-size: 0.9rem !important; }
+            table { font-size: 0.75rem !important; }
+            th, td { padding: 0.4rem 0.3rem !important; }
         }
     </style>
     <script>
@@ -45,37 +54,37 @@
 <body class="bg-gray-50 text-dark dark:bg-darkBg dark:text-darkText min-h-screen transition-colors duration-300">
     <!-- Header -->
     <header class="bg-primary text-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl md:text-2xl font-bold"><i class="fas fa-user-graduate mr-2"></i>Jurnal Guru Wali</h1>
-            <div class="flex items-center gap-3">
+        <div class="container mx-auto px-3 py-3 flex justify-between items-center">
+            <h1 class="text-lg md:text-2xl font-bold"><i class="fas fa-user-graduate mr-2"></i>Jurnal Guru Wali</h1>
+            <div class="flex items-center gap-2">
                 <button id="toggle-dark" class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition">
                     <i class="fas fa-moon" id="icon-mode"></i>
                 </button>
-                <p class="text-sm hidden md:block">Permendikbudristek No.11 Tahun 2025</p>
+                <p class="text-xs hidden md:block">Permendikbudristek No.11 Tahun 2025</p>
             </div>
         </div>
     </header>
 
     <!-- Navigasi Tab -->
-    <div class="container mx-auto px-4 mt-4">
-        <div class="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2">
-            <button class="tab-btn active bg-primary text-white px-3 py-2 rounded-lg text-sm font-medium" data-tab="data-siswa">Data Siswa</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="monitoring">Monitoring</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="jurnal">Jurnal</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="observasi">Observasi</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="koordinasi">Koordinasi BK</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="presensi">Presensi</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="orangtua">Pertemuan Ortu</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="rtli">RTLI</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="komunikasi">Log Komunikasi</button>
-            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="laporan">Laporan</button>
+    <div class="container mx-auto px-3 mt-3">
+        <div class="flex flex-wrap gap-1.5 mb-3 overflow-x-auto pb-2">
+            <button class="tab-btn active bg-primary text-white px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="data-siswa">Data Siswa</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="monitoring">Monitoring</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="jurnal">Jurnal</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="observasi">Observasi</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="koordinasi">Koordinasi BK</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="presensi">Presensi</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="orangtua">Pertemuan Ortu</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="rtli">RTLI</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="komunikasi">Log Komunikasi</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-2.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="laporan">Laporan</button>
         </div>
 
         <!-- 1. DATA SISWA -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6" id="data-siswa">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-id-card mr-2"></i>Data Utama Siswa</h2>
-            <form id="form-data-siswa" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4" id="data-siswa">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-id-card mr-2"></i>Data Utama Siswa</h2>
+            <form id="form-data-siswa" class="mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 mb-3">
                     <input type="text" placeholder="Nama Lengkap" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
                     <input type="text" placeholder="NIS" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
                     <input type="text" placeholder="Kelas" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
@@ -86,7 +95,7 @@
                     <textarea placeholder="Latar Belakang Belajar" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                     <textarea placeholder="Kebutuhan Khusus / Pemetaan Karakter" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -106,10 +115,10 @@
         </div>
 
         <!-- 2. MONITORING INDIVIDU -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="monitoring">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-chart-line mr-2"></i>Buku Monitoring Individu</h2>
-            <form id="form-monitoring" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="monitoring">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-chart-line mr-2"></i>Buku Monitoring Individu</h2>
+            <form id="form-monitoring" class="mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 mb-3">
                     <select id="pilih-siswa-monitoring" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
                         <option value="">Pilih Siswa</option>
                     </select>
@@ -118,7 +127,7 @@
                     <textarea placeholder="Aspek Non-Akademik" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                     <textarea placeholder="Catatan Khusus" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border dark:border-gray-600">
@@ -139,18 +148,20 @@
         </div>
 
         <!-- 3. JURNAL MINGGUAN -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="jurnal">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-book mr-2"></i>Jurnal Mingguan Guru Wali</h2>
-            <form id="form-jurnal" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                    <input type="number" placeholder="Minggu Ke-" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                    <textarea placeholder="Kegiatan / Observasi" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Permasalahan Ditemukan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Tindak Lanjut" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Hasil Tindak Lanjut" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="jurnal">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-book mr-2"></i>Jurnal Mingguan Guru Wali</h2>
+            <form id="form-jurnal" class="mb-4">
+                <div class="grid grid-cols-1 gap-2.5 mb-3">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <input type="number" placeholder="Minggu Ke-" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    </div>
+                    <textarea placeholder="Kegiatan / Observasi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Permasalahan Ditemukan" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Tindak Lanjut" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Hasil Tindak Lanjut" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border dark:border-gray-600">
@@ -171,19 +182,21 @@
         </div>
 
         <!-- 4. OBSERVASI SISWA -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="observasi">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-eye mr-2"></i>Formulir Observasi Siswa</h2>
-            <form id="form-observasi" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                    <select id="pilih-siswa-observasi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                        <option value="">Pilih Siswa</option>
-                    </select>
-                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                    <textarea placeholder="Aspek yang Diamati" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Hasil Pengamatan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Kesimpulan & Saran" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="observasi">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-eye mr-2"></i>Formulir Observasi Siswa</h2>
+            <form id="form-observasi" class="mb-4">
+                <div class="grid grid-cols-1 gap-2.5 mb-3">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <select id="pilih-siswa-observasi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                            <option value="">Pilih Siswa</option>
+                        </select>
+                        <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    </div>
+                    <textarea placeholder="Aspek yang Diamati" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Hasil Pengamatan" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Kesimpulan & Saran" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border dark:border-gray-600">
@@ -204,19 +217,21 @@
         </div>
 
         <!-- 5. KOORDINASI BK -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="koordinasi">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-handshake mr-2"></i>Rekap Koordinasi Guru BK</h2>
-            <form id="form-bk" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                    <select id="pilih-siswa-bk" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                        <option value="">Pilih Siswa</option>
-                    </select>
-                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                    <textarea placeholder="Permasalahan Utama" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Tindakan BK" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Hasil Evaluasi" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="koordinasi">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-handshake mr-2"></i>Rekap Koordinasi Guru BK</h2>
+            <form id="form-bk" class="mb-4">
+                <div class="grid grid-cols-1 gap-2.5 mb-3">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <select id="pilih-siswa-bk" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                            <option value="">Pilih Siswa</option>
+                        </select>
+                        <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    </div>
+                    <textarea placeholder="Permasalahan Utama" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Tindakan BK" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Hasil Evaluasi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border dark:border-gray-600">
@@ -237,21 +252,21 @@
         </div>
 
         <!-- 6. PRESENSI & PRESTASI -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="presensi">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-list-check mr-2"></i>Presensi & Prestasi Siswa</h2>
-            <form id="form-presensi" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                    <select id="pilih-siswa-presensi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="presensi">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-list-check mr-2"></i>Presensi & Prestasi Siswa</h2>
+            <form id="form-presensi" class="mb-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-3">
+                    <select id="pilih-siswa-presensi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary md:col-span-3" required>
                         <option value="">Pilih Siswa</option>
                     </select>
-                    <input type="text" placeholder="Periode" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <input type="text" placeholder="Periode" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary md:col-span-2" required>
                     <input type="number" placeholder="Hadir" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
                     <input type="number" placeholder="Sakit" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
                     <input type="number" placeholder="Izin" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
                     <input type="number" placeholder="Alpa" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
                     <textarea placeholder="Prestasi Akademik & Non-Akademik" class="border dark:border-gray-600 p-2 rounded md:col-span-3 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border dark:border-gray-600">
@@ -270,16 +285,16 @@
         </div>
 
         <!-- 7. PERTEMUAN ORANG TUA -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="orangtua">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-users mr-2"></i>Notulen Pertemuan Orang Tua</h2>
-            <form id="form-orangtua" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="orangtua">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-users mr-2"></i>Notulen Pertemuan Orang Tua</h2>
+            <form id="form-orangtua" class="mb-4">
+                <div class="grid grid-cols-1 gap-2.5 mb-3">
                     <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
                     <input type="text" placeholder="Nama Orang Tua/Siswa" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                    <textarea placeholder="Agenda & Kesepakatan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Tindak Lanjut & Batas Waktu" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Agenda & Kesepakatan" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Tindak Lanjut & Batas Waktu" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border dark:border-gray-600">
@@ -298,20 +313,20 @@
         </div>
 
         <!-- 8. RTLI -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="rtli">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-bullseye mr-2"></i>Rencana Tindak Lanjut Individu (RTLI)</h2>
-            <form id="form-rtli" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="rtli">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-bullseye mr-2"></i>Rencana Tindak Lanjut Individu (RTLI)</h2>
+            <form id="form-rtli" class="mb-4">
+                <div class="grid grid-cols-1 gap-2.5 mb-3">
                     <select id="pilih-siswa-rtli" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
                         <option value="">Pilih Siswa</option>
                     </select>
                     <input type="text" placeholder="Waktu Pelaksanaan" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                    <textarea placeholder="Masalah Utama" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Target Perubahan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Bentuk Intervensi" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
-                    <textarea placeholder="Hasil Evaluasi" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Masalah Utama" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Target Perubahan" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Bentuk Intervensi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Hasil Evaluasi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border dark:border-gray-600">
@@ -331,21 +346,23 @@
         </div>
 
         <!-- 9. LOG KOMUNIKASI -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="komunikasi">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-comments mr-2"></i>Log Komunikasi Orang Tua</h2>
-            <form id="form-komunikasi" class="mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                    <select class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
-                        <option value="">Media Komunikasi</option>
-                        <option>WhatsApp</option><option>Telpon</option><option>Bertemu Langsung</option>
-                    </select>
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="komunikasi">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-comments mr-2"></i>Log Komunikasi Orang Tua</h2>
+            <form id="form-komunikasi" class="mb-4">
+                <div class="grid grid-cols-1 gap-2.5 mb-3">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <select class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                            <option value="">Media Komunikasi</option>
+                            <option>WhatsApp</option><option>Telpon</option><option>Bertemu Langsung</option>
+                        </select>
+                    </div>
                     <select id="pilih-siswa-komunikasi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
                         <option value="">Pilih Siswa</option>
                     </select>
-                    <textarea placeholder="Isi Pesan & Kesimpulan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Isi Pesan & Kesimpulan" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
                 </div>
-                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 w-full md:w-auto"><i class="fas fa-save mr-1"></i> Simpan</button>
             </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border dark:border-gray-600">
@@ -364,21 +381,21 @@
         </div>
 
         <!-- 10. LAPORAN -->
-        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="laporan">
-            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-file-pdf mr-2"></i>Laporan Perkembangan</h2>
-            <div class="flex gap-2 mb-4">
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-4 mb-4 hidden" id="laporan">
+            <h2 class="text-lg font-bold mb-3 text-primary"><i class="fas fa-file-pdf mr-2"></i>Laporan Perkembangan</h2>
+            <div class="flex flex-col sm:flex-row gap-2 mb-3">
                 <button onclick="window.print()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"><i class="fas fa-print mr-1"></i> Cetak Laporan</button>
                 <button onclick="eksporCSV()" class="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600"><i class="fas fa-file-excel mr-1"></i> Ekspor Excel</button>
             </div>
-            <div class="space-y-3 text-sm">
+            <div class="space-y-2 text-sm">
                 <p class="text-gray-600 dark:text-gray-400">Laporan disusun otomatis dari semua data yang sudah Anda masukkan.</p>
                 <p class="text-gray-600 dark:text-gray-400">Cukup pilih periode lalu cetak atau simpan sebagai file.</p>
             </div>
         </div>
     </div>
 
-    <footer class="bg-dark text-white text-center py-4 mt-8">
-        <p class="text-sm">Jurnal Pendampingan Guru Wali @ 2026</p>
+    <footer class="bg-dark text-white text-center py-3 mt-6">
+        <p class="text-xs">Jurnal Pendampingan Guru Wali @ 2026</p>
     </footer>
 
     <script>
