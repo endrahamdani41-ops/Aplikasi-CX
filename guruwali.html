@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Guru Wali</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Perbaikan tampilan pilihan nama siswa */
+        select option {
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            background-color: #1e293b !important;
+        }
+        select option:checked {
+            background-color: #165DFF !important;
+            color: white !important;
+        }
+        select {
+            color: #e2e8f0 !important;
+            font-weight: 500 !important;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CBCB',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        darkBg: '#0F172A',
+                        darkCard: '#1E293B',
+                        darkText: '#E2E8F0'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-dark dark:bg-darkBg dark:text-darkText min-h-screen transition-colors duration-300">
+    <!-- Header -->
+    <header class="bg-primary text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold"><i class="fas fa-user-graduate mr-2"></i>Jurnal Guru Wali</h1>
+            <div class="flex items-center gap-3">
+                <button id="toggle-dark" class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition">
+                    <i class="fas fa-moon" id="icon-mode"></i>
+                </button>
+                <p class="text-sm hidden md:block">Permendikbudristek No.11 Tahun 2025</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigasi Tab -->
+    <div class="container mx-auto px-4 mt-4">
+        <div class="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2">
+            <button class="tab-btn active bg-primary text-white px-3 py-2 rounded-lg text-sm font-medium" data-tab="data-siswa">Data Siswa</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="monitoring">Monitoring</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="jurnal">Jurnal</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="observasi">Observasi</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="koordinasi">Koordinasi BK</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="presensi">Presensi</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="orangtua">Pertemuan Ortu</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="rtli">RTLI</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="komunikasi">Log Komunikasi</button>
+            <button class="tab-btn bg-white dark:bg-darkCard shadow px-3 py-2 rounded-lg text-sm font-medium" data-tab="laporan">Laporan</button>
+        </div>
+
+        <!-- 1. DATA SISWA -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6" id="data-siswa">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-id-card mr-2"></i>Data Utama Siswa</h2>
+            <form id="form-data-siswa" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <input type="text" placeholder="Nama Lengkap" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <input type="text" placeholder="NIS" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <input type="text" placeholder="Kelas" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
+                    <input type="text" placeholder="Alamat Lengkap" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary">
+                    <input type="text" placeholder="Nama Orang Tua" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
+                    <input type="tel" placeholder="No HP Orang Tua" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
+                    <textarea placeholder="Latar Belakang Belajar" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Kebutuhan Khusus / Pemetaan Karakter" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 text-left">No</th>
+                            <th class="p-2 text-left">Nama</th>
+                            <th class="p-2 text-left">NIS</th>
+                            <th class="p-2 text-left">Kelas</th>
+                            <th class="p-2 text-left">Orang Tua</th>
+                            <th class="p-2 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-data-siswa"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 2. MONITORING INDIVIDU -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="monitoring">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-chart-line mr-2"></i>Buku Monitoring Individu</h2>
+            <form id="form-monitoring" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <select id="pilih-siswa-monitoring" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <option value="">Pilih Siswa</option>
+                    </select>
+                    <input type="text" placeholder="Periode (Bulan/Semester)" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <textarea placeholder="Aspek Akademik" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Aspek Non-Akademik" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Catatan Khusus" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 border dark:border-gray-600">No</th>
+                            <th class="p-2 border dark:border-gray-600">Nama</th>
+                            <th class="p-2 border dark:border-gray-600">Akademik</th>
+                            <th class="p-2 border dark:border-gray-600">Non-Akademik</th>
+                            <th class="p-2 border dark:border-gray-600">Catatan</th>
+                            <th class="p-2 border dark:border-gray-600">Periode</th>
+                            <th class="p-2 border dark:border-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-monitoring"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. JURNAL MINGGUAN -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="jurnal">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-book mr-2"></i>Jurnal Mingguan Guru Wali</h2>
+            <form id="form-jurnal" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <input type="number" placeholder="Minggu Ke-" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <textarea placeholder="Kegiatan / Observasi" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Permasalahan Ditemukan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Tindak Lanjut" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Hasil Tindak Lanjut" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 border dark:border-gray-600">Minggu</th>
+                            <th class="p-2 border dark:border-gray-600">Tanggal</th>
+                            <th class="p-2 border dark:border-gray-600">Kegiatan</th>
+                            <th class="p-2 border dark:border-gray-600">Masalah</th>
+                            <th class="p-2 border dark:border-gray-600">Tindak Lanjut</th>
+                            <th class="p-2 border dark:border-gray-600">Hasil</th>
+                            <th class="p-2 border dark:border-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-jurnal"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. OBSERVASI SISWA -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="observasi">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-eye mr-2"></i>Formulir Observasi Siswa</h2>
+            <form id="form-observasi" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <select id="pilih-siswa-observasi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <option value="">Pilih Siswa</option>
+                    </select>
+                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <textarea placeholder="Aspek yang Diamati" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Hasil Pengamatan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Kesimpulan & Saran" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 border dark:border-gray-600">No</th>
+                            <th class="p-2 border dark:border-gray-600">Nama</th>
+                            <th class="p-2 border dark:border-gray-600">Tanggal</th>
+                            <th class="p-2 border dark:border-gray-600">Aspek</th>
+                            <th class="p-2 border dark:border-gray-600">Hasil</th>
+                            <th class="p-2 border dark:border-gray-600">Kesimpulan</th>
+                            <th class="p-2 border dark:border-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-observasi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. KOORDINASI BK -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="koordinasi">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-handshake mr-2"></i>Rekap Koordinasi Guru BK</h2>
+            <form id="form-bk" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <select id="pilih-siswa-bk" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <option value="">Pilih Siswa</option>
+                    </select>
+                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <textarea placeholder="Permasalahan Utama" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Tindakan BK" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Hasil Evaluasi" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 border dark:border-gray-600">No</th>
+                            <th class="p-2 border dark:border-gray-600">Nama</th>
+                            <th class="p-2 border dark:border-gray-600">Tanggal</th>
+                            <th class="p-2 border dark:border-gray-600">Masalah</th>
+                            <th class="p-2 border dark:border-gray-600">Tindakan BK</th>
+                            <th class="p-2 border dark:border-gray-600">Hasil</th>
+                            <th class="p-2 border dark:border-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-bk"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 6. PRESENSI & PRESTASI -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="presensi">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-list-check mr-2"></i>Presensi & Prestasi Siswa</h2>
+            <form id="form-presensi" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                    <select id="pilih-siswa-presensi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <option value="">Pilih Siswa</option>
+                    </select>
+                    <input type="text" placeholder="Periode" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <input type="number" placeholder="Hadir" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
+                    <input type="number" placeholder="Sakit" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
+                    <input type="number" placeholder="Izin" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
+                    <input type="number" placeholder="Alpa" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary">
+                    <textarea placeholder="Prestasi Akademik & Non-Akademik" class="border dark:border-gray-600 p-2 rounded md:col-span-3 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 border dark:border-gray-600">Nama</th>
+                            <th class="p-2 border dark:border-gray-600">Periode</th>
+                            <th class="p-2 border dark:border-gray-600">H/S/I/A</th>
+                            <th class="p-2 border dark:border-gray-600">Prestasi</th>
+                            <th class="p-2 border dark:border-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-presensi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 7. PERTEMUAN ORANG TUA -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="orangtua">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-users mr-2"></i>Notulen Pertemuan Orang Tua</h2>
+            <form id="form-orangtua" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <input type="text" placeholder="Nama Orang Tua/Siswa" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <textarea placeholder="Agenda & Kesepakatan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Tindak Lanjut & Batas Waktu" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 border dark:border-gray-600">Tanggal</th>
+                            <th class="p-2 border dark:border-gray-600">Nama</th>
+                            <th class="p-2 border dark:border-gray-600">Kesepakatan</th>
+                            <th class="p-2 border dark:border-gray-600">Tindak Lanjut</th>
+                            <th class="p-2 border dark:border-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-orangtua"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 8. RTLI -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="rtli">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-bullseye mr-2"></i>Rencana Tindak Lanjut Individu (RTLI)</h2>
+            <form id="form-rtli" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <select id="pilih-siswa-rtli" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <option value="">Pilih Siswa</option>
+                    </select>
+                    <input type="text" placeholder="Waktu Pelaksanaan" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <textarea placeholder="Masalah Utama" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Target Perubahan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Bentuk Intervensi" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                    <textarea placeholder="Hasil Evaluasi" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 border dark:border-gray-600">Nama</th>
+                            <th class="p-2 border dark:border-gray-600">Masalah</th>
+                            <th class="p-2 border dark:border-gray-600">Target</th>
+                            <th class="p-2 border dark:border-gray-600">Intervensi</th>
+                            <th class="p-2 border dark:border-gray-600">Hasil</th>
+                            <th class="p-2 border dark:border-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-rtli"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 9. LOG KOMUNIKASI -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="komunikasi">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-comments mr-2"></i>Log Komunikasi Orang Tua</h2>
+            <form id="form-komunikasi" class="mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <input type="date" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                    <select class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <option value="">Media Komunikasi</option>
+                        <option>WhatsApp</option><option>Telpon</option><option>Bertemu Langsung</option>
+                    </select>
+                    <select id="pilih-siswa-komunikasi" class="border dark:border-gray-600 p-2 rounded bg-transparent focus:ring-1 focus:ring-primary" required>
+                        <option value="">Pilih Siswa</option>
+                    </select>
+                    <textarea placeholder="Isi Pesan & Kesimpulan" class="border dark:border-gray-600 p-2 rounded md:col-span-2 bg-transparent focus:ring-1 focus:ring-primary" rows="2"></textarea>
+                </div>
+                <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"><i class="fas fa-save mr-1"></i> Simpan</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-slate-700">
+                        <tr>
+                            <th class="p-2 border dark:border-gray-600">Tanggal</th>
+                            <th class="p-2 border dark:border-gray-600">Siswa</th>
+                            <th class="p-2 border dark:border-gray-600">Media</th>
+                            <th class="p-2 border dark:border-gray-600">Isi & Kesimpulan</th>
+                            <th class="p-2 border dark:border-gray-600">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-komunikasi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 10. LAPORAN -->
+        <div class="tab-content bg-white dark:bg-darkCard rounded-xl shadow p-5 mb-6 hidden" id="laporan">
+            <h2 class="text-xl font-bold mb-4 text-primary"><i class="fas fa-file-pdf mr-2"></i>Laporan Perkembangan</h2>
+            <div class="flex gap-2 mb-4">
+                <button onclick="window.print()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"><i class="fas fa-print mr-1"></i> Cetak Laporan</button>
+                <button onclick="eksporCSV()" class="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600"><i class="fas fa-file-excel mr-1"></i> Ekspor Excel</button>
+            </div>
+            <div class="space-y-3 text-sm">
+                <p class="text-gray-600 dark:text-gray-400">Laporan disusun otomatis dari semua data yang sudah Anda masukkan.</p>
+                <p class="text-gray-600 dark:text-gray-400">Cukup pilih periode lalu cetak atau simpan sebagai file.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-4 mt-8">
+        <p class="text-sm">Jurnal Pendampingan Guru Wali @ 2026</p>
+    </footer>
+
+    <script>
+        // === FUNGSI UMUM ===
+        const toggleBtn = document.getElementById('toggle-dark');
+        const iconMode = document.getElementById('icon-mode');
+        const isDark = localStorage.getItem('darkMode') === 'true' || (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if(isDark){ document.documentElement.classList.add('dark'); iconMode.className='fas fa-sun'; }
+        toggleBtn.addEventListener('click',()=>{
+            document.documentElement.classList.toggle('dark');
+            const s=document.documentElement.classList.contains('dark');
+            localStorage.setItem('darkMode',s); iconMode.className=s?'fas fa-sun':'fas fa-moon';
+        });
+
+        // Pengalihan Tab
+        document.querySelectorAll('.tab-btn').forEach(btn=>{
+            btn.addEventListener('click',()=>{
+                document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.remove('active','bg-primary','text-white');b.classList.add('bg-white','dark:bg-darkCard');});
+                document.querySelectorAll('.tab-content').forEach(c=>c.classList.add('hidden'));
+                btn.classList.add('active','bg-primary','text-white'); btn.classList.remove('bg-white','dark:bg-darkCard');
+                document.getElementById(btn.dataset.tab).classList.remove('hidden');
+                isiPilihanSiswa();
+            });
+        });
+
+        // === FUNGSI PENGISIAN PILIHAN SISWA OTOMATIS ===
+        function isiPilihanSiswa(){
+            const daftarSiswa = db.siswa.map(s => `<option value="${s.nama}">${s.nama}</option>`).join('');
+            document.getElementById('pilih-siswa-monitoring').innerHTML = `<option value="">Pilih Siswa</option>${daftarSiswa}`;
+            document.getElementById('pilih-siswa-observasi').innerHTML = `<option value="">Pilih Siswa</option>${daftarSiswa}`;
+            document.getElementById('pilih-siswa-bk').innerHTML = `<option value="">Pilih Siswa</option>${daftarSiswa}`;
+            document.getElementById('pilih-siswa-presensi').innerHTML = `<option value="">Pilih Siswa</option>${daftarSiswa}`;
+            document.getElementById('pilih-siswa-rtli').innerHTML = `<option value="">Pilih Siswa</option>${daftarSiswa}`;
+            document.getElementById('pilih-siswa-komunikasi').innerHTML = `<option value="">Pilih Siswa</option>${daftarSiswa}`;
+        }
+
+        // === PENYIMPANAN DATA ===
+        let db = {
+            siswa: JSON.parse(localStorage.getItem('db_siswa'))||[],
+            monitoring: JSON.parse(localStorage.getItem('db_monitoring'))||[],
+            jurnal: JSON.parse(localStorage.getItem('db_jurnal'))||[],
+            observasi: JSON.parse(localStorage.getItem('db_observasi'))||[],
+            bk: JSON.parse(localStorage.getItem('db_bk'))||[],
+            presensi: JSON.parse(localStorage.getItem('db_presensi'))||[],
+            orangtua: JSON.parse(localStorage.getItem('db_orangtua'))||[],
+            rtli: JSON.parse(localStorage.getItem('db_rtli'))||[],
+            komunikasi: JSON.parse(localStorage.getItem('db_komunikasi'))||[]
+        };
+        function simpanDb(){
+            localStorage.setItem('db_siswa',JSON.stringify(db.siswa));
+            localStorage.setItem('db_monitoring',JSON.stringify(db.monitoring));
+            localStorage.setItem('db_jurnal',JSON.stringify(db.jurnal));
+            localStorage.setItem('db_observasi',JSON.stringify(db.observasi));
+            localStorage.setItem('db_bk',JSON.stringify(db.bk));
+            localStorage.setItem('db_presensi',JSON.stringify(db.presensi));
+            localStorage.setItem('db_orangtua',JSON.stringify(db.orangtua));
+            localStorage.setItem('db_rtli',JSON.stringify(db.rtli));
+            localStorage.setItem('db_komunikasi',JSON.stringify(db.komunikasi));
+            tampilSemua();
+            isiPilihanSiswa();
+        }
+        function hapus(arr,i){if(confirm('Yakin hapus?')){arr.splice(i,1);simpanDb();}}
+        function tampilSemua(){
+            document.getElementById('tabel-data-siswa').innerHTML=db.siswa.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${i+1}</td><td class="p-2">${d.nama}</td><td class="p-2">${d.nis}</td><td class="p-2">${d.kelas}</td><td class="p-2">${d.ortu}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.siswa,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('tabel-monitoring').innerHTML=db.monitoring.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${i+1}</td><td class="p-2">${d.nama}</td><td class="p-2">${d.akad}</td><td class="p-2">${d.nonakad}</td><td class="p-2">${d.catatan}</td><td class="p-2">${d.periode}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.monitoring,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('tabel-jurnal').innerHTML=db.jurnal.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${d.minggu}</td><td class="p-2">${d.tgl}</td><td class="p-2">${d.kegiatan}</td><td class="p-2">${d.masalah}</td><td class="p-2">${d.tindak}</td><td class="p-2">${d.hasil}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.jurnal,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('tabel-observasi').innerHTML=db.observasi.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${i+1}</td><td class="p-2">${d.nama}</td><td class="p-2">${d.tgl}</td><td class="p-2">${d.aspek}</td><td class="p-2">${d.hasil}</td><td class="p-2">${d.saran}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.observasi,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('tabel-bk').innerHTML=db.bk.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${i+1}</td><td class="p-2">${d.nama}</td><td class="p-2">${d.tgl}</td><td class="p-2">${d.masalah}</td><td class="p-2">${d.tindak}</td><td class="p-2">${d.hasil}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.bk,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('tabel-presensi').innerHTML=db.presensi.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${d.nama}</td><td class="p-2">${d.periode}</td><td class="p-2">${d.h}/${d.s}/${d.i}/${d.a}</td><td class="p-2">${d.prestasi}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.presensi,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('tabel-orangtua').innerHTML=db.orangtua.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${d.tgl}</td><td class="p-2">${d.nama}</td><td class="p-2">${d.kesepakatan}</td><td class="p-2">${d.tindak}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.orangtua,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('tabel-rtli').innerHTML=db.rtli.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${d.nama}</td><td class="p-2">${d.masalah}</td><td class="p-2">${d.target}</td><td class="p-2">${d.cara}</td><td class="p-2">${d.hasil}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.rtli,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+            document.getElementById('tabel-komunikasi').innerHTML=db.komunikasi.map((d,i)=>`<tr class="border-b dark:border-gray-700"><td class="p-2">${d.tgl}</td><td class="p-2">${d.nama}</td><td class="p-2">${d.media}</td><td class="p-2">${d.isi}</td><td class="p-2 text-center"><button class="text-red-500" onclick="hapus(db.komunikasi,${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+        }
+
+        document.getElementById('form-data-siswa').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.siswa.push({nama:f[0].value,nis:f[1].value,kelas:f[2].value,tgl:f[3].value,alamat:f[4].value,ortu:f[5].value,hp:f[6].value,latar:f[7].value,karakter:f[8].value});
+            f.reset(); simpanDb();
+            alert('Data siswa berhasil disimpan! Nama sudah muncul di daftar pilihan.');
+        });
+        document.getElementById('form-monitoring').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.monitoring.push({nama:f[0].value,periode:f[1].value,akad:f[2].value,nonakad:f[3].value,catatan:f[4].value});
+            f.reset(); simpanDb();
+        });
+        document.getElementById('form-jurnal').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.jurnal.push({minggu:f[0].value,tgl:f[1].value,kegiatan:f[2].value,masalah:f[3].value,tindak:f[4].value,hasil:f[5].value});
+            f.reset(); simpanDb();
+        });
+        document.getElementById('form-observasi').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.observasi.push({nama:f[0].value,tgl:f[1].value,aspek:f[2].value,hasil:f[3].value,saran:f[4].value});
+            f.reset(); simpanDb();
+        });
+        document.getElementById('form-bk').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.bk.push({nama:f[0].value,tgl:f[1].value,masalah:f[2].value,tindak:f[3].value,hasil:f[4].value});
+            f.reset(); simpanDb();
+        });
+        document.getElementById('form-presensi').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.presensi.push({nama:f[0].value,periode:f[1].value,h:f[2].value,s:f[3].value,i:f[4].value,a:f[5].value,prestasi:f[6].value});
+            f.reset(); simpanDb();
+        });
+        document.getElementById('form-orangtua').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.orangtua.push({tgl:f[0].value,nama:f[1].value,kesepakatan:f[2].value,tindak:f[3].value});
+            f.reset(); simpanDb();
+        });
+        document.getElementById('form-rtli').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.rtli.push({nama:f[0].value,waktu:f[1].value,masalah:f[2].value,target:f[3].value,cara:f[4].value,hasil:f[5].value});
+            f.reset(); simpanDb();
+        });
+        document.getElementById('form-komunikasi').addEventListener('submit',e=>{
+            e.preventDefault(); const f=e.target;
+            db.komunikasi.push({tgl:f[0].value,media:f[1].value,nama:f[2].value,isi:f[3].value});
+            f.reset(); simpanDb();
+        });
+
+        function eksporCSV(){
+            let csv='Data Siswa,NIS,Kelas,Nama Orang Tua,No HP\n';
+            db.siswa.forEach(d=>csv+=`${d.nama},${d.nis},${d.kelas},${d.ortu},${d.hp}\n`);
+            const blob=new Blob([csv],{type:'text/csv'});
+            const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='DataWaliKelas.csv'; a.click();
+        }
+
+        tampilSemua();
+        isiPilihanSiswa();
+    </script>
+</body>
+</html>
