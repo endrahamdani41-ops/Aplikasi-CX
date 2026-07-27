@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir</title>
+    <style>
+        /* Gaya agar tampilan lebih rapi */
+        .form-container {
+            width: 500px;
+            margin: 30px auto;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Wadah untuk menyusun Kelas dan Tanggal Lahir berdampingan */
+        .baris-sejajar {
+            display: flex;
+            gap: 40px; /* Jarak antara Kelas dan Tanggal Lahir */
+            align-items: center; /* Agar label dan kotak isian sejajar tengah */
+            margin-bottom: 15px;
+        }
+
+        .grup-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .grup-input input {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h3>Formulir Data</h3>
+
+    <!-- Bagian yang sudah diatur posisinya -->
+    <div class="baris-sejajar">
+        <!-- Bagian Kelas (Kiri) -->
+        <div class="grup-input">
+            <label>Kelas</label>
+            <input type="text" name="kelas">
+        </div>
+
+        <!-- Bagian Pilih Tanggal Lahir (Kanan Kelas) -->
+        <div class="grup-input">
+            <label>Pilih Tanggal Lahir</label>
+            <input type="date" name="tanggal_lahir">
+        </div>
+    </div>
+
+    <!-- Bisa ditambahkan input lain di bawahnya -->
+    <div class="grup-input">
+        <label>Nama Lengkap</label>
+        <input type="text" name="nama" style="width: 100%;">
+    </div>
+</div>
+
+</body>
+</html>
