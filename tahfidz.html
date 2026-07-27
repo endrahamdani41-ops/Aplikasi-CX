@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Progres Hafalan Juz Amma - Guru SMP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] dark:bg-slate-950 text-slate-700 dark:text-slate-200 min-h-screen transition-colors duration-200">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 sticky top-0 z-30 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-100 dark:bg-emerald-900/40 p-2.5 rounded-xl text-emerald-600 dark:text-emerald-400">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800 dark:text-white">Tahfidz Monitor</h1>
+                    <p class="text-xs text-slate-400 dark:text-slate-500">Progres Hafalan Juz Amma Siswa</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <!-- Tombol Toggle Dark Mode -->
+                <button onclick="toggleDarkMode()" class="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition" title="Ganti Tema">
+                    <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+                </button>
+                
+                <button onclick="bukaModalSiswa()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center space-x-2 transition shadow-sm shadow-emerald-100 dark:shadow-none">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- Search & Stats Bar -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center space-x-4 transition-colors duration-200">
+                <div class="bg-indigo-50 dark:bg-indigo-950/50 p-3 rounded-xl text-indigo-500 dark:text-indigo-400">
+                    <i data-lucide="users" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Total Siswa</p>
+                    <h3 id="statTotalSiswa" class="text-xl font-bold text-slate-800 dark:text-white">0</h3>
+                </div>
+            </div>
+            
+            <div class="md:col-span-2 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center transition-colors duration-200">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </span>
+                    <input type="text" id="inputCari" oninput="cariSiswa()" placeholder="Cari nama siswa atau kelas..." class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabel Siswa -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors duration-200">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 dark:text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                            <th class="py-3 px-4 font-semibold">Nama Siswa</th>
+                            <th class="py-3 px-4 font-semibold">Kelas</th>
+                            <th class="py-3 px-4 font-semibold">Progres Surat</th>
+                            <th class="py-3 px-4 font-semibold text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelSiswaBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+                        <!-- Data akan dimasukkan oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="emptyState" class="hidden text-center py-12">
+                <div class="bg-slate-50 dark:bg-slate-800 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-slate-400 mb-3">
+                    <i data-lucide="folder-open" class="w-6 h-6"></i>
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Belum ada data siswa. Silakan tambahkan terlebih dahulu.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Tambah/Edit Siswa -->
+    <div id="modalSiswa" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-800 animate-in fade-in zoom-in duration-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-800 dark:text-white">Tambah Data Siswa</h3>
+                <button onclick="tutupModalSiswa()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="formSiswa" onsubmit="simpanSiswa(event)">
+                <input type="hidden" id="editIndex">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Nama Lengkap Siswa</label>
+                        <input type="text" id="namaSiswa" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500" placeholder="Contoh: Ahmad Fauzan">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Kelas</label>
+                        <input type="text" id="kelasSiswa" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500" placeholder="Contoh: 7A">
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="tutupModalSiswa()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition shadow-sm shadow-emerald-100 dark:shadow-none">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Detail & Input Hafalan -->
+    <div id="modalHafalan" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-100 dark:border-slate-800 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div>
+                    <h3 id="detailNamaSiswa" class="text-lg font-bold text-slate-800 dark:text-white">Nama Siswa</h3>
+                    <p id="detailKelasSiswa" class="text-xs text-slate-400 dark:text-slate-500">Kelas</p>
+                </div>
+                <button onclick="tutupModalHafalan()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="overflow-y-auto flex-1 pr-1 space-y-3" id="listSuratContainer">
+                <!-- Daftar Surat Juz Amma dimasukkan via JS -->
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <button onclick="tutupModalHafalan()" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const daftarSurat = [
+            "An-Naba'", "An-Nazi'at", "'Abasa", "At-Takwir", "Al-Infitar", 
+            "Al-Muthaffifin", "Al-Insyiqaq", "Al-Buruj", "At-Tariq", "Al-A'la", 
+            "Al-Ghasyiyah", "Al-Fajr", "Al-Balad", "Asy-Syams", "Al-Lail", 
+            "Ad-Duha", "Asy-Syarh", "At-Tin", "Al-'Alaq", "Al-Qadr", 
+            "Al-Bayyinah", "Al-Zalzalah", "Al-'Adiyat", "Al-Qari'ah", "At-Takasur", 
+            "Al-'Asr", "Al-Humazah", "Al-Fil", "Quraisy", "Al-Ma'un", 
+            "Al-Kautsar", "Al-Kafirun", "An-Nasr", "Al-Lahab", "Al-Ikhlas", 
+            "Al-Falaq", "An-Nas"
+        ];
+
+        let dataSiswa = JSON.parse(localStorage.getItem('data_hafalan_siswa')) || [];
+        let currentSiswaIndex = null;
+
+        // Inisialisasi Tema & Icons
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            updateThemeIcon();
+            lucide.createIcons();
+            renderTabel();
+        });
+
+        function toggleDarkMode() {
+            const htmlEl = document.documentElement;
+            if (htmlEl.classList.contains('dark')) {
+                htmlEl.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlEl.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const iconEl = document.getElementById('themeIcon');
+            if (iconEl) {
+                iconEl.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+                lucide.createIcons();
+            }
+        }
+
+        function simpanKeLocalStorage() {
+            localStorage.setItem('data_hafalan_siswa', JSON.stringify(dataSiswa));
+        }
+
+        function renderTabel(filter = "") {
+            const tbody = document.getElementById("tabelSiswaBody");
+            const emptyState = document.getElementById("emptyState");
+            tbody.innerHTML = "";
+
+            const filteredData = dataSiswa.filter(s => 
+                s.nama.toLowerCase().includes(filter.toLowerCase()) || 
+                s.kelas.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            document.getElementById("statTotalSiswa").innerText = dataSiswa.length;
+
+            if (filteredData.length === 0) {
+                emptyState.classList.remove("hidden");
+                return;
+            } else {
+                emptyState.classList.add("hidden");
+            }
+
+            filteredData.forEach((siswa, index) => {
+                const totalLancar = Object.values(siswa.hafalan || {}).filter(status => status === 'Lancar').length;
+                const persentase = Math.round((totalLancar / daftarSurat.length) * 100);
+
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition border-b border-slate-50 dark:border-slate-800/60";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-slate-800 dark:text-slate-200">${siswa.nama}</td>
+                    <td class="py-3 px-4 text-slate-500 dark:text-slate-400">${siswa.kelas}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden w-32">
+                                <div class="bg-emerald-500 h-full rounded-full" style="width: ${persentase}%"></div>
+                            </div>
+                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">${totalLancar}/${daftarSurat.length} (${persentase}%)</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="flex items-center justify-center space-x-2">
+                            <button onclick="bukaModalHafalan(${index})" class="p-1.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded-lg transition" title="Kelola Hafalan">
+                                <i data-lucide="award" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="editSiswa(${index})" class="p-1.5 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/50 rounded-lg transition" title="Edit Siswa">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="hapusSiswa(${index})" class="p-1.5 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-lg transition" title="Hapus">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        function cariSiswa() {
+            const query = document.getElementById("inputCari").value;
+            renderTabel(query);
+        }
+
+        function bukaModalSiswa() {
+            document.getElementById("modalTitle").innerText = "Tambah Data Siswa";
+            document.getElementById("formSiswa").reset();
+            document.getElementById("editIndex").value = "";
+            document.getElementById("modalSiswa").classList.remove("hidden");
+        }
+
+        function tutupModalSiswa() {
+            document.getElementById("modalSiswa").classList.add("hidden");
+        }
+
+        function simpanSiswa(event) {
+            event.preventDefault();
+            const nama = document.getElementById("namaSiswa").value;
+            const kelas = document.getElementById("kelasSiswa").value;
+            const editIndex = document.getElementById("editIndex").value;
+
+            if (editIndex === "") {
+                dataSiswa.push({ nama, kelas, hafalan: {} });
+            } else {
+                dataSiswa[editIndex].nama = nama;
+                dataSiswa[editIndex].kelas = kelas;
+            }
+
+            simpanKeLocalStorage();
+            tutupModalSiswa();
+            renderTabel();
+        }
+
+        function editSiswa(index) {
+            document.getElementById("modalTitle").innerText = "Edit Data Siswa";
+            document.getElementById("namaSiswa").value = dataSiswa[index].nama;
+            document.getElementById("kelasSiswa").value = dataSiswa[index].kelas;
+            document.getElementById("editIndex").value = index;
+            document.getElementById("modalSiswa").classList.remove("hidden");
+        }
+
+        function hapusSiswa(index) {
+            if (confirm(`Yakin ingin menghapus data ${dataSiswa[index].nama}?`)) {
+                dataSiswa.splice(index, 1);
+                simpanKeLocalStorage();
+                renderTabel();
+            }
+        }
+
+        function bukaModalHafalan(index) {
+            currentSiswaIndex = index;
+            const siswa = dataSiswa[index];
+            document.getElementById("detailNamaSiswa").innerText = siswa.nama;
+            document.getElementById("detailKelasSiswa").innerText = `Kelas: ${siswa.kelas}`;
+
+            const container = document.getElementById("listSuratContainer");
+            container.innerHTML = "";
+
+            daftarSurat.forEach((surat) => {
+                const status = siswa.hafalan[surat] || "Belum";
+                
+                let badgeColor = "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700";
+                if (status === "Proses") badgeColor = "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800";
+                if (status === "Lancar") badgeColor = "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800";
+
+                const div = document.createElement("div");
+                div.className = "flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800";
+                div.innerHTML = `
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">${surat}</span>
+                    <select onchange="updateHafalan('${surat}', this.value)" class="text-xs px-3 py-1.5 rounded-lg border font-medium transition focus:outline-none ${badgeColor}">
+                        <option value="Belum" ${status === 'Belum' ? 'selected' : ''}>Belum</option>
+                        <option value="Proses" ${status === 'Proses' ? 'selected' : ''}>Proses</option>
+                        <option value="Lancar" ${status === 'Lancar' ? 'selected' : ''}>Lancar</option>
+                    </select>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById("modalHafalan").classList.remove("hidden");
+        }
+
+        function tutupModalHafalan() {
+            document.getElementById("modalHafalan").classList.add("hidden");
+            renderTabel();
+        }
+
+        function updateHafalan(surat, status) {
+            if (currentSiswaIndex !== null) {
+                if (!dataSiswa[currentSiswaIndex].hafalan) {
+                    dataSiswa[currentSiswaIndex].hafalan = {};
+                }
+                dataSiswa[currentSiswaIndex].hafalan[surat] = status;
+                simpanKeLocalStorage();
+                bukaModalHafalan(currentSiswaIndex);
+            }
+        }
+    </script>
+</body>
+</html>
