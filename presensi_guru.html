@@ -29,28 +29,31 @@
         }
         input, select, textarea { font-size: 16px !important; }
 
-        /* Gaya Tabel dengan Garis Rapi */
+        /* === Gaya Tabel dengan Garis SANGAT JELAS & TEGAS === */
         .tabel-garis {
             border-collapse: collapse;
             width: 100%;
+            margin: 0;
         }
         .tabel-garis th,
         .tabel-garis td {
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            padding: 8px 6px;
+            border: 1px solid rgba(148, 163, 184, 0.55); /* Garis lebih tegas/terlihat */
+            padding: 10px 8px;
+            vertical-align: middle;
         }
         .tabel-garis th {
-            background-color: rgba(15, 23, 42, 0.6);
+            background-color: rgba(15, 23, 42, 0.85);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 10px;
+            font-size: 11px;
             letter-spacing: 0.3px;
+            color: #cbd5f8;
         }
         .tabel-garis tr:nth-child(even) {
-            background-color: rgba(30, 41, 59, 0.2);
+            background-color: rgba(30, 41, 59, 0.35);
         }
         .tabel-garis tr:hover {
-            background-color: rgba(99, 102, 241, 0.08);
+            background-color: rgba(99, 102, 241, 0.12);
         }
 
         /* Bungkus tabel agar bisa digeser di HP */
@@ -116,11 +119,10 @@
         <!-- Logo Sekolah di Tengah -->
         <div id="logoUtama" class="logo-tengah">
             <img src="https://i.ibb.co.com/3YLC4rL4/erasebg-transformed.png" alt="Logo SMPN 110 Jakarta" class="w-40 h-40 md:w-52 md:h-52 object-contain drop-shadow-lg">
-
         </div>
 
         <div class="mt-6">
-            <!-- Bagian Input Presensi (Awalnya Kosong/Tersembunyi) -->
+            <!-- Bagian Input Presensi -->
             <div id="bagianInput" class="konten-tersembunyi max-w-xl mx-auto">
                 <div class="glass p-4 rounded-2xl">
                     <h3 class="text-white font-semibold mb-5 text-sm uppercase tracking-widest flex items-center gap-2">
@@ -237,7 +239,7 @@
                 </div>
             </div>
 
-            <!-- Bagian Rekapitulasi (Awalnya Kosong/Tersembunyi) -->
+            <!-- Bagian Rekapitulasi -->
             <div id="bagianRekap" class="konten-tersembunyi">
                 <div class="glass rounded-2xl overflow-hidden shadow-2xl">
                     <h4 class="px-5 pt-4 pb-3 text-sm font-semibold text-slate-300 uppercase tracking-wider text-center">Rekapitulasi</h4>
@@ -256,7 +258,7 @@
                 </div>
             </div>
 
-            <!-- Bagian Histori (Awalnya Kosong/Tersembunyi) -->
+            <!-- Bagian Histori -->
             <div id="bagianHistori" class="konten-tersembunyi">
                 <div class="relative mb-5">
                     <input type="text" id="search" placeholder="Cari histori lengkap..." class="w-full p-3.5 pl-12 rounded-2xl glass outline-none text-sm border-none shadow-xl transition-all">
@@ -294,12 +296,8 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm_NnsANbjQtY53AMv4DIsnp7kve27BkB-DKrIFk4vupx26Vnf_nMYGeXMBck5qN_CsA/exec";
 
-        // Fungsi Menampilkan Hanya Satu Bagian & Sembunyikan Logo
         function tampilkanBagian(pilihan) {
-            // Sembunyikan Logo
             document.getElementById('logoUtama').classList.add('logo-sembunyi');
-
-            // Sembunyikan Semua Bagian & Hapus Tanda Aktif
             document.getElementById('bagianInput').classList.remove('konten-terbuka');
             document.getElementById('bagianRekap').classList.remove('konten-terbuka');
             document.getElementById('bagianHistori').classList.remove('konten-terbuka');
@@ -307,7 +305,6 @@
             document.getElementById('btnRekap').classList.remove('tombol-aktif', 'ring-2', 'ring-white/40');
             document.getElementById('btnHistori').classList.remove('tombol-aktif', 'ring-2', 'ring-white/40');
 
-            // Tampilkan Bagian yang Dipilih & Beri Tanda Aktif
             if (pilihan === 'input') {
                 document.getElementById('bagianInput').classList.add('konten-terbuka');
                 document.getElementById('btnInput').classList.add('tombol-aktif', 'ring-2', 'ring-white/40');
