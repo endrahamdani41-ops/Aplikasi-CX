@@ -64,10 +64,16 @@
             opacity: 0;
             overflow: hidden;
             transition: all 0.3s ease;
+            display: none;
         }
         .konten-terbuka {
-            max-height: 5000px;
+            max-height: 9999px;
             opacity: 1;
+            display: block;
+        }
+        .tombol-aktif {
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -76,13 +82,16 @@
         <header class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
             <div class="text-center sm:text-left">
                 <h1 class="text-xl font-bold text-indigo-400">SMPN 110 JAKARTA</h1>
-                <p class="text-slate-500 text-xs">Sistem Database Presensi Guru</p>
+                <h2 class="text-xl text-indigo-100">Presensi Guru</h2>
             </div>
             <div class="flex flex-wrap gap-2 justify-center">
-                <button id="btnRekap" onclick="toggleRekap()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
+                <button id="btnInput" onclick="tampilkanBagian('input')" class="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
+                    <i class="fa-solid fa-pen-to-square"></i> 
+                </button>
+                <button id="btnRekap" onclick="tampilkanBagian('rekap')" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
                     <i class="fa-solid fa-table-list"></i> 
                 </button>
-                <button id="btnHistori" onclick="toggleHistori()" class="bg-purple-600 hover:bg-purple-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
+                <button id="btnHistori" onclick="tampilkanBagian('histori')" class="bg-purple-600 hover:bg-purple-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
                     <i class="fa-solid fa-clock-rotate-left"></i> 
                 </button>
                 <button onclick="exportExcel()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
@@ -91,9 +100,9 @@
             </div>
         </header>
 
-        <div class="grid lg:grid-cols-12 gap-6">
-            <!-- Form Input: Penuh di HP, 4 kolom di layar besar -->
-            <div class="lg:col-span-4">
+        <div class="mt-6">
+            <!-- Bagian Input Presensi (Awalnya Kosong/Tersembunyi) -->
+            <div id="bagianInput" class="konten-tersembunyi max-w-xl mx-auto">
                 <div class="glass p-4 rounded-2xl">
                     <h3 class="text-white font-semibold mb-5 text-sm uppercase tracking-widest flex items-center gap-2">
                         <span class="w-1.5 h-4 bg-gradient-to-b from-indigo-400 to-purple-500 rounded-full"></span> Input Presensi
@@ -108,7 +117,7 @@
                             <div>
                                 <label class="text-[11px] text-slate-500 font-semibold ml-1 uppercase">Status</label>
                                 <select name="status" class="w-full mt-1 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 outline-none text-white transition-all focus:border-indigo-500/50">
-                                    <option value="">-- Alasan --</option>
+                                    <option value="">Alasan</option>
                                     <option>Sakit</option><option>Izin</option><option>Alpha</option>
                                 </select>
                             </div>
@@ -117,7 +126,7 @@
                         <div>
                             <label class="text-[11px] text-slate-500 font-semibold ml-1 uppercase">Nama Guru</label>
                             <select name="teacher_name" class="w-full mt-1 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 outline-none text-white transition-all focus:border-indigo-500/50" required>
-                                <option value="">-- Pilih Guru --</option>
+                                <option value="">Pilih Guru</option>
                                 <option>Sunardi, M.Pd.</option><option>Popy, S.Ag.</option><option>Purwanto, S.Pd.</option>
                                 <option>Sri Murwani, M.Pd.</option><option>Endang Retna Ningsih, M.Pd.</option><option>Badriah, M.Pd.</option>
                                 <option>Lelalahi, S.Pd.</option><option>Endra Triyanto Hamdani, S.Kom.</option>
@@ -209,10 +218,9 @@
                 </div>
             </div>
 
-            <!-- Tabel: Penuh di HP, 8 kolom di layar besar -->
-            <div class="lg:col-span-8">
-                <!-- Bagian Rekapitulasi (Awalnya Tersembunyi) -->
-                <div id="kotakRekap" class="konten-tersembunyi glass rounded-2xl overflow-hidden shadow-2xl mb-6">
+            <!-- Bagian Rekapitulasi (Awalnya Kosong/Tersembunyi) -->
+            <div id="bagianRekap" class="konten-tersembunyi">
+                <div class="glass rounded-2xl overflow-hidden shadow-2xl">
                     <h4 class="px-5 pt-4 pb-3 text-sm font-semibold text-slate-300 uppercase tracking-wider text-center">Rekapitulasi</h4>
                     <div class="bungkus-tabel">
                         <table class="tabel-garis">
@@ -227,30 +235,30 @@
                         </table>
                     </div>
                 </div>
+            </div>
 
-                <!-- Bagian Histori (Awalnya Tersembunyi) -->
-                <div id="kotakHistori" class="konten-tersembunyi">
-                    <div class="relative mb-5">
-                        <input type="text" id="search" placeholder="Cari histori lengkap..." class="w-full p-3.5 pl-12 rounded-2xl glass outline-none text-sm border-none shadow-xl transition-all">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    </div>
-                    
-                    <div class="glass rounded-2xl overflow-hidden shadow-2xl">
-                        <div class="bungkus-tabel">
-                            <table class="tabel-garis text-[11px]" id="tabel-lengkap">
-                                <thead>
-                                    <tr>
-                                        <th>TANGGAL</th>
-                                        <th>NAMA GURU</th>
-                                        <th>MAPEL</th>
-                                        <th>KELAS</th>
-                                        <th>JAM</th>
-                                        <th>ALASAN</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabelLengkapBody"></tbody>
-                            </table>
-                        </div>
+            <!-- Bagian Histori (Awalnya Kosong/Tersembunyi) -->
+            <div id="bagianHistori" class="konten-tersembunyi">
+                <div class="relative mb-5">
+                    <input type="text" id="search" placeholder="Cari histori lengkap..." class="w-full p-3.5 pl-12 rounded-2xl glass outline-none text-sm border-none shadow-xl transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                </div>
+                
+                <div class="glass rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="bungkus-tabel">
+                        <table class="tabel-garis text-[11px]" id="tabel-lengkap">
+                            <thead>
+                                <tr>
+                                    <th>TANGGAL</th>
+                                    <th>NAMA GURU</th>
+                                    <th>MAPEL</th>
+                                    <th>KELAS</th>
+                                    <th>JAM</th>
+                                    <th>ALASAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelLengkapBody"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -267,31 +275,26 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm_NnsANbjQtY53AMv4DIsnp7kve27BkB-DKrIFk4vupx26Vnf_nMYGeXMBck5qN_CsA/exec";
 
-        // Fungsi Buka-Tutup Rekapitulasi
-        function toggleRekap(){
-            const kotak = document.getElementById('kotakRekap');
-            const tombol = document.getElementById('btnRekap');
-            kotak.classList.toggle('konten-terbuka');
-            if(kotak.classList.contains('konten-terbuka')){
-                tombol.classList.remove('bg-indigo-600');
-                tombol.classList.add('bg-indigo-700');
-            }else{
-                tombol.classList.remove('bg-indigo-700');
-                tombol.classList.add('bg-indigo-600');
-            }
-        }
+        // Fungsi Menampilkan Hanya Satu Bagian
+        function tampilkanBagian(pilihan) {
+            // Sembunyikan Semua Bagian & Hapus Tanda Aktif
+            document.getElementById('bagianInput').classList.remove('konten-terbuka');
+            document.getElementById('bagianRekap').classList.remove('konten-terbuka');
+            document.getElementById('bagianHistori').classList.remove('konten-terbuka');
+            document.getElementById('btnInput').classList.remove('tombol-aktif', 'ring-2', 'ring-white/40');
+            document.getElementById('btnRekap').classList.remove('tombol-aktif', 'ring-2', 'ring-white/40');
+            document.getElementById('btnHistori').classList.remove('tombol-aktif', 'ring-2', 'ring-white/40');
 
-        // Fungsi Buka-Tutup Histori
-        function toggleHistori(){
-            const kotak = document.getElementById('kotakHistori');
-            const tombol = document.getElementById('btnHistori');
-            kotak.classList.toggle('konten-terbuka');
-            if(kotak.classList.contains('konten-terbuka')){
-                tombol.classList.remove('bg-purple-600');
-                tombol.classList.add('bg-purple-700');
-            }else{
-                tombol.classList.remove('bg-purple-700');
-                tombol.classList.add('bg-purple-600');
+            // Tampilkan Bagian yang Dipilih & Beri Tanda Aktif
+            if (pilihan === 'input') {
+                document.getElementById('bagianInput').classList.add('konten-terbuka');
+                document.getElementById('btnInput').classList.add('tombol-aktif', 'ring-2', 'ring-white/40');
+            } else if (pilihan === 'rekap') {
+                document.getElementById('bagianRekap').classList.add('konten-terbuka');
+                document.getElementById('btnRekap').classList.add('tombol-aktif', 'ring-2', 'ring-white/40');
+            } else if (pilihan === 'histori') {
+                document.getElementById('bagianHistori').classList.add('konten-terbuka');
+                document.getElementById('btnHistori').classList.add('tombol-aktif', 'ring-2', 'ring-white/40');
             }
         }
 
