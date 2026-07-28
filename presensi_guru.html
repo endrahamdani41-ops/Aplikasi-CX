@@ -6,7 +6,6 @@
     <title>Presensi Guru - SMPN 110 JAKARTA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { 
@@ -27,64 +26,55 @@
             color: white; 
             box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
         }
-        input, select, textarea { font-size: 15px !important; }
-        #tabel-tampil { 
-            table-layout: fixed; 
-            width: 100%; 
+        input, select, textarea { font-size: 16px !important; }
+
+        /* Gaya Tabel dengan Garis Rapi */
+        .tabel-garis {
             border-collapse: collapse;
+            width: 100%;
         }
-        #tabel-tampil td, #tabel-tampil th {
-            white-space: nowrap;
-            overflow: visible;
-            padding: 12px 10px;
-            font-size: 12px;
-            line-height: 1.3;
-            border: 1px solid rgba(148, 163, 184, 0.15);
+        .tabel-garis th,
+        .tabel-garis td {
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            padding: 8px 6px;
         }
-        #tabel-tampil th {
-            border-bottom: 2px solid rgba(148, 163, 184, 0.3);
+        .tabel-garis th {
+            background-color: rgba(15, 23, 42, 0.6);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.3px;
         }
-        #tabel-tampil th:nth-child(1), #tabel-tampil td:nth-child(1) { width: 50px; text-align:center; }
-        #tabel-tampil th:nth-child(2), #tabel-tampil td:nth-child(2) { width: 100px; }
-        #tabel-tampil th:nth-child(3), #tabel-tampil td:nth-child(3) { width: 190px; }
-        #tabel-tampil th:nth-child(4), #tabel-tampil td:nth-child(4) { width: 170px; }
-        #tabel-tampil th:nth-child(5), #tabel-tampil td:nth-child(5) { width: 160px; text-align:center; }
-        #tabel-tampil th:nth-child(6), #tabel-tampil td:nth-child(6) { width: 200px; text-align:center; }
-        #tabel-tampil th:nth-child(7), #tabel-tampil td:nth-child(7) { width: auto; }
+        .tabel-garis tr:nth-child(even) {
+            background-color: rgba(30, 41, 59, 0.2);
+        }
+        .tabel-garis tr:hover {
+            background-color: rgba(99, 102, 241, 0.08);
+        }
+
+        /* Bungkus tabel agar bisa digeser di HP */
+        .bungkus-tabel {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
     </style>
 </head>
 <body class="p-3 md:p-6">
-    <div class="max-w-[1600px] mx-auto">
-        <header class="flex justify-between items-center mb-6">
-            <div>
+    <div class="max-w-[1800px] mx-auto">
+        <header class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
+            <div class="text-center sm:text-left">
                 <h1 class="text-xl font-bold text-indigo-400">SMPN 110 JAKARTA</h1>
                 <p class="text-slate-500 text-xs">Sistem Database Presensi Guru</p>
             </div>
-            <button onclick="exportExcel()" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-emerald-900/20">
+            <button onclick="exportExcel()" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-emerald-900/20 w-full sm:w-auto justify-center">
                 <i class="fa-solid fa-file-excel"></i> Laporan Excel
             </button>
         </header>
 
-        <div class="glass p-5 rounded-2xl mb-6">
-            <h3 class="text-white font-semibold mb-4 text-sm uppercase tracking-widest flex items-center gap-2">
-                <span class="w-1.5 h-4 bg-gradient-to-b from-indigo-400 to-purple-500 rounded-full"></span> Statistik Ketidakhadiran Guru Per Bulan
-            </h3>
-            <div class="grid md:grid-cols-2 gap-4 mb-4">
-                <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-4 rounded-xl text-center border border-slate-700/50">
-                    <div class="text-2xl font-bold text-indigo-300" id="totalSemua">0</div>
-                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wide">Total Data</div>
-                </div>
-                <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-4 rounded-xl text-center border border-slate-700/50">
-                    <div class="text-2xl font-bold text-rose-300" id="totalTidakMasuk">0</div>
-                    <div class="text-xs text-slate-400 mt-1 uppercase tracking-wide">Guru Tidak Masuk</div>
-                </div>
-            </div>
-            <canvas id="grafikPresensi" height="220"></canvas>
-        </div>
-
         <div class="grid lg:grid-cols-12 gap-6">
+            <!-- Form Input: Penuh di HP, 4 kolom di layar besar -->
             <div class="lg:col-span-4">
-                <div class="glass p-5 rounded-2xl">
+                <div class="glass p-4 rounded-2xl">
                     <h3 class="text-white font-semibold mb-5 text-sm uppercase tracking-widest flex items-center gap-2">
                         <span class="w-1.5 h-4 bg-gradient-to-b from-indigo-400 to-purple-500 rounded-full"></span> Input Presensi
                     </h3>
@@ -122,7 +112,8 @@
                                 <option>Nurina Permatasari, S.Pd.</option>
                                 <option>Heru Damara, S.Pd.</option>
                                 <option>Endah Sulstyorini, M.Pd.</option>
-                                <option>Riswadi, S.Pd.</option><option>Sidiq Prakoso, S.Pd.</option>
+                                <option>Riswadi, S.Pd.</option>
+                                <option>Sidiq Prakoso, S.Pd.</option>
                             </select>
                         </div>
 
@@ -148,23 +139,19 @@
                         <div>
                             <label class="text-[11px] text-slate-500 font-semibold ml-1 uppercase">Pilih Kelas</label>
                             <div class="space-y-2 mt-1 bg-slate-900/40 p-3 rounded-xl border border-slate-800/60">
-                                <div class="grid grid-cols-6 gap-2">
+                                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7A" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">7A</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7B" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">7B</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7C" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">7C</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7D" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">7D</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7E" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">7E</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="7F" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">7F</span></label>
-                                </div>
-                                <div class="grid grid-cols-6 gap-2">
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8A" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">8A</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8B" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">8B</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8C" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">8C</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8D" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">8D</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8E" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">8E</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="8F" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">8F</span></label>
-                                </div>
-                                <div class="grid grid-cols-6 gap-2">
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9A" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">9A</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9B" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">9B</span></label>
                                     <label class="check-item cursor-pointer"><input type="checkbox" name="class_checkbox" value="9C" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">9C</span></label>
@@ -177,7 +164,7 @@
 
                         <div>
                             <label class="text-[11px] text-slate-500 font-semibold ml-1 uppercase">Jam Ke</label>
-                            <div class="grid grid-cols-4 gap-2 mt-1">
+                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-1">
                                 <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="1" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">1</span></label>
                                 <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="2" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">2</span></label>
                                 <label class="check-item cursor-pointer"><input type="checkbox" name="hour_check" value="3" class="hidden"><span class="block text-center py-2 rounded-lg border border-slate-700/70 text-xs font-semibold text-slate-400 transition-all">3</span></label>
@@ -202,27 +189,45 @@
                 </div>
             </div>
 
+            <!-- Tabel: Penuh di HP, 8 kolom di layar besar -->
             <div class="lg:col-span-8">
+                <div class="glass rounded-2xl overflow-hidden shadow-2xl mb-6">
+                    <h4 class="px-5 pt-4 pb-3 text-sm font-semibold text-slate-300 uppercase tracking-wider text-center">Rekapitulasi</h4>
+                    <div class="bungkus-tabel">
+                        <table class="tabel-garis">
+                            <thead>
+                                <tr>
+                                    <th class="w-12 text-center">NO.</th>
+                                    <th>NAMA GURU</th>
+                                    <th class="w-24 text-center">JUMLAH</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="relative mb-5">
-                    <input type="text" id="search" placeholder="Cari histori pengisian..." class="w-full p-3.5 pl-12 rounded-2xl glass outline-none text-sm border-none shadow-xl transition-all">
+                    <input type="text" id="search" placeholder="Cari histori lengkap..." class="w-full p-3.5 pl-12 rounded-2xl glass outline-none text-sm border-none shadow-xl transition-all">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 </div>
                 
                 <div class="glass rounded-2xl overflow-hidden shadow-2xl">
-                    <table class="w-full text-left" id="tabel-tampil">
-                        <thead>
-                            <tr class="bg-slate-800/80 text-slate-400 uppercase text-[11px]">
-                                <th>No.</th>
-                                <th>Tanggal</th>
-                                <th>Nama Guru</th>
-                                <th>Mata Pelajaran</th>
-                                <th>Kelas</th>
-                                <th>Jam ke</th>
-                                <th>Alasan</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelBody"></tbody>
-                    </table>
+                    <div class="bungkus-tabel">
+                        <table class="tabel-garis text-[11px]" id="tabel-lengkap">
+                            <thead>
+                                <tr>
+                                    <th>TANGGAL</th>
+                                    <th>NAMA GURU</th>
+                                    <th>MAPEL</th>
+                                    <th>KELAS</th>
+                                    <th>JAM</th>
+                                    <th>ALASAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelLengkapBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -237,196 +242,92 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm_NnsANbjQtY53AMv4DIsnp7kve27BkB-DKrIFk4vupx26Vnf_nMYGeXMBck5qN_CsA/exec";
-        let nomorUrut = 1;
-        let grafik;
 
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("tanggal_input").value = new Date().toISOString().slice(0, 10);
             muatDataRiwayat();
         });
 
-        // === GRAFIK: NAMA GURU PER BULAN ===
-        function buatGrafik(dataPresensi) {
-            const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const warnaGuru = ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#f43f5e','#14b8a6','#a855f7','#6366f1'];
+        function hitungRingkasan(dataPresensi) {
+            const hitungGuru = dataPresensi.reduce((h, i) => {
+                h[i.nama_guru] = (h[i.nama_guru] || 0) + 1;
+                return h;
+            }, {});
 
-            // Ambil semua bulan yang ada di data
-            const daftarBulan = [...new Set(dataPresensi.map(item => {
-                const tgl = new Date(item.tanggal);
-                return `${namaBulan[tgl.getMonth()]} ${tgl.getFullYear()}`;
-            }))].sort((a,b) => {
-                const [blnA, thnA] = a.split(' ');
-                const [blnB, thnB] = b.split(' ');
-                return new Date(`${blnA} 1, ${thnA}`) - new Date(`${blnB} 1, ${thnB}`);
-            });
+            const urut = Object.entries(hitungGuru).sort((a,b) => b[1] - a[1]);
 
-            // Ambil semua nama guru yang ada
-            const daftarGuru = [...new Set(dataPresensi.map(i => i.nama_guru))];
-
-            // Susun data per guru per bulan
-            const kumpulanData = daftarGuru.map((guru, idx) => {
-                const hitung = daftarBulan.map(bulan => {
-                    return dataPresensi.filter(item => {
-                        const tgl = new Date(item.tanggal);
-                        const kunci = `${namaBulan[tgl.getMonth()]} ${tgl.getFullYear()}`;
-                        return item.nama_guru === guru && kunci === bulan;
-                    }).length;
-                });
-                return {
-                    label: guru,
-                    data: hitung,
-                    backgroundColor: warnaGuru[idx % warnaGuru.length],
-                    borderRadius: 6,
-                    borderWidth: 0
-                };
-            });
-
-            document.getElementById("totalSemua").innerText = dataPresensi.length;
-            document.getElementById("totalTidakMasuk").innerText = daftarGuru.length;
-
-            if(grafik) grafik.destroy();
-            const ctx = document.getElementById("grafikPresensi").getContext("2d");
-
-            grafik = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: daftarBulan,
-                    datasets: kumpulanData
-                },
-                options: {
-                    responsive: true,
-                    layout: { padding: { top: 5, bottom: 5 } },
-                    plugins: { 
-                        legend: { 
-                            position: 'top',
-                            labels: { font: { size: 9.5 }, boxWidth: 12, padding: 12 }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.92)',
-                            borderColor: 'rgba(148, 163, 184, 0.2)',
-                            borderWidth: 1,
-                            padding: 10,
-                            titleFont: { size: 12, weight: '600' },
-                            bodyFont: { size: 11 },
-                            callbacks: {
-                                label: function(info) {
-                                    return `${info.dataset.label}: ${info.raw} kali`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            stacked: true,
-                            ticks: { color: "#94a3b8", font: { size: 10.5 }, precision: 0 }, 
-                            grid: { color: "rgba(148, 163, 184, 0.08)", lineWidth: 1 }
-                        },
-                        x: { 
-                            stacked: true,
-                            ticks: { color: "#64748b", font: { size: 10 } }, 
-                            grid: { display: false } 
-                        }
-                    }
-                }
+            document.getElementById("tabelBody").innerHTML = "";
+            urut.forEach((g, idx) => {
+                document.getElementById("tabelBody").innerHTML += `
+                <tr>
+                    <td class="text-center text-slate-400">${idx+1}</td>
+                    <td class="font-semibold">${g[0]}</td>
+                    <td class="text-center font-bold text-rose-400">${g[1]}</td>
+                </tr>`;
             });
         }
 
         function muatDataRiwayat() {
-            console.log("🔄 Memuat data...");
-            document.getElementById("tabelBody").innerHTML = "";
+            document.getElementById("tabelLengkapBody").innerHTML = "";
             document.getElementById("tabelEksporBody").innerHTML = "";
-            nomorUrut = 1;
 
             fetch(SCRIPT_URL)
-            .then(res => res.json())
-            .then(respon => {
-                console.log("✅ Data diterima:", respon);
-                if(respon.status === "berhasil" && Array.isArray(respon.data)) {
-                    if(respon.data.length === 0) {
-                        buatGrafik([]);
-                        return console.log("Belum ada data");
-                    }
-                    respon.data.reverse().forEach(baris => {
-                        tambahKeTabel(baris.tanggal, baris.nama_guru, baris.status, baris.mata_pelajaran, baris.kelas, baris.jam_ke, baris.alasan);
+            .then(r=>r.json()).then(res=>{
+                if(res.status==="berhasil" && Array.isArray(res.data)){
+                    hitungRingkasan(res.data);
+                    res.data.reverse().forEach((b,no)=>{
+                        document.getElementById("tabelLengkapBody").innerHTML += `
+                        <tr>
+                            <td>${b.tanggal.split("-").reverse().join("/")}</td>
+                            <td class="font-medium">${b.nama_guru}</td>
+                            <td>${b.mata_pelajaran}</td>
+                            <td class="text-center">${b.kelas}</td>
+                            <td class="text-center">${b.jam_ke}</td>
+                            <td class="italic">${b.alasan||"-"}</td>
+                        </tr>`;
+                        document.getElementById("tabelEksporBody").innerHTML += `
+                        <tr><td>${no+1}</td><td>${b.tanggal}</td><td>${b.nama_guru}</td><td>${b.status||"-"}</td><td>${b.mata_pelajaran}</td><td>${b.kelas}</td><td>${b.jam_ke}</td><td>${b.alasan||"-"}</td></tr>`;
                     });
-                    buatGrafik(respon.data);
                 }
-            })
-            .catch(err => alert("Gagal memuat: " + err.message));
+            }).catch(e=>alert("Gagal memuat data: "+e.message));
         }
 
-        function tambahKeTabel(tgl, nama, status, mapel, kelas, jam, alasan) {
-            jam = String(jam).replace(/[^0-9, ]/g, "").trim() || "-";
-            const tglBiasa = tgl.split("-").reverse().join("/");
-
-            const barisTampil = `
-                <tr class="search-item hover:bg-slate-800/30 transition-colors">
-                    <td class="text-center font-semibold text-slate-400">${nomorUrut}</td>
-                    <td class="text-slate-400">${tglBiasa}</td>
-                    <td class="font-semibold text-white">${nama}</td>
-                    <td class="text-slate-400">${mapel}</td>
-                    <td class="text-center font-semibold text-blue-400">${kelas}</td>
-                    <td class="text-center font-mono text-purple-400">${jam}</td>
-                    <td class="text-slate-400 italic">${alasan}</td>
-                </tr>`;
-
-            const barisEkspor = `
-                <tr>
-                    <td>${nomorUrut}</td><td>${tgl}</td><td>${nama}</td><td>${status || "-"}</td><td>${mapel}</td><td>${kelas}</td><td>${jam}</td><td>${alasan}</td>
-                </tr>`;
-
-            document.getElementById("tabelBody").insertAdjacentHTML("beforeend", barisTampil);
-            document.getElementById("tabelEksporBody").insertAdjacentHTML("beforeend", barisEkspor);
-            nomorUrut++;
-        }
-
-        document.getElementById("formPresensi").addEventListener("submit", function(e) {
+        document.getElementById("formPresensi").addEventListener("submit", e=>{
             e.preventDefault();
             const btn = document.getElementById("btnSimpan");
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Memproses...`;
+            btn.disabled = true; btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
 
-            let checkedSubjects = [...document.querySelectorAll("input[name='subject_check']:checked")].map(cb => cb.value);
-            if (!checkedSubjects.length) { alert("Pilih minimal satu mata pelajaran!"); btn.disabled = false; btn.innerHTML = "Simpan ke Google Sheet"; return; }
+            const mapel = [...document.querySelectorAll("[name=subject_check]:checked")].map(c=>c.value);
+            const kelas = [...document.querySelectorAll("[name=class_checkbox]:checked")].map(c=>c.value);
+            const jam = [...document.querySelectorAll("[name=hour_check]:checked")].map(c=>c.value);
+            if(!mapel.length||!kelas.length||!jam.length){alert("Lengkapi semua pilihan!"); btn.disabled=false; btn.innerHTML="Simpan ke Google Sheet"; return;}
 
-            let checkedClasses = [...document.querySelectorAll("input[name='class_checkbox']:checked")].map(cb => cb.value);
-            if (!checkedClasses.length) { alert("Pilih minimal satu kelas!"); btn.disabled = false; btn.innerHTML = "Simpan ke Google Sheet"; return; }
+            const fd = new FormData(e.target);
+            const d = new URLSearchParams();
+            d.append("tanggal_input", fd.get("tanggal_input"));
+            d.append("teacher_name", fd.get("teacher_name"));
+            d.append("status", fd.get("status")||"-");
+            d.append("subject", mapel.join(", "));
+            d.append("class_name", kelas.join(", "));
+            d.append("class_hour", jam.join(", "));
+            d.append("reason", fd.get("reason").trim()||"-");
 
-            let checkedHours = [...document.querySelectorAll("input[name='hour_check']:checked")].map(cb => cb.value);
-            if (!checkedHours.length) { alert("Pilih minimal satu jam!"); btn.disabled = false; btn.innerHTML = "Simpan ke Google Sheet"; return; }
-
-            const form = new FormData(this);
-            const data = new URLSearchParams();
-            data.append("tanggal_input", form.get("tanggal_input"));
-            data.append("teacher_name", form.get("teacher_name"));
-            data.append("status", form.get("status") || "-");
-            data.append("subject", checkedSubjects.join(", "));
-            data.append("class_name", checkedClasses.join(", "));
-            data.append("class_hour", checkedHours.join(", "));
-            data.append("reason", form.get("reason").trim() || "-");
-
-            fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: data })
-            .then(() => {
-                alert("✅ Tersimpan!");
-                muatDataRiwayat();
-                this.reset();
+            fetch(SCRIPT_URL, {method:"POST", mode:"no-cors", body:d}).then(()=>{
+                alert("✅ Data tersimpan!"); muatDataRiwayat(); e.target.reset();
                 document.getElementById("tanggal_input").value = new Date().toISOString().slice(0,10);
-            })
-            .catch(err => alert("❌ Gagal: " + err.message))
-            .finally(() => { btn.disabled = false; btn.innerHTML = "Simpan ke Google Sheet"; });
+            }).catch(e=>alert("❌ Gagal menyimpan: "+e.message)).finally(()=>{btn.disabled=false; btn.innerHTML="Simpan ke Google Sheet";});
         });
 
-        document.getElementById("search").addEventListener("keyup", function() {
-            const kata = this.value.toLowerCase();
-            document.querySelectorAll(".search-item").forEach(baris => {
-                baris.style.display = baris.innerText.toLowerCase().includes(kata) ? "" : "none";
+        document.getElementById("search").addEventListener("keyup", function(){
+            const k = this.value.toLowerCase();
+            document.querySelectorAll("#tabelLengkapBody tr").forEach(r=>{
+                r.style.display = r.innerText.toLowerCase().includes(k)?"":"none";
             });
         });
 
-        function exportExcel() {
-            const buku = XLSX.utils.table_to_book(document.getElementById("tabel-ekspor"), { sheet: "Presensi" });
-            XLSX.writeFile(buku, `Presensi_Guru_${new Date().toISOString().slice(0,10)}.xlsx`);
+        function exportExcel(){
+            const b = XLSX.utils.table_to_book(document.getElementById("tabel-ekspor"), {sheet:"Presensi_Guru"});
+            XLSX.writeFile(b, `Presensi_Guru_${new Date().toISOString().slice(0,10)}.xlsx`);
         }
     </script>
 </body>
