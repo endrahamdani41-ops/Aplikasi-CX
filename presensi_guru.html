@@ -57,6 +57,18 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
+
+        /* Animasi buka-tutup */
+        .konten-tersembunyi {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .konten-terbuka {
+            max-height: 5000px;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="p-3 md:p-6">
@@ -66,9 +78,17 @@
                 <h1 class="text-xl font-bold text-indigo-400">SMPN 110 JAKARTA</h1>
                 <p class="text-slate-500 text-xs">Sistem Database Presensi Guru</p>
             </div>
-            <button onclick="exportExcel()" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300 shadow-lg hover:shadow-emerald-900/20 w-full sm:w-auto justify-center">
-                <i class="fa-solid fa-file-excel"></i> Laporan Excel
-            </button>
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button id="btnRekap" onclick="toggleRekap()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
+                    <i class="fa-solid fa-table-list"></i> 
+                </button>
+                <button id="btnHistori" onclick="toggleHistori()" class="bg-purple-600 hover:bg-purple-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
+                    <i class="fa-solid fa-clock-rotate-left"></i> 
+                </button>
+                <button onclick="exportExcel()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
+                    <i class="fa-solid fa-file-excel"></i> 
+                </button>
+            </div>
         </header>
 
         <div class="grid lg:grid-cols-12 gap-6">
@@ -191,7 +211,8 @@
 
             <!-- Tabel: Penuh di HP, 8 kolom di layar besar -->
             <div class="lg:col-span-8">
-                <div class="glass rounded-2xl overflow-hidden shadow-2xl mb-6">
+                <!-- Bagian Rekapitulasi (Awalnya Tersembunyi) -->
+                <div id="kotakRekap" class="konten-tersembunyi glass rounded-2xl overflow-hidden shadow-2xl mb-6">
                     <h4 class="px-5 pt-4 pb-3 text-sm font-semibold text-slate-300 uppercase tracking-wider text-center">Rekapitulasi</h4>
                     <div class="bungkus-tabel">
                         <table class="tabel-garis">
@@ -207,26 +228,29 @@
                     </div>
                 </div>
 
-                <div class="relative mb-5">
-                    <input type="text" id="search" placeholder="Cari histori lengkap..." class="w-full p-3.5 pl-12 rounded-2xl glass outline-none text-sm border-none shadow-xl transition-all">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                </div>
-                
-                <div class="glass rounded-2xl overflow-hidden shadow-2xl">
-                    <div class="bungkus-tabel">
-                        <table class="tabel-garis text-[11px]" id="tabel-lengkap">
-                            <thead>
-                                <tr>
-                                    <th>TANGGAL</th>
-                                    <th>NAMA GURU</th>
-                                    <th>MAPEL</th>
-                                    <th>KELAS</th>
-                                    <th>JAM</th>
-                                    <th>ALASAN</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelLengkapBody"></tbody>
-                        </table>
+                <!-- Bagian Histori (Awalnya Tersembunyi) -->
+                <div id="kotakHistori" class="konten-tersembunyi">
+                    <div class="relative mb-5">
+                        <input type="text" id="search" placeholder="Cari histori lengkap..." class="w-full p-3.5 pl-12 rounded-2xl glass outline-none text-sm border-none shadow-xl transition-all">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    </div>
+                    
+                    <div class="glass rounded-2xl overflow-hidden shadow-2xl">
+                        <div class="bungkus-tabel">
+                            <table class="tabel-garis text-[11px]" id="tabel-lengkap">
+                                <thead>
+                                    <tr>
+                                        <th>TANGGAL</th>
+                                        <th>NAMA GURU</th>
+                                        <th>MAPEL</th>
+                                        <th>KELAS</th>
+                                        <th>JAM</th>
+                                        <th>ALASAN</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelLengkapBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -242,6 +266,34 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm_NnsANbjQtY53AMv4DIsnp7kve27BkB-DKrIFk4vupx26Vnf_nMYGeXMBck5qN_CsA/exec";
+
+        // Fungsi Buka-Tutup Rekapitulasi
+        function toggleRekap(){
+            const kotak = document.getElementById('kotakRekap');
+            const tombol = document.getElementById('btnRekap');
+            kotak.classList.toggle('konten-terbuka');
+            if(kotak.classList.contains('konten-terbuka')){
+                tombol.classList.remove('bg-indigo-600');
+                tombol.classList.add('bg-indigo-700');
+            }else{
+                tombol.classList.remove('bg-indigo-700');
+                tombol.classList.add('bg-indigo-600');
+            }
+        }
+
+        // Fungsi Buka-Tutup Histori
+        function toggleHistori(){
+            const kotak = document.getElementById('kotakHistori');
+            const tombol = document.getElementById('btnHistori');
+            kotak.classList.toggle('konten-terbuka');
+            if(kotak.classList.contains('konten-terbuka')){
+                tombol.classList.remove('bg-purple-600');
+                tombol.classList.add('bg-purple-700');
+            }else{
+                tombol.classList.remove('bg-purple-700');
+                tombol.classList.add('bg-purple-600');
+            }
+        }
 
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("tanggal_input").value = new Date().toISOString().slice(0, 10);
