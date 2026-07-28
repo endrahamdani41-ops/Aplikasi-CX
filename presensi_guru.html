@@ -13,6 +13,7 @@
             color: #e2e8f0; 
             font-family: 'Segoe UI', sans-serif; 
             overflow-x: hidden; 
+            min-height: 100vh;
         }
         .glass { 
             background: rgba(30, 41, 59, 0.6); 
@@ -75,14 +76,26 @@
             box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
             transform: translateY(-1px);
         }
+        /* Logo Tengah */
+        .logo-tengah {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+        }
+        .logo-sembunyi {
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
-<body class="p-3 md:p-6">
+<body class="p-3 md:p-6 relative">
     <div class="max-w-[1800px] mx-auto">
         <header class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
             <div class="text-center sm:text-left">
                 <h1 class="text-xl font-bold text-indigo-400">SMPN 110 JAKARTA</h1>
-                <h2 class="text-xl text-indigo-100">Presensi Guru</h2>
+                <h2 class="text-xl text-indigo-100">Presensi Guru</h2><br>
             </div>
             <div class="flex flex-wrap gap-2 justify-center">
                 <button id="btnInput" onclick="tampilkanBagian('input')" class="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all duration-300">
@@ -99,6 +112,12 @@
                 </button>
             </div>
         </header>
+
+        <!-- Logo Sekolah di Tengah -->
+        <div id="logoUtama" class="logo-tengah">
+            <img src="https://i.ibb.co.com/3YLC4rL4/erasebg-transformed.png" alt="Logo SMPN 110 Jakarta" class="w-40 h-40 md:w-52 md:h-52 object-contain drop-shadow-lg">
+
+        </div>
 
         <div class="mt-6">
             <!-- Bagian Input Presensi (Awalnya Kosong/Tersembunyi) -->
@@ -117,7 +136,7 @@
                             <div>
                                 <label class="text-[11px] text-slate-500 font-semibold ml-1 uppercase">Status</label>
                                 <select name="status" class="w-full mt-1 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 outline-none text-white transition-all focus:border-indigo-500/50">
-                                    <option value="">Alasan</option>
+                                    <option value="">-- Alasan --</option>
                                     <option>Sakit</option><option>Izin</option><option>Alpha</option>
                                 </select>
                             </div>
@@ -126,7 +145,7 @@
                         <div>
                             <label class="text-[11px] text-slate-500 font-semibold ml-1 uppercase">Nama Guru</label>
                             <select name="teacher_name" class="w-full mt-1 p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 outline-none text-white transition-all focus:border-indigo-500/50" required>
-                                <option value="">Pilih Guru</option>
+                                <option value="">-- Pilih Guru --</option>
                                 <option>Sunardi, M.Pd.</option><option>Popy, S.Ag.</option><option>Purwanto, S.Pd.</option>
                                 <option>Sri Murwani, M.Pd.</option><option>Endang Retna Ningsih, M.Pd.</option><option>Badriah, M.Pd.</option>
                                 <option>Lelalahi, S.Pd.</option><option>Endra Triyanto Hamdani, S.Kom.</option>
@@ -275,8 +294,11 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwm_NnsANbjQtY53AMv4DIsnp7kve27BkB-DKrIFk4vupx26Vnf_nMYGeXMBck5qN_CsA/exec";
 
-        // Fungsi Menampilkan Hanya Satu Bagian
+        // Fungsi Menampilkan Hanya Satu Bagian & Sembunyikan Logo
         function tampilkanBagian(pilihan) {
+            // Sembunyikan Logo
+            document.getElementById('logoUtama').classList.add('logo-sembunyi');
+
             // Sembunyikan Semua Bagian & Hapus Tanda Aktif
             document.getElementById('bagianInput').classList.remove('konten-terbuka');
             document.getElementById('bagianRekap').classList.remove('konten-terbuka');
