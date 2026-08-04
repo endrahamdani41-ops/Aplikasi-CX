@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presensi & Laporan Kelas - SMPN 110 Jakarta</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --subtext: #64748b;
+      --border: #e2e8f0;
+      --input-border: #cbd5e1;
+      --th-bg: #f1f5f9;
+      --th-text: #334155;
+    }
+
+    /* Mode Gelap (Dark Mode) */
+    [data-theme="dark"] {
+      --primary: #3b82f6;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --border: #334155;
+      --input-border: #475569;
+      --th-bg: #334155;
+      --th-text: #f8fafc;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s;
+    }
+
+    .header-top { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 8px; 
+    }
+    
+    .theme-toggle {
+      background: transparent; 
+      border: 1px solid var(--input-border); 
+      color: var(--text);
+      padding: 6px 12px; 
+      border-radius: 20px; 
+      cursor: pointer; 
+      font-size: 13px; 
+      display: flex; 
+      align-items: center; 
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    
+    .theme-toggle:hover { background-color: var(--th-bg); }
+
+    .header { 
+      text-align: center; 
+      border-bottom: 2px solid var(--border); 
+      padding-bottom: 16px; 
+      margin-bottom: 20px; 
+    }
+    .header h1 { margin: 0; color: var(--primary); font-size: 22px; }
+    .header p { margin: 4px 0 0; color: var(--subtext); font-size: 14px; }
+
+    /* Navigasi Tab Menu */
+    .nav-tabs { 
+      display: flex; 
+      gap: 8px; 
+      margin-bottom: 20px; 
+      border-bottom: 1px solid var(--border); 
+      padding-bottom: 10px; 
+    }
+    .tab-btn { 
+      padding: 8px 16px; 
+      border: none; 
+      background: transparent; 
+      color: var(--subtext); 
+      font-weight: 600; 
+      cursor: pointer; 
+      border-radius: 6px; 
+      font-size: 14px; 
+      transition: all 0.2s;
+    }
+    .tab-btn.active { 
+      background-color: var(--primary); 
+      color: white; 
+    }
+
+    .controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
+    
+    label { font-size: 12px; font-weight: 600; color: var(--subtext); }
+    input, select, button { 
+      padding: 10px; 
+      border: 1px solid var(--input-border); 
+      border-radius: 6px; 
+      font-size: 14px; 
+      background-color: var(--card-bg); 
+      color: var(--text);
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background-color: var(--th-bg); font-size: 13px; color: var(--th-text); }
+    
+    .radio-group { display: flex; gap: 12px; }
+    .radio-group label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text); }
+    
+    .btn-submit { 
+      background-color: var(--primary); 
+      color: white; 
+      border: none; 
+      width: 100%; 
+      padding: 12px; 
+      font-size: 15px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      border-radius: 6px; 
+      transition: opacity 0.2s;
+    }
+    .btn-submit:disabled { background-color: #94a3b8; cursor: not-allowed; }
+    
+    .loading-text { text-align: center; color: var(--subtext); padding: 20px; }
+    .alert { padding: 12px; border-radius: 6px; margin-top: 16px; display: none; font-size: 14px; }
+    .alert-success { background-color: #dcfce7; color: #166534; }
+    .alert-error { background-color: #fee2e2; color: #991b1b; }
+    [data-theme="dark"] .alert-success { background-color: #064e3b; color: #a7f3d0; }
+    [data-theme="dark"] .alert-error { background-color: #7f1d1d; color: #fecaca; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-top">
+    <div></div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+    </button>
+  </div>
+
+  <div class="header">
+    <h1>SMPN 110 JAKARTA</h1>
+    <p>Aplikasi Presensi & Laporan Harian Siswa</p>
+  </div>
+
+  <!-- Menu Navigasi Tab -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('presensi', this)">Form Presensi</button>
+    <button class="tab-btn" onclick="switchTab('laporan', this)">Laporan Kehadiran</button>
+  </div>
+
+  <!-- TAB 1: FORM PRESENSI -->
+  <div id="tab-presensi" class="tab-content active">
+    <div class="controls">
+      <div class="form-group">
+        <label for="tanggal">Tanggal</label>
+        <!-- Pemicu otomatis ganti tanggal -->
+        <input type="date" id="tanggal" onchange="ambilSiswaDariSheet()">
+      </div>
+      <div class="form-group">
+        <label for="kelas">Pilih Kelas</label>
+        <!-- Pemicu otomatis ganti kelas -->
+        <select id="kelas" onchange="ambilSiswaDariSheet()">
+          <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
+          <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
+          <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option>
+          <option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
+          <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
+          <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="loading" class="loading-text" style="display: none;">Memuat data siswa dan presensi...</div>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>NISN</th>
+          <th>Nama Siswa</th>
+          <th>Status Kehadiran</th>
+        </tr>
+      </thead>
+      <tbody id="student-list"></tbody>
+    </table>
+    <button class="btn-submit" id="btnSimpan" onclick="kirimPresensi()">Simpan Ke Google Sheets</button>
+  </div>
+
+  <!-- TAB 2: LAPORAN KEHADIRAN -->
+  <div id="tab-laporan" class="tab-content">
+    <div class="controls">
+      <div class="form-group">
+        <label for="lap-periode">Periode Laporan</label>
+        <select id="lap-periode">
+          <option value="minggu">Per Minggu</option>
+          <option value="bulan">Per Bulan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="lap-tanggal">Acuan Tanggal</label>
+        <input type="date" id="lap-tanggal">
+      </div>
+      <div class="form-group">
+        <label for="lap-kelas">Pilih Kelas</label>
+        <select id="lap-kelas">
+          <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
+          <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
+          <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option>
+          <option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
+          <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
+          <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
+        </select>
+      </div>
+      <div class="form-group" style="justify-content: flex-end;">
+        <label>&nbsp;</label>
+        <button class="btn-submit" onclick="muatLaporan()" style="padding: 10px;">Tampilkan Laporan</button>
+      </div>
+    </div>
+
+    <div id="loading-laporan" class="loading-text" style="display: none;">Menghitung rekapitulasi presensi...</div>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>NISN</th>
+          <th>Nama Siswa</th>
+          <th>Hadir</th>
+          <th>Sakit</th>
+          <th>Izin</th>
+          <th>Alpa</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="laporan-list">
+        <tr><td colspan="8" style="text-align:center;">Pilih filter lalu klik 'Tampilkan Laporan'.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="alertBox" class="alert"></div>
+</div>
+
+<script>
+  // ⚠️ PASTIKAN URL SCRIPT SESUAI DENGAN HASIL DEPLOYMENT TERBARU ANDA
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx0DnSIbai3gC1QwBXsUW-yIaaFxEbGLrth0vyl7zvmibCfWWlfK2VCqryfhUJ1h5eHw/exec";
+
+  let siswaList = [];
+  let alertTimeout = null;
+
+  document.getElementById('tanggal').valueAsDate = new Date();
+  document.getElementById('lap-tanggal').valueAsDate = new Date();
+
+  // --- NOTIFIKASI OTOMATIS HILANG DALAM 3 DETIK ---
+  function showAlert(message, type) {
+    const alertBox = document.getElementById('alertBox');
+    alertBox.className = `alert alert-${type}`;
+    alertBox.innerText = message;
+    alertBox.style.display = "block";
+
+    if (alertTimeout) clearTimeout(alertTimeout);
+
+    alertTimeout = setTimeout(() => {
+      alertBox.style.display = "none";
+    }, 3000);
+  }
+
+  // --- TAB NAVIGATION ---
+  function switchTab(tabName, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+    btn.classList.add('active');
+    if (tabName === 'presensi') ambilSiswaDariSheet();
+  }
+
+  // --- THEME LOGIC ---
+  function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      updateThemeUI(true);
+    }
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      updateThemeUI(false);
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      updateThemeUI(true);
+    }
+  }
+
+  function updateThemeUI(isDark) {
+    document.getElementById('themeIcon').innerText = isDark ? '☀️' : '🌙';
+    document.getElementById('themeText').innerText = isDark ? 'Light Mode' : 'Dark Mode';
+  }
+
+  // --- AMBIL SISWA & STATUS PRESENSI TERINPUT ---
+  async function ambilSiswaDariSheet() {
+    const kelas = document.getElementById('kelas').value;
+    const tanggal = document.getElementById('tanggal').value;
+    const tbody = document.getElementById('student-list');
+    const loading = document.getElementById('loading');
+    
+    tbody.innerHTML = '';
+    loading.style.display = 'block';
+    
+    try {
+      // Mengirimkan parameter kelas dan tanggal untuk mendeteksi data presensi
+      const response = await fetch(`${SCRIPT_URL}?kelas=${kelas}&tanggal=${tanggal}`);
+      const result = await response.json();
+
+      if (result.status === "success") {
+        siswaList = result.data;
+        renderTabelSiswa();
+      } else {
+        showAlert("Gagal mengambil data: " + result.message, "error");
+      }
+    } catch (error) {
+      showAlert("Gagal terhubung ke Google Sheets.", "error");
+    } finally {
+      loading.style.display = 'none';
+    }
+  }
+
+  // --- RENDER TABEL DENGAN CENTANG RADIO AUTOMATIS ---
+  function renderTabelSiswa() {
+    const tbody = document.getElementById('student-list');
+    tbody.innerHTML = '';
+
+    if (siswaList.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Tidak ada data siswa untuk kelas ini.</td></tr>';
+      return;
+    }
+
+    siswaList.forEach((siswa, index) => {
+      // Menggunakan status tersimpan (Hadir/Sakit/Izin/Alpa) dari Sheets
+      const st = siswa.status || "Hadir";
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${siswa.nisn}</td>
+        <td><strong>${siswa.nama}</strong></td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="status-${index}" value="Hadir" ${st === 'Hadir' ? 'checked' : ''}> Hadir</label>
+            <label><input type="radio" name="status-${index}" value="Sakit" ${st === 'Sakit' ? 'checked' : ''}> Sakit</label>
+            <label><input type="radio" name="status-${index}" value="Izin" ${st === 'Izin' ? 'checked' : ''}> Izin</label>
+            <label><input type="radio" name="status-${index}" value="Alpa" ${st === 'Alpa' ? 'checked' : ''}> Alpa</label>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // --- SIMPAN PRESENSI ---
+  async function kirimPresensi() {
+    const tanggal = document.getElementById('tanggal').value;
+    const kelas = document.getElementById('kelas').value;
+    const btnSimpan = document.getElementById('btnSimpan');
+    if (siswaList.length === 0) return showAlert("Tidak ada data siswa.", "error");
+
+    const payload = siswaList.map((siswa, index) => {
+      const status = document.querySelector(`input[name="status-${index}"]:checked`).value;
+      return { tanggal, kelas, nisn: siswa.nisn, nama: siswa.nama, status };
+    });
+
+    btnSimpan.disabled = true;
+    btnSimpan.innerText = "Mengirim Data...";
+
+    try {
+      await fetch(SCRIPT_URL, { 
+        method: "POST", 
+        mode: "no-cors", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify(payload) 
+      });
+      
+      showAlert("Presensi berhasil disimpan ke Google Sheets!", "success");
+    } catch (error) {
+      showAlert("Gagal menyimpan data.", "error");
+    } finally {
+      btnSimpan.disabled = false;
+      btnSimpan.innerText = "Simpan Ke Google Sheets";
+    }
+  }
+
+  // --- REKAP LAPORAN ---
+  async function muatLaporan() {
+    const periode = document.getElementById('lap-periode').value;
+    const tanggal = document.getElementById('lap-tanggal').value;
+    const kelas = document.getElementById('lap-kelas').value;
+    const tbody = document.getElementById('laporan-list');
+    const loading = document.getElementById('loading-laporan');
+
+    tbody.innerHTML = '';
+    loading.style.display = 'block';
+
+    try {
+      const response = await fetch(`${SCRIPT_URL}?action=laporan&periode=${periode}&tanggal=${tanggal}&kelas=${kelas}`);
+      const result = await response.json();
+
+      if (result.status === "success") {
+        const data = result.data;
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Tidak ada data laporan pada periode ini.</td></tr>';
+          return;
+        }
+        data.forEach((item, index) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.nisn}</td>
+            <td><strong>${item.nama}</strong></td>
+            <td>${item.Hadir}</td>
+            <td>${item.Sakit}</td>
+            <td>${item.Izin}</td>
+            <td>${item.Alpa}</td>
+            <td><strong>${item.Total}</strong></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        showAlert("Gagal memuat laporan.", "error");
+      }
+    } catch (error) {
+      showAlert("Gagal terhubung untuk mengambil laporan.", "error");
+    } finally {
+      loading.style.display = 'none';
+    }
+  }
+
+  // Inisialisasi awal
+  initTheme();
+  ambilSiswaDariSheet();
+</script>
+
+</body>
+</html>
