@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SMPN 110 JAKARTA</title>
+<style>
+  :root{
+    --madu-terang:#ffd977;
+    --madu:#f5a302;
+    --madu-gelap:#a86100;
+    --bg:#140c02;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    min-height:100vh;
+    font-family:"Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(ellipse at 50% -10%, #3a2506 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='rgba(255,180,0,0.07)' stroke-width='2'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='rgba(255,180,0,0.07)' stroke-width='2'/%3E%3C/svg%3E"),
+      var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:48px 16px; color:#fff; overflow-x:hidden;
+  }
+
+  /* ===== Judul ===== */
+  header{ text-align:center; margin-bottom:44px; z-index:1; }
+  h1{
+    font-size:clamp(2rem,5vw,3.2rem); letter-spacing:2px; text-transform:uppercase;
+    background:linear-gradient(180deg,#fff3c9,#ffc82e 55%,#d07f00);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 3px 14px rgba(255,170,0,.35));
+  }
+  header p{ color:#cfa14f; margin-top:8px; letter-spacing:1px; }
+
+  /* ===== Susunan sarang (baris 2-3-2 otomatis saling mengunci) ===== */
+  .sarang{ display:flex; flex-direction:column; align-items:center; z-index:1; }
+  .baris{ display:flex; gap:10px; }
+  .baris + .baris{ margin-top:-43px; } /* ubah nilai ini jika jarak antar baris ingin lebih rapat/renggang */
+
+  /* ===== Sel heksagon ===== */
+  .sel{
+    display:block; position:relative;
+    filter:drop-shadow(0 8px 12px rgba(0,0,0,.5));
+    transition:filter .3s;
+    animation:muncul .6s cubic-bezier(.2,.9,.3,1.4) backwards;
+    animation-delay:calc(var(--i,0) * .09s);
+  }
+  .sel:hover, .sel.aktif{ filter:drop-shadow(0 0 22px rgba(255,190,40,.85)); z-index:3; }
+
+  .hexa{
+    position:relative; width:180px; height:208px;
+    clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background:linear-gradient(160deg, var(--madu-terang), var(--madu) 50%, var(--madu-gelap));
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
+    text-align:center; text-decoration:none; color:#3b2302; overflow:hidden;
+    transition:transform .35s cubic-bezier(.2,.9,.3,1.5);
+  }
+  /* dinding dalam sel (efek bingkai) */
+  .hexa::before{
+    content:""; position:absolute; inset:7px;
+    clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background:linear-gradient(160deg,#ffe9b0,#f7ab13 55%,#c97d05);
+  }
+  /* kilau madu yang melintas saat hover */
+  .hexa::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.6) 50%,transparent 65%);
+    transform:translateX(-130%); transition:transform .55s ease;
+  }
+  .sel:hover .hexa{ transform:scale(1.09); }
+  .sel:hover .hexa::after{ transform:translateX(130%); }
+  .hexa span{ position:relative; z-index:1; }
+
+  .ikon{ font-size:44px; line-height:1; }
+  .judul{ font-weight:700; letter-spacing:1.5px; text-transform:uppercase; font-size:.82rem; }
+  .ket{ font-size:.68rem; opacity:.75; }
+
+  /* ===== Sel logo di tengah ===== */
+  .logo .hexa{ background:linear-gradient(160deg,#5b3c07,#2a1a03); animation:napas 3.5s ease-in-out infinite; }
+  .logo .hexa::before{ background:radial-gradient(circle at 50% 35%, #3d2906, #1c1102); }
+  .logo{ color:var(--madu-terang); }
+  .logo .ikon{ font-size:52px; }
+  @keyframes napas{ 50%{ transform:scale(1.04); } }
+
+  /* ===== Sel aktif (diklik) ===== */
+  .sel.aktif .hexa::before{ background:linear-gradient(160deg,#fff3c4,#ffbe2e 55%,#e08a00); }
+
+  /* ===== Lebah terbang ===== */
+  .bee{ position:fixed; font-size:26px; z-index:0; pointer-events:none; animation:terbang 16s linear infinite; }
+  .bee.b2{ font-size:19px; animation-duration:23s; animation-delay:-9s; }
+  @keyframes terbang{
+    0%  { transform:translate(-5vw,70vh) rotate(-8deg); }
+    20% { transform:translate(20vw,30vh) rotate(8deg); }
+    40% { transform:translate(45vw,55vh) rotate(-8deg); }
+    60% { transform:translate(70vw,25vh) rotate(8deg); }
+    80% { transform:translate(90vw,55vh) rotate(-8deg); }
+    100%{ transform:translate(108vw,30vh) rotate(0deg); }
+  }
+
+  footer{ margin-top:48px; color:#9a733a; font-size:.8rem; letter-spacing:1px; z-index:1; }
+
+  @keyframes muncul{ from{ opacity:0; transform:scale(.3) translateY(30px); } }
+
+  /* ===== Layar kecil ===== */
+  @media (max-width:640px){
+    .hexa{ width:112px; height:130px; }
+    .ikon{ font-size:30px; }
+    .logo .ikon{ font-size:36px; }
+    .judul{ font-size:.6rem; letter-spacing:1px; }
+    .ket{ display:none; }
+    .baris{ gap:7px; }
+    .baris + .baris{ margin-top:-26px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <span class="bee">🐝</span>
+  <span class="bee b2">🐝</span>
+
+  <header>
+    <h1>SMPN 110 JAKARTA</h1>
+    <p>Maju Bersama Raih Prestasi</p>
+  </header>
+
+  <nav class="sarang">
+    <!-- Baris 1 -->
+    <div class="baris">
+      <a href="#beranda" class="sel" style="--i:1">
+        <span class="hexa"><span class="ikon">🏠</span><span class="judul">Beranda</span><span class="ket">Halaman utama</span></span>
+      </a>
+      <a href="#menu" class="sel" style="--i:2">
+        <span class="hexa"><span class="ikon">🍯</span><span class="judul">Menu</span><span class="ket">Kue &amp; minuman</span></span>
+      </a>
+    </div>
+    <!-- Baris 2 (ada logo di tengah) -->
+    <div class="baris">
+      <a href="#galeri" class="sel" style="--i:3">
+        <span class="hexa"><span class="ikon">📸</span><span class="judul">Galeri</span><span class="ket">Foto suasana</span></span>
+      </a>
+      <a href="#" class="sel logo" style="--i:4">
+        <span class="hexa"><span class="ikon">🐝</span><span class="judul">Honey Hexa</span><span class="ket">Kafe Madu</span></span>
+      </a>
+      <a href="#promo" class="sel" style="--i:5">
+        <span class="hexa"><span class="ikon">🏷️</span><span class="judul">Promo</span><span class="ket">Diskon hari ini</span></span>
+      </a>
+    </div>
+    <!-- Baris 3 -->
+    <div class="baris">
+      <a href="#tentang" class="sel" style="--i:6">
+        <span class="hexa"><span class="ikon">🌻</span><span class="judul">Tentang</span><span class="ket">Cerita kami</span></span>
+      </a>
+      <a href="#kontak" class="sel" style="--i:7">
+        <span class="hexa"><span class="ikon">✉️</span><span class="judul">Kontak</span><span class="ket">Hubungi kami</span></span>
+      </a>
+    </div>
+  </nav>
+
+  <footer>Sel yang diklik akan tetap menyala seperti madu ✦</footer>
+
+  <script>
+    document.querySelectorAll('.sel').forEach(sel => {
+      sel.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector('.sel.aktif')?.classList.remove('aktif');
+        sel.classList.add('aktif');
+      });
+    });  </script>
+</body>
+</html>
