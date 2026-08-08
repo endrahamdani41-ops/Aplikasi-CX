@@ -6,10 +6,12 @@
 <title>SMPN 110 JAKARTA</title>
 <style>
   :root{
-    --madu-terang:#ffd977;
-    --madu:#f5a302;
-    --madu-gelap:#a86100;
-    --bg:#140c02;
+    --navy-tua:#0a2540;
+    --navy:#1e3a8a;
+    --navy-terang:#60a5fa;
+    --aksen:#bfdbfe;
+    --bg:#030a17;
+    --teks-redup:#8aa4cc;
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
 
@@ -17,56 +19,52 @@
     min-height:100vh;
     font-family:"Segoe UI", system-ui, sans-serif;
     background:
-      radial-gradient(ellipse at 50% -10%, #3a2506 0%, transparent 60%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='rgba(255,180,0,0.07)' stroke-width='2'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='rgba(255,180,0,0.07)' stroke-width='2'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse at 50% -10%, #0f2d5a 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='rgba(96,165,250,0.07)' stroke-width='2'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='rgba(96,165,250,0.07)' stroke-width='2'/%3E%3C/svg%3E"),
       var(--bg);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     padding:48px 16px; color:#fff; overflow-x:hidden;
   }
 
-  /* ===== Judul ===== */
   header{ text-align:center; margin-bottom:44px; z-index:1; }
   h1{
     font-size:clamp(2rem,5vw,3.2rem); letter-spacing:2px; text-transform:uppercase;
-    background:linear-gradient(180deg,#fff3c9,#ffc82e 55%,#d07f00);
+    background:linear-gradient(180deg,#dbeafe,#60a5fa 55%,#1e3a8a);
     -webkit-background-clip:text; background-clip:text; color:transparent;
-    filter:drop-shadow(0 3px 14px rgba(255,170,0,.35));
+    filter:drop-shadow(0 3px 14px rgba(96,165,250,.35));
   }
-  header p{ color:#cfa14f; margin-top:8px; letter-spacing:1px; }
+  header p{ color:var(--aksen); margin-top:8px; letter-spacing:1px; }
 
-  /* ===== Susunan sarang (baris 2-3-2 otomatis saling mengunci) ===== */
   .sarang{ display:flex; flex-direction:column; align-items:center; z-index:1; }
   .baris{ display:flex; gap:10px; }
-  .baris + .baris{ margin-top:-43px; } /* ubah nilai ini jika jarak antar baris ingin lebih rapat/renggang */
+  .baris + .baris{ margin-top:-43px; }
 
-  /* ===== Sel heksagon ===== */
   .sel{
     display:block; position:relative;
-    filter:drop-shadow(0 8px 12px rgba(0,0,0,.5));
-    transition:filter .3s;
+    text-decoration:none; /* ✅ garis bawah link dihapus */
+    filter:drop-shadow(0 8px 12px rgba(0,0,0,.55));
     animation:muncul .6s cubic-bezier(.2,.9,.3,1.4) backwards;
     animation-delay:calc(var(--i,0) * .09s);
+    transition:filter .3s;
   }
-  .sel:hover, .sel.aktif{ filter:drop-shadow(0 0 22px rgba(255,190,40,.85)); z-index:3; }
+  .sel.aktif{ filter:drop-shadow(0 0 22px rgba(96,165,250,.85)); z-index:3; }
 
   .hexa{
     position:relative; width:180px; height:208px;
     clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    background:linear-gradient(160deg, var(--madu-terang), var(--madu) 50%, var(--madu-gelap));
+    background:linear-gradient(160deg, var(--aksen), var(--navy-terang) 50%, var(--navy));
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
-    text-align:center; text-decoration:none; color:#3b2302; overflow:hidden;
+    text-align:center; color:#0a2540; overflow:hidden;
     transition:transform .35s cubic-bezier(.2,.9,.3,1.5);
   }
-  /* dinding dalam sel (efek bingkai) */
   .hexa::before{
     content:""; position:absolute; inset:7px;
     clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    background:linear-gradient(160deg,#ffe9b0,#f7ab13 55%,#c97d05);
+    background:linear-gradient(160deg,#dbeafe,#3b82f6 55%,#1e3a8a);
   }
-  /* kilau madu yang melintas saat hover */
   .hexa::after{
     content:""; position:absolute; inset:0;
-    background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.6) 50%,transparent 65%);
+    background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);
     transform:translateX(-130%); transition:transform .55s ease;
   }
   .sel:hover .hexa{ transform:scale(1.09); }
@@ -75,21 +73,61 @@
 
   .ikon{ font-size:44px; line-height:1; }
   .judul{ font-weight:700; letter-spacing:1.5px; text-transform:uppercase; font-size:.82rem; }
-  .ket{ font-size:.68rem; opacity:.75; }
+  .ket{ font-size:.68rem; opacity:.78; }
 
   /* ===== Sel logo di tengah ===== */
-  .logo .hexa{ background:linear-gradient(160deg,#5b3c07,#2a1a03); animation:napas 3.5s ease-in-out infinite; }
-  .logo .hexa::before{ background:radial-gradient(circle at 50% 35%, #3d2906, #1c1102); }
-  .logo{ color:var(--madu-terang); }
-  .logo .ikon{ font-size:52px; }
+  .logo{ cursor:pointer; }
+  .logo .hexa{
+    background:linear-gradient(160deg,#1e3a8a,#0a2540);
+    color:var(--aksen);
+    animation:napas 3.5s ease-in-out infinite;
+    transition:transform .6s ease;
+  }
+  .logo .hexa::before{ background:radial-gradient(circle at 50% 35%, #1e3a8a, #030a17); }
+  .logo .ikon{
+    font-size:52px;
+    transition:transform .9s cubic-bezier(.5,.05,.4,1);
+    display:inline-block;
+  }
+  .logo.tutup .ikon{ transform:rotate(360deg); }
+  .logo:hover .hexa{ transform:scale(1.07); }
+  .logo:hover .ikon{ filter:drop-shadow(0 0 10px rgba(96,165,250,.7)); }
   @keyframes napas{ 50%{ transform:scale(1.04); } }
 
-  /* ===== Sel aktif (diklik) ===== */
-  .sel.aktif .hexa::before{ background:linear-gradient(160deg,#fff3c4,#ffbe2e 55%,#e08a00); }
+  .sel.aktif .hexa::before{ background:linear-gradient(160deg,#dbeafe,#60a5fa 55%,#1d4ed8); }
 
-  /* ===== Lebah terbang ===== */
-  .bee{ position:fixed; font-size:26px; z-index:0; pointer-events:none; animation:terbang 16s linear infinite; }
-  .bee.b2{ font-size:19px; animation-duration:23s; animation-delay:-9s; }
+  /* ===== Efek ledakan ===== */
+  .partikel{
+    position:fixed;
+    width:14px; height:16px;
+    clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    pointer-events:none;
+    z-index:9999;
+    will-change:transform, opacity;
+  }
+  .gelombang{
+    position:fixed;
+    border:3px solid rgba(96,165,250,.85);
+    border-radius:50%;
+    pointer-events:none;
+    z-index:9998;
+    transform:translate(-50%,-50%);
+    will-change:transform, opacity;
+  }
+  @keyframes getar{
+    0%, 100%{ transform:translate(0,0) rotate(0deg); }
+    15%{ transform:translate(-4px, 3px) rotate(-2deg); }
+    30%{ transform:translate(4px, -3px) rotate(2deg); }
+    45%{ transform:translate(-3px, -4px) rotate(-1.5deg); }
+    60%{ transform:translate(3px, 4px) rotate(1.5deg); }
+    75%{ transform:translate(-2px, 2px) rotate(-1deg); }
+    90%{ transform:translate(2px, -2px) rotate(1deg); }
+  }
+  .sel.meledak .hexa{ animation:getar .5s ease; }
+  .sel.meledak{ filter:drop-shadow(0 0 35px rgba(147,197,253,1)) brightness(1.4); }
+
+  .fly{ position:fixed; font-size:24px; z-index:0; pointer-events:none; animation:terbang 16s linear infinite; }
+  .fly.f2{ font-size:18px; animation-duration:22s; animation-delay:-9s; }
   @keyframes terbang{
     0%  { transform:translate(-5vw,70vh) rotate(-8deg); }
     20% { transform:translate(20vw,30vh) rotate(8deg); }
@@ -99,11 +137,11 @@
     100%{ transform:translate(108vw,30vh) rotate(0deg); }
   }
 
-  footer{ margin-top:48px; color:#9a733a; font-size:.8rem; letter-spacing:1px; z-index:1; }
+  footer{ margin-top:48px; color:var(--teks-redup); font-size:.8rem; letter-spacing:1px; z-index:1; text-align:center; }
+  footer small{ display:block; margin-top:6px; color:var(--navy-terang); }
 
   @keyframes muncul{ from{ opacity:0; transform:scale(.3) translateY(30px); } }
 
-  /* ===== Layar kecil ===== */
   @media (max-width:640px){
     .hexa{ width:112px; height:130px; }
     .ikon{ font-size:30px; }
@@ -120,56 +158,205 @@
 </head>
 <body>
 
-  <span class="bee">🐝</span>
-  <span class="bee b2">🐝</span>
+  <span class="fly">✈️</span>
+  <span class="fly f2">✈️</span>
 
   <header>
     <h1>SMPN 110 JAKARTA</h1>
     <p>Maju Bersama Raih Prestasi</p>
   </header>
 
-  <nav class="sarang">
-    <!-- Baris 1 -->
+  <nav class="sarang" id="sarang">
     <div class="baris">
-      <a href="#beranda" class="sel" style="--i:1">
-        <span class="hexa"><span class="ikon">🏠</span><span class="judul">Beranda</span><span class="ket">Halaman utama</span></span>
+      <a href="https://script.google.com/a/macros/guru.smp.belajar.id/s/AKfycbwwv3mDouicAsURapXTmZApd1Mwj6lAL-A5EMZCjJPNK7aiIL5etZmo-Yxu5YqrqwWstQ/exec" 
+         class="sel" 
+         style="--i:1" 
+         target="_blank" 
+         rel="noopener">
+        <span class="hexa">
+          <span class="ikon">🏠</span>
+          <span class="judul">Presensi</span>
+          <span class="ket">Isi absen harian</span>
+        </span>
       </a>
-      <a href="#menu" class="sel" style="--i:2">
-        <span class="hexa"><span class="ikon">🍯</span><span class="judul">Menu</span><span class="ket">Kue &amp; minuman</span></span>
+      <a href="#profil" class="sel" style="--i:2">
+        <span class="hexa">
+          <span class="ikon">🏫</span>
+          <span class="judul">Profil</span>
+          <span class="ket">Visi &amp; misi</span>
+        </span>
       </a>
     </div>
-    <!-- Baris 2 (ada logo di tengah) -->
     <div class="baris">
-      <a href="#galeri" class="sel" style="--i:3">
-        <span class="hexa"><span class="ikon">📸</span><span class="judul">Galeri</span><span class="ket">Foto suasana</span></span>
+      <a href="#berita" class="sel" style="--i:3">
+        <span class="hexa">
+          <span class="ikon">📰</span>
+          <span class="judul">Berita</span>
+          <span class="ket">Kabar terbaru</span>
+        </span>
       </a>
-      <a href="#" class="sel logo" style="--i:4">
-        <span class="hexa"><span class="ikon">🐝</span><span class="judul">Honey Hexa</span><span class="ket">Kafe Madu</span></span>
+      <a href="#" class="sel logo" id="toggle-sarang" style="--i:4">
+        <span class="hexa">
+          <span class="ikon">🎓</span>
+          <span class="judul">SMPN 110</span>
+          <span class="ket">Jakarta</span>
+        </span>
       </a>
-      <a href="#promo" class="sel" style="--i:5">
-        <span class="hexa"><span class="ikon">🏷️</span><span class="judul">Promo</span><span class="ket">Diskon hari ini</span></span>
+      <a href="#prestasi" class="sel" style="--i:5">
+        <span class="hexa">
+          <span class="ikon">🏆</span>
+          <span class="judul">Prestasi</span>
+          <span class="ket">Juara siswa</span>
+        </span>
       </a>
     </div>
-    <!-- Baris 3 -->
     <div class="baris">
-      <a href="#tentang" class="sel" style="--i:6">
-        <span class="hexa"><span class="ikon">🌻</span><span class="judul">Tentang</span><span class="ket">Cerita kami</span></span>
+      <a href="#ekskul" class="sel" style="--i:6">
+        <span class="hexa">
+          <span class="ikon">🎨</span>
+          <span class="judul">Ekskul</span>
+          <span class="ket">Kegiatan siswa</span>
+        </span>
       </a>
       <a href="#kontak" class="sel" style="--i:7">
-        <span class="hexa"><span class="ikon">✉️</span><span class="judul">Kontak</span><span class="ket">Hubungi kami</span></span>
+        <span class="hexa">
+          <span class="ikon">✉️</span>
+          <span class="judul">Kontak</span>
+          <span class="ket">Hubungi kami</span>
+        </span>
       </a>
     </div>
   </nav>
 
-  <footer>Sel yang diklik akan tetap menyala seperti madu ✦</footer>
+  <footer>
+    Klik logo 🎓 di tengah untuk collapse/expand · Klik menu pinggir untuk efek ledakan 💥
+    <small>Sel yang diklik akan tetap menyala ✦</small>
+  </footer>
 
   <script>
-    document.querySelectorAll('.sel').forEach(sel => {
+    const toggleBtn = document.getElementById('toggle-sarang');
+    const logoHexa = toggleBtn.querySelector('.hexa');
+    const sels = [...document.querySelectorAll('.sel:not(.logo)')];
+    let isTutup = false;
+
+    /* ===== Efek ledakan partikel + gelombang kejut ===== */
+    function meledak(x, y) {
+      const jumlahPartikel = 32;
+      const warna = ['#60a5fa', '#3b82f6', '#bfdbfe', '#93c5fd', '#1e3a8a', '#dbeafe'];
+
+      for (let i = 0; i < jumlahPartikel; i++) {
+        const p = document.createElement('div');
+        p.className = 'partikel';
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+        p.style.background = warna[Math.floor(Math.random() * warna.length)];
+        p.style.boxShadow = `0 0 8px ${warna[Math.floor(Math.random() * warna.length)]}`;
+
+        const sudut = (Math.PI * 2 * i) / jumlahPartikel + (Math.random() - 0.5) * 0.6;
+        const jarak = 90 + Math.random() * 140;
+        const dx = Math.cos(sudut) * jarak;
+        const dy = Math.sin(sudut) * jarak;
+        const rotasi = Math.random() * 720 - 360;
+        const skala = 0.6 + Math.random() * 1.2;
+
+        document.body.appendChild(p);
+
+        p.animate([
+          { transform: `translate(-50%,-50%) translate(0,0) rotate(0deg) scale(${skala})`, opacity: 1 },
+          { transform: `translate(-50%,-50%) translate(${dx}px,${dy}px) rotate(${rotasi}deg) scale(0)`, opacity: 0 }
+        ], {
+          duration: 700 + Math.random() * 500,
+          easing: 'cubic-bezier(.1,.8,.3,1)'
+        }).onfinish = () => p.remove();
+      }
+
+      for (let r = 0; r < 2; r++) {
+        const g = document.createElement('div');
+        g.className = 'gelombang';
+        g.style.left = x + 'px';
+        g.style.top = y + 'px';
+        g.style.width = '20px';
+        g.style.height = '20px';
+        document.body.appendChild(g);
+
+        g.animate([
+          { transform: 'translate(-50%,-50%) scale(1)', opacity: 0.9, borderWidth: '4px' },
+          { transform: 'translate(-50%,-50%) scale(12)', opacity: 0, borderWidth: '1px' }
+        ], {
+          duration: 600 + r * 200,
+          delay: r * 120,
+          easing: 'cubic-bezier(.2,.7,.4,1)'
+        }).onfinish = () => g.remove();
+      }
+    }
+
+    /* ===== Klik menu pinggir → ledakan + aktif ===== */
+    sels.forEach(sel => {
       sel.addEventListener('click', e => {
-        e.preventDefault();
+        if (isTutup) { e.preventDefault(); return; }
+
+        const rect = sel.querySelector('.hexa').getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        meledak(cx, cy);
+
+        sel.classList.remove('meledak');
+        void sel.offsetWidth;
+        sel.classList.add('meledak');
+        setTimeout(() => sel.classList.remove('meledak'), 600);
+
         document.querySelector('.sel.aktif')?.classList.remove('aktif');
         sel.classList.add('aktif');
+
+        const href = sel.getAttribute('href') || '';
+        if (href.startsWith('#') || href === '#') {
+          e.preventDefault();
+        }
       });
-    });  </script>
+    });
+
+    /* ===== Toggle collapse/expand ===== */
+    toggleBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      const logoRect = logoHexa.getBoundingClientRect();
+      const logoCX = logoRect.left + logoRect.width / 2;
+      const logoCY = logoRect.top + logoRect.height / 2;
+
+      const duration = 0.9;
+      const step = 0.15;
+      const easing = 'cubic-bezier(.55,.05,.35,1)';
+
+      if (!isTutup) {
+        sels.forEach((sel, i) => {
+          const rect = sel.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = logoCX - cx;
+          const dy = logoCY - cy;
+
+          sel.style.transition = `transform ${duration}s ${easing}, opacity ${duration}s ease`;
+          sel.style.transitionDelay = (i * step) + 's';
+          sel.style.transform = `translate(${dx}px, ${dy}px) scale(0.1) rotate(540deg)`;
+          sel.style.opacity = '0';
+          sel.style.pointerEvents = 'none';
+        });
+        toggleBtn.classList.add('tutup');
+        isTutup = true;
+      } else {
+        sels.forEach((sel, i) => {
+          const delay = (sels.length - 1 - i) * step;
+          sel.style.transition = `transform ${duration}s ${easing}, opacity ${duration}s ease`;
+          sel.style.transitionDelay = delay + 's';
+          sel.style.transform = '';
+          sel.style.opacity = '';
+          setTimeout(() => { sel.style.pointerEvents = ''; }, (delay + duration) * 1000);
+        });
+        toggleBtn.classList.remove('tutup');
+        isTutup = false;
+      }
+    });
+  </script>
 </body>
 </html>
