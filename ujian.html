@@ -8,81 +8,72 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body { background-color: #f0f4f8; }
 
-        /* Layar Awal */
         #layar-awal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: white; z-index: 999;
         }
-        #layar-awal h1 { font-size: 28px; margin-bottom: 30px; }
-        #layar-awal ul { text-align: left; line-height: 2; margin-bottom: 30px; font-size: 16px; }
+        #layar-awal h1 { font-size: 26px; margin-bottom: 25px; }
+        #layar-awal ul { text-align: left; line-height: 2; margin-bottom: 25px; font-size: 15px; }
         #btn-mulai {
-            padding: 14px 40px; font-size: 18px; background: #10b981; color: white;
+            padding: 12px 36px; font-size: 17px; background: #10b981; color: white;
             border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.3s;
         }
         #btn-mulai:hover { background: #059669; transform: scale(1.05); }
 
-        /* Konten Soal */
         #konten-soal { display: none; width: 100%; height: 100vh; }
         iframe { width: 100%; height: 100vh; border: none; }
 
-        /* Layar Peringatan */
         #layar-peringatan {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #f59e0b; color: white; align-items: center; justify-content: center;
-            flex-direction: column; z-index: 9998;
+            flex-direction: column; z-index: 9998; padding: 20px; text-align: center;
         }
-        #layar-peringatan h2 { font-size: 32px; margin-bottom: 20px; }
-        #layar-peringatan p { font-size: 18px; margin-bottom: 15px; text-align: center; padding: 0 20px; }
+        #layar-peringatan h2 { font-size: 28px; margin-bottom: 15px; }
         #btn-lanjut {
             padding: 12px 30px; font-size: 16px; background: #1e3a8a; color: white;
-            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 15px;
         }
 
-        /* Layar Diblokir Permanen */
         #layar-diblokir {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #dc2626; color: white; align-items: center; justify-content: center;
-            flex-direction: column; z-index: 9999;
+            flex-direction: column; z-index: 9999; padding: 20px; text-align: center;
         }
-        #layar-diblokir h2 { font-size: 36px; margin-bottom: 20px; }
+        #layar-diblokir h2 { font-size: 32px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <!-- LAYAR AWAL -->
     <div id="layar-awal">
         <h1>🛡️ UJIAN ONLINE - MODE AMAN</h1>
         <ul>
-            <li>✅ Wajib menggunakan <b>Layar Penuh</b></li>
-            <li>⚠️ Mendapatkan <b>3 kali peringatan</b> sebelum diblokir</li>
-            <li>❌ Pindah tab / keluar layar penuh = Peringatan!</li>
-            <li>🚫 Peringatan ke-3 = Soal diblokir permanen</li>
+            <li>✅ Wajib Layar Penuh — JANGAN DIBELAH!</li>
+            <li>❌ Layar mengecil / dibelah = TERDETEKSI!</li>
+            <li>❌ Pindah tab / keluar layar penuh = PERINGATAN</li>
+            <li>⚠️ Mendapat <b>3 kali peringatan</b></li>
+            <li>🚫 Ke-3 kali = DIBLOKIR PERMANEN</li>
         </ul>
         <button id="btn-mulai">MULAI UJIAN</button>
     </div>
 
-    <!-- KONTEN SOAL GOOGLE FORM -->
     <div id="konten-soal">
-        <iframe src="https://forms.gle/7dWCAuCeaKEkFhaz5"></iframe>
+        <iframe src="https://forms.gle/5RZxHPyYYcc7SLDB8"></iframe>
     </div>
 
-    <!-- LAYAR PERINGATAN (Masih Bisa Lanjut) -->
     <div id="layar-peringatan">
         <h2>⚠️ PERINGATAN PELANGGARAN</h2>
         <p id="teks-alasan"></p>
         <p id="sisa-kesempatan"></p>
-        <button id="btn-lanjut">KLIK DI SINI UNTUK LANJUT UJIAN</button>
+        <button id="btn-lanjut">KLIK UNTUK LANJUT (LAYAR HARUS PENUH!)</button>
     </div>
 
-    <!-- LAYAR DIBLOKIR PERMANEN -->
     <div id="layar-diblokir">
         <h2>🚫 DIBLOKIR PERMANEN</h2>
-        <p>Anda telah melanggar aturan sebanyak 3 kali.</p>
-        <p>Ujian dibatalkan dan tidak dapat dilanjutkan lagi.</p>
-        <p>Silakan hubungi guru pengawas.</p>
+        <p>Anda melanggar aturan sebanyak 3 kali.</p>
+        <p>Ujian dibatalkan. Hubungi guru pengawas.</p>
     </div>
 
     <script>
@@ -97,28 +88,35 @@
 
         let sedangUjian = false;
         let jumlahPelanggaran = 0;
-        const MAKSIMAL_PERINGATAN = 3; // BISA DIUBAH JIKA INGIN 2/4 KALI
+        const MAKSIMAL = 3;
 
-        // TOMBOL MULAI → Masuk Layar Penuh
+        // AMBIL UKURAN LAYAR SAAT PENUH
+        let lebarPenuh = 0;
+        let tinggiPenuh = 0;
+
         btnMulai.addEventListener('click', async () => {
             try {
                 await document.documentElement.requestFullscreen();
                 setTimeout(() => {
+                    // CATAT UKURAN LAYAR PENUH
+                    lebarPenuh = window.innerWidth;
+                    tinggiPenuh = window.innerHeight;
                     layarAwal.style.display = 'none';
                     kontenSoal.style.display = 'block';
                     sedangUjian = true;
                 }, 600);
             } catch (err) {
-                alert('❌ Harus izinkan Layar Penuh untuk memulai ujian!\nKlik lagi dan pilih "Izinkan".');
+                alert('❌ Harus izinkan Layar Penuh untuk memulai!');
             }
         });
 
-        // Lanjutkan ujian setelah peringatan
         btnLanjut.addEventListener('click', async () => {
             layarPeringatan.style.display = 'none';
             try {
                 await document.documentElement.requestFullscreen();
                 setTimeout(() => {
+                    lebarPenuh = window.innerWidth;
+                    tinggiPenuh = window.innerHeight;
                     kontenSoal.style.display = 'block';
                     sedangUjian = true;
                 }, 400);
@@ -128,21 +126,39 @@
             }
         });
 
-        // Deteksi Keluar Layar Penuh
+        // DETEKSI KELUAR LAYAR PENUH
         document.addEventListener('fullscreenchange', () => {
             if (sedangUjian && !document.fullscreenElement) {
                 beriPeringatan('Anda keluar dari mode Layar Penuh!');
             }
         });
 
-        // Deteksi Pindah Tab
+        // DETEKSI PINDAH TAB
         document.addEventListener('visibilitychange', () => {
             if (sedangUjian && document.visibilityState === 'hidden') {
-                beriPeringatan('Anda berpindah tab atau membuka aplikasi lain!');
+                beriPeringatan('Anda berpindah tab atau aplikasi lain!');
             }
         });
 
-        // Deteksi Klik Jendela Lain
+        // DETEKSI LAYAR DIBELAH / DIKECILKAN
+        window.addEventListener('resize', () => {
+            if (!sedangUjian || lebarPenuh === 0) return;
+
+            const selisihLebar = Math.abs(window.innerWidth - lebarPenuh) / lebarPenuh;
+            const selisihTinggi = Math.abs(window.innerHeight - tinggiPenuh) / tinggiPenuh;
+
+            // Jika layar mengecil lebih dari 12% → dianggap dibelah/diubah
+            if (selisihLebar > 0.12 || selisihTinggi > 0.12) {
+                // Hanya jika BUKAN karena rotasi layar penuh
+                if (document.fullscreenElement) {
+                    beriPeringatan('Layar terdeteksi terbagi/dibelah! Dilarang menggunakan mode belah layar.');
+                } else {
+                    beriPeringatan('Layar tidak dalam kondisi penuh!');
+                }
+            }
+        });
+
+        // DETEKSI KEHILANGAN FOKUS
         window.addEventListener('blur', () => {
             if (sedangUjian && !document.fullscreenElement) {
                 beriPeringatan('Anda berpindah ke jendela/aplikasi lain!');
@@ -154,18 +170,16 @@
             jumlahPelanggaran++;
             kontenSoal.style.display = 'none';
 
-            if (jumlahPelanggaran >= MAKSIMAL_PERINGATAN) {
-                // KE-3 KALI → DIBLOKIR PERMANEN
+            if (jumlahPelanggaran >= MAKSIMAL) {
                 layarDiblokir.style.display = 'flex';
                 if (document.fullscreenElement) document.exitFullscreen();
             } else {
-                // MASIH ADA KESEMPATAN → TAMPIL PERINGATAN
-                const sisa = MAKSIMAL_PERINGATAN - jumlahPelanggaran;
+                const sisa = MAKSIMAL - jumlahPelanggaran;
                 teksAlasan.textContent = 'Alasan: ' + alasan;
-                sisaKesempatan.innerHTML = 
-                    `<strong>⚠️ Peringatan ke-${jumlahPelanggaran} dari ${MAKSIMAL_PERINGATAN}</strong><br>` +
-                    `Sisa kesempatan: <span style="font-size:22px; color:#fff;">${sisa} kali lagi</span><br>` +
-                    `Jika melanggar lagi → akan diblokir permanen!`;
+                sisaKesempatan.innerHTML =
+                    `<strong>⚠️ Peringatan ke-${jumlahPelanggaran} dari ${MAKSIMAL}</strong><br>` +
+                    `Sisa kesempatan: ${sisa} kali lagi<br>` +
+                    `⚠️ Pastikan layar PENUH dan TIDAK DIBELAH!`;
                 layarPeringatan.style.display = 'flex';
                 if (document.fullscreenElement) document.exitFullscreen();
             }
