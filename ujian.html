@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UJIAN AMAN - Google Form Anti-Curang</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #f0f4f8; }
+
+        /* Layar Awal */
+        #layar-awal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; z-index: 999;
+        }
+        #layar-awal h1 { font-size: 28px; margin-bottom: 30px; }
+        #layar-awal ul { text-align: left; line-height: 2; margin-bottom: 30px; font-size: 16px; }
+        #btn-mulai {
+            padding: 14px 40px; font-size: 18px; background: #10b981; color: white;
+            border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.3s;
+        }
+        #btn-mulai:hover { background: #059669; transform: scale(1.05); }
+
+        /* Konten Soal */
+        #konten-soal { display: none; width: 100%; height: 100vh; }
+        iframe { width: 100%; height: 100vh; border: none; }
+
+        /* Layar Pelanggaran */
+        #layar-pelanggaran {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #dc2626; color: white; align-items: center; justify-content: center;
+            flex-direction: column; z-index: 9999;
+        }
+        #layar-pelanggaran h2 { font-size: 32px; margin-bottom: 20px; }
+        #layar-pelanggaran p { font-size: 18px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- LAYAR AWAL -->
+    <div id="layar-awal">
+        <h1>🛡️ UJIAN ONLINE - MODE AMAN</h1>
+        <ul>
+            <li>✅ Wajib menggunakan <b>Layar Penuh</b></li>
+            <li>❌ Dilarang <b>Pindah Tab / Minimalkan</b> = Diskualifikasi</li>
+            <li>❌ Dilarang tekan <b>ESC</b> atau keluar layar penuh = Diskualifikasi</li>
+            <li>⚠️ Pelanggaran = Soal hilang & tidak bisa lanjut</li>
+        </ul>
+        <button id="btn-mulai">MULAI UJIAN</button>
+    </div>
+
+    <!-- KONTEN SOAL GOOGLE FORM -->
+    <div id="konten-soal">
+        <iframe src="https://forms.gle/MyvXEXwxzDdEdRQb6"></iframe>
+    </div>
+
+    <!-- LAYAR PELANGGARAN -->
+    <div id="layar-pelanggaran">
+        <h2>🚫 PELANGGARAN TERDETEKSI</h2>
+        <p id="alasan-pelanggaran"></p>
+        <p>Ujian telah dibatalkan. Silakan hubungi guru pengawas.</p>
+    </div>
+
+    <script>
+        const layarAwal = document.getElementById('layar-awal');
+        const kontenSoal = document.getElementById('konten-soal');
+        const layarPelanggaran = document.getElementById('layar-pelanggaran');
+        const alasanPelanggaran = document.getElementById('alasan-pelanggaran');
+        const btnMulai = document.getElementById('btn-mulai');
+
+        let sedangUjian = false;
+
+        // Ganti link ini dengan link Google Form Anda
+        const linkIframe = document.querySelector('iframe').src;
+
+        // Tombol Mulai → Masuk Fullscreen
+        btnMulai.addEventListener('click', async () => {
+            try {
+                await document.documentElement.requestFullscreen();
+                layarAwal.style.display = 'none';
+                kontenSoal.style.display = 'block';
+                sedangUjian = true;
+            } catch (err) {
+                alert('Harus izinkan Layar Penuh untuk memulai ujian!');
+            }
+        });
+
+        // Deteksi Keluar Fullscreen
+        document.addEventListener('fullscreenchange', () => {
+            if (sedangUjian && !document.fullscreenElement) {
+                blokirUjian('Anda keluar dari mode Layar Penuh! (tekan ESC atau tombol kembali)');
+            }
+        });
+
+        // Deteksi Pindah Tab / Hilang Fokus
+        document.addEventListener('visibilitychange', () => {
+            if (sedangUjian && document.visibilityState === 'hidden') {
+                blokirUjian('Anda berpindah tab atau membuka aplikasi lain!');
+            }
+        });
+
+        // Deteksi kehilangan fokus jendela (klik luar browser)
+        window.addEventListener('blur', () => {
+            if (sedangUjian) {
+                blokirUjian('Anda berpindah ke jendela/aplikasi lain!');
+            }
+        });
+
+        function blokirUjian(alasan) {
+            sedangUjian = false;
+            kontenSoal.style.display = 'none';
+            layarPelanggaran.style.display = 'flex';
+            alasanPelanggaran.textContent = 'Alasan: ' + alasan;
+            if (document.fullscreenElement) document.exitFullscreen();
+        }
+    </script>
+</body>
+</html>
