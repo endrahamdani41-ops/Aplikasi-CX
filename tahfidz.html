@@ -13,12 +13,66 @@
     </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeIn 0.2s ease-out; }
+        .animate-slide-down { animation: slideDown 0.3s ease-out; }
+        .spinner {
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            border-top: 2px solid #10b981;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Warna teks opsi dropdown filter kelas */
+        #filterKelas option {
+            color: #334155;
+            background-color: #ffffff;
+        }
+        .dark #filterKelas option {
+            color: #e2e8f0;
+            background-color: #0f172a;
+        }
+        /* Custom scrollbar untuk matriks */
+        .matrix-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
+        .matrix-scroll::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.1);
+            border-radius: 4px;
+        }
+        .matrix-scroll::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 4px;
+        }
+        .matrix-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 185, 129, 0.5);
+        }
     </style>
 </head>
 <body class="bg-[#F8FAFC] dark:bg-slate-950 text-slate-700 dark:text-slate-200 min-h-screen transition-colors duration-200">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 right-4 z-[60] hidden">
+        <div id="toastContent" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg px-4 py-3 flex items-center space-x-3 max-w-sm">
+            <div id="toastIcon" class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+            </div>
+            <p id="toastMessage" class="text-sm font-medium text-slate-700 dark:text-slate-200">Berhasil!</p>
+        </div>
+    </div>
 
     <!-- Header -->
     <header class="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 sticky top-0 z-30 transition-colors duration-200">
@@ -34,15 +88,13 @@
             </div>
             
             <div class="flex items-center space-x-3">
-                <!-- Tombol Toggle Dark Mode -->
+                <button onclick="refreshData()" class="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition" title="Refresh Data">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                </button>
                 <button onclick="toggleDarkMode()" class="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition" title="Ganti Tema">
                     <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
                 </button>
                 
-                <button onclick="bukaModalSiswa()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center space-x-2 transition shadow-sm shadow-emerald-100 dark:shadow-none">
-                    <i data-lucide="user-plus" class="w-4 h-4"></i>
-                    <span></span>
-                </button>
             </div>
         </div>
     </header>
@@ -50,8 +102,40 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 py-8">
         
-        <!-- Search & Stats Bar -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- Filter & Search Bar -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm mb-6 animate-slide-down">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                <!-- Filter Kelas -->
+                <div class="md:col-span-3">
+                    <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Filter Kelas</label>
+                    <select id="filterKelas" onchange="applyFilterKelas()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition">
+                        <option value="" disabled selected hidden>Pilih Kelas</option>
+                    </select>
+                </div>
+                
+                <!-- Search -->
+                <div class="md:col-span-6">
+                    <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Cari Siswa</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="inputCari" oninput="cariSiswa()" placeholder="Pilih kelas terlebih dahulu..." disabled class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    </div>
+                </div>
+                
+                <!-- Tombol Rekap -->
+                <div class="md:col-span-3">
+                    <button id="btnRekapKelas" onclick="bukaModalRekapKelas()" class="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium flex items-center justify-center space-x-2 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                        <span>Rekap Kelas</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center space-x-4 transition-colors duration-200">
                 <div class="bg-indigo-50 dark:bg-indigo-950/50 p-3 rounded-xl text-indigo-500 dark:text-indigo-400">
                     <i data-lucide="users" class="w-6 h-6"></i>
@@ -62,12 +146,64 @@
                 </div>
             </div>
             
-            <div class="md:col-span-2 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center transition-colors duration-200">
-                <div class="relative w-full">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
-                        <i data-lucide="search" class="w-4 h-4"></i>
-                    </span>
-                    <input type="text" id="inputCari" oninput="cariSiswa()" placeholder="Cari nama siswa atau kelas..." class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center space-x-4 transition-colors duration-200">
+                <div class="bg-emerald-50 dark:bg-emerald-950/50 p-3 rounded-xl text-emerald-500 dark:text-emerald-400">
+                    <i data-lucide="check-circle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Total Lancar</p>
+                    <h3 id="statTotalLancar" class="text-xl font-bold text-slate-800 dark:text-white">0</h3>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center space-x-4 transition-colors duration-200">
+                <div class="bg-amber-50 dark:bg-amber-950/50 p-3 rounded-xl text-amber-500 dark:text-amber-400">
+                    <i data-lucide="clock" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Sedang Proses</p>
+                    <h3 id="statTotalProses" class="text-xl font-bold text-slate-800 dark:text-white">0</h3>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center space-x-4 transition-colors duration-200">
+                <div class="bg-purple-50 dark:bg-purple-950/50 p-3 rounded-xl text-purple-500 dark:text-purple-400">
+                    <i data-lucide="school" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Jumlah Kelas</p>
+                    <h3 id="statTotalKelas" class="text-xl font-bold text-slate-800 dark:text-white">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Kelas Aktif (muncul saat filter aktif) -->
+        <div id="infoKelasAktif" class="hidden mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-4 animate-slide-down">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-emerald-100 dark:bg-emerald-900/50 p-3 rounded-xl text-emerald-600 dark:text-emerald-400">
+                        <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-emerald-800 dark:text-emerald-300">Kelas <span id="namaKelasAktif">-</span></h3>
+                        <p class="text-xs text-emerald-600 dark:text-emerald-400"><span id="jumlahSiswaKelas">0</span> siswa • Rata-rata progres: <span id="rataRataKelas">0</span>%</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="lancarKelas">0</p>
+                        <p class="text-[10px] text-emerald-500 dark:text-emerald-400 uppercase tracking-wide">Lancar</p>
+                    </div>
+                    <div class="w-px h-8 bg-emerald-200 dark:bg-emerald-800"></div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-amber-600 dark:text-amber-400" id="prosesKelas">0</p>
+                        <p class="text-[10px] text-amber-500 dark:text-amber-400 uppercase tracking-wide">Proses</p>
+                    </div>
+                    <div class="w-px h-8 bg-emerald-200 dark:bg-emerald-800"></div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-slate-400 dark:text-slate-500" id="belumKelas">0</p>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wide">Belum</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,10 +226,10 @@
                 </table>
             </div>
             <div id="emptyState" class="hidden text-center py-12">
-                <div class="bg-slate-50 dark:bg-slate-800 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-slate-400 mb-3">
-                    <i data-lucide="folder-open" class="w-6 h-6"></i>
+                <div id="emptyStateIcon" class="bg-slate-50 dark:bg-slate-800 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-slate-400 mb-3">
+                    <i data-lucide="mouse-pointer-click" class="w-6 h-6"></i>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-sm">Belum ada data siswa. Silakan tambahkan terlebih dahulu.</p>
+                <p id="emptyStateText" class="text-slate-500 dark:text-slate-400 text-sm">Silakan pilih kelas terlebih dahulu untuk menampilkan data siswa.</p>
             </div>
         </div>
 
@@ -101,7 +237,7 @@
 
     <!-- Modal Tambah/Edit Siswa -->
     <div id="modalSiswa" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-800 animate-in fade-in zoom-in duration-200">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 dark:border-slate-800 animate-in">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="modalTitle" class="text-lg font-bold text-slate-800 dark:text-white">Tambah Data Siswa</h3>
                 <button onclick="tutupModalSiswa()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
@@ -117,12 +253,15 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Kelas</label>
-                        <input type="text" id="kelasSiswa" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500" placeholder="Contoh: 7A">
+                        <input type="text" id="kelasSiswa" required list="daftarKelas" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-emerald-500" placeholder="Contoh: 7A">
+                        <datalist id="daftarKelas"></datalist>
                     </div>
                 </div>
                 <div class="mt-6 flex justify-end space-x-3">
                     <button type="button" onclick="tutupModalSiswa()" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition shadow-sm shadow-emerald-100 dark:shadow-none">Simpan</button>
+                    <button type="submit" id="btnSimpanSiswa" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition shadow-sm shadow-emerald-100 dark:shadow-none flex items-center space-x-2">
+                        <span>Simpan</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -130,7 +269,7 @@
 
     <!-- Modal Detail & Input Hafalan -->
     <div id="modalHafalan" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-100 dark:border-slate-800 max-h-[90vh] flex flex-col">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-100 dark:border-slate-800 max-h-[90vh] flex flex-col animate-in">
             <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div>
                     <h3 id="detailNamaSiswa" class="text-lg font-bold text-slate-800 dark:text-white">Nama Siswa</h3>
@@ -151,8 +290,84 @@
         </div>
     </div>
 
+    <!-- Modal Rekap Kelas (Matriks) -->
+    <div id="modalRekapKelas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-6xl w-full shadow-xl border border-slate-100 dark:border-slate-800 max-h-[95vh] flex flex-col animate-in">
+            <!-- Header Modal -->
+            <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center space-x-2">
+                            <i data-lucide="layout-grid" class="w-5 h-5 text-indigo-500"></i>
+                            <span>Rekap Hafalan Kelas <span id="rekapKelasNama" class="text-indigo-600 dark:text-indigo-400">-</span></span>
+                        </h3>
+                        <p class="text-sm text-slate-400 dark:text-slate-500 mt-1">
+                            <span id="rekapJumlahSiswa">0</span> siswa • Juz Amma (37 Surat)
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="printRekapKelas()" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-medium transition flex items-center space-x-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Print</span>
+                        </button>
+                        <button onclick="exportRekapCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition flex items-center space-x-2">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>Export CSV</span>
+                        </button>
+                        <button onclick="tutupModalRekapKelas()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Legend -->
+                <div class="flex items-center space-x-4 mt-4 text-xs">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                        <span class="text-slate-500 dark:text-slate-400">Lancar</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                        <span class="text-slate-500 dark:text-slate-400">Proses</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <span class="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+                        <span class="text-slate-500 dark:text-slate-400">Belum</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Matrix Table -->
+            <div class="flex-1 overflow-auto matrix-scroll p-6">
+                <div class="min-w-max">
+                    <table class="w-full border-collapse text-xs" id="matriksTable">
+                        <thead id="matriksHead" class="sticky top-0 z-10">
+                            <!-- Header generated by JS -->
+                        </thead>
+                        <tbody id="matriksBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Body generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Footer Modal -->
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+                <div class="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
+                    <p>Klik pada sel untuk mengubah status hafalan</p>
+                    <p>Total: <span id="matriksTotalLancar" class="font-bold text-emerald-600 dark:text-emerald-400">0</span> hafalan lancar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript Logic -->
     <script>
+        // ========== KONFIGURASI ==========
+        // GANTI URL DIBAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwBjD_9qRfzKXFaBhMqizZYM9lv0O6aFviUFYXe3Lay2q22AyTZ-mLkKfmb8xIELf7e/exec';
+        // ==================================
+
         const daftarSurat = [
             "An-Naba'", "An-Nazi'at", "'Abasa", "At-Takwir", "Al-Infitar", 
             "Al-Muthaffifin", "Al-Insyiqaq", "Al-Buruj", "At-Tariq", "Al-A'la", 
@@ -164,11 +379,81 @@
             "Al-Falaq", "An-Nas"
         ];
 
-        let dataSiswa = JSON.parse(localStorage.getItem('data_hafalan_siswa')) || [];
-        let currentSiswaIndex = null;
+        // Nama singkat untuk header matriks
+        const namaSuratPendek = [
+            "Naba", "Naziat", "Abasa", "Takwir", "Infitar", 
+            "Muthaffifin", "Insyiqaq", "Buruj", "Tariq", "A'la", 
+            "Ghasyiyah", "Fajr", "Balad", "Syams", "Lail", 
+            "Duha", "Syarh", "Tin", "Alaq", "Qadr", 
+            "Bayyinah", "Zalzalah", "Adiyat", "Qari'ah", "Takasur", 
+            "Ashr", "Humazah", "Fil", "Quraisy", "Ma'un", 
+            "Kautsar", "Kafirun", "Nasr", "Lahab", "Ikhlas", 
+            "Falaq", "Nas"
+        ];
 
-        // Inisialisasi Tema & Icons
-        document.addEventListener("DOMContentLoaded", () => {
+        let dataSiswa = [];
+        let currentSiswaIndex = null;
+        let currentKelasFilter = "";
+        let isSubmitting = false;
+
+        // ========== HELPER FUNCTIONS ==========
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            if (type === 'success') {
+                toastIcon.className = 'p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400';
+                toastIcon.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i>';
+            } else {
+                toastIcon.className = 'p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400';
+                toastIcon.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4"></i>';
+            }
+            
+            lucide.createIcons();
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        async function apiCall(params, method = 'GET', body = null) {
+            const url = new URL(WEB_APP_URL);
+            Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+            
+            const options = { method };
+            if (body) {
+                options.body = JSON.stringify(body);
+                options.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
+            }
+            
+            try {
+                const response = await fetch(url, options);
+                const text = await response.text();
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('Response bukan JSON:', text);
+                    return { success: false, error: 'Respon server tidak valid' };
+                }
+            } catch (err) {
+                console.error('Network error:', err);
+                return { success: false, error: 'Koneksi gagal: ' + err.message };
+            }
+        }
+
+        function getDaftarKelas() {
+            const kelasSet = new Set(dataSiswa.map(s => s.kelas));
+            return Array.from(kelasSet).sort();
+        }
+
+        function getSiswaByKelas(kelas) {
+            if (!kelas) return dataSiswa;
+            return dataSiswa.filter(s => s.kelas === kelas);
+        }
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener("DOMContentLoaded", async () => {
             const savedTheme = localStorage.getItem('theme') || 'light';
             if (savedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -177,9 +462,136 @@
             }
             updateThemeIcon();
             lucide.createIcons();
-            renderTabel();
+            await loadSiswa();
         });
 
+        async function loadSiswa() {
+            const tbody = document.getElementById("tabelSiswaBody");
+            if (dataSiswa.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">
+                    <div class="spinner mx-auto mb-2"></div>
+                    <p class="text-sm">Memuat data dari server...</p>
+                </td></tr>`;
+            }
+
+            const result = await apiCall({ action: 'getSiswa' });
+            
+            if (result.success) {
+                dataSiswa = [];
+                const hafalanPromises = result.data.map(siswa => 
+                    apiCall({ action: 'getHafalan', siswaId: siswa.id })
+                        .then(r => ({ siswa, hafalan: r.success ? r.data : {} }))
+                );
+                
+                const results = await Promise.all(hafalanPromises);
+                dataSiswa = results.map(r => ({ ...r.siswa, hafalan: r.hafalan }));
+                
+                updateFilterKelas();
+                renderTabel();
+            } else {
+                showToast('Gagal memuat data: ' + result.error, 'error');
+                tbody.innerHTML = '';
+                renderTabel();
+            }
+        }
+
+        async function refreshData() {
+            await loadSiswa();
+            showToast('Data berhasil di-refresh');
+        }
+
+        // ========== FILTER KELAS ==========
+        function updateFilterKelas() {
+            const select = document.getElementById('filterKelas');
+            const datalist = document.getElementById('daftarKelas');
+            const daftarKelas = getDaftarKelas();
+            
+            // Placeholder "Pilih Kelas" sebagai default
+            const currentValue = select.value;
+            select.innerHTML = '<option value="" disabled selected hidden>Pilih Kelas</option>';
+            daftarKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                option.textContent = 'Kelas ' + kelas;
+                select.appendChild(option);
+            });
+            if (currentValue) select.value = currentValue;
+            updateFilterStyle();
+            
+            // Update datalist untuk input kelas
+            datalist.innerHTML = '';
+            daftarKelas.forEach(kelas => {
+                const option = document.createElement('option');
+                option.value = kelas;
+                datalist.appendChild(option);
+            });
+            
+            // Update stat jumlah kelas
+            document.getElementById('statTotalKelas').innerText = daftarKelas.length;
+        }
+
+        // Ubah warna teks: abu-abu saat placeholder, normal saat kelas terpilih
+        function updateFilterStyle() {
+            const select = document.getElementById('filterKelas');
+            if (select.value === '') {
+                select.classList.add('text-slate-400', 'dark:text-slate-500');
+                select.classList.remove('text-slate-800', 'dark:text-slate-200');
+            } else {
+                select.classList.add('text-slate-800', 'dark:text-slate-200');
+                select.classList.remove('text-slate-400', 'dark:text-slate-500');
+            }
+        }
+
+        function applyFilterKelas() {
+            currentKelasFilter = document.getElementById('filterKelas').value;
+            const btnRekap = document.getElementById('btnRekapKelas');
+            const infoKelas = document.getElementById('infoKelasAktif');
+            const inputCari = document.getElementById('inputCari');
+            
+            updateFilterStyle();
+            
+            // Reset pencarian & aktifkan/nonaktifkan kolom search
+            inputCari.value = '';
+            inputCari.disabled = !currentKelasFilter;
+            inputCari.placeholder = currentKelasFilter ? 'Cari nama siswa...' : 'Pilih kelas terlebih dahulu...';
+            
+            if (currentKelasFilter) {
+                btnRekap.disabled = false;
+                infoKelas.classList.remove('hidden');
+                updateInfoKelasAktif();
+            } else {
+                btnRekap.disabled = true;
+                infoKelas.classList.add('hidden');
+            }
+            
+            renderTabel();
+            lucide.createIcons();
+        }
+
+        function updateInfoKelasAktif() {
+            const siswaKelas = getSiswaByKelas(currentKelasFilter);
+            let totalLancar = 0, totalProses = 0, totalBelum = 0;
+            
+            siswaKelas.forEach(siswa => {
+                Object.values(siswa.hafalan || {}).forEach(status => {
+                    if (status === 'Lancar') totalLancar++;
+                    else if (status === 'Proses') totalProses++;
+                    else if (status === 'Belum') totalBelum++;
+                });
+            });
+            
+            const totalHafalan = siswaKelas.length * daftarSurat.length;
+            const rataRata = totalHafalan > 0 ? Math.round((totalLancar / totalHafalan) * 100) : 0;
+            
+            document.getElementById('namaKelasAktif').textContent = currentKelasFilter;
+            document.getElementById('jumlahSiswaKelas').textContent = siswaKelas.length;
+            document.getElementById('rataRataKelas').textContent = rataRata;
+            document.getElementById('lancarKelas').textContent = totalLancar;
+            document.getElementById('prosesKelas').textContent = totalProses;
+            document.getElementById('belumKelas').textContent = totalBelum;
+        }
+
+        // ========== THEME ==========
         function toggleDarkMode() {
             const htmlEl = document.documentElement;
             if (htmlEl.classList.contains('dark')) {
@@ -201,55 +613,92 @@
             }
         }
 
-        function simpanKeLocalStorage() {
-            localStorage.setItem('data_hafalan_siswa', JSON.stringify(dataSiswa));
-        }
-
+        // ========== RENDER TABLE ==========
         function renderTabel(filter = "") {
             const tbody = document.getElementById("tabelSiswaBody");
             const emptyState = document.getElementById("emptyState");
+            const emptyIcon = document.getElementById("emptyStateIcon");
+            const emptyText = document.getElementById("emptyStateText");
             tbody.innerHTML = "";
 
-            const filteredData = dataSiswa.filter(s => 
-                s.nama.toLowerCase().includes(filter.toLowerCase()) || 
-                s.kelas.toLowerCase().includes(filter.toLowerCase())
-            );
-
+            // Statistik global tetap dihitung
             document.getElementById("statTotalSiswa").innerText = dataSiswa.length;
+            
+            let totalLancarAll = 0, totalProsesAll = 0;
+            dataSiswa.forEach(s => {
+                Object.values(s.hafalan || {}).forEach(st => {
+                    if (st === 'Lancar') totalLancarAll++;
+                    else if (st === 'Proses') totalProsesAll++;
+                });
+            });
+            document.getElementById("statTotalLancar").innerText = totalLancarAll;
+            document.getElementById("statTotalProses").innerText = totalProsesAll;
+
+            // ===== BELUM PILIH KELAS → JANGAN TAMPILKAN SISWA =====
+            if (!currentKelasFilter) {
+                emptyState.classList.remove("hidden");
+                emptyIcon.innerHTML = '<i data-lucide="mouse-pointer-click" class="w-6 h-6"></i>';
+                emptyText.innerHTML = 'Silakan <span class="font-semibold text-emerald-600 dark:text-emerald-400">pilih kelas</span> terlebih dahulu untuk menampilkan data siswa.';
+                lucide.createIcons();
+                return;
+            }
+
+            // Filter berdasarkan kelas, lalu pencarian nama
+            let filteredData = dataSiswa.filter(s => s.kelas === currentKelasFilter);
+            if (filter) {
+                filteredData = filteredData.filter(s =>
+                    s.nama.toLowerCase().includes(filter.toLowerCase())
+                );
+            }
 
             if (filteredData.length === 0) {
                 emptyState.classList.remove("hidden");
+                if (filter) {
+                    emptyIcon.innerHTML = '<i data-lucide="search-x" class="w-6 h-6"></i>';
+                    emptyText.textContent = `Tidak ditemukan siswa bernama "${filter}" di kelas ${currentKelasFilter}.`;
+                } else {
+                    emptyIcon.innerHTML = '<i data-lucide="folder-open" class="w-6 h-6"></i>';
+                    emptyText.textContent = 'Belum ada data siswa di kelas ini. Silakan tambahkan terlebih dahulu.';
+                }
+                lucide.createIcons();
                 return;
             } else {
                 emptyState.classList.add("hidden");
             }
 
-            filteredData.forEach((siswa, index) => {
+            filteredData.forEach((siswa) => {
+                const realIndex = dataSiswa.findIndex(s => s.id === siswa.id);
                 const totalLancar = Object.values(siswa.hafalan || {}).filter(status => status === 'Lancar').length;
+                const totalProses = Object.values(siswa.hafalan || {}).filter(status => status === 'Proses').length;
                 const persentase = Math.round((totalLancar / daftarSurat.length) * 100);
-
+                const persentaseProses = Math.round((totalProses / daftarSurat.length) * 100);
                 const tr = document.createElement("tr");
                 tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition border-b border-slate-50 dark:border-slate-800/60";
                 tr.innerHTML = `
                     <td class="py-3 px-4 font-medium text-slate-800 dark:text-slate-200">${siswa.nama}</td>
-                    <td class="py-3 px-4 text-slate-500 dark:text-slate-400">${siswa.kelas}</td>
                     <td class="py-3 px-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden w-32">
-                                <div class="bg-emerald-500 h-full rounded-full" style="width: ${persentase}%"></div>
-                            </div>
-                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">${totalLancar}/${daftarSurat.length} (${persentase}%)</span>
-                        </div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+                            ${siswa.kelas}
+                        </span>
                     </td>
+                    <td class="py-3 px-4">
+    <div class="flex items-center space-x-3">
+        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden w-32 flex">
+            <div class="bg-emerald-500 h-full" style="width: ${persentase}%"></div>
+            <div class="bg-amber-400 h-full" style="width: ${persentaseProses}%"></div>
+        </div>
+        <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">${totalLancar}/${daftarSurat.length} (${persentase}%)${totalProses > 0 ? `<span class="text-amber-500 dark:text-amber-400"> • ${totalProses} proses</span>` : ''}</span>
+    </div>
+</td>
                     <td class="py-3 px-4 text-center">
                         <div class="flex items-center justify-center space-x-2">
-                            <button onclick="bukaModalHafalan(${index})" class="p-1.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded-lg transition" title="Kelola Hafalan">
+                            <button onclick="bukaModalHafalan(${realIndex})" class="p-1.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded-lg transition" title="Kelola Hafalan">
                                 <i data-lucide="award" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="editSiswa(${index})" class="p-1.5 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/50 rounded-lg transition" title="Edit Siswa">
+                            <button onclick="editSiswa(${realIndex})" class="p-1.5 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/50 rounded-lg transition" title="Edit Siswa">
                                 <i data-lucide="edit-3" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="hapusSiswa(${index})" class="p-1.5 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-lg transition" title="Hapus">
+                            <button onclick="hapusSiswa(${realIndex})" class="p-1.5 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 rounded-lg transition" title="Hapus">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -265,6 +714,7 @@
             renderTabel(query);
         }
 
+        // ========== MODAL SISWA ==========
         function bukaModalSiswa() {
             document.getElementById("modalTitle").innerText = "Tambah Data Siswa";
             document.getElementById("formSiswa").reset();
@@ -276,22 +726,38 @@
             document.getElementById("modalSiswa").classList.add("hidden");
         }
 
-        function simpanSiswa(event) {
+        async function simpanSiswa(event) {
             event.preventDefault();
+            if (isSubmitting) return;
+            
+            isSubmitting = true;
+            const btn = document.getElementById("btnSimpanSiswa");
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="spinner"></div>';
+            btn.disabled = true;
+
             const nama = document.getElementById("namaSiswa").value;
             const kelas = document.getElementById("kelasSiswa").value;
             const editIndex = document.getElementById("editIndex").value;
 
-            if (editIndex === "") {
-                dataSiswa.push({ nama, kelas, hafalan: {} });
-            } else {
-                dataSiswa[editIndex].nama = nama;
-                dataSiswa[editIndex].kelas = kelas;
+            const payload = { nama, kelas };
+            if (editIndex !== "") {
+                payload.id = dataSiswa[editIndex].id;
             }
 
-            simpanKeLocalStorage();
-            tutupModalSiswa();
-            renderTabel();
+            const result = await apiCall({ action: 'saveSiswa' }, 'POST', payload);
+            
+            isSubmitting = false;
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            
+            if (result.success) {
+                tutupModalSiswa();
+                await loadSiswa();
+                showToast(editIndex ? 'Data siswa berhasil diupdate' : 'Siswa baru berhasil ditambahkan');
+            } else {
+                showToast('Gagal menyimpan: ' + result.error, 'error');
+            }
         }
 
         function editSiswa(index) {
@@ -302,14 +768,20 @@
             document.getElementById("modalSiswa").classList.remove("hidden");
         }
 
-        function hapusSiswa(index) {
-            if (confirm(`Yakin ingin menghapus data ${dataSiswa[index].nama}?`)) {
-                dataSiswa.splice(index, 1);
-                simpanKeLocalStorage();
-                renderTabel();
+        async function hapusSiswa(index) {
+            const siswa = dataSiswa[index];
+            if (confirm(`Yakin ingin menghapus data ${siswa.nama}?`)) {
+                const result = await apiCall({ action: 'deleteSiswa', id: siswa.id });
+                if (result.success) {
+                    await loadSiswa();
+                    showToast('Data siswa berhasil dihapus');
+                } else {
+                    showToast('Gagal menghapus: ' + result.error, 'error');
+                }
             }
         }
 
+        // ========== MODAL HAFALAN ==========
         function bukaModalHafalan(index) {
             currentSiswaIndex = index;
             const siswa = dataSiswa[index];
@@ -330,7 +802,7 @@
                 div.className = "flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800";
                 div.innerHTML = `
                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">${surat}</span>
-                    <select onchange="updateHafalan('${surat}', this.value)" class="text-xs px-3 py-1.5 rounded-lg border font-medium transition focus:outline-none ${badgeColor}">
+                    <select onchange="updateHafalan('${surat.replace(/'/g, "\\'")}', this.value, this)" class="text-xs px-3 py-1.5 rounded-lg border font-medium transition focus:outline-none ${badgeColor}">
                         <option value="Belum" ${status === 'Belum' ? 'selected' : ''}>Belum</option>
                         <option value="Proses" ${status === 'Proses' ? 'selected' : ''}>Proses</option>
                         <option value="Lancar" ${status === 'Lancar' ? 'selected' : ''}>Lancar</option>
@@ -344,18 +816,268 @@
 
         function tutupModalHafalan() {
             document.getElementById("modalHafalan").classList.add("hidden");
-            renderTabel();
+            renderTabel(document.getElementById("inputCari").value);
         }
 
-        function updateHafalan(surat, status) {
-            if (currentSiswaIndex !== null) {
-                if (!dataSiswa[currentSiswaIndex].hafalan) {
-                    dataSiswa[currentSiswaIndex].hafalan = {};
-                }
-                dataSiswa[currentSiswaIndex].hafalan[surat] = status;
-                simpanKeLocalStorage();
-                bukaModalHafalan(currentSiswaIndex);
+        async function updateHafalan(surat, status, selectElement) {
+            if (currentSiswaIndex === null) return;
+            
+            selectElement.disabled = true;
+            
+            const siswa = dataSiswa[currentSiswaIndex];
+            const payload = {
+                siswaId: siswa.id,
+                surat: surat,
+                status: status
+            };
+            
+            const result = await apiCall({ action: 'updateHafalan' }, 'POST', payload);
+            
+            if (result.success) {
+                if (!siswa.hafalan) siswa.hafalan = {};
+                siswa.hafalan[surat] = status;
+                
+                let badgeColor = "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700";
+                if (status === "Proses") badgeColor = "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800";
+                if (status === "Lancar") badgeColor = "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800";
+                
+                selectElement.className = `text-xs px-3 py-1.5 rounded-lg border font-medium transition focus:outline-none ${badgeColor}`;
+                
+                renderTabel(document.getElementById("inputCari").value);
+                if (currentKelasFilter) updateInfoKelasAktif();
+            } else {
+                showToast('Gagal update hafalan: ' + result.error, 'error');
+                selectElement.value = siswa.hafalan[surat] || "Belum";
             }
+            
+            selectElement.disabled = false;
+        }
+
+        // ========== REKAP KELAS (MATRIKS) ==========
+        function bukaModalRekapKelas() {
+            if (!currentKelasFilter) {
+                showToast('Pilih kelas terlebih dahulu', 'error');
+                return;
+            }
+            
+            const siswaKelas = getSiswaByKelas(currentKelasFilter);
+            
+            document.getElementById('rekapKelasNama').textContent = currentKelasFilter;
+            document.getElementById('rekapJumlahSiswa').textContent = siswaKelas.length;
+            
+            renderMatriks(siswaKelas);
+            document.getElementById('modalRekapKelas').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function tutupModalRekapKelas() {
+            document.getElementById('modalRekapKelas').classList.add('hidden');
+        }
+
+        function renderMatriks(siswaKelas) {
+            const thead = document.getElementById('matriksHead');
+            const tbody = document.getElementById('matriksBody');
+            
+            // Header: No | Nama | 37 Surat | Total
+            let headerHTML = `
+                <tr>
+                    <th class="py-2 px-3 text-left font-semibold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-0 z-20 min-w-[40px]">No</th>
+                    <th class="py-2 px-3 text-left font-semibold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-[40px] z-20 min-w-[180px]">Nama Siswa</th>
+            `;
+            
+            namaSuratPendek.forEach(nama => {
+                headerHTML += `<th class="py-2 px-1 text-center font-medium text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 min-w-[36px]" title="${nama}">${nama}</th>`;
+            });
+            
+            headerHTML += `
+                    <th class="py-2 px-3 text-center font-semibold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 bg-emerald-50 dark:bg-emerald-950/50 min-w-[70px]">Total</th>
+                </tr>
+            `;
+            thead.innerHTML = headerHTML;
+            
+            // Body
+            let bodyHTML = '';
+            let totalLancarKelas = 0;
+            
+            siswaKelas.forEach((siswa, idx) => {
+                let totalLancarSiswa = 0;
+                
+                bodyHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                        <td class="py-2 px-3 text-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 sticky left-0 bg-white dark:bg-slate-900">${idx + 1}</td>
+                        <td class="py-2 px-3 font-medium text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 sticky left-[40px] bg-white dark:bg-slate-900 whitespace-nowrap">${siswa.nama}</td>
+                `;
+                
+                daftarSurat.forEach((surat) => {
+                    const status = siswa.hafalan[surat] || 'Belum';
+                    let cellClass = 'bg-slate-100 dark:bg-slate-800';
+                    let cellText = '•';
+                    let cellTextColor = 'text-slate-300 dark:text-slate-600';
+                    
+                    if (status === 'Lancar') {
+                        cellClass = 'bg-emerald-500 dark:bg-emerald-600';
+                        cellText = '✓';
+                        cellTextColor = 'text-white';
+                        totalLancarSiswa++;
+                        totalLancarKelas++;
+                    } else if (status === 'Proses') {
+                        cellClass = 'bg-amber-400 dark:bg-amber-500';
+                        cellText = '~';
+                        cellTextColor = 'text-white';
+                    }
+                    
+                    bodyHTML += `
+                        <td class="py-2 px-1 text-center border border-slate-200 dark:border-slate-700 ${cellClass} ${cellTextColor} font-bold cursor-pointer hover:opacity-80 transition" 
+                            onclick="cycleStatusMatriks('${siswa.id}', '${surat.replace(/'/g, "\\'")}', this)"
+                            title="${surat}: ${status}">
+                            ${cellText}
+                        </td>
+                    `;
+                });
+                
+                const persentase = Math.round((totalLancarSiswa / daftarSurat.length) * 100);
+                bodyHTML += `
+                        <td class="py-2 px-3 text-center font-bold border border-slate-200 dark:border-slate-700 bg-emerald-50 dark:bg-emerald-950/30">
+                            <span class="text-emerald-600 dark:text-emerald-400">${totalLancarSiswa}</span>
+                            <span class="text-xs text-slate-400 dark:text-slate-500">(${persentase}%)</span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = bodyHTML;
+            document.getElementById('matriksTotalLancar').textContent = totalLancarKelas;
+        }
+
+        async function cycleStatusMatriks(siswaId, surat, cell) {
+            const siswa = dataSiswa.find(s => s.id === siswaId);
+            if (!siswa) return;
+            
+            const currentStatus = siswa.hafalan[surat] || 'Belum';
+            const statusOrder = ['Belum', 'Proses', 'Lancar'];
+            const nextIndex = (statusOrder.indexOf(currentStatus) + 1) % statusOrder.length;
+            const newStatus = statusOrder[nextIndex];
+            
+            // Optimistic UI update
+            cell.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'bg-emerald-500', 'dark:bg-emerald-600', 'bg-amber-400', 'dark:bg-amber-500');
+            cell.classList.remove('text-slate-300', 'dark:text-slate-600', 'text-white');
+            
+            if (newStatus === 'Lancar') {
+                cell.classList.add('bg-emerald-500', 'dark:bg-emerald-600', 'text-white');
+                cell.textContent = '✓';
+            } else if (newStatus === 'Proses') {
+                cell.classList.add('bg-amber-400', 'dark:bg-amber-500', 'text-white');
+                cell.textContent = '~';
+            } else {
+                cell.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-300', 'dark:text-slate-600');
+                cell.textContent = '•';
+            }
+            
+            // Simpan ke server
+            const payload = { siswaId, surat, status: newStatus };
+            const result = await apiCall({ action: 'updateHafalan' }, 'POST', payload);
+            
+            if (result.success) {
+                siswa.hafalan[surat] = newStatus;
+                renderTabel(document.getElementById("inputCari").value);
+                if (currentKelasFilter) updateInfoKelasAktif();
+            } else {
+                showToast('Gagal update: ' + result.error, 'error');
+            }
+        }
+
+        // ========== EXPORT & PRINT ==========
+        function printRekapKelas() {
+            const siswaKelas = getSiswaByKelas(currentKelasFilter);
+            const tanggal = new Date().toLocaleDateString('id-ID', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            
+            let rows = '';
+            siswaKelas.forEach((siswa, idx) => {
+                let totalLancar = 0;
+                let cells = '';
+                daftarSurat.forEach((surat) => {
+                    const status = siswa.hafalan[surat] || 'Belum';
+                    let symbol = '•', bg = '#f1f5f9', color = '#94a3b8';
+                    if (status === 'Lancar') { symbol = '✓'; bg = '#10b981'; color = '#fff'; totalLancar++; }
+                    else if (status === 'Proses') { symbol = '~'; bg = '#f59e0b'; color = '#fff'; }
+                    cells += `<td style="border:1px solid #cbd5e1;text-align:center;padding:4px;background:${bg};color:${color};font-weight:bold;">${symbol}</td>`;
+                });
+                const pct = Math.round((totalLancar / daftarSurat.length) * 100);
+                rows += `<tr>
+                    <td style="border:1px solid #cbd5e1;padding:4px;text-align:center;">${idx + 1}</td>
+                    <td style="border:1px solid #cbd5e1;padding:4px;font-weight:600;">${siswa.nama}</td>
+                    ${cells}
+                    <td style="border:1px solid #cbd5e1;padding:4px;text-align:center;font-weight:bold;">${totalLancar} (${pct}%)</td>
+                </tr>`;
+            });
+            
+            const headCells = namaSuratPendek.map(n => 
+                `<th style="border:1px solid #cbd5e1;padding:4px;background:#e2e8f0;font-size:10px;">${n}</th>`
+            ).join('');
+            
+            const html = `<!DOCTYPE html><html><head><title>Rekap Kelas ${currentKelasFilter}</title></head>
+            <body style="font-family: Arial, sans-serif; padding: 20px;">
+                <div style="text-align:center;margin-bottom:16px;">
+                    <h2 style="margin:0;">REKAP HAFALAN JUZ AMMA</h2>
+                    <p style="margin:4px 0;">Kelas: <b>${currentKelasFilter}</b> &bull; ${siswaKelas.length} siswa</p>
+                    <p style="margin:0;color:#555;font-size:12px;">Tanggal cetak: ${tanggal}</p>
+                </div>
+                <div style="overflow-x:auto;">
+                <table style="border-collapse:collapse;width:100%;font-size:11px;">
+                    <thead><tr>
+                        <th style="border:1px solid #cbd5e1;padding:4px;background:#e2e8f0;">No</th>
+                        <th style="border:1px solid #cbd5e1;padding:4px;background:#e2e8f0;text-align:left;">Nama Siswa</th>
+                        ${headCells}
+                        <th style="border:1px solid #cbd5e1;padding:4px;background:#e2e8f0;">Total</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+                </div>
+                <p style="font-size:11px;color:#555;margin-top:12px;">Keterangan: &#10003; = Lancar, ~ = Proses, &bull; = Belum</p>
+                <script>window.onload = function(){ window.print(); }<\/script>
+            </body></html>`;
+            
+            const w = window.open('', '_blank');
+            w.document.write(html);
+            w.document.close();
+        }
+
+        function exportRekapCSV() {
+            const siswaKelas = getSiswaByKelas(currentKelasFilter);
+            
+            // Header CSV
+            let csv = ['No', 'Nama Siswa', ...namaSuratPendek, 'Total Lancar', 'Persentase'].join(',') + '\n';
+            
+            // Data rows
+            siswaKelas.forEach((siswa, idx) => {
+                let row = [idx + 1, `"${siswa.nama}"`];
+                let totalLancar = 0;
+                
+                daftarSurat.forEach(surat => {
+                    const status = siswa.hafalan[surat] || 'Belum';
+                    row.push(status);
+                    if (status === 'Lancar') totalLancar++;
+                });
+                
+                const persentase = Math.round((totalLancar / daftarSurat.length) * 100);
+                row.push(totalLancar, persentase + '%');
+                csv += row.join(',') + '\n';
+            });
+            
+            // Download
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Rekap_Hafalan_Kelas_${currentKelasFilter}_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('File CSV berhasil diunduh');
         }
     </script>
 </body>
