@@ -28,14 +28,26 @@
         #konten-soal { display: none; width: 100%; height: 100vh; }
         iframe { width: 100%; height: 100vh; border: none; }
 
-        /* Layar Pelanggaran */
-        #layar-pelanggaran {
+        /* Layar Peringatan */
+        #layar-peringatan {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #f59e0b; color: white; align-items: center; justify-content: center;
+            flex-direction: column; z-index: 9998;
+        }
+        #layar-peringatan h2 { font-size: 32px; margin-bottom: 20px; }
+        #layar-peringatan p { font-size: 18px; margin-bottom: 15px; text-align: center; padding: 0 20px; }
+        #btn-lanjut {
+            padding: 12px 30px; font-size: 16px; background: #1e3a8a; color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+        }
+
+        /* Layar Diblokir Permanen */
+        #layar-diblokir {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #dc2626; color: white; align-items: center; justify-content: center;
             flex-direction: column; z-index: 9999;
         }
-        #layar-pelanggaran h2 { font-size: 32px; margin-bottom: 20px; }
-        #layar-pelanggaran p { font-size: 18px; margin-bottom: 10px; }
+        #layar-diblokir h2 { font-size: 36px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -45,76 +57,118 @@
         <h1>🛡️ UJIAN ONLINE - MODE AMAN</h1>
         <ul>
             <li>✅ Wajib menggunakan <b>Layar Penuh</b></li>
-            <li>❌ Dilarang <b>Pindah Tab / Minimalkan</b> = Diskualifikasi</li>
-            <li>❌ Dilarang tekan <b>ESC</b> atau keluar layar penuh = Diskualifikasi</li>
-            <li>⚠️ Pelanggaran = Soal hilang & tidak bisa lanjut</li>
+            <li>⚠️ Mendapatkan <b>3 kali peringatan</b> sebelum diblokir</li>
+            <li>❌ Pindah tab / keluar layar penuh = Peringatan!</li>
+            <li>🚫 Peringatan ke-3 = Soal diblokir permanen</li>
         </ul>
         <button id="btn-mulai">MULAI UJIAN</button>
     </div>
 
     <!-- KONTEN SOAL GOOGLE FORM -->
     <div id="konten-soal">
-        <iframe src="https://forms.gle/MyvXEXwxzDdEdRQb6"></iframe>
+        <iframe src="https://forms.gle/7dWCAuCeaKEkFhaz5"></iframe>
     </div>
 
-    <!-- LAYAR PELANGGARAN -->
-    <div id="layar-pelanggaran">
-        <h2>🚫 PELANGGARAN TERDETEKSI</h2>
-        <p id="alasan-pelanggaran"></p>
-        <p>Ujian telah dibatalkan. Silakan hubungi guru pengawas.</p>
+    <!-- LAYAR PERINGATAN (Masih Bisa Lanjut) -->
+    <div id="layar-peringatan">
+        <h2>⚠️ PERINGATAN PELANGGARAN</h2>
+        <p id="teks-alasan"></p>
+        <p id="sisa-kesempatan"></p>
+        <button id="btn-lanjut">KLIK DI SINI UNTUK LANJUT UJIAN</button>
+    </div>
+
+    <!-- LAYAR DIBLOKIR PERMANEN -->
+    <div id="layar-diblokir">
+        <h2>🚫 DIBLOKIR PERMANEN</h2>
+        <p>Anda telah melanggar aturan sebanyak 3 kali.</p>
+        <p>Ujian dibatalkan dan tidak dapat dilanjutkan lagi.</p>
+        <p>Silakan hubungi guru pengawas.</p>
     </div>
 
     <script>
         const layarAwal = document.getElementById('layar-awal');
         const kontenSoal = document.getElementById('konten-soal');
-        const layarPelanggaran = document.getElementById('layar-pelanggaran');
-        const alasanPelanggaran = document.getElementById('alasan-pelanggaran');
+        const layarPeringatan = document.getElementById('layar-peringatan');
+        const layarDiblokir = document.getElementById('layar-diblokir');
+        const teksAlasan = document.getElementById('teks-alasan');
+        const sisaKesempatan = document.getElementById('sisa-kesempatan');
         const btnMulai = document.getElementById('btn-mulai');
+        const btnLanjut = document.getElementById('btn-lanjut');
 
         let sedangUjian = false;
+        let jumlahPelanggaran = 0;
+        const MAKSIMAL_PERINGATAN = 3; // BISA DIUBAH JIKA INGIN 2/4 KALI
 
-        // Ganti link ini dengan link Google Form Anda
-        const linkIframe = document.querySelector('iframe').src;
-
-        // Tombol Mulai → Masuk Fullscreen
+        // TOMBOL MULAI → Masuk Layar Penuh
         btnMulai.addEventListener('click', async () => {
             try {
                 await document.documentElement.requestFullscreen();
-                layarAwal.style.display = 'none';
-                kontenSoal.style.display = 'block';
-                sedangUjian = true;
+                setTimeout(() => {
+                    layarAwal.style.display = 'none';
+                    kontenSoal.style.display = 'block';
+                    sedangUjian = true;
+                }, 600);
             } catch (err) {
-                alert('Harus izinkan Layar Penuh untuk memulai ujian!');
+                alert('❌ Harus izinkan Layar Penuh untuk memulai ujian!\nKlik lagi dan pilih "Izinkan".');
             }
         });
 
-        // Deteksi Keluar Fullscreen
+        // Lanjutkan ujian setelah peringatan
+        btnLanjut.addEventListener('click', async () => {
+            layarPeringatan.style.display = 'none';
+            try {
+                await document.documentElement.requestFullscreen();
+                setTimeout(() => {
+                    kontenSoal.style.display = 'block';
+                    sedangUjian = true;
+                }, 400);
+            } catch (err) {
+                alert('Harus masuk Layar Penuh untuk melanjutkan!');
+                layarPeringatan.style.display = 'flex';
+            }
+        });
+
+        // Deteksi Keluar Layar Penuh
         document.addEventListener('fullscreenchange', () => {
             if (sedangUjian && !document.fullscreenElement) {
-                blokirUjian('Anda keluar dari mode Layar Penuh! (tekan ESC atau tombol kembali)');
+                beriPeringatan('Anda keluar dari mode Layar Penuh!');
             }
         });
 
-        // Deteksi Pindah Tab / Hilang Fokus
+        // Deteksi Pindah Tab
         document.addEventListener('visibilitychange', () => {
             if (sedangUjian && document.visibilityState === 'hidden') {
-                blokirUjian('Anda berpindah tab atau membuka aplikasi lain!');
+                beriPeringatan('Anda berpindah tab atau membuka aplikasi lain!');
             }
         });
 
-        // Deteksi kehilangan fokus jendela (klik luar browser)
+        // Deteksi Klik Jendela Lain
         window.addEventListener('blur', () => {
-            if (sedangUjian) {
-                blokirUjian('Anda berpindah ke jendela/aplikasi lain!');
+            if (sedangUjian && !document.fullscreenElement) {
+                beriPeringatan('Anda berpindah ke jendela/aplikasi lain!');
             }
         });
 
-        function blokirUjian(alasan) {
+        function beriPeringatan(alasan) {
             sedangUjian = false;
+            jumlahPelanggaran++;
             kontenSoal.style.display = 'none';
-            layarPelanggaran.style.display = 'flex';
-            alasanPelanggaran.textContent = 'Alasan: ' + alasan;
-            if (document.fullscreenElement) document.exitFullscreen();
+
+            if (jumlahPelanggaran >= MAKSIMAL_PERINGATAN) {
+                // KE-3 KALI → DIBLOKIR PERMANEN
+                layarDiblokir.style.display = 'flex';
+                if (document.fullscreenElement) document.exitFullscreen();
+            } else {
+                // MASIH ADA KESEMPATAN → TAMPIL PERINGATAN
+                const sisa = MAKSIMAL_PERINGATAN - jumlahPelanggaran;
+                teksAlasan.textContent = 'Alasan: ' + alasan;
+                sisaKesempatan.innerHTML = 
+                    `<strong>⚠️ Peringatan ke-${jumlahPelanggaran} dari ${MAKSIMAL_PERINGATAN}</strong><br>` +
+                    `Sisa kesempatan: <span style="font-size:22px; color:#fff;">${sisa} kali lagi</span><br>` +
+                    `Jika melanggar lagi → akan diblokir permanen!`;
+                layarPeringatan.style.display = 'flex';
+                if (document.fullscreenElement) document.exitFullscreen();
+            }
         }
     </script>
 </body>
