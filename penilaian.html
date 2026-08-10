@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rekap Nilai — PH · ASTS · ASAT (Multi-Kelas)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6f4ea; --card:#fffdf7; --ink:#14231c; --muted:#5c6f66;
+  --green:#0e5c43; --green-deep:#0a3d2e; --red:#cf3f38; --yellow:#ffd23f;
+  --line:rgba(20,60,45,.16); --line-soft:rgba(20,35,28,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Public Sans',sans-serif;color:var(--ink);background-color:var(--paper);
+  background-image:linear-gradient(rgba(14,92,67,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(14,92,67,.06) 1px,transparent 1px);
+  background-size:28px 28px;min-height:100vh}
+.margin-line{position:fixed;top:0;bottom:0;left:64px;width:2px;background:rgba(207,63,56,.22);pointer-events:none;z-index:0}
+.page{max-width:1300px;margin:0 auto;padding:34px 40px 90px;position:relative;z-index:1}
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:3px solid var(--ink);padding-bottom:22px}
+.kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.22em;color:var(--green);text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:26px;height:10px;background:var(--yellow);border:1.5px solid var(--ink);transform:skewX(-12deg)}
+h1{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(2.5rem,5.6vw,4.2rem);line-height:.95;letter-spacing:-.02em;margin-top:10px}
+h1 .hl{position:relative;display:inline-block;padding:0 .08em}
+h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:38%;background:var(--yellow);z-index:-1;transform:skewX(-8deg) rotate(-1deg);animation:swipe .7s .25s cubic-bezier(.2,.8,.2,1) both}
+@keyframes swipe{from{transform:skewX(-8deg) rotate(-1deg) scaleX(0);transform-origin:left}to{transform:skewX(-8deg) rotate(-1deg) scaleX(1)}}
+.sub{margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13.5px}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;border:1.5px solid var(--ink);padding:3px 9px;border-radius:999px;background:#fff}
+.datechip{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--green);font-weight:600}
+.mast-right{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0}
+.stamp{width:112px;height:112px;color:var(--green);animation:spin 46s linear infinite;cursor:pointer;transition:scale .3s}
+.stamp:hover{animation-play-state:paused;scale:1.06}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stamp text{font-family:'IBM Plex Mono',monospace}
+.docmeta{margin-top:26px;display:flex;flex-wrap:wrap;border-top:1.5px dashed var(--line);border-bottom:1.5px dashed var(--line)}
+.field{flex:1;min-width:180px;padding:14px 20px;border-left:1.5px dashed var(--line)}
+.field:first-child{border-left:0}
+.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.field input,.field select{width:100%;border:0;background:transparent;font:600 15px 'Public Sans',sans-serif;color:var(--ink);padding:3px 0;border-bottom:2px dotted transparent;transition:.2s}
+.field input:focus,.field select:focus{outline:none;border-bottom-color:var(--green);background:rgba(255,210,63,.14)}
+.toolbar{margin:26px 0 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search{position:relative;flex:1;min-width:200px;max-width:320px}
+.search input{width:100%;border:1.5px solid var(--ink);border-radius:9px;background:#fff;padding:10px 14px 10px 36px;font:500 13.5px 'Public Sans',sans-serif;transition:.2s}
+.search input:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.5);border-color:var(--green)}
+.search::before{content:"⌕";position:absolute;left:12px;top:50%;translate:0 -50%;font-size:17px;color:var(--muted)}
+.btn{font:600 13px 'Public Sans',sans-serif;padding:10px 15px;border-radius:9px;cursor:pointer;border:1.5px solid var(--ink);background:#fff;color:var(--ink);box-shadow:0 2px 0 var(--ink);transition:transform .15s,box-shadow .15s,background .15s;display:inline-flex;align-items:center;gap:7px;position:relative}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--ink)}
+.btn:active{transform:translateY(0);box-shadow:0 1px 0 var(--ink)}
+.btn.primary{background:var(--green);border-color:var(--green-deep);color:#fff;box-shadow:0 2px 0 var(--green-deep)}
+.btn.primary:hover{box-shadow:0 4px 0 var(--green-deep);background:#0f6b4e}
+.btn.danger{border-color:var(--red);color:var(--red);box-shadow:0 2px 0 var(--red)}
+.btn.linked::after{content:"";position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#2fae6e;border:1.5px solid #fff}
+.spacer{flex:1}
+.stats{display:flex;flex-wrap:wrap;border:1.5px solid var(--ink);background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.stat{flex:1;min-width:180px;padding:16px 22px;border-left:1.5px dashed var(--line)}
+.stat:first-child{border-left:0}
+.stat .lbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.stat .val{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:29px;margin-top:2px;line-height:1.1}
+.stat .note{font-size:11px;color:var(--muted);margin-top:2px}
+.stat.green .val{color:var(--green)}
+.stat.yellow .val{color:#b98a00}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:start}
+.card{background:var(--card);border:1.5px solid var(--ink);border-radius:12px;box-shadow:5px 5px 0 rgba(20,35,28,.08)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1.5px dashed var(--line);font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;background:var(--yellow);border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.table-scroll{overflow-x:auto}
+table{width:100%;min-width:900px;border-collapse:collapse}
+thead th{background:var(--green-deep);color:#f2f0e4;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:9px 8px;white-space:nowrap}
+thead th.grp{background:var(--green);letter-spacing:.14em}
+thead th[data-sort]{cursor:pointer;user-select:none}
+thead th[data-sort] .arr{opacity:.4;font-size:9px;margin-left:3px}
+thead th[data-sort].on .arr{opacity:1;color:var(--yellow)}
+tbody td{padding:7px 8px;border-bottom:1px solid var(--line-soft);vertical-align:middle;text-align:center}
+tbody tr{transition:background .15s}
+tbody tr:nth-child(even){background:rgba(14,92,67,.03)}
+tbody tr:hover{background:rgba(255,210,63,.14)}
+tbody tr.new{animation:rowIn .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes rowIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.idx{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);width:36px}
+td.name{text-align:left;min-width:180px}
+.inp-name{width:100%;border:0;background:transparent;font:600 14px 'Public Sans',sans-serif;color:var(--ink);padding:6px 5px;border-bottom:1.5px dashed transparent;border-radius:4px;transition:.2s}
+.inp-name:focus{outline:none;border-bottom-color:var(--green);background:rgba(255,210,63,.18)}
+.inp-num{width:62px;text-align:center;font:600 13.5px 'IBM Plex Mono',monospace;color:var(--ink);border:1.5px dashed transparent;border-radius:7px;padding:6px 2px;background:transparent;transition:.2s}
+.inp-num:hover{border-color:var(--line)}
+.inp-num:focus{outline:none;border-color:var(--green);background:#fff;box-shadow:0 0 0 3px rgba(255,210,63,.4)}
+.inp-num.below{color:var(--red);font-weight:700}
+.mono{font-family:'IBM Plex Mono',monospace}
+.c-rph{font-weight:600;color:var(--muted)}
+.c-na{font-weight:700;font-size:15px}
+.pred{display:inline-grid;place-items:center;width:30px;height:30px;border:2px solid;border-radius:8px;font:800 14px 'Archivo',sans-serif}
+.pred.A{background:var(--green);border-color:var(--green-deep);color:#fff}
+.pred.B{border-color:var(--green);color:var(--green)}
+.pred.C{background:var(--yellow);border-color:var(--ink);color:var(--ink)}
+.pred.D{border-color:var(--red);color:var(--red)}
+.st{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.05em;padding:4px 9px;border-radius:999px;border:1.5px solid;white-space:nowrap}
+.st.ok{color:var(--green);border-color:var(--green);background:rgba(14,92,67,.07)}
+.st.no{color:var(--red);border-color:var(--red);background:rgba(207,63,56,.07)}
+.del{border:0;background:none;color:var(--red);font-size:17px;cursor:pointer;opacity:0;transition:.2s;line-height:1}
+tbody tr:hover .del{opacity:.9}
+.del:hover{transform:scale(1.3)}
+tfoot td{border-top:2.5px solid var(--ink);background:rgba(14,92,67,.06);font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12.5px;padding:10px 8px;text-align:center}
+.empty{padding:52px 20px;text-align:center;color:var(--muted)}
+.empty .big{font-size:34px;margin-bottom:8px}
+.empty .btn{margin-top:14px}
+.legend{padding:10px 16px;border-top:1.5px dashed var(--line);font-size:11px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+.legend b{color:var(--red)}
+.side{display:flex;flex-direction:column;gap:18px}
+.donut-wrap{display:flex;align-items:center;gap:18px;padding:16px}
+.donut{width:104px;height:104px;flex-shrink:0;position:relative}
+.donut svg{transform:rotate(-90deg)}
+.donut .track{stroke:rgba(20,35,28,.1)}
+.donut .arc{stroke:var(--green);stroke-linecap:round;transition:stroke-dasharray .8s cubic-bezier(.2,.8,.2,1)}
+.donut .mid{position:absolute;inset:0;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:20px}
+.donut-info .t{font-weight:700;font-size:14px}
+.donut-info .s{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.hist{position:relative;height:118px;display:flex;align-items:flex-end;gap:5px;padding:8px 16px 0}
+.hbar{flex:1;background:var(--green);border-radius:4px 4px 0 0;min-height:3px;transition:height .55s cubic-bezier(.2,.8,.2,1);cursor:default}
+.hbar:hover{filter:brightness(1.15)}
+.hbar.low{background:rgba(207,63,56,.72)}
+.hbar.zero{background:rgba(20,35,28,.1)}
+.kmark{position:absolute;top:2px;bottom:0;border-left:2px dashed var(--red);pointer-events:none}
+.kmark span{position:absolute;top:-4px;left:4px;font:600 9px 'IBM Plex Mono',monospace;color:var(--red);white-space:nowrap}
+.axis{display:flex;justify-content:space-between;padding:5px 16px 14px;font:500 10px 'IBM Plex Mono',monospace;color:var(--muted)}
+.toplist{padding:8px 16px 14px;display:flex;flex-direction:column;gap:8px}
+.toprow{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px dashed var(--line);border-radius:9px;transition:.2s}
+.toprow:hover{background:rgba(255,210,63,.16);transform:translateX(3px)}
+.medal{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:800 11px 'Archivo',sans-serif;border:1.5px solid var(--ink);flex-shrink:0}
+.m1{background:#f4c542}.m2{background:#d7d7cf}.m3{background:#e0a370}
+.toprow .nm{flex:1;font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toprow .sc{font:700 13.5px 'IBM Plex Mono',monospace;color:var(--green)}
+.formula{padding:14px 16px;font:600 12px 'IBM Plex Mono',monospace;background:rgba(14,92,67,.06);border-bottom:1.5px dashed var(--line);line-height:1.7}
+.opt{padding:12px 16px;border-bottom:1px dashed var(--line-soft)}
+.opt .row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;margin-bottom:6px}
+.opt .row output{font:700 12.5px 'IBM Plex Mono',monospace;color:var(--green)}
+.opt input[type=range]{width:100%;accent-color:var(--green);cursor:pointer}
+.opt input[type=number]{width:76px;border:1.5px solid var(--ink);border-radius:7px;padding:5px 8px;font:700 13px 'IBM Plex Mono',monospace;background:#fff}
+.opt input[type=number]:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.45)}
+.thresh{padding:11px 16px;font:500 10.5px 'IBM Plex Mono',monospace;color:var(--muted);line-height:1.9}
+.thresh b{color:var(--ink)}
+.foot-note{margin-top:26px;font:500 11px 'IBM Plex Mono',monospace;color:var(--muted);text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(20,35,28,.52);display:flex;align-items:center;justify-content:center;z-index:60;padding:18px}
+.overlay[hidden]{display:none}
+.modal{width:min(720px,100%);max-height:88vh;overflow:auto;animation:pop .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{transform:translateY(16px) scale(.97);opacity:0}}
+.mclose{border:0;background:none;font-size:17px;color:var(--red);cursor:pointer;transition:transform .2s}
+.mclose:hover{transform:scale(1.25)}
+.tabs{display:flex;border-bottom:1.5px dashed var(--line);flex-wrap:wrap}
+.tab{border:0;background:none;padding:13px 16px;font:700 12.5px 'Public Sans',sans-serif;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent}
+.tab.on{color:var(--ink);border-bottom-color:var(--yellow)}
+.tabpane{padding:16px 18px}
+.help-p{font-size:12.5px;color:var(--muted);line-height:1.8;margin-bottom:12px}
+.help-p b{color:var(--ink)}
+.help{margin:0 0 12px 18px;font-size:12.5px;color:var(--muted);line-height:1.9}
+.help b{color:var(--ink)}
+textarea{width:100%;min-height:180px;border:1.5px dashed var(--ink);border-radius:9px;background:#fff;padding:10px 12px;font:500 12.5px 'IBM Plex Mono',monospace;resize:vertical;color:var(--ink)}
+textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210,63,.4)}
+.improw{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:12.5px;font-weight:600}
+.improw label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.improw input[type=url]{flex:1;min-width:220px;border:1.5px solid var(--ink);border-radius:9px;padding:9px 12px;font:500 12.5px 'IBM Plex Mono',monospace}
+.improw input[type=url]:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.45)}
+.improw select{border:1.5px solid var(--ink);border-radius:9px;padding:9px 12px;font:600 13px 'Public Sans',sans-serif;background:#fff;cursor:pointer;min-width:200px}
+.improw select:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.45)}
+.status{margin-top:10px;font:500 12px 'IBM Plex Mono',monospace;color:var(--green);line-height:1.7}
+.status.err{color:var(--red)}
+.modal-foot{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1.5px dashed var(--line);flex-wrap:wrap}
+.hint{font-size:11px;color:var(--muted)}
+.toast{position:fixed;left:24px;bottom:24px;z-index:70;display:flex;align-items:center;gap:14px;background:var(--ink);color:#f6f4ea;padding:13px 18px;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13.5px;font-weight:600;opacity:0;transform:translateY(18px);transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.toast.show{opacity:1;transform:none;pointer-events:auto}
+.toast button{border:0;background:none;color:var(--yellow);font:700 13px 'Public Sans',sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+#printSheet{display:none}
+@media print{
+  body{background:#fff}
+  .page,.margin-line,.toast,.overlay{display:none!important}
+  #printSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm}
+  #printSheet .kop{text-align:center}
+  #printSheet .kop h2{font-size:17pt;text-transform:uppercase;text-decoration:underline;margin:0}
+  #printSheet .kop p{font-size:11pt;margin:2px 0}
+  #printSheet hr{border:0;border-top:2.5px solid #000;margin:8px 0 14px}
+  #printSheet .meta{font-size:11pt;margin-bottom:12px;line-height:1.7}
+  #printSheet table{width:100%;border-collapse:collapse;font-size:10.5pt}
+  #printSheet th,#printSheet td{border:1px solid #000;padding:4px 6px;text-align:center}
+  #printSheet th{background:#e8e8e8;font-weight:bold}
+  #printSheet td.nm{text-align:left}
+  #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
+  #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
+}
+@media (max-width:1080px){.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}}
+@media (max-width:900px){.margin-line{display:none}.page{padding:24px 18px 70px}
+  .masthead{flex-direction:column;align-items:flex-start}.side{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== MODE LEBAR: tabel daftar nilai terlihat penuh ===== */
+.page{max-width:1760px;padding:34px 32px 90px}
+.layout{grid-template-columns:minmax(0,1fr) 300px;gap:20px}
+table{min-width:840px}
+td.name{min-width:150px}
+.inp-name{font-size:13.5px}
+.inp-num{width:54px}
+thead th{padding:9px 6px}
+tbody td{padding:7px 5px}
+@media (max-width:1080px){.layout{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div class="margin-line"></div>
+<div class="page">
+
+  <header class="masthead">
+    <div>
+      <div class="kicker">Lembar Penilaian · Kurikulum Merdeka</div>
+      <h1>REKAP <span class="hl">NILAI</span></h1>
+      <div class="sub">
+        <span class="tag">PH-1</span><span class="tag">PH-2</span><span class="tag">PH-3</span>
+        <span class="tag">ASTS</span><span class="tag">ASAT</span>
+        <span class="tag">MULTI-KELAS</span>
+        <span class="datechip" id="todayChip"></span>
+      </div>
+    </div>
+    <div class="mast-right">
+      <svg class="stamp" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" stroke-width="3"/>
+        <circle cx="60" cy="60" r="48" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4"/>
+        <path id="circ" d="M60,60 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" fill="none"/>
+        <text font-size="9.5" letter-spacing="1.6" fill="currentColor" font-weight="700">
+          <textPath href="#circ">REKAP NILAI • PH • ASTS • ASAT •</textPath>
+        </text>
+        <text x="60" y="66" text-anchor="middle" font-size="21" font-weight="700" fill="currentColor">✦</text>
+      </svg>
+    </div>
+  </header>
+
+  <section class="docmeta">
+    <div class="field"><label>Mata Pelajaran</label><input id="m-mapel" type="text" placeholder="cth. Matematika"></div>
+    <div class="field"><label>Kelas (= nama tab di Sheet)</label><input id="m-kelas" type="text" placeholder="cth. VII A"></div>
+    <div class="field"><label>Nama Guru</label><input id="m-guru" type="text" placeholder="Nama lengkap"></div>
+    <div class="field"><label>Tahun Ajaran</label>
+      <select id="m-tahun">
+        <option>2024/2025</option><option>2025/2026</option>
+        <option selected>2026/2027</option><option>2027/2028</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <div class="search"><input id="inpSearch" type="text" placeholder="Cari nama siswa…"></div>
+    <div class="spacer"></div>
+    <button class="btn" id="btnSheet">☁ Sinkron Sheet</button>
+    <button class="btn" id="btnImport">📥 Impor</button>
+    <button class="btn" id="btnAdd">＋ Tambah Siswa</button>
+    <button class="btn" id="btnCsv">⤓ CSV</button>
+    <button class="btn" id="btnPrint">🖶 Cetak</button>
+    <button class="btn danger" id="btnReset" title="Hapus semua data">↺</button>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><div class="lbl">Jumlah Siswa</div><div class="val" id="sCount">0</div><div class="note" id="sCountNote">terisi identitas</div></div>
+    <div class="stat green"><div class="lbl">Rata-rata NA</div><div class="val" id="sAvg">–</div><div class="note">nilai akhir kelas</div></div>
+    <div class="stat yellow"><div class="lbl">Ketercapaian KKTP</div><div class="val" id="sPass">–</div><div class="note" id="sPassNote">siswa tuntas</div></div>
+    <div class="stat"><div class="lbl">Nilai Tertinggi</div><div class="val" id="sTop">–</div><div class="note" id="sTopNote">—</div></div>
+  </section>
+
+  <main class="layout">
+    <div class="card">
+      <div class="card-h"><span>Daftar Nilai Siswa</span><span class="chip" id="chipCount">0 siswa</span></div>
+      <div class="table-scroll">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th rowspan="2" style="width:36px">No</th>
+              <th rowspan="2" data-sort="nama" style="text-align:left;min-width:180px">Nama Siswa<span class="arr">↕</span></th>
+              <th colspan="3" class="grp">Penilaian Harian</th>
+              <th rowspan="2" data-sort="rph">Rata² PH<span class="arr">↕</span></th>
+              <th rowspan="2" data-sort="asts">ASTS<span class="arr">↕</span></th>
+              <th rowspan="2" data-sort="asat">ASAT<span class="arr">↕</span></th>
+              <th colspan="3" class="grp">Hasil Pengolahan</th>
+              <th rowspan="2" style="width:30px"></th>
+            </tr>
+            <tr>
+              <th data-sort="ph1" style="width:66px">PH-1<span class="arr">↕</span></th>
+              <th data-sort="ph2" style="width:66px">PH-2<span class="arr">↕</span></th>
+              <th data-sort="ph3" style="width:66px">PH-3<span class="arr">↕</span></th>
+              <th data-sort="na" style="width:70px">Nilai Akhir<span class="arr">↕</span></th>
+              <th style="width:60px">Predikat</th>
+              <th style="width:104px">Status</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" style="text-align:left;padding-left:12px">RATA-RATA KELAS</td>
+              <td id="f-ph1">–</td><td id="f-ph2">–</td><td id="f-ph3">–</td>
+              <td id="f-rph">–</td><td id="f-asts">–</td><td id="f-asat">–</td>
+              <td id="f-na">–</td><td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="legend">
+        <span><b>Merah</b> = di bawah KKTP</span>
+        <span>Nilai 0 – 100 · boleh desimal (78,5)</span>
+        <span>Sumber data siswa: <b>Google Sheet</b> (tab per kelas)</span>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="card">
+        <div class="card-h"><span>Ketercapaian KKTP</span></div>
+        <div class="donut-wrap">
+          <div class="donut">
+            <svg viewBox="0 0 100 100" width="104" height="104">
+              <circle class="track" cx="50" cy="50" r="42" fill="none" stroke-width="12"/>
+              <circle class="arc" id="donutArc" cx="50" cy="50" r="42" fill="none" stroke-width="12" stroke-dasharray="0 264"/>
+            </svg>
+            <div class="mid" id="donutPct">–</div>
+          </div>
+          <div class="donut-info">
+            <div class="t">Tuntas vs Belum</div>
+            <div class="s" id="donutSub">Belum ada nilai akhir.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span>Distribusi Nilai Akhir</span></div>
+        <div class="hist" id="hist"><div class="kmark" id="kmark"><span>KKTP</span></div></div>
+        <div class="axis"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span>Peringkat Teratas</span></div>
+        <div class="toplist" id="topList"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span>Pengolahan Nilai</span></div>
+        <div class="formula" id="formulaLine"></div>
+        <div class="opt"><div class="row"><label for="kKktp">KKTP (Kriteria Ketercapaian)</label>
+          <input id="kKktp" type="number" min="0" max="100" value="75"></div></div>
+        <div class="opt"><div class="row"><label for="wPh">Bobot Rata-rata PH</label><output id="fPh">40%</output></div>
+          <input id="wPh" type="range" min="0" max="100" step="5" value="40"></div>
+        <div class="opt"><div class="row"><label for="wAsts">Bobot ASTS</label><output id="fAsts">30%</output></div>
+          <input id="wAsts" type="range" min="0" max="100" step="5" value="30"></div>
+        <div class="opt"><div class="row"><label for="wAsat">Bobot ASAT</label><output id="fAsat">30%</output></div>
+          <input id="wAsat" type="range" min="0" max="100" step="5" value="30"></div>
+        <div class="thresh" id="threshLine"></div>
+      </div>
+    </aside>
+  </main>
+
+  <p class="foot-note">Data siswa diambil dari Google Sheet · perubahan tersimpan otomatis di peramban (localStorage).</p>
+</div>
+
+<!-- MODAL SHEET -->
+<div class="overlay" id="overlay" hidden>
+  <div class="modal card">
+    <div class="card-h"><span>Data Siswa ↔ Google Sheet (Multi-Kelas)</span>
+      <button class="mclose" id="mClose" title="Tutup">✕</button></div>
+    <div class="tabs">
+      <button class="tab on" data-tab="gas">⚙️ Apps Script (code.gs)</button>
+      <button class="tab" data-tab="paste">📋 Tempel Data</button>
+    </div>
+
+    <div class="tabpane" id="pane-gas">
+      <p class="help-p"><b>Setup sekali:</b> di Google Sheet buka <b>Ekstensi → Apps Script</b> → tempel
+      <b>code.gs versi multi-kelas</b> → jalankan <b>setup</b> → <b>Deploy → Aplikasi Web</b>
+      (jalankan: <i>Saya</i> · akses: <i>Siapa saja</i>) → salin URL <b>/exec</b>.
+      Setiap kelas menjadi <b>tab sendiri</b> di Sheet; tab baru dibuat otomatis saat <i>Kirim</i>.</p>
+      <div class="improw">
+        <input id="gasUrl" type="url" placeholder="https://script.google.com/macros/s/AKfycbx2xBYX-v4xgdFCsJIcNeeJf39oUwaqBE_JhtCU12iciOSnbb64kh6o2TL_CzXVvpJQ/exec">
+        <button class="btn" id="btnGasList">⟳ Muat Daftar Kelas</button>
+      </div>
+      <div class="improw">
+        <label for="kelasSelect" style="cursor:default">Kelas:</label>
+        <select id="kelasSelect"><option value="">— muat daftar kelas dulu —</option></select>
+        <span class="spacer"></span><span class="chip" id="gasState">belum terhubung</span>
+      </div>
+      <div class="improw">
+        <button class="btn" id="btnGasPull">⤓ Tarik dari Sheet</button>
+        <button class="btn primary" id="btnGasPush">⤒ Kirim ke Sheet</button>
+      </div>
+      <p class="status" id="gasStatus"></p>
+    </div>
+
+    <div class="tabpane" id="pane-paste" hidden>
+      <ol class="help">
+        <li>Blok kolom <b>Nama | PH-1 | PH-2 | PH-3 | ASTS | ASAT</b> di Sheet/Excel.</li>
+        <li>Salin (<b>Ctrl+C</b>) lalu tempel di bawah (<b>Ctrl+V</b>).</li>
+      </ol>
+      <textarea id="pasteArea" spellcheck="false"
+        placeholder="Nama Siswa&#9;PH-1&#9;PH-2&#9;PH-3&#9;ASTS&#9;ASAT&#10;Aisyah Putri&#9;88&#9;90&#9;86&#9;85&#9;88"></textarea>
+      <div class="improw">
+        <label><input type="radio" name="impMode" value="replace" checked> Ganti semua data</label>
+        <label><input type="radio" name="impMode" value="append"> Tambahkan di bawah</label>
+        <span class="spacer"></span>
+        <span class="chip" id="prevCount">0 baris valid</span>
+        <button class="btn primary" id="btnDoImport">Impor ✔</button>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn" id="btnTemplate">⤓ Unduh Template CSV</button>
+      <span class="hint">Isi template di Sheet/Excel per kelas, lalu impor atau tempel ke sini.</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="toastAct" hidden>Urungkan</button></div>
+<div id="printSheet"></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const KEY="rekap-nilai-ph-asts-asat-v1";
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=(v,d=1)=>{ if(v==null||v==="")return "–"; const n=+v; return Number.isInteger(n)?String(n):n.toFixed(d); };
+const nz=v=>v==null?"":v;
+const NUMKEYS=["ph1","ph2","ph3","asts","asat"];
+
+/* ---------- STATE (mulai KOSONG — data berasal dari Sheet) ---------- */
+function defaultState(){
+  return {meta:{mapel:"",kelas:"",guru:"",tahun:"2026/2027",kktp:75,
+          w:{ph:40,asts:30,asat:30},sheetUrl:""},
+          rows:[],sort:{key:null,dir:1}};
+}
+let state,saveT,lastDeleted=null,kelasList=[];
+try{const raw=localStorage.getItem(KEY); const s=raw&&JSON.parse(raw);
+  state=(s&&Array.isArray(s.rows))?s:defaultState();
+}catch(e){state=defaultState();}
+state.meta.sheetUrl=state.meta.sheetUrl||"";
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}},200);}
+
+/* ---------- parser ---------- */
+function splitCSVLine(line,delim){
+  const out=[];let cur="",q=false;
+  for(let i=0;i<line.length;i++){const ch=line[i];
+    if(q){ if(ch==='"'){ if(line[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else{ if(ch==='"')q=true; else if(ch===delim){out.push(cur);cur="";} else cur+=ch; } }
+  out.push(cur);return out.map(c=>c.trim());
+}
+const detectDelim=l=>l.includes("\t")?"\t":((l.match(/;/g)||[]).length&&(l.match(/;/g)||[]).length>=(l.match(/,/g)||[]).length?";":(l.includes(",")?",":null));
+function parseNum(v){
+  v=(v||"").toString().trim().replace(/["\s]/g,"").replace(",",".");
+  if(v===""||v==="-"||v==="–")return "";
+  const n=parseFloat(v);return isNaN(n)?"":Math.min(100,Math.max(0,n));
+}
+function parseSheetText(txt){
+  const lines=txt.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  const rows=[];
+  lines.forEach((line,li)=>{
+    const delim=detectDelim(line);
+    let cells=delim?splitCSVLine(line,delim):[line];
+    if(li===0&&((cells[0]||"").toLowerCase().includes("nama")||(cells[1]||"").toLowerCase().match(/ph/)))return;
+    if(cells.length>=2&&/^\d{1,4}\.?$/.test(cells[0])&&isNaN(parseFloat((cells[1]||"").replace(",","."))))cells.shift();
+    const nama=(cells[0]||"").replace(/^"|"$/g,"").trim();
+    const nums=cells.slice(1,6).map(parseNum);
+    if(!nama&&nums.every(v=>v===""))return;
+    rows.push({id:uid(),nama:nama||("Siswa "+(rows.length+1)),
+      scores:{ph1:nz(nums[0]),ph2:nz(nums[1]),ph3:nz(nums[2]),asts:nz(nums[3]),asat:nz(nums[4])}});
+  });
+  return rows;
+}
+
+/* ---------- hitungan ---------- */
+const kktp=()=>+state.meta.kktp||0;
+function weights(){const w=state.meta.w,t=w.ph+w.asts+w.asat;return t>0?w:{ph:40,asts:30,asat:30};}
+function computeRow(r){
+  const s=r.scores, phs=["ph1","ph2","ph3"].map(k=>s[k]).filter(v=>v!==""&&v!=null).map(Number);
+  const rph=phs.length?phs.reduce((a,b)=>a+b,0)/phs.length:null;
+  const W=weights(), comps=[];
+  if(rph!=null)comps.push([rph,W.ph]);
+  if(s.asts!==""&&s.asts!=null)comps.push([+s.asts,W.asts]);
+  if(s.asat!==""&&s.asat!=null)comps.push([+s.asat,W.asat]);
+  const ws=comps.reduce((a,c)=>a+c[1],0);
+  const na=(comps.length&&ws>0)?comps.reduce((a,c)=>a+c[0]*c[1],0)/ws:null;
+  return {rph,na};
+}
+function predikat(na){
+  if(na==null)return null; const k=kktp(), aMin=k+(100-k)/2;
+  if(na>=aMin)return "A"; if(na>=k)return "B"; if(na>=Math.max(0,k-15))return "C"; return "D";
+}
+const PRED_LABEL={A:"Sangat Baik",B:"Baik",C:"Cukup (Belum Tuntas)",D:"Perlu Bimbingan"};
+let query="";
+function sortVal(r,k){
+  if(k==="nama")return (r.nama||"").toLowerCase();
+  if(k==="rph"||k==="na"){const v=computeRow(r)[k];return v==null?-1:v;}
+  const v=r.scores[k];return (v===""||v==null)?-1:+v;
+}
+function viewRows(all){
+  let rows=state.rows.slice();
+  if(!all&&query)rows=rows.filter(r=>(r.nama||"").toLowerCase().includes(query));
+  const {key,dir}=state.sort;
+  if(key)rows.sort((a,b)=>{const x=sortVal(a,key),y=sortVal(b,key);return (x<y?-1:x>y?1:0)*dir;});
+  return rows;
+}
+const byId=id=>state.rows.find(r=>r.id===id);
+
+/* ---------- tabel ---------- */
+const tbody=$("#tbody");
+function cellScore(r,k){
+  const td=document.createElement("td");
+  const inp=document.createElement("input");
+  inp.className="inp-num";inp.type="text";inp.inputMode="decimal";inp.maxLength=6;
+  inp.dataset.k=k;inp.value=(r.scores[k]===""||r.scores[k]==null)?"":r.scores[k];
+  inp.placeholder="–";inp.setAttribute("aria-label",k.toUpperCase());
+  td.appendChild(inp);return td;
+}
+function rowEl(r,i,fresh){
+  const tr=document.createElement("tr");tr.dataset.id=r.id;if(fresh)tr.className="new";
+  const td0=document.createElement("td");td0.className="idx";td0.textContent=i+1;tr.appendChild(td0);
+  const tdN=document.createElement("td");tdN.className="name";
+  const inpN=document.createElement("input");inpN.className="inp-name";inpN.type="text";
+  inpN.value=r.nama||"";inpN.placeholder="Nama siswa…";inpN.dataset.k="nama";
+  tdN.appendChild(inpN);tr.appendChild(tdN);
+  ["ph1","ph2","ph3"].forEach(k=>tr.appendChild(cellScore(r,k)));
+  const mk=(cls)=>{const td=document.createElement("td");td.className="mono "+cls;td.textContent="–";return td;};
+  tr.appendChild(mk("c-rph"));
+  tr.appendChild(cellScore(r,"asts"));tr.appendChild(cellScore(r,"asat"));
+  tr.appendChild(mk("c-na"));
+  const tdP=document.createElement("td");tdP.innerHTML='<span class="pred" hidden></span>';tr.appendChild(tdP);
+  const tdS=document.createElement("td");tdS.innerHTML='<span class="st" hidden></span>';tr.appendChild(tdS);
+  const tdX=document.createElement("td");
+  const btn=document.createElement("button");btn.className="del";btn.title="Hapus siswa";btn.textContent="✕";btn.dataset.del=r.id;
+  tdX.appendChild(btn);tr.appendChild(tdX);
+  updateRowDerived(tr,r);return tr;
+}
+function updateRowDerived(tr,r){
+  const {rph,na}=computeRow(r), k=kktp();
+  tr.querySelectorAll(".inp-num").forEach(inp=>inp.classList.toggle("below",inp.value!==""&&+inp.value<k));
+  tr.querySelector(".c-rph").textContent=fmt(rph);
+  const naEl=tr.querySelector(".c-na");naEl.textContent=fmt(na);
+  const s=r.scores;
+  naEl.title=na==null?"Isi minimal satu nilai":`Rata² PH: ${fmt(rph)} · ASTS: ${fmt(s.asts)} · ASAT: ${fmt(s.asat)}`;
+  const p=predikat(na), pe=tr.querySelector(".pred");
+  if(p){pe.hidden=false;pe.textContent=p;pe.className="pred "+p;pe.title=PRED_LABEL[p];}else pe.hidden=true;
+  const se=tr.querySelector(".st");
+  if(na!=null){se.hidden=false;const ok=na>=k;se.className="st "+(ok?"ok":"no");se.textContent=ok?"TUNTAS":"BELUM";}
+  else se.hidden=true;
+}
+function renderTable(freshId){
+  tbody.innerHTML="";
+  const rows=viewRows();
+  if(!rows.length){
+    const tr=document.createElement("tr"),td=document.createElement("td");
+    td.colSpan=12;td.className="empty";
+    td.innerHTML=state.rows.length
+      ?'<div class="big">🔍</div>Tidak ada siswa yang cocok dengan pencarian.'
+      :'<div class="big">📗</div>Belum ada data siswa di sini.<br>Data diambil dari Google Sheet — klik tombol di bawah untuk menghubungkan & menarik data.'
+       +'<br><button class="btn primary" data-goto-sheet>☁ Sinkron dengan Sheet</button>';
+    tr.appendChild(td);tbody.appendChild(tr);
+  }else rows.forEach((r,i)=>tbody.appendChild(rowEl(r,i,r.id===freshId)));
+  $("#chipCount").textContent=rows.length+" siswa";
+  refreshPanels();
+}
+
+/* ---------- panel ---------- */
+function animNum(el,to,dec){
+  const from=el._v??0;el._v=to;
+  if(to==null){el.textContent="–";return;}
+  const t0=performance.now(),dur=420;
+  (function step(t){const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);
+    el.textContent=(from+(to-from)*e).toFixed(dec);
+    if(p<1)requestAnimationFrame(step);})(t0);
+}
+function refreshPanels(){
+  const rows=state.rows,calc=rows.map(r=>({r,...computeRow(r)})),withNA=calc.filter(c=>c.na!=null);
+  const k=kktp(),W=weights(),tot=W.ph+W.asts+W.asat||1;
+  $("#sCount").textContent=rows.length;
+  $("#sCountNote").textContent=rows.filter(r=>r.nama&&r.nama.trim()).length+" terisi identitas";
+  const avg=withNA.length?withNA.reduce((a,c)=>a+c.na,0)/withNA.length:null;
+  animNum($("#sAvg"),avg,1);
+  const pass=withNA.filter(c=>c.na>=k),pct=withNA.length?pass.length/withNA.length*100:null;
+  $("#sPass").textContent=pct==null?"–":pct.toFixed(0)+"%";
+  $("#sPassNote").textContent=withNA.length?`${pass.length} dari ${withNA.length} siswa tuntas`:"belum ada nilai";
+  const top=withNA.slice().sort((a,b)=>b.na-a.na)[0];
+  animNum($("#sTop"),top?top.na:null,1);$("#sTopNote").textContent=top?(top.r.nama||"—"):"—";
+  const C=2*Math.PI*42;
+  $("#donutArc").setAttribute("stroke-dasharray",`${(pct||0)/100*C} ${C}`);
+  $("#donutPct").textContent=pct==null?"–":pct.toFixed(0)+"%";
+  $("#donutSub").innerHTML=withNA.length
+    ?`<b style="color:var(--green)">${pass.length} tuntas</b> · <b style="color:var(--red)">${withNA.length-pass.length} belum</b><br>Batas tuntas (KKTP): <b>${fmt(k)}</b>`
+    :"Belum ada nilai akhir yang bisa diolah.";
+  const buckets=Array(10).fill(0);
+  withNA.forEach(c=>buckets[Math.min(9,Math.floor(c.na/10))]++);
+  const mx=Math.max(...buckets,1),hist=$("#hist");
+  hist.querySelectorAll(".hbar").forEach(b=>b.remove());
+  buckets.forEach((n,i)=>{
+    const b=document.createElement("div");
+    b.className="hbar"+(n===0?" zero":(i*10+10<=k?" low":""));
+    b.style.height=(n/mx*100)+"%";b.title=`${i*10}–${i*10+9}: ${n} siswa`;
+    hist.appendChild(b);
+  });
+  $("#kmark").style.left=Math.min(100,k)+"%";
+  const tl=$("#topList");tl.innerHTML="";
+  const top3=withNA.slice().sort((a,b)=>b.na-a.na).slice(0,3);
+  if(!top3.length)tl.innerHTML='<div class="empty" style="padding:16px">Belum ada nilai akhir.</div>';
+  top3.forEach((c,i)=>{
+    const d=document.createElement("div");d.className="toprow";
+    d.innerHTML=`<span class="medal m${i+1}">${i+1}</span><span class="nm">${esc(c.r.nama)||"—"}</span><span class="sc">${fmt(c.na)}</span>`;
+    tl.appendChild(d);
+  });
+  const colAvg=get=>{const v=calc.map(get).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;};
+  ["ph1","ph2","ph3","asts","asat"].forEach(kk=>{
+    $("#f-"+kk).textContent=fmt(colAvg(c=>{const v=c.r.scores[kk];return (v===""||v==null)?null:+v;}));
+  });
+  $("#f-rph").textContent=fmt(colAvg(c=>c.rph));
+  $("#f-na").textContent=fmt(colAvg(c=>c.na));
+  const pc=x=>Math.round(x/tot*100);
+  $("#formulaLine").innerHTML=`NA = <b>${pc(W.ph)}%</b>×Rata²PH + <b>${pc(W.asts)}%</b>×ASTS + <b>${pc(W.asat)}%</b>×ASAT`;
+  const aMin=k+(100-k)/2;
+  $("#threshLine").innerHTML=`Predikat: <b>A ≥ ${fmt(aMin)}</b> · <b>B ≥ ${fmt(k)}</b> · <b>C ≥ ${fmt(Math.max(0,k-15))}</b> · <b>D &lt; ${fmt(Math.max(0,k-15))}</b><br>Status <b>TUNTAS</b> jika NA ≥ KKTP (${fmt(k)}).`;
+}
+
+/* ---------- event tabel ---------- */
+tbody.addEventListener("input",e=>{
+  const tr=e.target.closest("tr");if(!tr)return;const r=byId(tr.dataset.id);if(!r)return;
+  const k=e.target.dataset.k;
+  if(k==="nama"){r.nama=e.target.value;save();refreshPanels();return;}
+  let v=e.target.value.replace(/[^0-9.,]/g,"").replace(",",".");
+  if(v!==""){const n=parseFloat(v);v=isNaN(n)?"":String(Math.min(100,n));}
+  if(v!==e.target.value)e.target.value=v;
+  r.scores[k]=(v==="")?"":+v;
+  updateRowDerived(tr,r);refreshPanels();save();
+});
+tbody.addEventListener("keydown",e=>{
+  if(e.key!=="Enter")return;e.preventDefault();
+  const tr=e.target.closest("tr"),k=e.target.dataset.k;if(!tr||!k)return;
+  const rows=$$("#tbody tr"),i=rows.indexOf(tr);
+  if(k==="nama"){tr.querySelector('[data-k="ph1"]')?.focus();return;}
+  const idx=NUMKEYS.indexOf(k);
+  if(idx<NUMKEYS.length-1)tr.querySelector(`[data-k="${NUMKEYS[idx+1]}"]`)?.focus();
+  else if(rows[i+1]){const nx=rows[i+1].querySelector('[data-k="ph1"]');nx?.focus();nx?.select();}
+});
+tbody.addEventListener("blur",e=>{
+  if(!e.target.classList?.contains("inp-num"))return;
+  const tr=e.target.closest("tr"),r=byId(tr.dataset.id);if(!r)return;
+  let v=e.target.value.trim();
+  if(v!==""){let n=Math.min(100,Math.max(0,parseFloat(v.replace(",","."))));
+    if(isNaN(n))v="";else{v=Number.isInteger(n)?String(n):n.toFixed(1);e.target.value=v;r.scores[e.target.dataset.k]=+v;}}
+  else r.scores[e.target.dataset.k]="";
+  updateRowDerived(tr,r);refreshPanels();save();
+},true);
+tbody.addEventListener("click",e=>{
+  if(e.target.closest("[data-goto-sheet]")){openModal("gas");return;}
+  const btn=e.target.closest("[data-del]");if(!btn)return;
+  const id=btn.dataset.del,idx=state.rows.findIndex(r=>r.id===id);
+  if(idx<0)return;
+  lastDeleted={row:state.rows[idx],idx};
+  state.rows.splice(idx,1);renderTable();save();
+  toast(`“${lastDeleted.row.nama||"Siswa"}” dihapus.`,"Urungkan",()=>{
+    state.rows.splice(lastDeleted.idx,0,lastDeleted.row);renderTable();save();
+  });
+});
+$$("th[data-sort]").forEach(th=>th.addEventListener("click",()=>{
+  const k=th.dataset.sort,{sort}=state;
+  if(sort.key===k)sort.dir*=-1;else{sort.key=k;sort.dir=1;}
+  $$("th[data-sort]").forEach(t=>{t.classList.toggle("on",t.dataset.key===sort.key);
+    t.querySelector(".arr").textContent=t.dataset.key===sort.key?(sort.dir===1?"▲":"▼"):"↕";});
+  renderTable();
+}));
+
+/* ---------- MODAL ---------- */
+const overlay=$("#overlay");
+function openModal(tab){
+  overlay.hidden=false;
+  if(tab){const t=document.querySelector(`.tab[data-tab="${tab}"]`);t&&t.click();}
+  if(tab==="gas"&&state.meta.sheetUrl)loadKelas();
+}
+function closeModal(){overlay.hidden=true;}
+$("#btnImport").addEventListener("click",()=>openModal("paste"));
+$("#btnSheet").addEventListener("click",()=>openModal("gas"));
+$("#mClose").addEventListener("click",closeModal);
+overlay.addEventListener("click",e=>{if(e.target===overlay)closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!overlay.hidden)closeModal();});
+$$(".tab").forEach(t=>t.addEventListener("click",()=>{
+  $$(".tab").forEach(x=>x.classList.toggle("on",x===t));
+  $$(".tabpane").forEach(p=>p.hidden=p.id!=="pane-"+t.dataset.tab);
+}));
+$("#pasteArea").addEventListener("input",e=>{
+  $("#prevCount").textContent=parseSheetText(e.target.value).length+" baris valid";
+});
+$("#btnDoImport").addEventListener("click",()=>{
+  const parsed=parseSheetText($("#pasteArea").value);
+  if(!parsed.length){toast("Tidak ada baris valid. Periksa kembali tempelan Anda.");return;}
+  const mode=document.querySelector('input[name="impMode"]:checked').value;
+  if(mode==="replace"){state.rows=parsed;state.sort={key:null,dir:1};query="";$("#inpSearch").value="";}
+  else state.rows=state.rows.concat(parsed);
+  renderTable();save();closeModal();
+  toast(`${parsed.length} siswa berhasil diimpor.`);
+  $("#pasteArea").value="";$("#prevCount").textContent="0 baris valid";
+});
+$("#btnTemplate").addEventListener("click",()=>{
+  const lines=["Nama Siswa,PH-1,PH-2,PH-3,ASTS,ASAT",
+    "Aisyah Putri Ramadhani,88,90,86,85,88","Bima Saputra,76,80,74,78,72","Cahaya Anindya,,,,,"];
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"}));
+  a.download="Template_Data_Siswa.csv";a.click();URL.revokeObjectURL(a.href);
+  toast("Template CSV diunduh.");
+});
+
+/* ---------- SINKRON MULTI-KELAS ---------- */
+$("#gasUrl").value=state.meta.sheetUrl;
+function syncSheetChip(){
+  const on=!!state.meta.sheetUrl.trim();
+  $("#gasState").textContent=on?"terhubung ✔":"belum terhubung";
+  $("#btnSheet").classList.toggle("linked",on);
+}
+$("#gasUrl").addEventListener("input",e=>{state.meta.sheetUrl=e.target.value.trim();save();syncSheetChip();});
+function populateKelas(list,selected){
+  const sel=$("#kelasSelect");sel.innerHTML="";
+  if(!list.length){const o=document.createElement("option");o.value="";o.textContent="— belum ada kelas di sheet —";sel.appendChild(o);}
+  list.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o);});
+  const oNew=document.createElement("option");oNew.value="__new__";oNew.textContent="＋ Buat kelas baru…";sel.appendChild(oNew);
+  const cur=selected||state.meta.kelas;
+  if(cur&&[...sel.options].some(o=>o.value===cur))sel.value=cur;
+  else if(sel.options.length>1)sel.selectedIndex=0;
+}
+async function loadKelas(){
+  const u=$("#gasUrl").value.trim(),st=$("#gasStatus");
+  if(!u){st.className="status err";st.textContent="Isi URL Web App (/exec) terlebih dahulu.";return;}
+  st.className="status";st.textContent="⏳ Memuat daftar kelas dari Sheet…";
+  try{
+    const r=await fetch(u);const j=await r.json();
+    if(!j.ok)throw new Error(j.error||"respon tidak valid");
+    kelasList=j.kelas||[];
+    populateKelas(kelasList);
+    st.className="status";
+    st.textContent=kelasList.length
+      ?`✔ Terhubung — ${kelasList.length} kelas: ${kelasList.join(" · ")}.`
+      :"✔ Terhubung — belum ada kelas. Pilih “＋ Buat kelas baru”, isi data, lalu Kirim (tab dibuat otomatis).";
+  }catch(err){
+    st.className="status err";
+    st.textContent="✕ Gagal: "+err.message+". Cek URL /exec, deployment (akses: Siapa saja), dan buka URL sekali di browser untuk otorisasi.";
+  }
+}
+$("#btnGasList").addEventListener("click",loadKelas);
+$("#kelasSelect").addEventListener("change",e=>{
+  if(e.target.value==="__new__"){
+    const nama=prompt("Nama kelas baru (menjadi nama tab di Sheet):","VII ");
+    if(!nama||!nama.trim()){populateKelas(kelasList);return;}
+    const n=nama.trim();
+    if(!kelasList.includes(n))kelasList.push(n);
+    populateKelas(kelasList,n);
+    state.meta.kelas=n;$("#m-kelas").value=n;save();
+  }else if(e.target.value){
+    state.meta.kelas=e.target.value;$("#m-kelas").value=e.target.value;save();
+  }
+});
+function applySheetMeta(m){
+  if(!m||typeof m!=="object")return;
+  ["mapel","kelas","guru","tahun"].forEach(k=>{
+    if(m[k]!=null&&m[k]!==""){state.meta[k]=String(m[k]);$("#m-"+k).value=state.meta[k];}});
+  if(m.kktp!=null&&m.kktp!==""){state.meta.kktp=Number(m.kktp)||75;$("#kKktp").value=state.meta.kktp;}
+  if(m.bobotPH!=null&&m.bobotPH!==""){
+    state.meta.w={ph:Number(m.bobotPH)||0,asts:Number(m.bobotASTS)||0,asat:Number(m.bobotASAT)||0};
+    $("#wPh").value=state.meta.w.ph;$("#wAsts").value=state.meta.w.asts;$("#wAsat").value=state.meta.w.asat;syncW();}
+}
+async function gasGet(url){const r=await fetch(url);const j=await r.json();if(!j.ok)throw new Error(j.error||"respon tidak valid");return j;}
+async function gasPost(url,payload){const r=await fetch(url,{method:"POST",body:JSON.stringify(payload)});const j=await r.json();if(!j.ok)throw new Error(j.error||"respon tidak valid");return j;}
+$("#btnGasPull").addEventListener("click",async()=>{
+  const u=$("#gasUrl").value.trim(),kelas=$("#kelasSelect").value,st=$("#gasStatus");
+  if(!u){st.className="status err";st.textContent="Isi URL Web App (/exec) terlebih dahulu.";return;}
+  if(!kelas||kelas==="__new__"){st.className="status err";st.textContent="Pilih kelas dulu (klik ⟳ Muat Daftar Kelas).";return;}
+  st.className="status";st.textContent=`⏳ Menarik data kelas “${kelas}”…`;
+  try{
+    const j=await gasGet(u+"?kelas="+encodeURIComponent(kelas));
+    if(!j.rows.length){st.className="status err";st.textContent=`Tab “${kelas}” masih kosong. Isi nama siswa dulu di Sheet atau kirim dari sini.`;return;}
+    state.rows=j.rows.map(r=>({id:uid(),nama:r.nama||"",scores:{
+      ph1:nz(r.scores.ph1),ph2:nz(r.scores.ph2),ph3:nz(r.scores.ph3),
+      asts:nz(r.scores.asts),asat:nz(r.scores.asat)}}));
+    applySheetMeta(j.meta);
+    state.meta.kelas=kelas;$("#m-kelas").value=kelas;
+    state.sort={key:null,dir:1};query="";$("#inpSearch").value="";
+    renderTable();save();
+    st.className="status";st.textContent=`✔ ${j.rows.length} siswa kelas “${kelas}” ditarik dari Sheet.`;
+    toast(`${j.rows.length} siswa kelas ${kelas} ditarik dari Sheet.`);
+  }catch(err){
+    st.className="status err";st.textContent="✕ Gagal: "+err.message;
+  }
+});
+$("#btnGasPush").addEventListener("click",async()=>{
+  const u=$("#gasUrl").value.trim(),st=$("#gasStatus");
+  let kelas=$("#kelasSelect").value;
+  if(!u){st.className="status err";st.textContent="Isi URL Web App (/exec) terlebih dahulu.";return;}
+  if(!kelas||kelas==="__new__")kelas=(state.meta.kelas||"").trim();
+  if(!kelas){st.className="status err";st.textContent="Pilih/buat kelas dulu, atau isi kolom “Kelas” di identitas.";return;}
+  st.className="status";st.textContent=`⏳ Mengirim kelas “${kelas}” ke Sheet…`;
+  try{
+    const j=await gasPost(u,{kelas,meta:state.meta,rows:state.rows});
+    if(!kelasList.includes(kelas)){kelasList.push(kelas);}
+    populateKelas(kelasList,kelas);
+    st.className="status";st.textContent=`✔ ${j.tersimpan} siswa tersimpan ke tab “${j.kelas}” (${j.waktu}).`;
+    toast(`Kelas ${j.kelas} terkirim ke Sheet.`);
+  }catch(err){
+    st.className="status err";st.textContent="✕ Gagal: "+err.message;
+  }
+});
+
+/* ---------- tombol lain ---------- */
+$("#btnAdd").addEventListener("click",()=>{
+  query="";$("#inpSearch").value="";
+  if(state.sort.key){state.sort={key:null,dir:1};$$("th[data-sort]").forEach(t=>{t.classList.remove("on");t.querySelector(".arr").textContent="↕";});}
+  const r={id:uid(),nama:"",scores:{ph1:"",ph2:"",ph3:"",asts:"",asat:""}};
+  state.rows.push(r);renderTable(r.id);save();
+  const tr=tbody.querySelector(`tr[data-id="${r.id}"]`);
+  tr?.scrollIntoView({behavior:"smooth",block:"center"});
+  setTimeout(()=>tr?.querySelector(".inp-name")?.focus(),120);
+});
+$("#btnReset").addEventListener("click",()=>{
+  if(!confirm("Hapus SEMUA data dan kembalikan pengaturan awal?"))return;
+  state=defaultState();localStorage.removeItem(KEY);
+  ["m-mapel","m-kelas","m-guru"].forEach(id=>$("#"+id).value="");
+  $("#m-tahun").value="2026/2027";$("#kKktp").value=75;
+  $("#wPh").value=40;$("#wAsts").value=30;$("#wAsat").value=30;syncW();
+  kelasList=[];populateKelas([],null);$("#gasUrl").value="";syncSheetChip();
+  renderTable();toast("Semua data dihapus.");
+});
+$("#inpSearch").addEventListener("input",e=>{query=e.target.value.toLowerCase();renderTable();});
+$("#btnCsv").addEventListener("click",()=>{
+  const rows=viewRows(),k=kktp();
+  const head=["No","Nama","PH-1","PH-2","PH-3","Rata-rata PH","ASTS","ASAT","Nilai Akhir","Predikat","Status"];
+  const lines=[head.join(",")];
+  rows.forEach((r,i)=>{
+    const {rph,na}=computeRow(r),s=r.scores,p=predikat(na);
+    lines.push([i+1,`"${(r.nama||"").replace(/"/g,'""')}"`,
+      s.ph1===""?"":s.ph1,s.ph2===""?"":s.ph2,s.ph3===""?"":s.ph3,
+      rph==null?"":+rph.toFixed(2),s.asts===""?"":s.asts,s.asat===""?"":s.asat,
+      na==null?"":+na.toFixed(2),p||"",na==null?"":(na>=k?"Tuntas":"Belum Tuntas")].join(","));
+  });
+  const nama=(state.meta.mapel||"rekap")+"-"+(state.meta.kelas||"").replace(/\s+/g,"");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"}));
+  a.download=`Nilai_${nama}.csv`;a.click();URL.revokeObjectURL(a.href);
+  toast("File CSV berhasil diunduh.");
+});
+$("#btnPrint").addEventListener("click",()=>{
+  const rows=viewRows(true),k=kktp(),m=state.meta;
+  const tgl=new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
+  let body=rows.map((r,i)=>{const {rph,na}=computeRow(r),s=r.scores;
+    return `<tr><td>${i+1}</td><td class="nm">${esc(r.nama)||"…"}</td>
+    <td>${s.ph1===""?"–":s.ph1}</td><td>${s.ph2===""?"–":s.ph2}</td><td>${s.ph3===""?"–":s.ph3}</td>
+    <td>${fmt(rph)}</td><td>${s.asts===""?"–":s.asts}</td><td>${s.asat===""?"–":s.asat}</td>
+    <td><b>${fmt(na)}</b></td><td>${predikat(na)||"–"}</td>
+    <td>${na==null?"–":(na>=k?"Tuntas":"Belum")}</td></tr>`;}).join("");
+  $("#printSheet").innerHTML=`
+    <div class="kop"><h2>Daftar Nilai</h2>
+      <p>Penilaian Harian 1–3 · ASTS · ASAT — Kurikulum Merdeka</p></div><hr>
+    <div class="meta">
+      Mata Pelajaran : <b>${esc(m.mapel)||"–"}</b> &nbsp;|&nbsp;
+      Kelas : <b>${esc(m.kelas)||"–"}</b> &nbsp;|&nbsp;
+      Tahun Ajaran : <b>${esc(m.tahun)}</b><br>
+      KKTP : <b>${fmt(k)}</b> &nbsp;|&nbsp; Rumus NA : Rata²PH ${Math.round(weights().ph)}% + ASTS ${Math.round(weights().asts)}% + ASAT ${Math.round(weights().asat)}%
+    </div>
+    <table><thead><tr><th>No</th><th>Nama Siswa</th><th>PH-1</th><th>PH-2</th><th>PH-3</th>
+      <th>Rata² PH</th><th>ASTS</th><th>ASAT</th><th>Nilai Akhir</th><th>Predikat</th><th>Status</th></tr></thead>
+      <tbody>${body||'<tr><td colspan="11">Belum ada data</td></tr>'}</tbody></table>
+    <p class="note">Dicetak otomatis oleh Aplikasi Rekap Nilai — ${tgl}.</p>
+    <div class="ttd">
+      <div>Mengetahui,<br>Kepala Sekolah<br><br><br><br><b><u>(&nbsp;………………………………&nbsp;)</u></b><br>NIP.</div>
+      <div>&nbsp;<br>Guru Mata Pelajaran<br><br><br><br><b><u>${esc(m.guru)||"………………………………"}</u></b><br>NIP.</div>
+    </div>`;
+  setTimeout(()=>window.print(),120);
+});
+
+/* ---------- meta & bobot ---------- */
+["mapel","kelas","guru","tahun"].forEach(k=>{
+  const el=$("#m-"+k);el.value=state.meta[k]||"";
+  el.addEventListener("input",()=>{state.meta[k]=el.value;save();});
+});
+$("#kKktp").value=state.meta.kktp;
+$("#kKktp").addEventListener("input",e=>{
+  let v=Math.min(100,Math.max(0,parseFloat(e.target.value)));
+  state.meta.kktp=isNaN(v)?0:v;save();
+  $$("#tbody tr").forEach(tr=>{const r=byId(tr.dataset.id);if(r)updateRowDerived(tr,r);});
+  refreshPanels();
+});
+function syncW(){["ph","asts","asat"].forEach(k=>{
+  $("#f"+(k==="ph"?"Ph":k==="asts"?"Asts":"Asat")).textContent=state.meta.w[k]+"%";});}
+[["wPh","ph"],["wAsts","asts"],["wAsat","asat"]].forEach(([id,k])=>{
+  const el=$("#"+id);el.value=state.meta.w[k];
+  el.addEventListener("input",()=>{state.meta.w[k]=+el.value;syncW();save();
+    $$("#tbody tr").forEach(tr=>{const r=byId(tr.dataset.id);if(r)updateRowDerived(tr,r);});
+    refreshPanels();});
+});
+syncW();syncSheetChip();
+
+/* ---------- toast & init ---------- */
+let toastT;
+function toast(msg,actLabel,act){
+  const t=$("#toast");$("#toastMsg").textContent=msg;
+  const b=$("#toastAct");b.hidden=!actLabel;
+  b.onclick=()=>{act&&act();t.classList.remove("show");};
+  t.classList.add("show");clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove("show"),actLabel?5000:3000);
+}
+$("#todayChip").textContent="📅 "+new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+renderTable();
+})();
+</script>
+</body>
+</html>
