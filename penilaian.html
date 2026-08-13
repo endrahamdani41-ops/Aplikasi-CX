@@ -36,7 +36,7 @@ body{font-family:'Public Sans',sans-serif;color:var(--ink);background-color:var(
 .masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:3px solid var(--ink);padding-bottom:22px}
 .kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.22em;color:var(--green);text-transform:uppercase;display:flex;align-items:center;gap:10px}
 .kicker::before{content:"";width:26px;height:10px;background:var(--yellow);border:1.5px solid var(--ink);transform:skewX(-12deg)}
-h1{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(2.5rem,5.6vw,4.2rem);line-height:.95;letter-spacing:-.02em;margin-top:10px}
+h1{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(2.4rem,5.6vw,4.2rem);line-height:.95;letter-spacing:-.02em;margin-top:10px}
 h1 .hl{position:relative;display:inline-block;padding:0 .08em}
 h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:38%;background:var(--yellow);z-index:-1;transform:skewX(-8deg) rotate(-1deg);animation:swipe .7s .25s cubic-bezier(.2,.8,.2,1) both}
 @keyframes swipe{from{transform:skewX(-8deg) rotate(-1deg) scaleX(0);transform-origin:left}to{transform:skewX(-8deg) rotate(-1deg) scaleX(1)}}
@@ -173,10 +173,66 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 .improw label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .modal-foot{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1.5px dashed var(--line);flex-wrap:wrap}
 .hint{font-size:11px;color:var(--muted)}
-.toast{position:fixed;left:24px;bottom:24px;z-index:70;display:flex;align-items:center;gap:14px;background:var(--toast-bg);color:var(--toast-fg);padding:13px 18px;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13.5px;font-weight:600;opacity:0;transform:translateY(18px);transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.toast{position:fixed;left:24px;bottom:24px;z-index:70;display:flex;align-items:center;gap:14px;background:var(--toast-bg);color:var(--toast-fg);padding:13px 18px;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13.5px;font-weight:600;opacity:0;transform:translateY(18px);transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none;max-width:calc(100vw - 48px)}
 .toast.show{opacity:1;transform:none;pointer-events:auto}
 .toast button{border:0;background:none;color:var(--yellow);font:700 13px 'Public Sans',sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 #printSheet{display:none}
+
+/* ============ RESPONSIF ============ */
+@media (max-width:1080px){
+  .layout{grid-template-columns:1fr}
+  .side{display:grid;grid-template-columns:1fr 1fr;align-items:start}
+}
+@media (max-width:900px){
+  .margin-line{display:none}
+  .page{padding:22px 14px 70px}
+  .masthead{flex-direction:column;align-items:flex-start;gap:12px}
+  .docmeta{flex-direction:column}
+  .field{min-width:100%;border-left:0;border-top:1.5px dashed var(--line);padding:12px 6px}
+  .field:first-child{border-top:0}
+  .toolbar{gap:8px}
+  .search{flex-basis:100%;max-width:none}
+  .toolbar .btn{flex:1 1 45%;justify-content:center}
+  .stats{display:grid;grid-template-columns:1fr 1fr}
+  .stat{min-width:0;border-left:0;border-top:1.5px dashed var(--line)}
+  .stat:nth-child(even){border-left:1.5px dashed var(--line)}
+  .stat:nth-child(-n+2){border-top:0}
+  .side{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  /* tabel berubah menjadi kartu per siswa */
+  .table-scroll{overflow:visible}
+  table{min-width:0}
+  thead,tfoot{display:none}
+  tbody tr{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:10px 8px;
+    background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+  tbody tr:nth-child(even){background:var(--card)}
+  tbody td{border:0;padding:0;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center}
+  tbody td[data-label]::before{content:attr(data-label);
+    font:600 9px 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  td.idx{position:absolute;top:12px;left:14px;width:auto;font-size:10.5px}
+  td.name{grid-column:1/-1;align-items:stretch;text-align:left;padding:0 40px 0 28px}
+  .inp-name{font-size:16px}
+  tbody td:last-child{position:absolute;top:8px;right:8px;width:auto}
+  .del{opacity:.55}
+  .inp-num{width:100%;font-size:16px}
+  .c-na{font-size:16px}
+  td.empty{display:block;grid-column:1/-1}
+  /* cegah zoom otomatis iOS saat fokus input */
+  .search input,.field input,.field select,textarea{font-size:16px}
+  .improw .btn{flex:1;justify-content:center}
+  .tabpane{padding:12px}
+  .modal-foot{padding:10px 12px}
+}
+@media (max-width:560px){
+  .mast-right{display:none}
+  .stats{grid-template-columns:1fr}
+  .stat{border-left:0!important}
+  .stat:nth-child(2){border-top:1.5px dashed var(--line)}
+  .toolbar .btn{flex:1 1 100%}
+  .toast{left:12px;right:12px;bottom:12px;max-width:none}
+  .donut-wrap{gap:12px}
+}
 @media print{
   body{background:#fff}
   .page,.margin-line,.toast,.overlay{display:none!important}
@@ -193,9 +249,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
   #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
 }
-@media (max-width:1080px){.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}}
-@media (max-width:900px){.margin-line{display:none}.page{padding:24px 18px 70px}
-  .masthead{flex-direction:column;align-items:flex-start}.side{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -299,7 +352,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
       <div class="legend">
         <span><b>Merah</b> = di bawah KKTP</span>
         <span>Nilai 0 – 100 · boleh desimal (78,5)</span>
-        <span>Terhubung otomatis ke Google Sheet sekolah</span>
+        <span>Di ponsel, tabel tampil sebagai kartu per siswa</span>
       </div>
     </div>
 
@@ -348,7 +401,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   <p class="foot-note">Pilih Mapel & Kelas — data dimuat dan disimpan otomatis ke Google Sheet.</p>
 </div>
 
-<!-- MODAL IMPOR (tempel) -->
+<!-- MODAL IMPOR -->
 <div class="overlay" id="overlay" hidden>
   <div class="modal card">
     <div class="card-h"><span>Impor Data Siswa</span>
@@ -384,9 +437,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 "use strict";
 /* ============================================================
    ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
-   Ganti dengan URL Web App (/exec) milik Anda. Setelah itu
-   bagikan file ini; pemakai TIDAK melihat & tidak perlu
-   mengisi koneksi apa pun.
    ============================================================ */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycby_mY1n3CnL7Z3WtRhcw2Ke95nG77jr0rvWV4AqNozFZpfl0CQuDQlORd7GojjwbcPN/exec";
 
@@ -491,8 +541,9 @@ const byId=id=>state.rows.find(r=>r.id===id);
 
 /* ---------- tabel ---------- */
 const tbody=$("#tbody");
-function cellScore(r,k){
+function cellScore(r,k,label){
   const td=document.createElement("td");
+  if(label)td.dataset.label=label;
   const inp=document.createElement("input");
   inp.className="inp-num";inp.type="text";inp.inputMode="decimal";inp.maxLength=6;
   inp.dataset.k=k;inp.value=(r.scores[k]===""||r.scores[k]==null)?"":r.scores[k];
@@ -506,13 +557,16 @@ function rowEl(r,i,fresh){
   const inpN=document.createElement("input");inpN.className="inp-name";inpN.type="text";
   inpN.value=r.nama||"";inpN.placeholder="Nama siswa…";inpN.dataset.k="nama";
   tdN.appendChild(inpN);tr.appendChild(tdN);
-  ["ph1","ph2","ph3"].forEach(k=>tr.appendChild(cellScore(r,k)));
-  const mk=(cls)=>{const td=document.createElement("td");td.className="mono "+cls;td.textContent="–";return td;};
-  tr.appendChild(mk("c-rph"));
-  tr.appendChild(cellScore(r,"asts"));tr.appendChild(cellScore(r,"asat"));
-  tr.appendChild(mk("c-na"));
-  const tdP=document.createElement("td");tdP.innerHTML='<span class="pred" hidden></span>';tr.appendChild(tdP);
-  const tdS=document.createElement("td");tdS.innerHTML='<span class="st" hidden></span>';tr.appendChild(tdS);
+  tr.appendChild(cellScore(r,"ph1","PH-1"));
+  tr.appendChild(cellScore(r,"ph2","PH-2"));
+  tr.appendChild(cellScore(r,"ph3","PH-3"));
+  const mk=(cls,label)=>{const td=document.createElement("td");td.className="mono "+cls;td.textContent="–";if(label)td.dataset.label=label;return td;};
+  tr.appendChild(mk("c-rph","Rata² PH"));
+  tr.appendChild(cellScore(r,"asts","ASTS"));
+  tr.appendChild(cellScore(r,"asat","ASAT"));
+  tr.appendChild(mk("c-na","Nilai Akhir"));
+  const tdP=document.createElement("td");tdP.dataset.label="Predikat";tdP.innerHTML='<span class="pred" hidden></span>';tr.appendChild(tdP);
+  const tdS=document.createElement("td");tdS.dataset.label="Status";tdS.innerHTML='<span class="st" hidden></span>';tr.appendChild(tdS);
   const tdX=document.createElement("td");
   const btn=document.createElement("button");btn.className="del";btn.title="Hapus siswa";btn.textContent="✕";btn.dataset.del=r.id;
   tdX.appendChild(btn);tr.appendChild(tdX);
@@ -722,7 +776,7 @@ async function loadActive(){
   }
 }
 
-/* ---------- SINKRON (otomatis, tanpa UI koneksi) ---------- */
+/* ---------- SINKRON ---------- */
 async function gasGet(url){const r=await fetch(url);const j=await r.json();if(!j.ok)throw new Error(j.error||"respon tidak valid");return j;}
 async function gasPost(url,payload){const r=await fetch(url,{method:"POST",body:JSON.stringify(payload)});const j=await r.json();if(!j.ok)throw new Error(j.error||"respon tidak valid");return j;}
 async function loadLists(notify){
@@ -911,7 +965,7 @@ function toast(msg,actLabel,act){
 }
 $("#todayChip").textContent="📅 "+new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 renderTable();
-loadLists(false); // terhubung otomatis saat dibuka
+loadLists(false);
 })();
 </script>
 </body>
