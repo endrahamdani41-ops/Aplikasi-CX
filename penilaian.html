@@ -3,23 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rekap Nilai — PH · ASTS · ASAT (Multi-Kelas)</title>
+<title>Rekap Nilai — PH · ASTS · ASAT (Multi-Kelas · Multi-Mapel)</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
+  color-scheme:light;
   --paper:#f6f4ea; --card:#fffdf7; --ink:#14231c; --muted:#5c6f66;
   --green:#0e5c43; --green-deep:#0a3d2e; --red:#cf3f38; --yellow:#ffd23f;
-  --line:rgba(20,60,45,.16); --line-soft:rgba(20,35,28,.09);
+  --yellow-text:#b98a00; --line:rgba(20,60,45,.16); --line-soft:rgba(20,35,28,.09);
+  --grid:rgba(14,92,67,.06); --input-bg:#ffffff; --btn-bg:#ffffff; --btn-shadow:var(--ink);
+  --zebra:rgba(14,92,67,.03); --rowhover:rgba(255,210,63,.14); --tfoot:rgba(14,92,67,.06);
+  --track:rgba(20,35,28,.1); --toast-bg:var(--ink); --toast-fg:#f6f4ea; --cardshadow:rgba(20,35,28,.08);
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0f1512; --card:#161f1a; --ink:#e9e7db; --muted:#96a69c;
+  --green:#31b586; --green-deep:#0e3527; --red:#ff8078; --yellow:#ffd23f;
+  --yellow-text:#ffd76a; --line:rgba(233,231,219,.16); --line-soft:rgba(233,231,219,.08);
+  --grid:rgba(49,181,134,.05); --input-bg:#1d2822; --btn-bg:#1d2822; --btn-shadow:#000000;
+  --zebra:rgba(49,181,134,.05); --rowhover:rgba(255,210,63,.10); --tfoot:rgba(49,181,134,.08);
+  --track:rgba(233,231,219,.12); --toast-bg:#202b25; --toast-fg:#e9e7db; --cardshadow:rgba(0,0,0,.5);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Public Sans',sans-serif;color:var(--ink);background-color:var(--paper);
-  background-image:linear-gradient(rgba(14,92,67,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(14,92,67,.06) 1px,transparent 1px);
-  background-size:28px 28px;min-height:100vh}
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;min-height:100vh;transition:background-color .3s,color .3s}
 .margin-line{position:fixed;top:0;bottom:0;left:64px;width:2px;background:rgba(207,63,56,.22);pointer-events:none;z-index:0}
-.page{max-width:1300px;margin:0 auto;padding:34px 40px 90px;position:relative;z-index:1}
+.page{max-width:1760px;margin:0 auto;padding:34px 32px 90px;position:relative;z-index:1}
 .masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:3px solid var(--ink);padding-bottom:22px}
 .kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.22em;color:var(--green);text-transform:uppercase;display:flex;align-items:center;gap:10px}
 .kicker::before{content:"";width:26px;height:10px;background:var(--yellow);border:1.5px solid var(--ink);transform:skewX(-12deg)}
@@ -28,7 +41,7 @@ h1 .hl{position:relative;display:inline-block;padding:0 .08em}
 h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:38%;background:var(--yellow);z-index:-1;transform:skewX(-8deg) rotate(-1deg);animation:swipe .7s .25s cubic-bezier(.2,.8,.2,1) both}
 @keyframes swipe{from{transform:skewX(-8deg) rotate(-1deg) scaleX(0);transform-origin:left}to{transform:skewX(-8deg) rotate(-1deg) scaleX(1)}}
 .sub{margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13.5px}
-.tag{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;border:1.5px solid var(--ink);padding:3px 9px;border-radius:999px;background:#fff}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;border:1.5px solid var(--ink);padding:3px 9px;border-radius:999px;background:var(--input-bg)}
 .datechip{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--green);font-weight:600}
 .mast-right{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0}
 .stamp{width:112px;height:112px;color:var(--green);animation:spin 46s linear infinite;cursor:pointer;transition:scale .3s}
@@ -39,20 +52,22 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 .field{flex:1;min-width:180px;padding:14px 20px;border-left:1.5px dashed var(--line)}
 .field:first-child{border-left:0}
 .field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-.field input,.field select{width:100%;border:0;background:transparent;font:600 15px 'Public Sans',sans-serif;color:var(--ink);padding:3px 0;border-bottom:2px dotted transparent;transition:.2s}
+.field input,.field select{width:100%;border:0;background:transparent;font:600 15px 'Public Sans',sans-serif;color:var(--ink);padding:3px 0;border-bottom:2px dotted transparent;transition:.2s;cursor:pointer}
+.field input{cursor:text}
 .field input:focus,.field select:focus{outline:none;border-bottom-color:var(--green);background:rgba(255,210,63,.14)}
+.field select option{background:var(--input-bg);color:var(--ink)}
+[data-theme="dark"] .field select option{background:#1d2822;color:#e9e7db}
 .toolbar{margin:26px 0 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .search{position:relative;flex:1;min-width:200px;max-width:320px}
-.search input{width:100%;border:1.5px solid var(--ink);border-radius:9px;background:#fff;padding:10px 14px 10px 36px;font:500 13.5px 'Public Sans',sans-serif;transition:.2s}
+.search input{width:100%;border:1.5px solid var(--ink);border-radius:9px;background:var(--input-bg);color:var(--ink);padding:10px 14px 10px 36px;font:500 13.5px 'Public Sans',sans-serif;transition:.2s}
 .search input:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.5);border-color:var(--green)}
 .search::before{content:"⌕";position:absolute;left:12px;top:50%;translate:0 -50%;font-size:17px;color:var(--muted)}
-.btn{font:600 13px 'Public Sans',sans-serif;padding:10px 15px;border-radius:9px;cursor:pointer;border:1.5px solid var(--ink);background:#fff;color:var(--ink);box-shadow:0 2px 0 var(--ink);transition:transform .15s,box-shadow .15s,background .15s;display:inline-flex;align-items:center;gap:7px;position:relative}
-.btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--ink)}
-.btn:active{transform:translateY(0);box-shadow:0 1px 0 var(--ink)}
+.btn{font:600 13px 'Public Sans',sans-serif;padding:10px 15px;border-radius:9px;cursor:pointer;border:1.5px solid var(--ink);background:var(--btn-bg);color:var(--ink);box-shadow:0 2px 0 var(--btn-shadow);transition:transform .15s,box-shadow .15s,background .15s;display:inline-flex;align-items:center;gap:7px;position:relative}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--btn-shadow)}
+.btn:active{transform:translateY(0);box-shadow:0 1px 0 var(--btn-shadow)}
 .btn.primary{background:var(--green);border-color:var(--green-deep);color:#fff;box-shadow:0 2px 0 var(--green-deep)}
-.btn.primary:hover{box-shadow:0 4px 0 var(--green-deep);background:#0f6b4e}
+.btn.primary:hover{box-shadow:0 4px 0 var(--green-deep);filter:brightness(1.08)}
 .btn.danger{border-color:var(--red);color:var(--red);box-shadow:0 2px 0 var(--red)}
-.btn.linked::after{content:"";position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:#2fae6e;border:1.5px solid #fff}
 .spacer{flex:1}
 .stats{display:flex;flex-wrap:wrap;border:1.5px solid var(--ink);background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:24px}
 .stat{flex:1;min-width:180px;padding:16px 22px;border-left:1.5px dashed var(--line)}
@@ -61,39 +76,41 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 .stat .val{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:29px;margin-top:2px;line-height:1.1}
 .stat .note{font-size:11px;color:var(--muted);margin-top:2px}
 .stat.green .val{color:var(--green)}
-.stat.yellow .val{color:#b98a00}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:start}
-.card{background:var(--card);border:1.5px solid var(--ink);border-radius:12px;box-shadow:5px 5px 0 rgba(20,35,28,.08)}
+.stat.yellow .val{color:var(--yellow-text)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.card{background:var(--card);border:1.5px solid var(--ink);border-radius:12px;box-shadow:5px 5px 0 var(--cardshadow);transition:background .3s}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1.5px dashed var(--line);font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase}
-.chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;background:var(--yellow);border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;background:var(--yellow);border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;white-space:nowrap;color:#14231c}
 .table-scroll{overflow-x:auto}
-table{width:100%;min-width:900px;border-collapse:collapse}
-thead th{background:var(--green-deep);color:#f2f0e4;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:9px 8px;white-space:nowrap}
+table{width:100%;min-width:840px;border-collapse:collapse}
+thead th{background:var(--green-deep);color:#f2f0e4;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:9px 6px;white-space:nowrap}
 thead th.grp{background:var(--green);letter-spacing:.14em}
+[data-theme="dark"] thead th.grp{color:#08130e}
 thead th[data-sort]{cursor:pointer;user-select:none}
 thead th[data-sort] .arr{opacity:.4;font-size:9px;margin-left:3px}
 thead th[data-sort].on .arr{opacity:1;color:var(--yellow)}
-tbody td{padding:7px 8px;border-bottom:1px solid var(--line-soft);vertical-align:middle;text-align:center}
+tbody td{padding:7px 5px;border-bottom:1px solid var(--line-soft);vertical-align:middle;text-align:center}
 tbody tr{transition:background .15s}
-tbody tr:nth-child(even){background:rgba(14,92,67,.03)}
-tbody tr:hover{background:rgba(255,210,63,.14)}
+tbody tr:nth-child(even){background:var(--zebra)}
+tbody tr:hover{background:var(--rowhover)}
 tbody tr.new{animation:rowIn .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes rowIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .idx{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);width:36px}
-td.name{text-align:left;min-width:180px}
-.inp-name{width:100%;border:0;background:transparent;font:600 14px 'Public Sans',sans-serif;color:var(--ink);padding:6px 5px;border-bottom:1.5px dashed transparent;border-radius:4px;transition:.2s}
+td.name{text-align:left;min-width:150px}
+.inp-name{width:100%;border:0;background:transparent;font:600 13.5px 'Public Sans',sans-serif;color:var(--ink);padding:6px 5px;border-bottom:1.5px dashed transparent;border-radius:4px;transition:.2s}
 .inp-name:focus{outline:none;border-bottom-color:var(--green);background:rgba(255,210,63,.18)}
-.inp-num{width:62px;text-align:center;font:600 13.5px 'IBM Plex Mono',monospace;color:var(--ink);border:1.5px dashed transparent;border-radius:7px;padding:6px 2px;background:transparent;transition:.2s}
+.inp-num{width:54px;text-align:center;font:600 13.5px 'IBM Plex Mono',monospace;color:var(--ink);border:1.5px dashed transparent;border-radius:7px;padding:6px 2px;background:transparent;transition:.2s}
 .inp-num:hover{border-color:var(--line)}
-.inp-num:focus{outline:none;border-color:var(--green);background:#fff;box-shadow:0 0 0 3px rgba(255,210,63,.4)}
+.inp-num:focus{outline:none;border-color:var(--green);background:var(--input-bg);box-shadow:0 0 0 3px rgba(255,210,63,.4)}
 .inp-num.below{color:var(--red);font-weight:700}
 .mono{font-family:'IBM Plex Mono',monospace}
 .c-rph{font-weight:600;color:var(--muted)}
 .c-na{font-weight:700;font-size:15px}
 .pred{display:inline-grid;place-items:center;width:30px;height:30px;border:2px solid;border-radius:8px;font:800 14px 'Archivo',sans-serif}
 .pred.A{background:var(--green);border-color:var(--green-deep);color:#fff}
+[data-theme="dark"] .pred.A{color:#08130e}
 .pred.B{border-color:var(--green);color:var(--green)}
-.pred.C{background:var(--yellow);border-color:var(--ink);color:var(--ink)}
+.pred.C{background:var(--yellow);border-color:var(--ink);color:#14231c}
 .pred.D{border-color:var(--red);color:var(--red)}
 .st{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.05em;padding:4px 9px;border-radius:999px;border:1.5px solid;white-space:nowrap}
 .st.ok{color:var(--green);border-color:var(--green);background:rgba(14,92,67,.07)}
@@ -101,7 +118,7 @@ td.name{text-align:left;min-width:180px}
 .del{border:0;background:none;color:var(--red);font-size:17px;cursor:pointer;opacity:0;transition:.2s;line-height:1}
 tbody tr:hover .del{opacity:.9}
 .del:hover{transform:scale(1.3)}
-tfoot td{border-top:2.5px solid var(--ink);background:rgba(14,92,67,.06);font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12.5px;padding:10px 8px;text-align:center}
+tfoot td{border-top:2.5px solid var(--ink);background:var(--tfoot);font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12.5px;padding:10px 8px;text-align:center}
 .empty{padding:52px 20px;text-align:center;color:var(--muted)}
 .empty .big{font-size:34px;margin-bottom:8px}
 .empty .btn{margin-top:14px}
@@ -111,7 +128,7 @@ tfoot td{border-top:2.5px solid var(--ink);background:rgba(14,92,67,.06);font-fa
 .donut-wrap{display:flex;align-items:center;gap:18px;padding:16px}
 .donut{width:104px;height:104px;flex-shrink:0;position:relative}
 .donut svg{transform:rotate(-90deg)}
-.donut .track{stroke:rgba(20,35,28,.1)}
+.donut .track{stroke:var(--track)}
 .donut .arc{stroke:var(--green);stroke-linecap:round;transition:stroke-dasharray .8s cubic-bezier(.2,.8,.2,1)}
 .donut .mid{position:absolute;inset:0;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:20px}
 .donut-info .t{font-weight:700;font-size:14px}
@@ -120,54 +137,43 @@ tfoot td{border-top:2.5px solid var(--ink);background:rgba(14,92,67,.06);font-fa
 .hbar{flex:1;background:var(--green);border-radius:4px 4px 0 0;min-height:3px;transition:height .55s cubic-bezier(.2,.8,.2,1);cursor:default}
 .hbar:hover{filter:brightness(1.15)}
 .hbar.low{background:rgba(207,63,56,.72)}
-.hbar.zero{background:rgba(20,35,28,.1)}
+.hbar.zero{background:var(--track)}
 .kmark{position:absolute;top:2px;bottom:0;border-left:2px dashed var(--red);pointer-events:none}
 .kmark span{position:absolute;top:-4px;left:4px;font:600 9px 'IBM Plex Mono',monospace;color:var(--red);white-space:nowrap}
 .axis{display:flex;justify-content:space-between;padding:5px 16px 14px;font:500 10px 'IBM Plex Mono',monospace;color:var(--muted)}
 .toplist{padding:8px 16px 14px;display:flex;flex-direction:column;gap:8px}
 .toprow{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px dashed var(--line);border-radius:9px;transition:.2s}
-.toprow:hover{background:rgba(255,210,63,.16);transform:translateX(3px)}
-.medal{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:800 11px 'Archivo',sans-serif;border:1.5px solid var(--ink);flex-shrink:0}
+.toprow:hover{background:var(--rowhover);transform:translateX(3px)}
+.medal{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:800 11px 'Archivo',sans-serif;border:1.5px solid var(--ink);flex-shrink:0;color:#14231c}
 .m1{background:#f4c542}.m2{background:#d7d7cf}.m3{background:#e0a370}
 .toprow .nm{flex:1;font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .toprow .sc{font:700 13.5px 'IBM Plex Mono',monospace;color:var(--green)}
-.formula{padding:14px 16px;font:600 12px 'IBM Plex Mono',monospace;background:rgba(14,92,67,.06);border-bottom:1.5px dashed var(--line);line-height:1.7}
+.formula{padding:14px 16px;font:600 12px 'IBM Plex Mono',monospace;background:var(--tfoot);border-bottom:1.5px dashed var(--line);line-height:1.7}
 .opt{padding:12px 16px;border-bottom:1px dashed var(--line-soft)}
 .opt .row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;margin-bottom:6px}
 .opt .row output{font:700 12.5px 'IBM Plex Mono',monospace;color:var(--green)}
 .opt input[type=range]{width:100%;accent-color:var(--green);cursor:pointer}
-.opt input[type=number]{width:76px;border:1.5px solid var(--ink);border-radius:7px;padding:5px 8px;font:700 13px 'IBM Plex Mono',monospace;background:#fff}
+.opt input[type=number]{width:76px;border:1.5px solid var(--ink);border-radius:7px;padding:5px 8px;font:700 13px 'IBM Plex Mono',monospace;background:var(--input-bg);color:var(--ink)}
 .opt input[type=number]:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.45)}
 .thresh{padding:11px 16px;font:500 10.5px 'IBM Plex Mono',monospace;color:var(--muted);line-height:1.9}
 .thresh b{color:var(--ink)}
 .foot-note{margin-top:26px;font:500 11px 'IBM Plex Mono',monospace;color:var(--muted);text-align:center}
-.overlay{position:fixed;inset:0;background:rgba(20,35,28,.52);display:flex;align-items:center;justify-content:center;z-index:60;padding:18px}
+.overlay{position:fixed;inset:0;background:rgba(10,15,12,.62);display:flex;align-items:center;justify-content:center;z-index:60;padding:18px}
 .overlay[hidden]{display:none}
 .modal{width:min(720px,100%);max-height:88vh;overflow:auto;animation:pop .3s cubic-bezier(.2,.8,.2,1)}
 @keyframes pop{from{transform:translateY(16px) scale(.97);opacity:0}}
 .mclose{border:0;background:none;font-size:17px;color:var(--red);cursor:pointer;transition:transform .2s}
 .mclose:hover{transform:scale(1.25)}
-.tabs{display:flex;border-bottom:1.5px dashed var(--line);flex-wrap:wrap}
-.tab{border:0;background:none;padding:13px 16px;font:700 12.5px 'Public Sans',sans-serif;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent}
-.tab.on{color:var(--ink);border-bottom-color:var(--yellow)}
 .tabpane{padding:16px 18px}
-.help-p{font-size:12.5px;color:var(--muted);line-height:1.8;margin-bottom:12px}
-.help-p b{color:var(--ink)}
 .help{margin:0 0 12px 18px;font-size:12.5px;color:var(--muted);line-height:1.9}
 .help b{color:var(--ink)}
-textarea{width:100%;min-height:180px;border:1.5px dashed var(--ink);border-radius:9px;background:#fff;padding:10px 12px;font:500 12.5px 'IBM Plex Mono',monospace;resize:vertical;color:var(--ink)}
+textarea{width:100%;min-height:180px;border:1.5px dashed var(--ink);border-radius:9px;background:var(--input-bg);padding:10px 12px;font:500 12.5px 'IBM Plex Mono',monospace;resize:vertical;color:var(--ink)}
 textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210,63,.4)}
 .improw{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:12.5px;font-weight:600}
 .improw label{display:flex;gap:6px;align-items:center;cursor:pointer}
-.improw input[type=url]{flex:1;min-width:220px;border:1.5px solid var(--ink);border-radius:9px;padding:9px 12px;font:500 12.5px 'IBM Plex Mono',monospace}
-.improw input[type=url]:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.45)}
-.improw select{border:1.5px solid var(--ink);border-radius:9px;padding:9px 12px;font:600 13px 'Public Sans',sans-serif;background:#fff;cursor:pointer;min-width:200px}
-.improw select:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.45)}
-.status{margin-top:10px;font:500 12px 'IBM Plex Mono',monospace;color:var(--green);line-height:1.7}
-.status.err{color:var(--red)}
 .modal-foot{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1.5px dashed var(--line);flex-wrap:wrap}
 .hint{font-size:11px;color:var(--muted)}
-.toast{position:fixed;left:24px;bottom:24px;z-index:70;display:flex;align-items:center;gap:14px;background:var(--ink);color:#f6f4ea;padding:13px 18px;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13.5px;font-weight:600;opacity:0;transform:translateY(18px);transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.toast{position:fixed;left:24px;bottom:24px;z-index:70;display:flex;align-items:center;gap:14px;background:var(--toast-bg);color:var(--toast-fg);padding:13px 18px;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13.5px;font-weight:600;opacity:0;transform:translateY(18px);transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none}
 .toast.show{opacity:1;transform:none;pointer-events:auto}
 .toast button{border:0;background:none;color:var(--yellow);font:700 13px 'Public Sans',sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 #printSheet{display:none}
@@ -191,18 +197,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 @media (max-width:900px){.margin-line{display:none}.page{padding:24px 18px 70px}
   .masthead{flex-direction:column;align-items:flex-start}.side{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-/* ===== MODE LEBAR: tabel daftar nilai terlihat penuh ===== */
-.page{max-width:1760px;padding:34px 32px 90px}
-.layout{grid-template-columns:minmax(0,1fr) 300px;gap:20px}
-table{min-width:840px}
-td.name{min-width:150px}
-.inp-name{font-size:13.5px}
-.inp-num{width:54px}
-thead th{padding:9px 6px}
-tbody td{padding:7px 5px}
-@media (max-width:1080px){.layout{grid-template-columns:1fr}}
-
 </style>
 </head>
 <body>
@@ -216,7 +210,7 @@ tbody td{padding:7px 5px}
       <div class="sub">
         <span class="tag">PH-1</span><span class="tag">PH-2</span><span class="tag">PH-3</span>
         <span class="tag">ASTS</span><span class="tag">ASAT</span>
-        <span class="tag">MULTI-KELAS</span>
+        <span class="tag">MULTI-KELAS · MULTI-MAPEL</span>
         <span class="datechip" id="todayChip"></span>
       </div>
     </div>
@@ -234,9 +228,11 @@ tbody td{padding:7px 5px}
   </header>
 
   <section class="docmeta">
-    <div class="field"><label>Mata Pelajaran</label><input id="m-mapel" type="text" placeholder="cth. Matematika"></div>
-    <div class="field"><label>Kelas (= nama tab di Sheet)</label><input id="m-kelas" type="text" placeholder="cth. VII A"></div>
-    <div class="field"><label>Nama Guru</label><input id="m-guru" type="text" placeholder="Nama lengkap"></div>
+    <div class="field"><label>Mata Pelajaran</label>
+      <select id="m-mapel"><option value="">— pilih mapel —</option></select></div>
+    <div class="field"><label>Kelas (pilih → data dimuat)</label>
+      <select id="m-kelas"><option value="">— pilih kelas —</option></select></div>
+    <div class="field"><label>Nama Guru (otomatis)</label><input id="m-guru" type="text" placeholder="Terisi dari tab MAPEL"></div>
     <div class="field"><label>Tahun Ajaran</label>
       <select id="m-tahun">
         <option>2024/2025</option><option>2025/2026</option>
@@ -248,11 +244,12 @@ tbody td{padding:7px 5px}
   <section class="toolbar">
     <div class="search"><input id="inpSearch" type="text" placeholder="Cari nama siswa…"></div>
     <div class="spacer"></div>
-    <button class="btn" id="btnSheet">☁ Sinkron Sheet</button>
+    <button class="btn primary" id="btnPush">⤒ Simpan ke Sheet</button>
     <button class="btn" id="btnImport">📥 Impor</button>
     <button class="btn" id="btnAdd">＋ Tambah Siswa</button>
     <button class="btn" id="btnCsv">⤓ CSV</button>
     <button class="btn" id="btnPrint">🖶 Cetak</button>
+    <button class="btn" id="btnTheme" title="Ganti tema">🌙 Mode Gelap</button>
     <button class="btn danger" id="btnReset" title="Hapus semua data">↺</button>
   </section>
 
@@ -271,7 +268,7 @@ tbody td{padding:7px 5px}
           <thead>
             <tr>
               <th rowspan="2" style="width:36px">No</th>
-              <th rowspan="2" data-sort="nama" style="text-align:left;min-width:180px">Nama Siswa<span class="arr">↕</span></th>
+              <th rowspan="2" data-sort="nama" style="text-align:left;min-width:150px">Nama Siswa<span class="arr">↕</span></th>
               <th colspan="3" class="grp">Penilaian Harian</th>
               <th rowspan="2" data-sort="rph">Rata² PH<span class="arr">↕</span></th>
               <th rowspan="2" data-sort="asts">ASTS<span class="arr">↕</span></th>
@@ -280,12 +277,12 @@ tbody td{padding:7px 5px}
               <th rowspan="2" style="width:30px"></th>
             </tr>
             <tr>
-              <th data-sort="ph1" style="width:66px">PH-1<span class="arr">↕</span></th>
-              <th data-sort="ph2" style="width:66px">PH-2<span class="arr">↕</span></th>
-              <th data-sort="ph3" style="width:66px">PH-3<span class="arr">↕</span></th>
+              <th data-sort="ph1" style="width:60px">PH-1<span class="arr">↕</span></th>
+              <th data-sort="ph2" style="width:60px">PH-2<span class="arr">↕</span></th>
+              <th data-sort="ph3" style="width:60px">PH-3<span class="arr">↕</span></th>
               <th data-sort="na" style="width:70px">Nilai Akhir<span class="arr">↕</span></th>
               <th style="width:60px">Predikat</th>
-              <th style="width:104px">Status</th>
+              <th style="width:100px">Status</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -302,7 +299,7 @@ tbody td{padding:7px 5px}
       <div class="legend">
         <span><b>Merah</b> = di bawah KKTP</span>
         <span>Nilai 0 – 100 · boleh desimal (78,5)</span>
-        <span>Sumber data siswa: <b>Google Sheet</b> (tab per kelas)</span>
+        <span>Terhubung otomatis ke Google Sheet sekolah</span>
       </div>
     </div>
 
@@ -336,7 +333,7 @@ tbody td{padding:7px 5px}
         <div class="card-h"><span>Pengolahan Nilai</span></div>
         <div class="formula" id="formulaLine"></div>
         <div class="opt"><div class="row"><label for="kKktp">KKTP (Kriteria Ketercapaian)</label>
-          <input id="kKktp" type="number" min="0" max="100" value="75"></div></div>
+          <input id="kKktp" type="number" min="0" max="100" value="82"></div></div>
         <div class="opt"><div class="row"><label for="wPh">Bobot Rata-rata PH</label><output id="fPh">40%</output></div>
           <input id="wPh" type="range" min="0" max="100" step="5" value="40"></div>
         <div class="opt"><div class="row"><label for="wAsts">Bobot ASTS</label><output id="fAsts">30%</output></div>
@@ -348,44 +345,19 @@ tbody td{padding:7px 5px}
     </aside>
   </main>
 
-  <p class="foot-note">Data siswa diambil dari Google Sheet · perubahan tersimpan otomatis di peramban (localStorage).</p>
+  <p class="foot-note">Pilih Mapel & Kelas — data dimuat dan disimpan otomatis ke Google Sheet.</p>
 </div>
 
-<!-- MODAL SHEET -->
+<!-- MODAL IMPOR (tempel) -->
 <div class="overlay" id="overlay" hidden>
   <div class="modal card">
-    <div class="card-h"><span>Data Siswa ↔ Google Sheet (Multi-Kelas)</span>
+    <div class="card-h"><span>Impor Data Siswa</span>
       <button class="mclose" id="mClose" title="Tutup">✕</button></div>
-    <div class="tabs">
-      <button class="tab on" data-tab="gas">⚙️ Apps Script (code.gs)</button>
-      <button class="tab" data-tab="paste">📋 Tempel Data</button>
-    </div>
-
-    <div class="tabpane" id="pane-gas">
-      <p class="help-p"><b>Setup sekali:</b> di Google Sheet buka <b>Ekstensi → Apps Script</b> → tempel
-      <b>code.gs versi multi-kelas</b> → jalankan <b>setup</b> → <b>Deploy → Aplikasi Web</b>
-      (jalankan: <i>Saya</i> · akses: <i>Siapa saja</i>) → salin URL <b>/exec</b>.
-      Setiap kelas menjadi <b>tab sendiri</b> di Sheet; tab baru dibuat otomatis saat <i>Kirim</i>.</p>
-      <div class="improw">
-        <input id="gasUrl" type="url" placeholder="https://script.google.com/macros/s/AKfycbx2xBYX-v4xgdFCsJIcNeeJf39oUwaqBE_JhtCU12iciOSnbb64kh6o2TL_CzXVvpJQ/exec">
-        <button class="btn" id="btnGasList">⟳ Muat Daftar Kelas</button>
-      </div>
-      <div class="improw">
-        <label for="kelasSelect" style="cursor:default">Kelas:</label>
-        <select id="kelasSelect"><option value="">— muat daftar kelas dulu —</option></select>
-        <span class="spacer"></span><span class="chip" id="gasState">belum terhubung</span>
-      </div>
-      <div class="improw">
-        <button class="btn" id="btnGasPull">⤓ Tarik dari Sheet</button>
-        <button class="btn primary" id="btnGasPush">⤒ Kirim ke Sheet</button>
-      </div>
-      <p class="status" id="gasStatus"></p>
-    </div>
-
-    <div class="tabpane" id="pane-paste" hidden>
+    <div class="tabpane">
       <ol class="help">
         <li>Blok kolom <b>Nama | PH-1 | PH-2 | PH-3 | ASTS | ASAT</b> di Sheet/Excel.</li>
         <li>Salin (<b>Ctrl+C</b>) lalu tempel di bawah (<b>Ctrl+V</b>).</li>
+        <li>Klik <b>Impor ✔</b> — setelah itu <b>⤒ Simpan ke Sheet</b> agar masuk tab aktif.</li>
       </ol>
       <textarea id="pasteArea" spellcheck="false"
         placeholder="Nama Siswa&#9;PH-1&#9;PH-2&#9;PH-3&#9;ASTS&#9;ASAT&#10;Aisyah Putri&#9;88&#9;90&#9;86&#9;85&#9;88"></textarea>
@@ -397,10 +369,9 @@ tbody td{padding:7px 5px}
         <button class="btn primary" id="btnDoImport">Impor ✔</button>
       </div>
     </div>
-
     <div class="modal-foot">
       <button class="btn" id="btnTemplate">⤓ Unduh Template CSV</button>
-      <span class="hint">Isi template di Sheet/Excel per kelas, lalu impor atau tempel ke sini.</span>
+      <span class="hint">Template untuk mengisi tab nilai di Sheet/Excel.</span>
     </div>
   </div>
 </div>
@@ -411,25 +382,46 @@ tbody td{padding:7px 5px}
 <script>
 (function(){
 "use strict";
+/* ============================================================
+   ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
+   Ganti dengan URL Web App (/exec) milik Anda. Setelah itu
+   bagikan file ini; pemakai TIDAK melihat & tidak perlu
+   mengisi koneksi apa pun.
+   ============================================================ */
+const SHEET_URL = "https://script.google.com/macros/s/AKfycby_mY1n3CnL7Z3WtRhcw2Ke95nG77jr0rvWV4AqNozFZpfl0CQuDQlORd7GojjwbcPN/exec";
+
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const KEY="rekap-nilai-ph-asts-asat-v1";
+const THEME_KEY="rekap-nilai-theme";
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=(v,d=1)=>{ if(v==null||v==="")return "–"; const n=+v; return Number.isInteger(n)?String(n):n.toFixed(d); };
 const nz=v=>v==null?"":v;
 const NUMKEYS=["ph1","ph2","ph3","asts","asat"];
+const urlSiap=()=>SHEET_URL.includes("GANTI_DENGAN_URL_EXEC_ANDA")?"":SHEET_URL;
 
-/* ---------- STATE (mulai KOSONG — data berasal dari Sheet) ---------- */
+/* ---------- TEMA ---------- */
+let theme=localStorage.getItem(THEME_KEY)||"light";
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme",t);
+  $("#btnTheme").textContent=t==="dark"?"☀️ Mode Terang":"🌙 Mode Gelap";
+}
+applyTheme(theme);
+$("#btnTheme").addEventListener("click",()=>{
+  theme=theme==="dark"?"light":"dark";
+  localStorage.setItem(THEME_KEY,theme);applyTheme(theme);
+});
+
 function defaultState(){
-  return {meta:{mapel:"",kelas:"",guru:"",tahun:"2026/2027",kktp:75,
-          w:{ph:40,asts:30,asat:30},sheetUrl:""},
+  return {meta:{mapel:"",kelas:"",guru:"",tahun:"2026/2027",kktp:82,
+          w:{ph:40,asts:30,asat:30}},
           rows:[],sort:{key:null,dir:1}};
 }
-let state,saveT,lastDeleted=null,kelasList=[];
+let state,saveT,lastDeleted=null,kelasList=[],mapelList=[];
 try{const raw=localStorage.getItem(KEY); const s=raw&&JSON.parse(raw);
   state=(s&&Array.isArray(s.rows))?s:defaultState();
 }catch(e){state=defaultState();}
-state.meta.sheetUrl=state.meta.sheetUrl||"";
+if(state.meta.kktp==null)state.meta.kktp=82;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}},200);}
 
 /* ---------- parser ---------- */
@@ -547,8 +539,8 @@ function renderTable(freshId){
     td.colSpan=12;td.className="empty";
     td.innerHTML=state.rows.length
       ?'<div class="big">🔍</div>Tidak ada siswa yang cocok dengan pencarian.'
-      :'<div class="big">📗</div>Belum ada data siswa di sini.<br>Data diambil dari Google Sheet — klik tombol di bawah untuk menghubungkan & menarik data.'
-       +'<br><button class="btn primary" data-goto-sheet>☁ Sinkron dengan Sheet</button>';
+      :'<div class="big">📗</div>Belum ada data untuk kombinasi kelas & mapel ini.<br>Pilih <b>Mapel</b> dan <b>Kelas</b> di bagian atas — data dimuat otomatis dari Sheet.'
+       +'<br><button class="btn primary" data-refresh>⟳ Muat daftar kelas & mapel</button>';
     tr.appendChild(td);tbody.appendChild(tr);
   }else rows.forEach((r,i)=>tbody.appendChild(rowEl(r,i,r.id===freshId)));
   $("#chipCount").textContent=rows.length+" siswa";
@@ -643,7 +635,7 @@ tbody.addEventListener("blur",e=>{
   updateRowDerived(tr,r);refreshPanels();save();
 },true);
 tbody.addEventListener("click",e=>{
-  if(e.target.closest("[data-goto-sheet]")){openModal("gas");return;}
+  if(e.target.closest("[data-refresh]")){loadLists(true);return;}
   const btn=e.target.closest("[data-del]");if(!btn)return;
   const id=btn.dataset.del,idx=state.rows.findIndex(r=>r.id===id);
   if(idx<0)return;
@@ -661,23 +653,137 @@ $$("th[data-sort]").forEach(th=>th.addEventListener("click",()=>{
   renderTable();
 }));
 
-/* ---------- MODAL ---------- */
-const overlay=$("#overlay");
-function openModal(tab){
-  overlay.hidden=false;
-  if(tab){const t=document.querySelector(`.tab[data-tab="${tab}"]`);t&&t.click();}
-  if(tab==="gas"&&state.meta.sheetUrl)loadKelas();
+/* ---------- DROPDOWN MAPEL & KELAS ---------- */
+function populateMapel(selected){
+  const sel=$("#m-mapel"),cur=selected??state.meta.mapel;
+  sel.innerHTML="";
+  const o0=document.createElement("option");o0.value="";o0.textContent="— pilih mapel —";sel.appendChild(o0);
+  const all=mapelList.slice();
+  if(cur&&!all.some(m=>m.mapel===cur))all.unshift({mapel:cur,guru:state.meta.guru||""});
+  all.forEach(m=>{const o=document.createElement("option");o.value=m.mapel;o.textContent=m.mapel;sel.appendChild(o);});
+  const oN=document.createElement("option");oN.value="__new__";oN.textContent="＋ Tambah mapel…";sel.appendChild(oN);
+  sel.value=cur||"";
 }
+function populateKelas(selected){
+  const sel=$("#m-kelas"),cur=selected??state.meta.kelas;
+  sel.innerHTML="";
+  const o0=document.createElement("option");o0.value="";o0.textContent="— pilih kelas —";sel.appendChild(o0);
+  const all=kelasList.slice();
+  if(cur&&!all.includes(cur))all.unshift(cur);
+  all.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o);});
+  const oN=document.createElement("option");oN.value="__new__";oN.textContent="＋ Buat kelas baru…";sel.appendChild(oN);
+  sel.value=cur||"";
+}
+$("#m-mapel").addEventListener("change",e=>{
+  let v=e.target.value;
+  if(v==="__new__"){
+    const n=prompt("Nama mata pelajaran baru:");
+    if(!n||!n.trim()){populateMapel();return;}
+    v=n.trim();
+    if(!mapelList.some(m=>m.mapel.toLowerCase()===v.toLowerCase()))
+      mapelList.push({mapel:v,guru:state.meta.guru||""});
+    populateMapel(v);
+  }
+  state.meta.mapel=v;
+  const hit=mapelList.find(m=>m.mapel===v);
+  if(hit&&hit.guru){state.meta.guru=hit.guru;$("#m-guru").value=hit.guru;}
+  save();refreshPanels();
+  if(state.meta.kelas)loadActive();
+});
+$("#m-kelas").addEventListener("change",e=>{
+  let v=e.target.value;
+  if(v==="__new__"){
+    const n=prompt("Nama kelas baru (menjadi bagian nama tab di Sheet):");
+    if(!n||!n.trim()){populateKelas();return;}
+    v=n.trim();
+    if(!kelasList.includes(v))kelasList.push(v);
+    populateKelas(v);
+    state.meta.kelas=v;save();
+    toast(`Kelas “${v}” siap — isi data lalu ⤒ Simpan ke Sheet.`);
+    return;
+  }
+  state.meta.kelas=v;save();
+  if(v)loadActive();
+});
+async function loadActive(){
+  const kelas=state.meta.kelas,mapel=state.meta.mapel;
+  if(!kelas)return;
+  const u=urlSiap();
+  if(!u){toast("Admin belum mengisi SHEET_URL di kode aplikasi.");return;}
+  toast(`⏳ Memuat ${kelas}${mapel?" · "+mapel:""} dari Sheet…`);
+  try{
+    await pullKelas(kelas,mapel);
+    toast(`✔ Data ${kelas}${mapel?" · "+mapel:""} dimuat.`);
+  }catch(err){
+    if(String(err.message).toLowerCase().includes("tidak ditemukan")){
+      state.rows=[];renderTable();save();
+      toast(`Belum ada tab untuk kombinasi ini — mulai isi lalu ⤒ Simpan.`);
+    }else toast("✕ Gagal memuat: "+err.message);
+  }
+}
+
+/* ---------- SINKRON (otomatis, tanpa UI koneksi) ---------- */
+async function gasGet(url){const r=await fetch(url);const j=await r.json();if(!j.ok)throw new Error(j.error||"respon tidak valid");return j;}
+async function gasPost(url,payload){const r=await fetch(url,{method:"POST",body:JSON.stringify(payload)});const j=await r.json();if(!j.ok)throw new Error(j.error||"respon tidak valid");return j;}
+async function loadLists(notify){
+  const u=urlSiap();
+  if(!u){if(notify)toast("Admin belum mengisi SHEET_URL di kode aplikasi.");return false;}
+  try{
+    const j=await gasGet(u);
+    kelasList=j.kelas||[];mapelList=j.mapel||[];
+    populateKelas();populateMapel();
+    if(notify)toast(`✔ Terhubung — ${kelasList.length} kelas · ${mapelList.length} mapel.`);
+    return true;
+  }catch(err){
+    if(notify)toast("✕ Gagal terhubung: "+err.message);
+    return false;
+  }
+}
+function applySheetMeta(m){
+  if(!m||typeof m!=="object")return;
+  if(m.guru!=null&&m.guru!==""){state.meta.guru=String(m.guru);$("#m-guru").value=state.meta.guru;}
+  if(m.tahun){state.meta.tahun=String(m.tahun);$("#m-tahun").value=state.meta.tahun;}
+  if(m.kktp!=null&&m.kktp!==""){state.meta.kktp=Number(m.kktp)||82;$("#kKktp").value=state.meta.kktp;}
+  if(m.bobotPH!=null&&m.bobotPH!==""){
+    state.meta.w={ph:Number(m.bobotPH)||0,asts:Number(m.bobotASTS)||0,asat:Number(m.bobotASAT)||0};
+    $("#wPh").value=state.meta.w.ph;$("#wAsts").value=state.meta.w.asts;$("#wAsat").value=state.meta.w.asat;syncW();}
+}
+async function pullKelas(kelas,mapel){
+  const j=await gasGet(urlSiap()+"?kelas="+encodeURIComponent(kelas)
+    +(mapel?"&mapel="+encodeURIComponent(mapel):""));
+  state.rows=(j.rows||[]).map(r=>({id:uid(),nama:r.nama||"",scores:{
+    ph1:nz(r.scores.ph1),ph2:nz(r.scores.ph2),ph3:nz(r.scores.ph3),
+    asts:nz(r.scores.asts),asat:nz(r.scores.asat)}}));
+  applySheetMeta(j.meta||{});
+  if(mapel){
+    state.meta.mapel=mapel;populateMapel(mapel);
+    const hit=mapelList.find(m=>m.mapel===mapel);
+    if(hit&&hit.guru){state.meta.guru=hit.guru;$("#m-guru").value=hit.guru;}
+  }
+  state.meta.kelas=kelas;populateKelas(kelas);
+  state.sort={key:null,dir:1};query="";$("#inpSearch").value="";
+  renderTable();save();
+}
+$("#btnPush").addEventListener("click",async()=>{
+  const u=urlSiap();
+  const kelas=state.meta.kelas||"",mapel=state.meta.mapel||"";
+  if(!u){toast("Admin belum mengisi SHEET_URL di kode aplikasi.");return;}
+  if(!kelas){toast("Pilih/buat kelas dulu di dropdown atas.");return;}
+  try{
+    const j=await gasPost(u,{kelas,mapel,meta:state.meta,rows:state.rows});
+    if(!kelasList.includes(kelas)){kelasList.push(kelas);populateKelas(kelas);}
+    toast(`✔ ${j.tersimpan} siswa tersimpan ke tab “${j.tab}”.`);
+  }catch(err){toast("✕ Gagal menyimpan: "+err.message);}
+});
+
+/* ---------- MODAL IMPOR ---------- */
+const overlay=$("#overlay");
+function openModal(){overlay.hidden=false;}
 function closeModal(){overlay.hidden=true;}
-$("#btnImport").addEventListener("click",()=>openModal("paste"));
-$("#btnSheet").addEventListener("click",()=>openModal("gas"));
+$("#btnImport").addEventListener("click",openModal);
 $("#mClose").addEventListener("click",closeModal);
 overlay.addEventListener("click",e=>{if(e.target===overlay)closeModal();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!overlay.hidden)closeModal();});
-$$(".tab").forEach(t=>t.addEventListener("click",()=>{
-  $$(".tab").forEach(x=>x.classList.toggle("on",x===t));
-  $$(".tabpane").forEach(p=>p.hidden=p.id!=="pane-"+t.dataset.tab);
-}));
 $("#pasteArea").addEventListener("input",e=>{
   $("#prevCount").textContent=parseSheetText(e.target.value).length+" baris valid";
 });
@@ -688,7 +794,7 @@ $("#btnDoImport").addEventListener("click",()=>{
   if(mode==="replace"){state.rows=parsed;state.sort={key:null,dir:1};query="";$("#inpSearch").value="";}
   else state.rows=state.rows.concat(parsed);
   renderTable();save();closeModal();
-  toast(`${parsed.length} siswa berhasil diimpor.`);
+  toast(`${parsed.length} siswa diimpor — jangan lupa ⤒ Simpan ke Sheet.`);
   $("#pasteArea").value="";$("#prevCount").textContent="0 baris valid";
 });
 $("#btnTemplate").addEventListener("click",()=>{
@@ -698,104 +804,6 @@ $("#btnTemplate").addEventListener("click",()=>{
   a.href=URL.createObjectURL(new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"}));
   a.download="Template_Data_Siswa.csv";a.click();URL.revokeObjectURL(a.href);
   toast("Template CSV diunduh.");
-});
-
-/* ---------- SINKRON MULTI-KELAS ---------- */
-$("#gasUrl").value=state.meta.sheetUrl;
-function syncSheetChip(){
-  const on=!!state.meta.sheetUrl.trim();
-  $("#gasState").textContent=on?"terhubung ✔":"belum terhubung";
-  $("#btnSheet").classList.toggle("linked",on);
-}
-$("#gasUrl").addEventListener("input",e=>{state.meta.sheetUrl=e.target.value.trim();save();syncSheetChip();});
-function populateKelas(list,selected){
-  const sel=$("#kelasSelect");sel.innerHTML="";
-  if(!list.length){const o=document.createElement("option");o.value="";o.textContent="— belum ada kelas di sheet —";sel.appendChild(o);}
-  list.forEach(n=>{const o=document.createElement("option");o.value=n;o.textContent=n;sel.appendChild(o);});
-  const oNew=document.createElement("option");oNew.value="__new__";oNew.textContent="＋ Buat kelas baru…";sel.appendChild(oNew);
-  const cur=selected||state.meta.kelas;
-  if(cur&&[...sel.options].some(o=>o.value===cur))sel.value=cur;
-  else if(sel.options.length>1)sel.selectedIndex=0;
-}
-async function loadKelas(){
-  const u=$("#gasUrl").value.trim(),st=$("#gasStatus");
-  if(!u){st.className="status err";st.textContent="Isi URL Web App (/exec) terlebih dahulu.";return;}
-  st.className="status";st.textContent="⏳ Memuat daftar kelas dari Sheet…";
-  try{
-    const r=await fetch(u);const j=await r.json();
-    if(!j.ok)throw new Error(j.error||"respon tidak valid");
-    kelasList=j.kelas||[];
-    populateKelas(kelasList);
-    st.className="status";
-    st.textContent=kelasList.length
-      ?`✔ Terhubung — ${kelasList.length} kelas: ${kelasList.join(" · ")}.`
-      :"✔ Terhubung — belum ada kelas. Pilih “＋ Buat kelas baru”, isi data, lalu Kirim (tab dibuat otomatis).";
-  }catch(err){
-    st.className="status err";
-    st.textContent="✕ Gagal: "+err.message+". Cek URL /exec, deployment (akses: Siapa saja), dan buka URL sekali di browser untuk otorisasi.";
-  }
-}
-$("#btnGasList").addEventListener("click",loadKelas);
-$("#kelasSelect").addEventListener("change",e=>{
-  if(e.target.value==="__new__"){
-    const nama=prompt("Nama kelas baru (menjadi nama tab di Sheet):","VII ");
-    if(!nama||!nama.trim()){populateKelas(kelasList);return;}
-    const n=nama.trim();
-    if(!kelasList.includes(n))kelasList.push(n);
-    populateKelas(kelasList,n);
-    state.meta.kelas=n;$("#m-kelas").value=n;save();
-  }else if(e.target.value){
-    state.meta.kelas=e.target.value;$("#m-kelas").value=e.target.value;save();
-  }
-});
-function applySheetMeta(m){
-  if(!m||typeof m!=="object")return;
-  ["mapel","kelas","guru","tahun"].forEach(k=>{
-    if(m[k]!=null&&m[k]!==""){state.meta[k]=String(m[k]);$("#m-"+k).value=state.meta[k];}});
-  if(m.kktp!=null&&m.kktp!==""){state.meta.kktp=Number(m.kktp)||75;$("#kKktp").value=state.meta.kktp;}
-  if(m.bobotPH!=null&&m.bobotPH!==""){
-    state.meta.w={ph:Number(m.bobotPH)||0,asts:Number(m.bobotASTS)||0,asat:Number(m.bobotASAT)||0};
-    $("#wPh").value=state.meta.w.ph;$("#wAsts").value=state.meta.w.asts;$("#wAsat").value=state.meta.w.asat;syncW();}
-}
-async function gasGet(url){const r=await fetch(url);const j=await r.json();if(!j.ok)throw new Error(j.error||"respon tidak valid");return j;}
-async function gasPost(url,payload){const r=await fetch(url,{method:"POST",body:JSON.stringify(payload)});const j=await r.json();if(!j.ok)throw new Error(j.error||"respon tidak valid");return j;}
-$("#btnGasPull").addEventListener("click",async()=>{
-  const u=$("#gasUrl").value.trim(),kelas=$("#kelasSelect").value,st=$("#gasStatus");
-  if(!u){st.className="status err";st.textContent="Isi URL Web App (/exec) terlebih dahulu.";return;}
-  if(!kelas||kelas==="__new__"){st.className="status err";st.textContent="Pilih kelas dulu (klik ⟳ Muat Daftar Kelas).";return;}
-  st.className="status";st.textContent=`⏳ Menarik data kelas “${kelas}”…`;
-  try{
-    const j=await gasGet(u+"?kelas="+encodeURIComponent(kelas));
-    if(!j.rows.length){st.className="status err";st.textContent=`Tab “${kelas}” masih kosong. Isi nama siswa dulu di Sheet atau kirim dari sini.`;return;}
-    state.rows=j.rows.map(r=>({id:uid(),nama:r.nama||"",scores:{
-      ph1:nz(r.scores.ph1),ph2:nz(r.scores.ph2),ph3:nz(r.scores.ph3),
-      asts:nz(r.scores.asts),asat:nz(r.scores.asat)}}));
-    applySheetMeta(j.meta);
-    state.meta.kelas=kelas;$("#m-kelas").value=kelas;
-    state.sort={key:null,dir:1};query="";$("#inpSearch").value="";
-    renderTable();save();
-    st.className="status";st.textContent=`✔ ${j.rows.length} siswa kelas “${kelas}” ditarik dari Sheet.`;
-    toast(`${j.rows.length} siswa kelas ${kelas} ditarik dari Sheet.`);
-  }catch(err){
-    st.className="status err";st.textContent="✕ Gagal: "+err.message;
-  }
-});
-$("#btnGasPush").addEventListener("click",async()=>{
-  const u=$("#gasUrl").value.trim(),st=$("#gasStatus");
-  let kelas=$("#kelasSelect").value;
-  if(!u){st.className="status err";st.textContent="Isi URL Web App (/exec) terlebih dahulu.";return;}
-  if(!kelas||kelas==="__new__")kelas=(state.meta.kelas||"").trim();
-  if(!kelas){st.className="status err";st.textContent="Pilih/buat kelas dulu, atau isi kolom “Kelas” di identitas.";return;}
-  st.className="status";st.textContent=`⏳ Mengirim kelas “${kelas}” ke Sheet…`;
-  try{
-    const j=await gasPost(u,{kelas,meta:state.meta,rows:state.rows});
-    if(!kelasList.includes(kelas)){kelasList.push(kelas);}
-    populateKelas(kelasList,kelas);
-    st.className="status";st.textContent=`✔ ${j.tersimpan} siswa tersimpan ke tab “${j.kelas}” (${j.waktu}).`;
-    toast(`Kelas ${j.kelas} terkirim ke Sheet.`);
-  }catch(err){
-    st.className="status err";st.textContent="✕ Gagal: "+err.message;
-  }
 });
 
 /* ---------- tombol lain ---------- */
@@ -809,13 +817,13 @@ $("#btnAdd").addEventListener("click",()=>{
   setTimeout(()=>tr?.querySelector(".inp-name")?.focus(),120);
 });
 $("#btnReset").addEventListener("click",()=>{
-  if(!confirm("Hapus SEMUA data dan kembalikan pengaturan awal?"))return;
+  if(!confirm("Hapus semua data di PERANGKAT ini dan kembalikan pengaturan awal? (Data di Sheet tidak terhapus)"))return;
   state=defaultState();localStorage.removeItem(KEY);
-  ["m-mapel","m-kelas","m-guru"].forEach(id=>$("#"+id).value="");
-  $("#m-tahun").value="2026/2027";$("#kKktp").value=75;
+  $("#m-guru").value="";$("#m-tahun").value="2026/2027";$("#kKktp").value=82;
   $("#wPh").value=40;$("#wAsts").value=30;$("#wAsat").value=30;syncW();
-  kelasList=[];populateKelas([],null);$("#gasUrl").value="";syncSheetChip();
-  renderTable();toast("Semua data dihapus.");
+  kelasList=[];mapelList=[];populateKelas(null);populateMapel(null);
+  renderTable();loadLists(false);
+  toast("Data perangkat dihapus. Sheet tetap aman.");
 });
 $("#inpSearch").addEventListener("input",e=>{query=e.target.value.toLowerCase();renderTable();});
 $("#btnCsv").addEventListener("click",()=>{
@@ -851,6 +859,7 @@ $("#btnPrint").addEventListener("click",()=>{
       Mata Pelajaran : <b>${esc(m.mapel)||"–"}</b> &nbsp;|&nbsp;
       Kelas : <b>${esc(m.kelas)||"–"}</b> &nbsp;|&nbsp;
       Tahun Ajaran : <b>${esc(m.tahun)}</b><br>
+      Guru : <b>${esc(m.guru)||"–"}</b> &nbsp;|&nbsp;
       KKTP : <b>${fmt(k)}</b> &nbsp;|&nbsp; Rumus NA : Rata²PH ${Math.round(weights().ph)}% + ASTS ${Math.round(weights().asts)}% + ASAT ${Math.round(weights().asat)}%
     </div>
     <table><thead><tr><th>No</th><th>Nama Siswa</th><th>PH-1</th><th>PH-2</th><th>PH-3</th>
@@ -865,10 +874,15 @@ $("#btnPrint").addEventListener("click",()=>{
 });
 
 /* ---------- meta & bobot ---------- */
-["mapel","kelas","guru","tahun"].forEach(k=>{
-  const el=$("#m-"+k);el.value=state.meta[k]||"";
-  el.addEventListener("input",()=>{state.meta[k]=el.value;save();});
+$("#m-guru").value=state.meta.guru||"";
+$("#m-guru").addEventListener("input",e=>{
+  state.meta.guru=e.target.value;
+  const hit=mapelList.find(m=>m.mapel===state.meta.mapel);
+  if(hit)hit.guru=e.target.value;
+  save();
 });
+$("#m-tahun").value=state.meta.tahun||"2026/2027";
+$("#m-tahun").addEventListener("input",e=>{state.meta.tahun=e.target.value;save();});
 $("#kKktp").value=state.meta.kktp;
 $("#kKktp").addEventListener("input",e=>{
   let v=Math.min(100,Math.max(0,parseFloat(e.target.value)));
@@ -884,7 +898,7 @@ function syncW(){["ph","asts","asat"].forEach(k=>{
     $$("#tbody tr").forEach(tr=>{const r=byId(tr.dataset.id);if(r)updateRowDerived(tr,r);});
     refreshPanels();});
 });
-syncW();syncSheetChip();
+syncW();populateKelas(null);populateMapel(null);
 
 /* ---------- toast & init ---------- */
 let toastT;
@@ -897,6 +911,7 @@ function toast(msg,actLabel,act){
 }
 $("#todayChip").textContent="📅 "+new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 renderTable();
+loadLists(false); // terhubung otomatis saat dibuka
 })();
 </script>
 </body>
