@@ -16,7 +16,8 @@
   --yellow-text:#b98a00; --gold:#c9a227; --th1:#12553f; --th2:#0a3d2e;
   --line:rgba(20,60,45,.16); --line-soft:rgba(20,35,28,.09);
   --grid:rgba(14,92,67,.06); --input-bg:#ffffff; --btn-bg:#ffffff; --btn-shadow:var(--ink);
-  --zebra:rgba(14,92,67,.028); --rowhover:rgba(255,210,63,.12); --tfoot:rgba(201,162,39,.10);
+  --zebra-solid:#f7f7ee; --rowhover-solid:#fff6dd;
+  --tfoot:rgba(201,162,39,.10);
   --track:rgba(20,35,28,.1); --toast-bg:var(--ink); --toast-fg:#f6f4ea; --cardshadow:rgba(20,35,28,.08);
   --na-tint:rgba(201,162,39,.07);
 }
@@ -27,7 +28,8 @@
   --yellow-text:#ffd76a; --gold:#d4af37; --th1:#16402f; --th2:#0b241b;
   --line:rgba(233,231,219,.16); --line-soft:rgba(233,231,219,.08);
   --grid:rgba(49,181,134,.05); --input-bg:#1d2822; --btn-bg:#1d2822; --btn-shadow:#000000;
-  --zebra:rgba(49,181,134,.045); --rowhover:rgba(255,210,63,.09); --tfoot:rgba(212,175,55,.10);
+  --zebra-solid:#182620; --rowhover-solid:#2b332f;
+  --tfoot:rgba(212,175,55,.10);
   --track:rgba(233,231,219,.12); --toast-bg:#202b25; --toast-fg:#e9e7db; --cardshadow:rgba(0,0,0,.5);
   --na-tint:rgba(212,175,55,.08);
 }
@@ -50,7 +52,7 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 .field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
 .field input,.field select{width:100%;border:0;background:transparent;font:600 15px 'Public Sans',sans-serif;color:var(--ink);padding:3px 0;border-bottom:2px dotted transparent;transition:.2s;cursor:pointer}
 .field input{cursor:text}
-.field input[readonly]{cursor:default}
+.field input[readonly]{cursor:default;pointer-events:none}
 .field input:focus,.field select:focus{outline:none;border-bottom-color:var(--green);background:rgba(255,210,63,.14)}
 .field select option{background:var(--input-bg);color:var(--ink)}
 [data-theme="dark"] .field select option{background:#1d2822;color:#e9e7db}
@@ -83,7 +85,7 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 .chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;background:var(--yellow);border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;white-space:nowrap;color:#14231c}
 
 /* ============ TABEL ELEGAN ============ */
-.table-scroll{overflow:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 12px 12px}
+.table-scroll{overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;border-radius:0 0 12px 12px}
 table{width:100%;min-width:860px;border-collapse:separate;border-spacing:0}
 thead th{
   background:linear-gradient(180deg,var(--th1),var(--th2));
@@ -99,36 +101,35 @@ thead th[data-sort]:hover{color:#ffe9a8}
 thead th[data-sort] .arr{opacity:.45;font-size:9px;margin-left:3px}
 thead th[data-sort].on{color:#ffe9a8}
 thead th[data-sort].on .arr{opacity:1;color:var(--yellow)}
-/* kolom No & Nama menempel */
 thead tr:first-child th:nth-child(-n+2){position:-webkit-sticky;position:sticky;z-index:3}
 thead tr:first-child th:nth-child(1){left:0}
 thead tr:first-child th:nth-child(2){left:36px;box-shadow:8px 0 12px -8px rgba(0,0,0,.45)}
 tbody td:nth-child(1){position:-webkit-sticky;position:sticky;left:0;z-index:2;background:var(--card)}
 tbody td:nth-child(2){position:-webkit-sticky;position:sticky;left:36px;z-index:2;background:var(--card);box-shadow:8px 0 12px -8px rgba(0,0,0,.45)}
+tbody tr:nth-child(even) td:nth-child(-n+2){background:var(--zebra-solid)}
+tbody tr:hover td:nth-child(-n+2){background:var(--rowhover-solid)}
 tfoot td:first-child{position:-webkit-sticky;position:sticky;left:0;z-index:2;background:var(--card)}
-tbody td{padding:11px 8px;border-bottom:1px solid var(--line-soft);vertical-align:middle;text-align:center;transition:background .15s}
+tbody td{padding:8px 6px;border-bottom:1px solid var(--line-soft);vertical-align:middle;text-align:center;transition:background .15s}
 tbody tr{transition:background .15s}
-tbody tr:nth-child(even){background:var(--zebra)}
-tbody tr:nth-child(even) td:nth-child(-n+2){background:transparent}
-tbody tr:hover{background:var(--rowhover)}
+tbody tr:nth-child(even){background:var(--zebra-solid)}
+tbody tr:hover{background:var(--rowhover-solid)}
 tbody tr:hover td:nth-child(1){box-shadow:inset 3px 0 0 var(--gold)}
 tbody tr.new{animation:rowIn .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes rowIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 .idx{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);width:36px;font-variant-numeric:tabular-nums}
 td.name{text-align:left;min-width:160px}
 .inp-name{display:inline-block;border:0;background:transparent;font:600 13.5px 'Public Sans',sans-serif;
-  color:var(--ink);padding:6px 6px;border-bottom:1.5px dashed transparent;border-radius:4px;transition:.2s;
+  color:var(--ink);padding:4px 6px;border-bottom:1.5px dashed transparent;border-radius:4px;transition:.2s;
   white-space:nowrap;text-align:left;outline:none;cursor:text;letter-spacing:.01em}
 .inp-name:hover{border-bottom-color:var(--line)}
 .inp-name:focus{border-bottom-color:var(--gold);background:rgba(255,210,63,.16)}
 .inp-name:empty::before{content:"Nama siswa…";color:var(--muted);font-weight:500}
-.inp-num{width:54px;text-align:center;font:600 13.5px 'IBM Plex Mono',monospace;color:var(--ink);border:1.5px dashed transparent;border-radius:8px;padding:6px 2px;background:transparent;transition:.2s;font-variant-numeric:tabular-nums}
+.inp-num{width:54px;text-align:center;font:600 13.5px 'IBM Plex Mono',monospace;color:var(--ink);border:1.5px dashed transparent;border-radius:8px;padding:4px 2px;background:transparent;transition:.2s;font-variant-numeric:tabular-nums}
 .inp-num:hover{border-color:var(--line);background:var(--input-bg)}
 .inp-num:focus{outline:none;border-color:var(--gold);background:var(--input-bg);box-shadow:0 0 0 3px rgba(201,162,39,.25)}
 .inp-num.below{color:var(--red);font-weight:700}
 .mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
 .c-rph{font-weight:600;color:var(--muted)}
-/* kolom Nilai Akhir diberi sorotan halus */
 tbody td.c-na{background:var(--na-tint);border-left:1px solid var(--line-soft);border-right:1px solid var(--line-soft)}
 .c-na{font-weight:700;font-size:15px}
 .pred{display:inline-grid;place-items:center;width:30px;height:30px;border:2px solid;border-radius:10px;font:800 14px 'Archivo',sans-serif;box-shadow:0 1px 0 rgba(0,0,0,.18)}
@@ -144,9 +145,8 @@ tbody td.c-na{background:var(--na-tint);border-left:1px solid var(--line-soft);b
 .del{border:0;background:none;color:var(--red);font-size:17px;cursor:pointer;opacity:0;transition:.2s;line-height:1}
 tbody tr:hover .del{opacity:.9}
 .del:hover{transform:scale(1.3)}
-/* footer rata-rata: bilah ringkasan resmi */
 tfoot td{border-top:2px solid var(--gold);background:linear-gradient(180deg,var(--tfoot),transparent);
-  font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12.5px;padding:12px 8px;text-align:center;
+  font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12.5px;padding:10px 6px;text-align:center;
   font-variant-numeric:tabular-nums;color:var(--ink)}
 tfoot td:first-child{letter-spacing:.14em;background:var(--card)}
 .empty{padding:52px 20px;text-align:center;color:var(--muted)}
@@ -216,53 +216,16 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   .stat:nth-child(even){border-left:1.5px dashed var(--line)}
   .stat:nth-child(-n+2){border-top:0}
   .side{grid-template-columns:1fr}
+  table{min-width:820px}
 }
 @media (max-width:700px){
-  thead th{padding:9px 4px;letter-spacing:.08em}
-  tbody td{padding:8px 3px}
+  thead th{padding:8px 4px;letter-spacing:.08em}
+  tbody td{padding:6px 3px}
   .del{opacity:.5}
   .search input,.field input,.field select,textarea,.inp-num,.inp-name{font-size:16px}
   .improw .btn{flex:1;justify-content:center}
   .tabpane{padding:12px}
   .modal-foot{padding:10px 12px}
-}
-@media (max-width:560px){
-  .stats{grid-template-columns:1fr}
-  .stat{border-left:0!important}
-  .stat:nth-child(2){border-top:1.5px dashed var(--line)}
-  .toast{left:12px;right:12px;bottom:12px;max-width:none}
-  .donut-wrap{gap:12px}
-}
-@media print{
-  body{background:#fff}
-  .page,.margin-line,.toast,.overlay{display:none!important}
-  #printSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm}
-  #printSheet .kop{text-align:center}
-  #printSheet .kop h2{font-size:17pt;text-transform:uppercase;text-decoration:underline;margin:0}
-  #printSheet .kop p{font-size:11pt;margin:2px 0}
-  #printSheet hr{border:0;border-top:2.5px solid #000;margin:8px 0 14px}
-  #printSheet .meta{font-size:11pt;margin-bottom:12px;line-height:1.7}
-  #printSheet table{width:100%;border-collapse:collapse;font-size:10.5pt}
-  #printSheet th,#printSheet td{border:1px solid #000;padding:4px 6px;text-align:center}
-  #printSheet th{background:#e8e8e8;font-weight:bold}
-  #printSheet td.nm{text-align:left}
-  #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
-  #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-/* ===== BARIS RAPAT + RESPONSIF PERANGKAT KECIL ===== */
-tbody td{padding:8px 6px}
-.inp-name{padding:4px 6px}
-.inp-num{padding:4px 2px}
-tfoot td{padding:10px 6px}
-.table-scroll{overscroll-behavior-x:contain}
-@media (max-width:900px){
-  table{min-width:820px}
-}
-@media (max-width:700px){
-  tbody td{padding:6px 3px}
-  thead th{padding:8px 4px}
 }
 @media (max-width:480px){
   .page{padding:18px 10px 60px}
@@ -286,16 +249,23 @@ tfoot td{padding:10px 6px}
   .st{padding:3px 8px;font-size:9px}
   .donut{width:88px;height:88px}
 }
-
-/* ===== perbaiki kolom sticky yang transparan saat digeser ===== */
-:root{--zebra-solid:#f7f7ee;--rowhover-solid:#fff6dd}
-[data-theme="dark"]{--zebra-solid:#182620;--rowhover-solid:#2b332f}
-tbody tr:nth-child(even){background:var(--zebra-solid)}
-tbody tr:hover{background:var(--rowhover-solid)}
-tbody td:nth-child(-n+2){background:var(--card)}
-tbody tr:nth-child(even) td:nth-child(-n+2){background:var(--zebra-solid)}
-tbody tr:hover td:nth-child(-n+2){background:var(--rowhover-solid)}
-
+@media print{
+  body{background:#fff}
+  .page,.margin-line,.toast,.overlay{display:none!important}
+  #printSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm}
+  #printSheet .kop{text-align:center}
+  #printSheet .kop h2{font-size:17pt;text-transform:uppercase;text-decoration:underline;margin:0}
+  #printSheet .kop p{font-size:11pt;margin:2px 0}
+  #printSheet hr{border:0;border-top:2.5px solid #000;margin:8px 0 14px}
+  #printSheet .meta{font-size:11pt;margin-bottom:12px;line-height:1.7}
+  #printSheet table{width:100%;border-collapse:collapse;font-size:10.5pt}
+  #printSheet th,#printSheet td{border:1px solid #000;padding:4px 6px;text-align:center}
+  #printSheet th{background:#e8e8e8;font-weight:bold}
+  #printSheet td.nm{text-align:left}
+  #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
+  #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -310,12 +280,13 @@ tbody tr:hover td:nth-child(-n+2){background:var(--rowhover-solid)}
   </header>
 
   <section class="docmeta">
+    <div class="field"><label>Nama Guru</label>
+      <select id="m-guru"><option value="">— pilih guru —</option></select></div>
     <div class="field"><label>Mata Pelajaran</label>
-      <select id="m-mapel"><option value="">— pilih mapel —</option></select></div>
-    <div class="field"><label>Nama Guru (otomatis)</label><input id="m-guru" type="text" placeholder="Terisi dari tab MAPEL"></div>
-    <div class="field"><label>Kelas (pilih → data dimuat)</label>
+      <input id="m-mapel" type="text" readonly placeholder="Terisi Otomatis"></div>
+    <div class="field"><label>Kelas</label>
       <select id="m-kelas"><option value="">— pilih kelas —</option></select></div>
-    <div class="field"><label>Tahun Ajaran (otomatis)</label><input id="m-tahun" type="text" readonly></div>
+    <div class="field"><label>Tahun Ajaran</label><input id="m-tahun" type="text" readonly></div>
   </section>
 
   <section class="toolbar">
@@ -373,7 +344,7 @@ tbody tr:hover td:nth-child(-n+2){background:var(--rowhover-solid)}
       <div class="legend">
         <span><b>Merah</b> = di bawah KKTP</span>
         <span>Nilai 0 – 100 · boleh desimal (78,5)</span>
-        <span>Mapel & kelas baru ditambahkan lewat Sheet</span>
+        <span>Pilih guru → mapel terisi otomatis → kelas menyesuaikan ampuan</span>
       </div>
     </div>
 
@@ -414,7 +385,7 @@ tbody tr:hover td:nth-child(-n+2){background:var(--rowhover-solid)}
     </aside>
   </main>
 
-  <p class="foot-note">Pilih Mapel & Kelas — data dimuat dan disimpan otomatis ke Google Sheet.</p>
+  <p class="foot-note">Pilih Guru & Kelas — data dimuat dan disimpan otomatis ke Google Sheet.</p>
 </div>
 
 <!-- MODAL IMPOR -->
@@ -620,8 +591,8 @@ function renderTable(freshId){
     td.colSpan=12;td.className="empty";
     td.innerHTML=state.rows.length
       ?'<div class="big">🔍</div>Tidak ada siswa yang cocok dengan pencarian.'
-      :'<div class="big">📗</div>Belum ada data untuk kombinasi kelas & mapel ini.<br>Pilih <b>Mapel</b> (nama guru terisi otomatis), lalu pilih <b>kelas yang diampu</b>.'
-       +'<br><button class="btn primary" data-refresh>⟳ Muat daftar kelas & mapel</button>';
+      :'<div class="big">📗</div>Belum ada data untuk kombinasi guru & kelas ini.<br>Pilih <b>Nama Guru</b> (mapel terisi otomatis), lalu pilih <b>kelas yang diampu</b>.'
+       +'<br><button class="btn primary" data-refresh>⟳ Muat daftar guru & kelas</button>';
     tr.appendChild(td);tbody.appendChild(tr);
   }else rows.forEach((r,i)=>tbody.appendChild(rowEl(r,i,r.id===freshId)));
   $("#chipCount").textContent=rows.length+" siswa";
@@ -742,15 +713,20 @@ $$("th[data-sort]").forEach(th=>th.addEventListener("click",()=>{
   renderTable();
 }));
 
-/* ---------- DROPDOWN: MAPEL → GURU → KELAS YANG DIAMPU ---------- */
-function populateMapel(selected){
-  const sel=$("#m-mapel"),cur=selected??state.meta.mapel;
+/* ---------- DROPDOWN: GURU → MAPEL (terkunci) → KELAS AMPU ---------- */
+function populateGuru(selected){
+  const sel=$("#m-guru"),cur=selected??state.meta.guru;
   sel.innerHTML="";
-  const o0=document.createElement("option");o0.value="";o0.textContent="— pilih mapel —";sel.appendChild(o0);
-  const all=mapelList.slice();
-  if(cur&&!all.some(m=>m.mapel===cur))all.unshift({mapel:cur,guru:state.meta.guru||""});
-  all.forEach(m=>{const o=document.createElement("option");o.value=m.mapel;o.textContent=m.mapel;sel.appendChild(o);});
+  const o0=document.createElement("option");o0.value="";o0.textContent="— pilih guru —";sel.appendChild(o0);
+  const gurus=[];
+  mapelList.forEach(m=>{if(m.guru&&!gurus.includes(m.guru))gurus.push(m.guru);});
+  if(cur&&!gurus.includes(cur))gurus.unshift(cur);
+  gurus.forEach(g=>{const o=document.createElement("option");o.value=g;o.textContent=g;sel.appendChild(o);});
   sel.value=cur||"";
+}
+function setMapelTampil(v){
+  state.meta.mapel=v||"";
+  $("#m-mapel").value=v||"";
 }
 function kelasTerampu(){
   const guru=(state.meta.guru||"").trim(), mapel=state.meta.mapel;
@@ -781,11 +757,11 @@ function refreshKelasDropdown(){
   populateKelas(null,allowed);
   save();
 }
-$("#m-mapel").addEventListener("change",e=>{
+$("#m-guru").addEventListener("change",e=>{
   const v=e.target.value;
-  state.meta.mapel=v;
-  const hit=mapelList.find(m=>m.mapel===v);
-  if(hit&&hit.guru){state.meta.guru=hit.guru;$("#m-guru").value=hit.guru;}
+  state.meta.guru=v;
+  const hit=mapelList.find(m=>m.guru===v);
+  setMapelTampil(hit?hit.mapel:"");      // mapel terisi otomatis & terkunci
   save();refreshPanels();
   refreshKelasDropdown();
   if(state.meta.kelas)loadActive();
@@ -821,7 +797,8 @@ async function loadLists(notify){
   try{
     const j=await gasGet(u);
     kelasList=j.kelas||[];mapelList=j.mapel||[];
-    populateMapel();
+    populateGuru();
+    setMapelTampil(state.meta.mapel);
     refreshKelasDropdown();
     if(notify)toast(`✔ Terhubung — ${kelasList.length} kelas · ${mapelList.length} mapel.`);
     return true;
@@ -833,7 +810,6 @@ async function loadLists(notify){
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadLists(false);});
 function applySheetMeta(m){
   if(!m||typeof m!=="object")return;
-  if(m.guru!=null&&m.guru!==""){state.meta.guru=String(m.guru);$("#m-guru").value=state.meta.guru;}
   if(m.kktp!=null&&m.kktp!==""){state.meta.kktp=Number(m.kktp)||82;$("#kKktp").value=state.meta.kktp;}
   if(m.bobotPH!=null&&m.bobotPH!==""){
     state.meta.w={ph:Number(m.bobotPH)||0,asts:Number(m.bobotASTS)||0,asat:Number(m.bobotASAT)||0};
@@ -848,9 +824,9 @@ async function pullKelas(kelas,mapel){
   applySheetMeta(j.meta||{});
   const rm=mapel||j.mapel||"";
   if(rm){
-    state.meta.mapel=rm;populateMapel(rm);
+    setMapelTampil(rm);
     const hit=mapelList.find(m=>m.mapel===rm);
-    if(hit&&hit.guru){state.meta.guru=hit.guru;$("#m-guru").value=hit.guru;}
+    if(hit&&hit.guru){state.meta.guru=hit.guru;populateGuru(hit.guru);}
   }
   state.meta.kelas=kelas;populateKelas(kelas,kelasTerampu());
   state.sort={key:null,dir:1};query="";$("#inpSearch").value="";
@@ -903,7 +879,7 @@ $("#btnTemplate").addEventListener("click",()=>{
 $("#btnReset").addEventListener("click",()=>{
   if(!confirm("Hapus semua data di PERANGKAT ini dan kembalikan pengaturan awal? (Data di Sheet tidak terhapus)"))return;
   state=defaultState();localStorage.removeItem(KEY);
-  $("#m-guru").value="";$("#kKktp").value=82;
+  $("#m-guru").value="";setMapelTampil("");$("#kKktp").value=82;
   $("#wPh").value=40;$("#wAsts").value=30;$("#wAsat").value=30;syncW();
   state.meta.tahun=tahunAjaranOtomatis();$("#m-tahun").value=state.meta.tahun;
   kelasList=[];mapelList=[];refreshKelasDropdown();
@@ -942,14 +918,8 @@ $("#btnPrint").addEventListener("click",()=>{
 });
 
 /* ---------- meta & bobot ---------- */
-$("#m-guru").value=state.meta.guru||"";
-$("#m-guru").addEventListener("input",e=>{
-  state.meta.guru=e.target.value;
-  const hit=mapelList.find(m=>m.mapel===state.meta.mapel);
-  if(hit)hit.guru=e.target.value;
-  save();
-  refreshKelasDropdown();
-});
+populateGuru();
+$("#m-mapel").value=state.meta.mapel||"";
 state.meta.tahun=tahunAjaranOtomatis();
 $("#m-tahun").value=state.meta.tahun;
 $("#kKktp").value=state.meta.kktp;
