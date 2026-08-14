@@ -250,6 +250,52 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== BARIS RAPAT + RESPONSIF PERANGKAT KECIL ===== */
+tbody td{padding:8px 6px}
+.inp-name{padding:4px 6px}
+.inp-num{padding:4px 2px}
+tfoot td{padding:10px 6px}
+.table-scroll{overscroll-behavior-x:contain}
+@media (max-width:900px){
+  table{min-width:820px}
+}
+@media (max-width:700px){
+  tbody td{padding:6px 3px}
+  thead th{padding:8px 4px}
+}
+@media (max-width:480px){
+  .page{padding:18px 10px 60px}
+  h1{font-size:2rem}
+  .field{padding:10px 4px}
+  .field label{font-size:8.5px;letter-spacing:.14em}
+  .toolbar{gap:6px}
+  .btn{padding:9px 12px}
+  .stat{padding:12px 14px}
+  .stat .val{font-size:24px}
+  .card-h{font-size:11px;padding:12px 14px}
+  .legend{font-size:10px;gap:10px}
+  table{min-width:700px}
+  thead th{font-size:9px;padding:8px 3px;letter-spacing:.06em}
+  .idx{width:30px}
+  thead tr:first-child th:nth-child(2){left:30px}
+  tbody td:nth-child(2){left:30px}
+  .inp-num{width:46px}
+  .c-na{font-size:14px}
+  .pred{width:26px;height:26px;font-size:12px;border-radius:8px}
+  .st{padding:3px 8px;font-size:9px}
+  .donut{width:88px;height:88px}
+}
+
+/* ===== perbaiki kolom sticky yang transparan saat digeser ===== */
+:root{--zebra-solid:#f7f7ee;--rowhover-solid:#fff6dd}
+[data-theme="dark"]{--zebra-solid:#182620;--rowhover-solid:#2b332f}
+tbody tr:nth-child(even){background:var(--zebra-solid)}
+tbody tr:hover{background:var(--rowhover-solid)}
+tbody td:nth-child(-n+2){background:var(--card)}
+tbody tr:nth-child(even) td:nth-child(-n+2){background:var(--zebra-solid)}
+tbody tr:hover td:nth-child(-n+2){background:var(--rowhover-solid)}
+
 </style>
 </head>
 <body>
@@ -408,7 +454,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 /* ============================================================
    ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
    ============================================================ */
-const SHEET_URL = "https://script.google.com/macros/s/AKfycby4GoiulQOgbd0aAowzMP6o2Lk_wr8ZsIZXHG4pwHcd539sq3h2lzSuJrW1U1YgsO20/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzGv3XFOK4_-IQBTqwKS0ZRMQE8F1yNiD3GwXEFgxnO8s-QMxnhoMQtFlsSH-V09vRk/exec";
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const KEY="rekap-nilai-ph-asts-asat-v1";
