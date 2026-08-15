@@ -39,14 +39,23 @@ body{font-family:'Public Sans',sans-serif;color:var(--ink);background-color:var(
   background-size:28px 28px;min-height:100vh;transition:background-color .3s,color .3s}
 .margin-line{position:fixed;top:0;bottom:0;left:64px;width:2px;background:rgba(207,63,56,.22);pointer-events:none;z-index:0}
 .page{max-width:1760px;margin:0 auto;padding:34px 32px 90px;position:relative;z-index:1}
-.masthead{border-bottom:3px solid var(--ink);padding-bottom:22px}
+.masthead{border-bottom:3px solid var(--ink);padding-bottom:18px}
 h1{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:clamp(2.4rem,5.6vw,4.2rem);line-height:.95;letter-spacing:-.02em;margin-top:4px}
 h1 .hl{position:relative;display:inline-block;padding:0 .08em}
 h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:38%;background:var(--yellow);z-index:-1;transform:skewX(-8deg) rotate(-1deg);animation:swipe .7s .25s cubic-bezier(.2,.8,.2,1) both}
 @keyframes swipe{from{transform:skewX(-8deg) rotate(-1deg) scaleX(0);transform-origin:left}to{transform:skewX(-8deg) rotate(-1deg) scaleX(1)}}
 .sub{margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13.5px}
 .datechip{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--green);font-weight:600}
-.docmeta{margin-top:26px;display:flex;flex-wrap:wrap;border-top:1.5px dashed var(--line);border-bottom:1.5px dashed var(--line)}
+.toolbar{margin:16px 0 20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+.btn{font:600 13px 'Public Sans',sans-serif;padding:10px 14px;border-radius:9px;cursor:pointer;border:1.5px solid var(--ink);background:var(--btn-bg);color:var(--ink);box-shadow:0 2px 0 var(--btn-shadow);transition:transform .15s,box-shadow .15s,background .15s;display:inline-flex;align-items:center;justify-content:center;gap:7px;position:relative}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--btn-shadow)}
+.btn:active{transform:translateY(0);box-shadow:0 1px 0 var(--btn-shadow)}
+.btn .ic{line-height:1;font-size:17px}
+.btn .txt{display:none}
+.btn.primary{background:var(--green);border-color:var(--green-deep);color:#fff;box-shadow:0 2px 0 var(--green-deep)}
+.btn.primary:hover{box-shadow:0 4px 0 var(--green-deep);filter:brightness(1.08)}
+.btn.danger{border-color:var(--red);color:var(--red);box-shadow:0 2px 0 var(--red)}
+.docmeta{margin-top:0;display:flex;flex-wrap:wrap;border-top:1.5px dashed var(--line);border-bottom:1.5px dashed var(--line)}
 .field{flex:1;min-width:180px;padding:14px 20px;border-left:1.5px dashed var(--line)}
 .field:first-child{border-left:0}
 .field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
@@ -56,21 +65,7 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 .field input:focus,.field select:focus{outline:none;border-bottom-color:var(--green);background:rgba(255,210,63,.14)}
 .field select option{background:var(--input-bg);color:var(--ink)}
 [data-theme="dark"] .field select option{background:#1d2822;color:#e9e7db}
-.toolbar{margin:26px 0 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
-.search{position:relative;flex-basis:100%}
-.search input{width:100%;border:1.5px solid var(--ink);border-radius:9px;background:var(--input-bg);color:var(--ink);padding:10px 14px 10px 36px;font:500 13.5px 'Public Sans',sans-serif;transition:.2s}
-.search input:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.5);border-color:var(--green)}
-.search::before{content:"⌕";position:absolute;left:12px;top:50%;translate:0 -50%;font-size:17px;color:var(--muted)}
-.btn{font:600 13px 'Public Sans',sans-serif;padding:10px 14px;border-radius:9px;cursor:pointer;border:1.5px solid var(--ink);background:var(--btn-bg);color:var(--ink);box-shadow:0 2px 0 var(--btn-shadow);transition:transform .15s,box-shadow .15s,background .15s;display:inline-flex;align-items:center;justify-content:center;gap:7px;position:relative}
-.btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--btn-shadow)}
-.btn:active{transform:translateY(0);box-shadow:0 1px 0 var(--btn-shadow)}
-.btn .ic{line-height:1;font-size:17px}
-.btn .txt{display:none}
-.btn.primary{background:var(--green);border-color:var(--green-deep);color:#fff;box-shadow:0 2px 0 var(--green-deep)}
-.btn.primary:hover{box-shadow:0 4px 0 var(--green-deep);filter:brightness(1.08)}
-.btn.danger{border-color:var(--red);color:var(--red);box-shadow:0 2px 0 var(--red)}
-.spacer{display:none}
-.stats{display:flex;flex-wrap:wrap;border:1.5px solid var(--ink);background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.stats{display:flex;flex-wrap:wrap;border:1.5px solid var(--ink);background:var(--card);border-radius:12px;overflow:hidden;margin:24px 0}
 .stat{flex:1;min-width:180px;padding:16px 22px;border-left:1.5px dashed var(--line)}
 .stat:first-child{border-left:0}
 .stat .lbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
@@ -78,13 +73,12 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 .stat .note{font-size:11px;color:var(--muted);margin-top:2px}
 .stat.green .val{color:var(--green)}
 .stat.yellow .val{color:var(--yellow-text)}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.layout{display:flex;flex-direction:column;gap:20px}
+.side{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}
 .card{background:var(--card);border:1.5px solid var(--ink);border-radius:14px;box-shadow:6px 6px 0 var(--cardshadow);transition:background .3s}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;border-bottom:1.5px solid var(--line);font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;position:relative}
 .card-h::after{content:"";position:absolute;left:18px;bottom:-1.5px;width:56px;height:3px;background:linear-gradient(90deg,var(--gold),transparent);border-radius:2px}
 .chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;background:var(--yellow);border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;white-space:nowrap;color:#14231c}
-
-/* ============ TABEL ELEGAN ============ */
 .table-scroll{overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;border-radius:0 0 12px 12px}
 table{width:100%;min-width:860px;border-collapse:separate;border-spacing:0}
 thead th{
@@ -152,9 +146,6 @@ tfoot td:first-child{letter-spacing:.14em;background:var(--card)}
 .empty{padding:52px 20px;text-align:center;color:var(--muted)}
 .empty .big{font-size:34px;margin-bottom:8px}
 .empty .btn{margin-top:14px}
-.legend{padding:10px 16px;border-top:1.5px dashed var(--line);font-size:11px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
-.legend b{color:var(--red)}
-.side{display:flex;flex-direction:column;gap:18px}
 .donut-wrap{display:flex;align-items:center;gap:18px;padding:16px}
 .donut{width:104px;height:104px;flex-shrink:0;position:relative}
 .donut svg{transform:rotate(-90deg)}
@@ -170,16 +161,6 @@ tfoot td:first-child{letter-spacing:.14em;background:var(--card)}
 .m1{background:#f4c542}.m2{background:#d7d7cf}.m3{background:#e0a370}
 .toprow .nm{flex:1;font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .toprow .sc{font:700 13.5px 'IBM Plex Mono',monospace;color:var(--green)}
-.formula{padding:14px 16px;font:600 12px 'IBM Plex Mono',monospace;background:var(--tfoot);border-bottom:1.5px dashed var(--line);line-height:1.7}
-.opt{padding:12px 16px;border-bottom:1px dashed var(--line-soft)}
-.opt .row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;margin-bottom:6px}
-.opt .row output{font:700 12.5px 'IBM Plex Mono',monospace;color:var(--green)}
-.opt input[type=range]{width:100%;accent-color:var(--green);cursor:pointer}
-.opt input[type=number]{width:76px;border:1.5px solid var(--ink);border-radius:7px;padding:5px 8px;font:700 13px 'IBM Plex Mono',monospace;background:var(--input-bg);color:var(--ink)}
-.opt input[type=number]:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.45)}
-.thresh{padding:11px 16px;font:500 10.5px 'IBM Plex Mono',monospace;color:var(--muted);line-height:1.9}
-.thresh b{color:var(--ink)}
-.foot-note{margin-top:26px;font:500 11px 'IBM Plex Mono',monospace;color:var(--muted);text-align:center}
 .overlay{position:fixed;inset:0;background:rgba(10,15,12,.62);display:flex;align-items:center;justify-content:center;z-index:60;padding:18px}
 .overlay[hidden]{display:none}
 .modal{width:min(720px,100%);max-height:88vh;overflow:auto;animation:pop .3s cubic-bezier(.2,.8,.2,1)}
@@ -201,10 +182,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 #printSheet{display:none}
 
 /* ============ RESPONSIF ============ */
-@media (max-width:1080px){
-  .layout{grid-template-columns:1fr}
-  .side{display:grid;grid-template-columns:1fr 1fr;align-items:start}
-}
 @media (max-width:900px){
   .margin-line{display:none}
   .page{padding:22px 14px 70px}
@@ -215,14 +192,14 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   .stat{min-width:0;border-left:0;border-top:1.5px dashed var(--line)}
   .stat:nth-child(even){border-left:1.5px dashed var(--line)}
   .stat:nth-child(-n+2){border-top:0}
-  .side{grid-template-columns:1fr}
   table{min-width:820px}
 }
 @media (max-width:700px){
+  .side{grid-template-columns:1fr}
   thead th{padding:8px 4px;letter-spacing:.08em}
   tbody td{padding:6px 3px}
   .del{opacity:.5}
-  .search input,.field input,.field select,textarea,.inp-num,.inp-name{font-size:16px}
+  .field input,.field select,textarea,.inp-num,.inp-name{font-size:16px}
   .improw .btn{flex:1;justify-content:center}
   .tabpane{padding:12px}
   .modal-foot{padding:10px 12px}
@@ -237,7 +214,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   .stat{padding:12px 14px}
   .stat .val{font-size:24px}
   .card-h{font-size:11px;padding:12px 14px}
-  .legend{font-size:10px;gap:10px}
   table{min-width:700px}
   thead th{font-size:9px;padding:8px 3px;letter-spacing:.06em}
   .idx{width:30px}
@@ -254,14 +230,18 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   .page,.margin-line,.toast,.overlay{display:none!important}
   #printSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm}
   #printSheet .kop{text-align:center}
-  #printSheet .kop h2{font-size:17pt;text-transform:uppercase;text-decoration:underline;margin:0}
-  #printSheet .kop p{font-size:11pt;margin:2px 0}
-  #printSheet hr{border:0;border-top:2.5px solid #000;margin:8px 0 14px}
-  #printSheet .meta{font-size:11pt;margin-bottom:12px;line-height:1.7}
-  #printSheet table{width:100%;border-collapse:collapse;font-size:10.5pt}
-  #printSheet th,#printSheet td{border:1px solid #000;padding:4px 6px;text-align:center}
-  #printSheet th{background:#e8e8e8;font-weight:bold}
-  #printSheet td.nm{text-align:left}
+  #printSheet .kop h2{font-size:15pt;font-weight:700;letter-spacing:.02em;margin:0;text-transform:uppercase}
+  #printSheet .kop p{font-size:11pt;font-weight:bold;margin:2px 0 0}
+  #printSheet hr{border:0;border-top:2.5px solid #000;margin:8px 0 10px}
+  #printSheet .meta{font-size:11pt;margin:0 0 12px;line-height:1.7}
+  #printSheet .meta table{width:100%;border-collapse:collapse}
+  #printSheet .meta td{border:0;padding:1px 8px 1px 0;vertical-align:top;text-align:left !important}
+  #printSheet .meta td.l{width:120px}
+  #printSheet .meta td.l2{width:110px}
+  #printSheet table.nt{width:100%;border-collapse:collapse;font-size:10.5pt}
+  #printSheet table.nt th,#printSheet table.nt td{border:1px solid #000;padding:4px 6px;text-align:center}
+  #printSheet table.nt th{background:#e8e8e8;font-weight:bold}
+  #printSheet table.nt td.nm{text-align:left}
   #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
   #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
 }
@@ -279,6 +259,14 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
     </div>
   </header>
 
+  <section class="toolbar">
+    <button class="btn primary" id="btnPush" title="Simpan ke Sheet" aria-label="Simpan ke Sheet"><span class="ic">⤒</span><span class="txt">Simpan ke Sheet</span></button>
+    <button class="btn" id="btnImport" title="Impor data" aria-label="Impor data"><span class="ic">📥</span><span class="txt">Impor</span></button>
+    <button class="btn" id="btnPrint" title="Cetak" aria-label="Cetak"><span class="ic">🖨️</span><span class="txt">Cetak</span></button>
+    <button class="btn" id="btnTheme" title="Ganti tema" aria-label="Ganti tema"><span class="ic">🌙</span><span class="txt">Mode Gelap</span></button>
+    <button class="btn danger" id="btnReset" title="Hapus semua data" aria-label="Hapus semua data"><span class="ic">↺</span></button>
+  </section>
+
   <section class="docmeta">
     <div class="field"><label>Nama Guru</label>
       <select id="m-guru"><option value="">— pilih guru —</option></select></div>
@@ -289,15 +277,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
     <div class="field"><label>Tahun Ajaran</label><input id="m-tahun" type="text" readonly></div>
   </section>
 
-  <section class="toolbar">
-    <div class="search"><input id="inpSearch" type="text" placeholder="Cari nama siswa…"></div>
-    <button class="btn primary" id="btnPush" title="Simpan ke Sheet" aria-label="Simpan ke Sheet"><span class="ic">⤒</span><span class="txt">Simpan ke Sheet</span></button>
-    <button class="btn" id="btnImport" title="Impor data" aria-label="Impor data"><span class="ic">📥</span><span class="txt">Impor</span></button>
-    <button class="btn" id="btnPrint" title="Cetak" aria-label="Cetak"><span class="ic">🖨️</span><span class="txt">Cetak</span></button>
-    <button class="btn" id="btnTheme" title="Ganti tema" aria-label="Ganti tema"><span class="ic">🌙</span><span class="txt">Mode Gelap</span></button>
-    <button class="btn danger" id="btnReset" title="Hapus semua data" aria-label="Hapus semua data"><span class="ic">↺</span></button>
-  </section>
-
   <section class="stats">
     <div class="stat"><div class="lbl">Jumlah Siswa</div><div class="val" id="sCount">0</div><div class="note" id="sCountNote">terisi identitas</div></div>
     <div class="stat green"><div class="lbl">Rata-rata NA</div><div class="val" id="sAvg">–</div><div class="note">nilai akhir kelas</div></div>
@@ -306,6 +285,29 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   </section>
 
   <main class="layout">
+    <aside class="side">
+      <div class="card">
+        <div class="card-h"><span>Ketercapaian KKTP</span></div>
+        <div class="donut-wrap">
+          <div class="donut">
+            <svg viewBox="0 0 100 100" width="104" height="104">
+              <circle class="track" cx="50" cy="50" r="42" fill="none" stroke-width="12"/>
+              <circle class="arc" id="donutArc" cx="50" cy="50" r="42" fill="none" stroke-width="12" stroke-dasharray="0 264"/>
+            </svg>
+            <div class="mid" id="donutPct">–</div>
+          </div>
+          <div class="donut-info">
+            <div class="t">Tuntas vs Belum</div>
+            <div class="s" id="donutSub">Belum ada nilai akhir.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span>Peringkat Teratas</span></div>
+        <div class="toplist" id="topList"></div>
+      </div>
+    </aside>
+
     <div class="card">
       <div class="card-h"><span>Daftar Nilai Siswa</span><span class="chip" id="chipCount">0 siswa</span></div>
       <div class="table-scroll">
@@ -341,51 +343,8 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
           </tfoot>
         </table>
       </div>
-      <div class="legend">
-        <span><b>Merah</b> = di bawah KKTP</span>
-        <span>Nilai 0 – 100 · boleh desimal (78,5)</span>
-        <span>Pilih guru → mapel terisi otomatis → kelas menyesuaikan ampuan</span>
-      </div>
     </div>
-
-    <aside class="side">
-      <div class="card">
-        <div class="card-h"><span>Ketercapaian KKTP</span></div>
-        <div class="donut-wrap">
-          <div class="donut">
-            <svg viewBox="0 0 100 100" width="104" height="104">
-              <circle class="track" cx="50" cy="50" r="42" fill="none" stroke-width="12"/>
-              <circle class="arc" id="donutArc" cx="50" cy="50" r="42" fill="none" stroke-width="12" stroke-dasharray="0 264"/>
-            </svg>
-            <div class="mid" id="donutPct">–</div>
-          </div>
-          <div class="donut-info">
-            <div class="t">Tuntas vs Belum</div>
-            <div class="s" id="donutSub">Belum ada nilai akhir.</div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><span>Peringkat Teratas</span></div>
-        <div class="toplist" id="topList"></div>
-      </div>
-      <div class="card">
-        <div class="card-h"><span>Pengolahan Nilai</span></div>
-        <div class="formula" id="formulaLine"></div>
-        <div class="opt"><div class="row"><label for="kKktp">KKTP (Kriteria Ketercapaian)</label>
-          <input id="kKktp" type="number" min="0" max="100" value="82"></div></div>
-        <div class="opt"><div class="row"><label for="wPh">Bobot Rata-rata PH</label><output id="fPh">40%</output></div>
-          <input id="wPh" type="range" min="0" max="100" step="5" value="40"></div>
-        <div class="opt"><div class="row"><label for="wAsts">Bobot ASTS</label><output id="fAsts">30%</output></div>
-          <input id="wAsts" type="range" min="0" max="100" step="5" value="30"></div>
-        <div class="opt"><div class="row"><label for="wAsat">Bobot ASAT</label><output id="fAsat">30%</output></div>
-          <input id="wAsat" type="range" min="0" max="100" step="5" value="30"></div>
-        <div class="thresh" id="threshLine"></div>
-      </div>
-    </aside>
   </main>
-
-  <p class="foot-note">Pilih Guru & Kelas — data dimuat dan disimpan otomatis ke Google Sheet.</p>
 </div>
 
 <!-- MODAL IMPOR -->
@@ -425,7 +384,8 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 /* ============================================================
    ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
    ============================================================ */
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbzGv3XFOK4_-IQBTqwKS0ZRMQE8F1yNiD3GwXEFgxnO8s-QMxnhoMQtFlsSH-V09vRk/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwic6yYEIljRTfHkh6tDPdnhZNv_FNrgGZj00th7v66n2Yz8XuANDnc1e-rQaOI6pyu/exec";
+const NAMA_SEKOLAH = "SMPN 110 JAKARTA";   // ganti sesuai sekolah Anda
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const KEY="rekap-nilai-ph-asts-asat-v1";
@@ -458,8 +418,7 @@ $("#btnTheme").addEventListener("click",()=>{
 });
 
 function defaultState(){
-  return {meta:{mapel:"",kelas:"",guru:"",tahun:tahunAjaranOtomatis(),kktp:82,
-          w:{ph:40,asts:30,asat:30}},
+  return {meta:{mapel:"",kelas:"",guru:"",nip:"",tahun:tahunAjaranOtomatis(),kktp:82},
           rows:[],sort:{key:null,dir:1}};
 }
 let state,saveT,lastDeleted=null,kelasList=[],mapelList=[];
@@ -468,7 +427,7 @@ try{const raw=localStorage.getItem(KEY); const s=raw&&JSON.parse(raw);
 }catch(e){state=defaultState();}
 if(state.meta.kktp==null)state.meta.kktp=82;
 /* tampilan awal selalu bersih setiap aplikasi dibuka */
-state.meta.mapel="";state.meta.kelas="";state.meta.guru="";state.rows=[];
+state.meta.mapel="";state.meta.kelas="";state.meta.guru="";state.meta.nip="";state.rows=[];
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}},200);}
 
 /* ---------- parser ---------- */
@@ -502,18 +461,16 @@ function parseSheetText(txt){
   return rows;
 }
 
-/* ---------- hitungan ---------- */
+/* ---------- hitungan (RUMUS PERMANEN: ((2*RataPH)+ASTS+ASAT)/4) ---------- */
 const kktp=()=>+state.meta.kktp||0;
-function weights(){const w=state.meta.w,t=w.ph+w.asts+w.asat;return t>0?w:{ph:40,asts:30,asat:30};}
 function computeRow(r){
   const s=r.scores, phs=["ph1","ph2","ph3"].map(k=>s[k]).filter(v=>v!==""&&v!=null).map(Number);
   const rph=phs.length?phs.reduce((a,b)=>a+b,0)/phs.length:null;
-  const W=weights(), comps=[];
-  if(rph!=null)comps.push([rph,W.ph]);
-  if(s.asts!==""&&s.asts!=null)comps.push([+s.asts,W.asts]);
-  if(s.asat!==""&&s.asat!=null)comps.push([+s.asat,W.asat]);
-  const ws=comps.reduce((a,c)=>a+c[1],0);
-  const na=(comps.length&&ws>0)?comps.reduce((a,c)=>a+c[0]*c[1],0)/ws:null;
+  let acc=0,w=0;
+  if(rph!=null){acc+=2*rph;w+=2;}
+  if(s.asts!==""&&s.asts!=null){acc+=+s.asts;w+=1;}
+  if(s.asat!==""&&s.asat!=null){acc+=+s.asat;w+=1;}
+  const na=w?acc/w:null;
   return {rph,na};
 }
 function predikat(na){
@@ -521,15 +478,13 @@ function predikat(na){
   if(na>=aMin)return "A"; if(na>=k)return "B"; if(na>=Math.max(0,k-15))return "C"; return "D";
 }
 const PRED_LABEL={A:"Sangat Baik",B:"Baik",C:"Cukup (Belum Tuntas)",D:"Perlu Bimbingan"};
-let query="";
 function sortVal(r,k){
   if(k==="nama")return (r.nama||"").toLowerCase();
   if(k==="rph"||k==="na"){const v=computeRow(r)[k];return v==null?-1:v;}
   const v=r.scores[k];return (v===""||v==null)?-1:+v;
 }
-function viewRows(all){
+function viewRows(){
   let rows=state.rows.slice();
-  if(!all&&query)rows=rows.filter(r=>(r.nama||"").toLowerCase().includes(query));
   const {key,dir}=state.sort;
   if(key)rows.sort((a,b)=>{const x=sortVal(a,key),y=sortVal(b,key);return (x<y?-1:x>y?1:0)*dir;});
   return rows;
@@ -589,9 +544,7 @@ function renderTable(freshId){
   if(!rows.length){
     const tr=document.createElement("tr"),td=document.createElement("td");
     td.colSpan=12;td.className="empty";
-    td.innerHTML=state.rows.length
-      ?'<div class="big">🔍</div>Tidak ada siswa yang cocok dengan pencarian.'
-      :'<div class="big">📗</div>Belum ada data untuk kombinasi guru & kelas ini.<br>Pilih <b>Nama Guru</b> (mapel terisi otomatis), lalu pilih <b>kelas yang diampu</b>.'
+    td.innerHTML='<div class="big">📗</div>Belum ada data untuk kombinasi guru & kelas ini.<br>Pilih <b>Nama Guru</b> (mapel terisi otomatis), lalu pilih <b>kelas yang diampu</b>.'
        +'<br><button class="btn primary" data-refresh>⟳ Muat daftar guru & kelas</button>';
     tr.appendChild(td);tbody.appendChild(tr);
   }else rows.forEach((r,i)=>tbody.appendChild(rowEl(r,i,r.id===freshId)));
@@ -610,7 +563,7 @@ function animNum(el,to,dec){
 }
 function refreshPanels(){
   const rows=state.rows,calc=rows.map(r=>({r,...computeRow(r)})),withNA=calc.filter(c=>c.na!=null);
-  const k=kktp(),W=weights(),tot=W.ph+W.asts+W.asat||1;
+  const k=kktp();
   $("#sCount").textContent=rows.length;
   $("#sCountNote").textContent=rows.filter(r=>r.nama&&r.nama.trim()).length+" terisi identitas";
   const avg=withNA.length?withNA.reduce((a,c)=>a+c.na,0)/withNA.length:null;
@@ -640,10 +593,6 @@ function refreshPanels(){
   });
   $("#f-rph").textContent=fmt(colAvg(c=>c.rph));
   $("#f-na").textContent=fmt(colAvg(c=>c.na));
-  const pc=x=>Math.round(x/tot*100);
-  $("#formulaLine").innerHTML=`NA = <b>${pc(W.ph)}%</b>×Rata²PH + <b>${pc(W.asts)}%</b>×ASTS + <b>${pc(W.asat)}%</b>×ASAT`;
-  const aMin=k+(100-k)/2;
-  $("#threshLine").innerHTML=`Predikat: <b>A ≥ ${fmt(aMin)}</b> · <b>B ≥ ${fmt(k)}</b> · <b>C ≥ ${fmt(Math.max(0,k-15))}</b> · <b>D &lt; ${fmt(Math.max(0,k-15))}</b><br>Status <b>TUNTAS</b> jika NA ≥ KKTP (${fmt(k)}).`;
 }
 
 /* ---------- event tabel ---------- */
@@ -731,17 +680,21 @@ function setMapelTampil(v){
 function kelasTerampu(){
   const guru=(state.meta.guru||"").trim(), mapel=state.meta.mapel;
   if(!guru&&!mapel)return null;
-  const match=mapelList.filter(m=>((guru&&m.guru&&m.guru===guru)||m.mapel===mapel));
+  const match=guru
+    ?mapelList.filter(m=>m.guru&&m.guru===guru)
+    :mapelList.filter(m=>m.mapel===mapel);
   if(!match.length)return null;
   const set=new Set();
   match.forEach(m=>(m.ampu||[]).forEach(k=>set.add(k)));
-  return set.size?[...set]:null;
+  return [...set];
 }
 function populateKelas(selected,allowed){
   const sel=$("#m-kelas");let cur=selected??state.meta.kelas;
   sel.innerHTML="";
   const o0=document.createElement("option");o0.value="";
-  o0.textContent=allowed?"— pilih kelas yang diampu —":"— pilih kelas —";sel.appendChild(o0);
+  o0.textContent=allowed==null?"— pilih kelas —"
+    :(allowed.length?"— pilih kelas yang diampu —":"— kelas ampu belum diisi di Sheet —");
+  sel.appendChild(o0);
   let all=kelasList.slice();
   if(allowed)all=all.filter(k=>allowed.includes(k));
   if(cur&&allowed&&!allowed.includes(cur))cur="";
@@ -760,8 +713,9 @@ function refreshKelasDropdown(){
 $("#m-guru").addEventListener("change",e=>{
   const v=e.target.value;
   state.meta.guru=v;
-  const hit=mapelList.find(m=>m.guru===v);
-  setMapelTampil(hit?hit.mapel:"");      // mapel terisi otomatis & terkunci
+  const hit=mapelList.find(m=>m.guru===v&&m.nip)||mapelList.find(m=>m.guru===v);
+  setMapelTampil(hit?hit.mapel:"");
+  state.meta.nip=hit?(hit.nip||""):"";
   save();refreshPanels();
   refreshKelasDropdown();
   if(state.meta.kelas)loadActive();
@@ -810,10 +764,7 @@ async function loadLists(notify){
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadLists(false);});
 function applySheetMeta(m){
   if(!m||typeof m!=="object")return;
-  if(m.kktp!=null&&m.kktp!==""){state.meta.kktp=Number(m.kktp)||82;$("#kKktp").value=state.meta.kktp;}
-  if(m.bobotPH!=null&&m.bobotPH!==""){
-    state.meta.w={ph:Number(m.bobotPH)||0,asts:Number(m.bobotASTS)||0,asat:Number(m.bobotASAT)||0};
-    $("#wPh").value=state.meta.w.ph;$("#wAsts").value=state.meta.w.asts;$("#wAsat").value=state.meta.w.asat;syncW();}
+  if(m.kktp!=null&&m.kktp!==""){state.meta.kktp=Number(m.kktp)||82;}
 }
 async function pullKelas(kelas,mapel){
   const j=await gasGet(urlSiap()+"?kelas="+encodeURIComponent(kelas)
@@ -825,11 +776,13 @@ async function pullKelas(kelas,mapel){
   const rm=mapel||j.mapel||"";
   if(rm){
     setMapelTampil(rm);
-    const hit=mapelList.find(m=>m.mapel===rm);
-    if(hit&&hit.guru){state.meta.guru=hit.guru;populateGuru(hit.guru);}
+    if(!state.meta.guru){
+      const hit=mapelList.find(m=>m.mapel===rm&&m.nip)||mapelList.find(m=>m.mapel===rm);
+      if(hit&&hit.guru){state.meta.guru=hit.guru;state.meta.nip=hit.nip||"";populateGuru(hit.guru);}
+    }
   }
   state.meta.kelas=kelas;populateKelas(kelas,kelasTerampu());
-  state.sort={key:null,dir:1};query="";$("#inpSearch").value="";
+  state.sort={key:null,dir:1};
   renderTable();save();
 }
 $("#btnPush").addEventListener("click",async()=>{
@@ -860,7 +813,7 @@ $("#btnDoImport").addEventListener("click",()=>{
   const parsed=parseSheetText($("#pasteArea").value);
   if(!parsed.length){toast("Tidak ada baris valid. Periksa kembali tempelan Anda.");return;}
   const mode=document.querySelector('input[name="impMode"]:checked').value;
-  if(mode==="replace"){state.rows=parsed;state.sort={key:null,dir:1};query="";$("#inpSearch").value="";}
+  if(mode==="replace"){state.rows=parsed;state.sort={key:null,dir:1};}
   else state.rows=state.rows.concat(parsed);
   renderTable();save();closeModal();
   toast(`${parsed.length} siswa diimpor — jangan lupa ⤒ Simpan ke Sheet.`);
@@ -879,16 +832,14 @@ $("#btnTemplate").addEventListener("click",()=>{
 $("#btnReset").addEventListener("click",()=>{
   if(!confirm("Hapus semua data di PERANGKAT ini dan kembalikan pengaturan awal? (Data di Sheet tidak terhapus)"))return;
   state=defaultState();localStorage.removeItem(KEY);
-  $("#m-guru").value="";setMapelTampil("");$("#kKktp").value=82;
-  $("#wPh").value=40;$("#wAsts").value=30;$("#wAsat").value=30;syncW();
+  $("#m-guru").value="";setMapelTampil("");
   state.meta.tahun=tahunAjaranOtomatis();$("#m-tahun").value=state.meta.tahun;
   kelasList=[];mapelList=[];refreshKelasDropdown();
   renderTable();loadLists(false);
   toast("Data perangkat dihapus. Sheet tetap aman.");
 });
-$("#inpSearch").addEventListener("input",e=>{query=e.target.value.toLowerCase();renderTable();});
 $("#btnPrint").addEventListener("click",()=>{
-  const rows=viewRows(true),k=kktp(),m=state.meta;
+  const rows=viewRows(),k=kktp(),m=state.meta;
   const tgl=new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
   let body=rows.map((r,i)=>{const {rph,na}=computeRow(r),s=r.scores;
     return `<tr><td>${i+1}</td><td class="nm">${esc(r.nama)||"…"}</td>
@@ -897,47 +848,37 @@ $("#btnPrint").addEventListener("click",()=>{
     <td><b>${fmt(na)}</b></td><td>${predikat(na)||"–"}</td>
     <td>${na==null?"–":(na>=k?"Tuntas":"Belum")}</td></tr>`;}).join("");
   $("#printSheet").innerHTML=`
-    <div class="kop"><h2>Daftar Nilai</h2>
-      <p>Penilaian Harian 1–3 · ASTS · ASAT — Kurikulum Merdeka</p></div><hr>
-    <div class="meta">
-      Mata Pelajaran : <b>${esc(m.mapel)||"–"}</b> &nbsp;|&nbsp;
-      Kelas : <b>${esc(m.kelas)||"–"}</b> &nbsp;|&nbsp;
-      Tahun Ajaran : <b>${esc(m.tahun)}</b><br>
-      Guru : <b>${esc(m.guru)||"–"}</b> &nbsp;|&nbsp;
-      KKTP : <b>${fmt(k)}</b> &nbsp;|&nbsp; Rumus NA : Rata²PH ${Math.round(weights().ph)}% + ASTS ${Math.round(weights().asts)}% + ASAT ${Math.round(weights().asat)}%
+    <div class="kop">
+      <h2>${esc(NAMA_SEKOLAH)}</h2>
+      <p>PENILAIAN HARIAN</p>
     </div>
-    <table><thead><tr><th>No</th><th>Nama Siswa</th><th>PH-1</th><th>PH-2</th><th>PH-3</th>
+    <hr>
+    <div class="meta"><table>
+      <tr>
+        <td class="l">Mata Pelajaran</td><td>: <b>${esc(m.mapel)||"–"}</b></td>
+        <td class="l2">Tahun Ajaran</td><td>: <b>${esc(m.tahun)}</b></td>
+      </tr>
+      <tr>
+        <td class="l">Guru</td><td>: <b>${esc(m.guru)||"–"}</b></td>
+        <td class="l2">Kelas</td><td>: <b>${esc(m.kelas)||"–"}</b></td>
+      </tr>
+    </table></div>
+    <table class="nt"><thead><tr><th>No</th><th>Nama Siswa</th><th>PH-1</th><th>PH-2</th><th>PH-3</th>
       <th>Rata² PH</th><th>ASTS</th><th>ASAT</th><th>Nilai Akhir</th><th>Predikat</th><th>Status</th></tr></thead>
       <tbody>${body||'<tr><td colspan="11">Belum ada data</td></tr>'}</tbody></table>
-    <p class="note">Dicetak otomatis oleh Aplikasi Rekap Nilai — ${tgl}.</p>
+    <p class="note">Dicetak otomatis oleh Aplikasi Rekap Nilai — ${tgl} · Rumus NA : ((2 × Rata² PH) + ASTS + ASAT) ÷ 4</p>
     <div class="ttd">
-      <div>Mengetahui,<br>Kepala Sekolah<br><br><br><br><b><u>(&nbsp;………………………………&nbsp;)</u></b><br>NIP.</div>
-      <div>&nbsp;<br>Guru Mata Pelajaran<br><br><br><br><b><u>${esc(m.guru)||"………………………………"}</u></b><br>NIP.</div>
+      <div>Mengetahui,<br>Kepala Sekolah<br><br><br><br><b><u>&nbsp;Iis Ratna Sariningrum, S.Pd., M.M.&nbsp;</u></b><br>NIP. 197010311994122001</div>
+      <div>&nbsp;<br>Guru Mata Pelajaran<br><br><br><br><b><u>${esc(m.guru)||"………………………………"}</u></b><br>NIP. ${m.nip?esc(m.nip):""}</div>
     </div>`;
   setTimeout(()=>window.print(),120);
 });
 
-/* ---------- meta & bobot ---------- */
+/* ---------- meta ---------- */
 populateGuru();
 $("#m-mapel").value=state.meta.mapel||"";
 state.meta.tahun=tahunAjaranOtomatis();
 $("#m-tahun").value=state.meta.tahun;
-$("#kKktp").value=state.meta.kktp;
-$("#kKktp").addEventListener("input",e=>{
-  let v=Math.min(100,Math.max(0,parseFloat(e.target.value)));
-  state.meta.kktp=isNaN(v)?0:v;save();
-  $$("#tbody tr").forEach(tr=>{const r=byId(tr.dataset.id);if(r)updateRowDerived(tr,r);});
-  refreshPanels();
-});
-function syncW(){["ph","asts","asat"].forEach(k=>{
-  $("#f"+(k==="ph"?"Ph":k==="asts"?"Asts":"Asat")).textContent=state.meta.w[k]+"%";});}
-[["wPh","ph"],["wAsts","asts"],["wAsat","asat"]].forEach(([id,k])=>{
-  const el=$("#"+id);el.value=state.meta.w[k];
-  el.addEventListener("input",()=>{state.meta.w[k]=+el.value;syncW();save();
-    $$("#tbody tr").forEach(tr=>{const r=byId(tr.dataset.id);if(r)updateRowDerived(tr,r);});
-    refreshPanels();});
-});
-syncW();refreshKelasDropdown();
 
 /* ---------- toast & init ---------- */
 let toastT;
