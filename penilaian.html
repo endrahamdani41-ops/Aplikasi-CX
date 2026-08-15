@@ -55,7 +55,6 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 .btn .txt{display:none}
 .btn.primary{background:var(--green);border-color:var(--green-deep);color:#fff;box-shadow:0 2px 0 var(--green-deep)}
 .btn.primary:hover{box-shadow:0 4px 0 var(--green-deep);filter:brightness(1.08)}
-/* tombol warna-warni */
 #btnImport{background:#2563eb;border-color:#1e40af;color:#fff;box-shadow:0 2px 0 #1e40af}
 #btnImport:hover{box-shadow:0 4px 0 #1e40af;filter:brightness(1.08)}
 #btnPrint{background:#7c3aed;border-color:#5b21b6;color:#fff;box-shadow:0 2px 0 #5b21b6}
@@ -279,10 +278,10 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" stroke="#ffffff"/><path d="m7 8 5-5 5 5" stroke="#ffffff"/><path d="M5 21h14" stroke="#ffd23f"/></svg></span>
       <span class="txt">Simpan ke Sheet</span></button>
     <button class="btn" id="btnImport" title="Impor data" aria-label="Impor data">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" stroke="#31b586"/><path d="m7 10 5 5 5-5" stroke="#31b586"/><path d="M5 21h14" stroke="#d4af37"/></svg></span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" stroke="#ffffff"/><path d="m7 10 5 5 5-5" stroke="#ffffff"/><path d="M5 21h14" stroke="#ffd23f"/></svg></span>
       <span class="txt">Impor</span></button>
     <button class="btn" id="btnPrint" title="Cetak" aria-label="Cetak">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9" stroke="#93c5fd"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke="#60a5fa"/><rect x="6" y="14" width="12" height="8" stroke="#f9a8d4"/></svg></span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9" stroke="#ffffff"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke="#ffffff"/><rect x="6" y="14" width="12" height="8" stroke="#ffd23f"/></svg></span>
       <span class="txt">Cetak</span></button>
     <button class="btn" id="btnTheme" title="Ganti tema" aria-label="Ganti tema">
       <span class="ic" id="icTheme"></span>
@@ -424,9 +423,10 @@ const nz=v=>v==null?"":v;
 const NUMKEYS=["ph1","ph2","ph3","asts","asat"];
 const urlSiap=()=>SHEET_URL.includes("GANTI_DENGAN_URL_EXEC_ANDA")?"":SHEET_URL;
 
-/* ikon tema (SVG garis, elegan) */
+/* ikon tema */
 const ICON_MOON='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="#ffffff"/><path d="M17 4h4" stroke="#fde68a"/><path d="M19 2v4" stroke="#fde68a"/></svg>';
 const ICON_SUN='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" stroke="#ffffff"/><path d="M12 2v2" stroke="#fde68a"/><path d="M12 20v2" stroke="#fde68a"/><path d="m4.93 4.93 1.41 1.41" stroke="#fde68a"/><path d="m17.66 17.66 1.41 1.41" stroke="#fde68a"/><path d="M2 12h2" stroke="#fde68a"/><path d="M20 12h2" stroke="#fde68a"/><path d="m6.34 17.66-1.41 1.41" stroke="#fde68a"/><path d="m19.07 4.93-1.41 1.41" stroke="#fde68a"/></svg>';
+
 function tahunAjaranOtomatis(){
   const d=new Date(),y=d.getFullYear(),m=d.getMonth()+1;
   const start=m>=7?y:y-1;
