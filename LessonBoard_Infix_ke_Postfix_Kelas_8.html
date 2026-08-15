@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LessonBoard - Infix ke Postfix | Informatika Kelas 8</title>
+<style>
+:root{
+  --bg:#08111f;--panel:#101d31;--panel2:#14253d;--text:#eef6ff;--muted:#a9bad0;
+  --primary:#5eead4;--secondary:#60a5fa;--accent:#fbbf24;--danger:#fb7185;
+  --success:#34d399;--border:rgba(255,255,255,.10);--shadow:0 20px 60px rgba(0,0,0,.28)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:
+radial-gradient(circle at 10% 10%,rgba(96,165,250,.18),transparent 30%),
+radial-gradient(circle at 90% 20%,rgba(94,234,212,.12),transparent 28%),var(--bg);
+color:var(--text);min-height:100vh}
+button{font:inherit}
+.app{display:flex;min-height:100vh}
+.sidebar{width:270px;background:rgba(8,17,31,.92);border-right:1px solid var(--border);padding:22px 16px;position:fixed;inset:0 auto 0 0;z-index:20}
+.logo{display:flex;gap:12px;align-items:center;margin-bottom:26px}
+.logo-icon{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:grid;place-items:center;color:#06111d;font-size:22px;font-weight:900}
+.logo h1{font-size:17px;margin:0}.logo small{color:var(--muted)}
+.nav button{width:100%;border:0;background:transparent;color:var(--muted);padding:13px 14px;border-radius:12px;text-align:left;cursor:pointer;margin:3px 0;transition:.2s}
+.nav button:hover,.nav button.active{background:rgba(96,165,250,.14);color:var(--text)}
+.progress-box{margin-top:24px;padding:15px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.03)}
+.progress{height:8px;background:#22334b;border-radius:10px;overflow:hidden;margin-top:10px}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));width:0;transition:.4s}
+.main{margin-left:270px;width:calc(100% - 270px);padding:24px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.topbar h2{margin:0;font-size:25px}.topbar p{margin:4px 0;color:var(--muted)}
+.score{background:linear-gradient(135deg,rgba(94,234,212,.12),rgba(96,165,250,.12));border:1px solid var(--border);padding:12px 18px;border-radius:14px;font-weight:800}
+.screen{display:none}.screen.active{display:block}
+.hero,.card{background:linear-gradient(145deg,rgba(20,37,61,.94),rgba(13,27,46,.94));border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+.hero{padding:38px;display:grid;grid-template-columns:1.3fr .7fr;gap:30px;align-items:center}
+.badge{display:inline-block;padding:7px 11px;border-radius:999px;background:rgba(94,234,212,.12);color:var(--primary);font-size:12px;font-weight:800}
+.hero h1{font-size:clamp(30px,5vw,54px);line-height:1.02;margin:16px 0}
+.hero p{color:var(--muted);font-size:17px;line-height:1.7}
+.cta,.primary{border:0;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#071321;font-weight:900;padding:13px 20px;border-radius:12px;cursor:pointer}
+.secondary{border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);padding:12px 18px;border-radius:12px;cursor:pointer}
+.stack-art{min-height:260px;display:flex;align-items:end;justify-content:center;gap:10px}
+.stack{width:190px;border:3px solid var(--secondary);border-radius:14px 14px 5px 5px;padding:8px;background:rgba(96,165,250,.06);display:flex;flex-direction:column-reverse;gap:8px}
+.block{padding:14px;text-align:center;border-radius:9px;background:rgba(94,234,212,.16);border:1px solid rgba(94,234,212,.3);font-weight:900}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px}.card{padding:22px}.card h3{margin-top:0}.card p,.card li{color:var(--muted);line-height:1.7}
+.table-wrap{overflow:auto}.tbl{width:100%;border-collapse:collapse;margin-top:14px}.tbl th,.tbl td{padding:12px;border-bottom:1px solid var(--border);text-align:left}.tbl th{color:var(--primary)}
+.lesson-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:15px}
+.lesson-nav{display:flex;gap:10px;flex-wrap:wrap}
+.rule{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.rule .card{padding:18px}
+.example{font-family:ui-monospace,Consolas,monospace;font-size:20px;background:#07101d;border-radius:12px;padding:18px;color:var(--primary);margin:12px 0}
+.quiz-card{max-width:900px;margin:auto}.question{font-size:21px;font-weight:800;line-height:1.5}.options{display:grid;gap:10px;margin-top:20px}.option{border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);padding:15px;border-radius:12px;text-align:left;cursor:pointer}.option:hover{border-color:var(--secondary)}.option.correct{border-color:var(--success);background:rgba(52,211,153,.12)}.option.wrong{border-color:var(--danger);background:rgba(251,113,133,.12)}
+.feedback{margin-top:15px;padding:14px;border-radius:12px;display:none}.feedback.show{display:block}.feedback.good{background:rgba(52,211,153,.12);color:#a7f3d0}.feedback.bad{background:rgba(251,113,133,.12);color:#fecdd3}
+.quiz-actions{display:flex;justify-content:space-between;align-items:center;margin-top:20px}
+.drag-area{display:grid;grid-template-columns:1fr 1fr;gap:20px}.tokens,.dropzone{min-height:150px;border:2px dashed #39516f;border-radius:16px;padding:15px;display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start}.token{padding:10px 15px;background:#19304d;border:1px solid #426384;border-radius:10px;cursor:grab;font-weight:800}.dropzone{background:rgba(94,234,212,.04)}.dropzone .token{cursor:default}
+.result{text-align:center;padding:35px}.big-score{font-size:64px;font-weight:1000;color:var(--primary)}
+footer{text-align:center;color:var(--muted);padding:30px 0}
+@media(max-width:900px){.sidebar{width:220px}.main{margin-left:220px;width:calc(100% - 220px)}.hero{grid-template-columns:1fr}.grid,.rule{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.sidebar{position:static;width:100%;height:auto}.app{display:block}.main{margin:0;width:100%;padding:14px}.nav{display:grid;grid-template-columns:repeat(2,1fr)}.grid,.rule,.drag-area{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.hero{padding:24px}.stack-art{min-height:200px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><div class="logo-icon">⌘</div><div><h1>LessonBoard</h1><small>Informatika Kelas 8</small></div></div>
+  <div class="nav">
+    <button class="active" data-screen="home">🏠 Beranda</button>
+    <button data-screen="materi">📚 Materi</button>
+    <button data-screen="contoh">🔄 Contoh</button>
+    <button data-screen="simulasi">🧠 Simulasi Stack</button>
+    <button data-screen="latihan">🎯 Kuis 15 Soal</button>
+    <button data-screen="drag">🧩 Tantangan Drag & Drop</button>
+    <button data-screen="bonus">🏆 Tantangan Bonus</button>
+  </div>
+  <div class="progress-box">
+    <b>Progress Belajar</b>
+    <div class="progress"><i id="progressBar"></i></div>
+    <small id="progressText">0% selesai</small>
+  </div>
+</aside>
+
+<main class="main">
+<div class="topbar">
+  <div><h2>Infix → Postfix</h2><p>Belajar algoritma dengan cara berpikir, bukan sekadar menghafal.</p></div>
+  <div class="score">⭐ Skor: <span id="score">0</span></div>
+</div>
+
+<section id="home" class="screen active">
+<div class="hero">
+  <div>
+    <span class="badge">KELAS 8 • ALGORITMA & STRUKTUR DATA</span>
+    <h1>Ubah Infix menjadi Postfix 🚀</h1>
+    <p>Pelajari bagaimana komputer mengatur urutan operasi menggunakan <b>Stack</b>. Ikuti materi, lihat simulasi, lalu uji kemampuanmu.</p>
+    <button class="cta" onclick="showScreen('materi')">Mulai Belajar →</button>
+  </div>
+  <div class="stack-art">
+    <div class="stack"><div class="block">+</div><div class="block">×</div><div class="block">( )</div></div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card"><h3>🎯 Tujuan</h3><p>Memahami infix, postfix, prioritas operator, dan peran stack.</p></div>
+  <div class="card"><h3>🧠 Fokus</h3><p>Amati aturan, lakukan langkah demi langkah, kemudian cek hasil.</p></div>
+  <div class="card"><h3>🏆 Tantangan</h3><p>15 soal + simulasi + drag & drop + tantangan bonus.</p></div>
+</div>
+</section>
+
+<section id="materi" class="screen">
+<div class="lesson-head"><div><span class="badge">MATERI 1</span><h2>Kenali Infix & Postfix</h2></div><button class="secondary" onclick="showScreen('contoh')">Lanjut →</button></div>
+<div class="grid">
+<div class="card"><h3>📌 Infix</h3><p>Operator berada di antara operand.</p><div class="example">A + B</div><p>Contoh sehari-hari: <b>5 + 3</b>.</p></div>
+<div class="card"><h3>📌 Postfix</h3><p>Operator ditulis setelah operand.</p><div class="example">AB+</div><p>Postfix membantu komputer memproses urutan operasi dengan lebih sederhana.</p></div>
+<div class="card"><h3>📚 Stack</h3><p>Stack memakai prinsip <b>LIFO</b> (Last In, First Out).</p><div class="example">TOP → [ × ] [ + ]</div><p>Dalam konversi, operator disimpan sementara di stack.</p></div>
+</div>
+<div class="card" style="margin-top:20px">
+<h3>Prioritas Operator</h3>
+<div class="table-wrap"><table class="tbl"><tr><th>Prioritas</th><th>Operator</th><th>Keterangan</th></tr>
+<tr><td>1</td><td>( )</td><td>Tanda kurung</td></tr><tr><td>2</td><td>^</td><td>Pangkat</td></tr>
+<tr><td>3</td><td>× ÷</td><td>Perkalian / Pembagian</td></tr><tr><td>4</td><td>+ -</td><td>Penjumlahan / Pengurangan</td></tr></table></div>
+</div>
+<div class="rule" style="margin-top:20px">
+<div class="card"><h3>1️⃣ Operand</h3><p>Langsung masukkan ke <b>output</b>.</p></div>
+<div class="card"><h3>2️⃣ Operator</h3><p>Periksa prioritas dengan operator di <b>stack</b>.</p></div>
+<div class="card"><h3>3️⃣ Kurung</h3><p>Jika selesai membaca, keluarkan isi stack sesuai aturan.</p></div>
+</div>
+</section>
+
+<section id="contoh" class="screen">
+<div class="lesson-head"><div><span class="badge">MATERI 2</span><h2>Contoh Langkah demi Langkah</h2></div><button class="secondary" onclick="showScreen('simulasi')">Coba Simulasi →</button></div>
+<div class="card">
+<h3>Contoh: A + B × C</h3>
+<p>Karena × memiliki prioritas lebih tinggi daripada +, operator × akan diproses lebih dahulu.</p>
+<div class="table-wrap"><table class="tbl">
+<tr><th>Simbol</th><th>Output</th><th>Stack</th><th>Alasan</th></tr>
+<tr><td>A</td><td>A</td><td>-</td><td>Operand → output</td></tr>
+<tr><td>+</td><td>A</td><td>+</td><td>Operator → stack</td></tr>
+<tr><td>B</td><td>AB</td><td>+</td><td>Operand → output</td></tr>
+<tr><td>×</td><td>AB</td><td>+ ×</td><td>× lebih tinggi → stack</td></tr>
+<tr><td>C</td><td>ABC</td><td>+ ×</td><td>Operand → output</td></tr>
+<tr><td>Selesai</td><td><b>ABC×+</b></td><td>-</td><td>Keluarkan stack</td></tr>
+</table></div>
+<div class="example">A + B × C → ABC×+</div>
+</div>
+<div class="grid">
+<div class="card"><h3>Contoh 2</h3><div class="example">(A + B) × C</div><p>Hasil: <b>AB+C×</b></p></div>
+<div class="card"><h3>Contoh 3</h3><div class="example">A × (B + C)</div><p>Hasil: <b>ABC+×</b></p></div>
+<div class="card"><h3>Contoh 4</h3><div class="example">A + B - C</div><p>Hasil: <b>AB+C-</b></p></div>
+</div>
+</section>
+
+<section id="simulasi" class="screen">
+<div class="lesson-head"><div><span class="badge">SIMULASI</span><h2>Mesin Konversi Interaktif</h2></div></div>
+<div class="card">
+<p>Masukkan ekspresi sederhana, misalnya <b>A+B*C</b> atau <b>(A+B)*C</b>.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<input id="expr" value="A+B*C" style="flex:1;min-width:220px;padding:14px;border-radius:12px;border:1px solid var(--border);background:#07101d;color:white;font-size:18px">
+<button class="primary" onclick="startSimulation()">Mulai Simulasi</button>
+</div>
+<div id="simResult" style="margin-top:20px"></div>
+</div>
+</section>
+
+<section id="latihan" class="screen">
+<div class="lesson-head"><div><span class="badge">KUIS</span><h2>15 Soal Bertingkat</h2></div></div>
+<div class="card quiz-card">
+<div id="quiz"></div>
+</div>
+</section>
+
+<section id="drag" class="screen">
+<div class="lesson-head"><div><span class="badge">TANTANGAN</span><h2>Susun Postfix dengan Drag & Drop</h2></div></div>
+<div class="card">
+<h3>Ekspresi: A + B × C</h3><p>Susun token di bawah menjadi postfix yang benar.</p>
+<div class="drag-area">
+<div><h3>Token</h3><div id="tokens" class="tokens"></div></div>
+<div><h3>Jawabanmu</h3><div id="dropzone" class="dropzone" ondragover="allowDrop(event)" ondrop="dropToken(event)"></div></div>
+</div>
+<div style="margin-top:18px;display:flex;gap:10px"><button class="primary" onclick="checkDrag()">Periksa Jawaban</button><button class="secondary" onclick="resetDrag()">Reset</button></div>
+<div id="dragFeedback" class="feedback"></div>
+</div>
+</section>
+
+<section id="bonus" class="screen">
+<div class="card result">
+<span class="badge">🏆 BOSS LEVEL</span>
+<h1>Tantangan Bonus</h1>
+<p>Konversikan ekspresi berikut tanpa bantuan contoh:</p>
+<div class="example">(A + B) × C - D ÷ E</div>
+<input id="bonusInput" placeholder="Tulis postfix..." style="width:min(600px,100%);padding:15px;border-radius:12px;border:1px solid var(--border);background:#07101d;color:white;font-size:18px;text-align:center">
+<br><br><button class="primary" onclick="checkBonus()">Periksa Tantangan</button>
+<div id="bonusFeedback" class="feedback"></div>
+</div>
+</section>
+<footer>LessonBoard Informatika Kelas 8 • Infix → Postfix</footer>
+</main>
+</div>
+
+<script>
+const screens=[...document.querySelectorAll('.screen')];
+const nav=[...document.querySelectorAll('.nav button')];
+let totalScore=0, completed=new Set();
+
+function showScreen(id){
+ screens.forEach(s=>s.classList.toggle('active',s.id===id));
+ nav.forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
+ if(id!=='home') completed.add(id);
+ updateProgress();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+nav.forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));
+
+function addScore(n){
+ totalScore+=n;
+ document.getElementById('score').textContent=totalScore;
+}
+function updateProgress(){
+ const pct=Math.min(100,Math.round(completed.size/6*100));
+ document.getElementById('progressBar').style.width=pct+'%';
+ document.getElementById('progressText').textContent=pct+'% selesai';
+}
+
+function precedence(op){
+ if(op==='^')return 3;
+ if(op==='*'||op==='×'||op==='/ '||op==='/')return 2;
+ if(op==='+'||op==='-')return 1;
+ return 0;
+}
+function infixToPostfix(exp){
+ const output=[], stack=[];
+ const chars=exp.replace(/\s+/g,'').replace(/x/g,'*').split('');
+ for(const c of chars){
+   if(/[A-Za-z0-9]/.test(c)) output.push(c);
+   else if(c==='(') stack.push(c);
+   else if(c===')'){
+     while(stack.length && stack[stack.length-1]!=='(') output.push(stack.pop());
+     stack.pop();
+   }else{
+     while(stack.length && stack[stack.length-1]!=='(' &&
+       precedence(stack[stack.length-1])>=precedence(c)){
+       output.push(stack.pop());
+     }
+     stack.push(c);
+   }
+ }
+ while(stack.length) output.push(stack.pop());
+ return output.join('');
+}
+function startSimulation(){
+ const exp=document.getElementById('expr').value;
+ if(!exp.trim())return;
+ const result=infixToPostfix(exp);
+ document.getElementById('simResult').innerHTML=
+ `<div class="grid">
+ <div class="card"><h3>Infix</h3><div class="example">${escapeHTML(exp)}</div></div>
+ <div class="card"><h3>Postfix</h3><div class="example">${escapeHTML(result)}</div></div>
+ <div class="card"><h3>Aturan</h3><p>Operand masuk output, operator masuk stack, lalu stack dikosongkan saat proses selesai.</p></div>
+ </div>`;
+ addScore(5);
+ completed.add('simulasi'); updateProgress();
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+
+const questions=[
+["A + B","AB+","AB+","A+B","BA+","AB-","A"],
+["A - B","AB-","AB-","BA-","AB+","A-B","A"],
+["A × B","AB×","AB×","BA×","A×B","AB+","A"],
+["A + B × C","ABC×+","ABC×+","AB+C×","AB×C+","A+B×C","B"],
+["A × B + C","AB×C+","AB×C+","ABC+×","AC×B+","AB+C×","B"],
+["A + B - C","AB+C-","AB+C-","ABC-+","AB-C+","A+BC-","B"],
+["(A + B) × C","AB+C×","AB+C×","ABC+×","AB×C+","A+B×C","A"],
+["A × (B + C)","ABC+×","ABC+×","AB×C+","A+BC×","ABC×+","A"],
+["(A - B) ÷ C","AB-C÷","AB-C÷","ABC-÷","AB÷C-","A-B÷C","A"],
+["A + B × C - D","ABC×+D-","ABC×+D-","AB+C×D-","ABCD×+-","ABC+×D-","A"],
+["(A + B) × (C - D)","AB+CD-×","AB+CD-×","ABC+D-×","AB+CD×-","AB×CD+-","A"],
+["A × B + C × D","AB×CD×+","AB×CD×+","ABC+×D","AB+C×D×","AB×C+D×","A"],
+["A + (B × C - D)","ABC×D-+","ABC×D-+","AB+C×D-","ABC×+D-","ABCD-×+","A"],
+["(A + B) ÷ (C - D)","AB+CD-÷","AB+CD-÷","ABC+D-÷","AB+CD÷-","AB÷CD-+","A"],
+["A × (B + C) - D","ABC+×D-","ABC+×D-","AB+C×D-","ABC×+D-","AB×CD+-","A"]
+];
+let qIndex=0,qScore=0,answered=false;
+function renderQuiz(){
+ const q=questions[qIndex];
+ const opts=q.slice(2,6);
+ document.getElementById('quiz').innerHTML=`
+ <div style="color:var(--muted);margin-bottom:10px">Soal ${qIndex+1} dari ${questions.length}</div>
+ <div class="question">Ubah <span style="color:var(--primary)">${q[0]}</span> menjadi postfix.</div>
+ <div class="options">${opts.map((o,i)=>`<button class="option" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div>
+ <div id="quizFeedback" class="feedback"></div>
+ <div class="quiz-actions"><span>Skor kuis: <b>${qScore}</b></span><button id="nextBtn" class="primary" style="display:none" onclick="nextQuiz()">${qIndex===questions.length-1?'Lihat Hasil':'Soal Berikutnya →'}</button></div>`;
+ answered=false;
+}
+function answerQuiz(i){
+ if(answered)return;
+ answered=true;
+ const q=questions[qIndex], buttons=document.querySelectorAll('.option');
+ buttons.forEach((b,idx)=>{if(idx===i)b.classList.add(idx===0?'correct':'wrong'); if(idx===0)b.classList.add('correct')});
+ const fb=document.getElementById('quizFeedback');fb.classList.add('show');
+ if(i===0){qScore+=10;addScore(10);fb.className='feedback show good';fb.innerHTML='✅ Benar! Kamu memperhatikan urutan operator dengan tepat.'}
+ else{fb.className='feedback show bad';fb.innerHTML='❌ Belum tepat. Jawaban yang benar adalah <b>'+q[1]+'</b>. Coba perhatikan prioritas operator dan tanda kurung.'}
+ document.getElementById('nextBtn').style.display='inline-block';
+}
+function nextQuiz(){
+ if(qIndex<questions.length-1){qIndex++;renderQuiz()}
+ else{
+  document.getElementById('quiz').innerHTML=`<div class="result"><div class="big-score">${qScore}</div><h2>Kuis Selesai! 🎉</h2><p>Skor kuismu dari 150 poin.</p><button class="primary" onclick="qIndex=0;qScore=0;renderQuiz()">Ulangi Kuis</button></div>`;
+  completed.add('latihan');updateProgress();
+ }
+}
+renderQuiz();
+
+let dragItems=['A','B','C','×','+'];
+function resetDrag(){
+ const t=document.getElementById('tokens'),d=document.getElementById('dropzone');
+ t.innerHTML='';d.innerHTML='';
+ [...dragItems].sort(()=>Math.random()-.5).forEach((x,i)=>{
+  const el=document.createElement('div');el.className='token';el.textContent=x;el.draggable=true;el.id='tok'+i;
+  el.ondragstart=e=>e.dataTransfer.setData('text/plain',el.id);t.appendChild(el);
+ });
+ document.getElementById('dragFeedback').className='feedback';
+}
+function allowDrop(e){e.preventDefault()}
+function dropToken(e){
+ e.preventDefault();const id=e.dataTransfer.getData('text/plain'),el=document.getElementById(id);
+ if(el && el.parentElement.id==='tokens')document.getElementById('dropzone').appendChild(el);
+}
+function checkDrag(){
+ const ans=[...document.querySelectorAll('#dropzone .token')].map(x=>x.textContent).join('');
+ const fb=document.getElementById('dragFeedback');fb.classList.add('show');
+ if(ans==='ABC×+'){fb.className='feedback show good';fb.innerHTML='🎉 Tepat! ABC×+ adalah postfix dari A + B × C.';addScore(20);completed.add('drag');updateProgress()}
+ else{fb.className='feedback show bad';fb.innerHTML='Belum tepat. Ingat: × dikerjakan sebelum +.'}
+}
+resetDrag();
+
+function checkBonus(){
+ const val=document.getElementById('bonusInput').value.replace(/\s+/g,'');
+ const fb=document.getElementById('bonusFeedback');fb.classList.add('show');
+ if(val==='AB+C×DE÷-'){
+  fb.className='feedback show good';fb.innerHTML='🏆 LUAR BIASA! Jawaban benar. Kamu mendapatkan <b>50 poin bonus</b>!';
+  addScore(50);completed.add('bonus');updateProgress();
+ }else{
+  fb.className='feedback show bad';fb.innerHTML='Belum tepat. Coba pecah menjadi: (A+B), ×C, D÷E, lalu tentukan urutan -.';
+ }
+}
+</script>
+</body>
+</html>
