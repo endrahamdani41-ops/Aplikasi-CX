@@ -259,6 +259,16 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
   #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
 }
+
+/* matikan kolom menempel agar tabel stabil di semua tingkat zoom */
+thead tr:first-child th,
+tbody td,
+tfoot td{position:static !important;left:auto !important}
+thead tr:first-child th:nth-child(2),
+thead tr:first-child th:nth-child(3),
+tbody td:nth-child(2),
+tbody td:nth-child(3){box-shadow:none !important}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -407,7 +417,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 /* ============================================================
    ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
    ============================================================ */
-const SHEET_URL   = "https://script.google.com/macros/s/AKfycbyxS-1zD9HWyWEPn4Yvx4W1oI-GteqheRWn2T1ur978eJsox-xAt9WOYlWHFZ1yc2pM/exec";
+const SHEET_URL   = "https://script.google.com/macros/s/AKfycbx-p11w209UR_miwNFW1TK4pYj_nRV0mZlfa_FoZb1-R1w9Y0paoWCDl_g-vjee5uP_/exec";
 const NAMA_SEKOLAH = "SMPN 110 JAKARTA";
 const NAMA_KEPSEK  = "Iis Ratna Sariningrum, S.Pd., M.M.";
 const NIP_KEPSEK   = "197010311994122001";
@@ -810,6 +820,7 @@ async function pullKelas(kelas,mapel){
     nis:String(r.nis||""),jk:String(r.jk||"").toUpperCase(),nama:r.nama||"",
     scores:{ph1:nz(r.scores.ph1),ph2:nz(r.scores.ph2),ph3:nz(r.scores.ph3),
     asts:nz(r.scores.asts),asat:nz(r.scores.asat)}}));
+      if(j.salin)toast("Daftar siswa disalin dari mapel lain — isi nilai lalu simpan ke Sheet.");
   applySheetMeta(j.meta||{});
   const rm=mapel||j.mapel||"";
   if(rm){
