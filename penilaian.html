@@ -100,16 +100,6 @@ thead th.grp{background:linear-gradient(180deg,color-mix(in srgb,var(--th1) 82%,
 thead th[data-sort]{cursor:pointer;user-select:none;transition:color .15s}
 thead th[data-sort]:hover{color:#ffe9a8}
 thead th[data-sort].on{color:#ffe9a8}
-thead tr:first-child th:nth-child(-n+3){position:-webkit-sticky;position:sticky;z-index:3}
-thead tr:first-child th:nth-child(1){left:0}
-thead tr:first-child th:nth-child(2){left:36px}
-thead tr:first-child th:nth-child(3){left:126px;box-shadow:8px 0 12px -8px rgba(0,0,0,.45)}
-tbody td:nth-child(1){position:-webkit-sticky;position:sticky;left:0;z-index:2;background:var(--card)}
-tbody td:nth-child(2){position:-webkit-sticky;position:sticky;left:36px;z-index:2;background:var(--card)}
-tbody td:nth-child(3){position:-webkit-sticky;position:sticky;left:126px;z-index:2;background:var(--card);box-shadow:8px 0 12px -8px rgba(0,0,0,.45)}
-tbody tr:nth-child(even) td:nth-child(-n+3){background:var(--zebra-solid)}
-tbody tr:hover td:nth-child(-n+3){background:var(--rowhover-solid)}
-tfoot td:first-child{position:-webkit-sticky;position:sticky;left:0;z-index:2;background:var(--card)}
 tbody td{padding:8px 6px;border-bottom:1px solid var(--line-soft);vertical-align:middle;text-align:center;transition:background .15s}
 tbody tr{transition:background .15s}
 tbody tr:nth-child(even){background:var(--zebra-solid)}
@@ -120,13 +110,7 @@ tbody tr.new{animation:rowIn .45s cubic-bezier(.2,.8,.2,1)}
 .idx{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);width:36px;font-variant-numeric:tabular-nums}
 .nis{width:90px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .jk{width:46px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--muted)}
-td.name{text-align:left;min-width:170px}
-.inp-name{display:inline-block;border:0;background:transparent;font:600 13.5px 'Public Sans',sans-serif;
-  color:var(--ink);padding:4px 6px;border-bottom:1.5px dashed transparent;border-radius:4px;transition:.2s;
-  white-space:nowrap;text-align:left;outline:none;cursor:text;letter-spacing:.01em}
-.inp-name:hover{border-bottom-color:var(--line)}
-.inp-name:focus{border-bottom-color:var(--gold);background:rgba(255,210,63,.16)}
-.inp-name:empty::before{content:"Nama siswa…";color:var(--muted);font-weight:500}
+td.name{text-align:left;min-width:170px;font-weight:600;letter-spacing:.01em;color:var(--ink);padding-left:10px}
 .inp-num{width:54px;text-align:center;font:600 13.5px 'IBM Plex Mono',monospace;color:var(--ink);border:1.5px dashed transparent;border-radius:8px;padding:4px 2px;background:transparent;transition:.2s;font-variant-numeric:tabular-nums}
 .inp-num:hover{border-color:var(--line);background:var(--input-bg)}
 .inp-num:focus{outline:none;border-color:var(--gold);background:var(--input-bg);box-shadow:0 0 0 3px rgba(201,162,39,.25)}
@@ -208,16 +192,12 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   thead th{padding:8px 4px;letter-spacing:.08em}
   tbody td{padding:6px 3px}
   .del{opacity:.5}
-  .field input,.field select,textarea,.inp-num,.inp-name{font-size:16px}
+  .field input,.field select,textarea,.inp-num{font-size:16px}
   .improw .btn{flex:1;justify-content:center}
   .tabpane{padding:12px}
   .modal-foot{padding:10px 12px}
   .idx{width:30px}
   .nis{width:64px}
-  thead tr:first-child th:nth-child(2){position:static}
-  tbody td:nth-child(2){position:static}
-  thead tr:first-child th:nth-child(3){left:30px}
-  tbody td:nth-child(3){left:30px}
   table{min-width:760px}
 }
 @media (max-width:480px){
@@ -231,7 +211,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   .stat .val{font-size:24px}
   .card-h{font-size:11px;padding:12px 14px}
   table{min-width:720px}
-  thead th{font-size:9px;padding:8px 3px;letter-spacing:.06em}
+  thead th{font-size:10px;padding:8px 3px;letter-spacing:.06em}
   .inp-num{width:46px}
   .c-na{font-size:14px}
   .pred{width:26px;height:26px;font-size:12px;border-radius:8px}
@@ -259,16 +239,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
   #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
 }
-
-/* matikan kolom menempel agar tabel stabil di semua tingkat zoom */
-thead tr:first-child th,
-tbody td,
-tfoot td{position:static !important;left:auto !important}
-thead tr:first-child th:nth-child(2),
-thead tr:first-child th:nth-child(3),
-tbody td:nth-child(2),
-tbody td:nth-child(3){box-shadow:none !important}
-
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -644,37 +614,16 @@ function refreshPanels(){
 tbody.addEventListener("input",e=>{
   const tr=e.target.closest("tr");if(!tr)return;const r=byId(tr.dataset.id);if(!r)return;
   const k=e.target.dataset.k;
-  if(k==="nama"){
-    r.nama=(e.target.textContent||"").replace(/\n+/g," ");
-    save();refreshPanels();return;
-  }
   let v=e.target.value.replace(/[^0-9.,]/g,"").replace(",",".");
   if(v!==""){const n=parseFloat(v);v=isNaN(n)?"":String(Math.min(100,n));}
   if(v!==e.target.value)e.target.value=v;
   r.scores[k]=(v==="")?"":+v;
   updateRowDerived(tr,r);refreshPanels();save();
 });
-tbody.addEventListener("paste",e=>{
-  const t=e.target;
-  if(t.classList&&t.classList.contains("inp-name")){
-    e.preventDefault();
-    const text=(e.clipboardData||window.clipboardData).getData("text/plain");
-    document.execCommand("insertText",false,text);
-  }
-});
-tbody.addEventListener("focusout",e=>{
-  if(e.target.classList&&e.target.classList.contains("inp-name")){
-    const clean=(e.target.textContent||"").replace(/\s+/g," ").trim();
-    e.target.textContent=clean;
-    const tr=e.target.closest("tr");const r=tr&&byId(tr.dataset.id);
-    if(r){r.nama=clean;save();refreshPanels();}
-  }
-});
 tbody.addEventListener("keydown",e=>{
   if(e.key!=="Enter")return;e.preventDefault();
   const tr=e.target.closest("tr"),k=e.target.dataset.k;if(!tr||!k)return;
   const rows=$$("#tbody tr"),i=rows.indexOf(tr);
-  if(k==="nama"){tr.querySelector('[data-k="ph1"]')?.focus();return;}
   const idx=NUMKEYS.indexOf(k);
   if(idx<NUMKEYS.length-1)tr.querySelector(`[data-k="${NUMKEYS[idx+1]}"]`)?.focus();
   else if(rows[i+1]){const nx=rows[i+1].querySelector('[data-k="ph1"]');nx?.focus();nx?.select();}
@@ -695,7 +644,7 @@ tbody.addEventListener("click",e=>{
   if(idx<0)return;
   lastDeleted={row:state.rows[idx],idx};
   state.rows.splice(idx,1);renderTable();save();
-  toast(`“${lastDeleted.row.nama||"Siswa"}” dihapus.`,"Urungkan",()=>{
+  toast(`"${lastDeleted.row.nama||"Siswa"}" dihapus.`,"Urungkan",()=>{
     state.rows.splice(lastDeleted.idx,0,lastDeleted.row);renderTable();save();
   });
 });
@@ -721,11 +670,9 @@ function setMapelTampil(v){
   $("#m-mapel").value=v||"";
 }
 function kelasTerampu(){
-  const guru=(state.meta.guru||"").trim(), mapel=state.meta.mapel;
-  if(!guru&&!mapel)return null;
-  const match=guru
-    ?mapelList.filter(m=>m.guru&&m.guru===guru)
-    :mapelList.filter(m=>m.mapel===mapel);
+  const guru=(state.meta.guru||"").trim();
+  if(!guru)return null;
+  const match=mapelList.filter(m=>m.guru&&m.guru===guru);
   if(!match.length)return null;
   const set=new Set();
   match.forEach(m=>(m.ampu||[]).forEach(k=>set.add(k)));
@@ -816,7 +763,7 @@ async function pullKelas(kelas,mapel){
     nis:String(r.nis||""),jk:String(r.jk||"").toUpperCase(),nama:r.nama||"",
     scores:{ph1:nz(r.scores.ph1),ph2:nz(r.scores.ph2),ph3:nz(r.scores.ph3),
     asts:nz(r.scores.asts),asat:nz(r.scores.asat)}}));
-      if(j.salin)toast("Daftar siswa disalin dari mapel lain — isi nilai lalu simpan ke Sheet.");
+  if(j.salin)toast("Daftar siswa disalin dari mapel lain — isi nilai lalu simpan ke Sheet.");
   applySheetMeta(j.meta||{});
   const rm=mapel||j.mapel||"";
   if(rm){
@@ -839,7 +786,7 @@ $("#btnPush").addEventListener("click",async()=>{
     const j=await gasPost(u,{kelas,mapel,meta:state.meta,rows:state.rows});
     if(!kelasList.includes(kelas)){kelasList.push(kelas);}
     populateKelas(kelas,kelasTerampu());
-    toast(`✔ ${j.tersimpan} siswa tersimpan ke tab “${j.tab}”.`);
+    toast(`✔ ${j.tersimpan} siswa tersimpan ke tab "${j.tab}".`);
   }catch(err){toast("✕ Gagal menyimpan: "+err.message);}
 });
 
