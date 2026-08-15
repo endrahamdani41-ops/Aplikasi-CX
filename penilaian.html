@@ -61,6 +61,8 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 #btnPrint:hover{box-shadow:0 4px 0 #5b21b6;filter:brightness(1.08)}
 #btnTheme{background:#f59e0b;border-color:#b45309;color:#fff;box-shadow:0 2px 0 #b45309}
 #btnTheme:hover{box-shadow:0 4px 0 #b45309;filter:brightness(1.08)}
+#btnLogout{background:#dc2626;border-color:#991b1b;color:#fff;box-shadow:0 2px 0 #991b1b}
+#btnLogout:hover{box-shadow:0 4px 0 #991b1b;filter:brightness(1.08)}
 .docmeta{margin-top:0;display:flex;flex-wrap:wrap;border-top:1.5px dashed var(--line);border-bottom:1.5px dashed var(--line)}
 .field{flex:1;min-width:180px;padding:14px 20px;border-left:1.5px dashed var(--line)}
 .field:first-child{border-left:0}
@@ -68,6 +70,7 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 .field input,.field select{width:100%;border:0;background:transparent;font:600 15px 'Public Sans',sans-serif;color:var(--ink);padding:3px 0;border-bottom:2px dotted transparent;transition:.2s;cursor:pointer}
 .field input{cursor:text}
 .field input[readonly]{cursor:default;pointer-events:none}
+#m-mapel:disabled{opacity:.85;cursor:default}
 .field input:focus,.field select:focus{outline:none;border-bottom-color:var(--green);background:rgba(255,210,63,.14)}
 .field select option{background:var(--input-bg);color:var(--ink)}
 [data-theme="dark"] .field select option{background:#1d2822;color:#e9e7db}
@@ -169,6 +172,12 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 .improw label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .modal-foot{display:flex;align-items:center;gap:12px;padding:12px 18px;border-top:1.5px dashed var(--line);flex-wrap:wrap}
 .hint{font-size:11px;color:var(--muted)}
+/* LOGIN NRK */
+.nrk-inp{width:100%;border:1.5px solid var(--ink);border-radius:9px;background:var(--input-bg);color:var(--ink);padding:11px 14px;font:600 16px 'IBM Plex Mono',monospace;letter-spacing:.08em;transition:.2s}
+.nrk-inp:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.5);border-color:var(--green)}
+.lbl-nrk{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:2px 0 6px}
+.login-msg{min-height:18px;font-size:12px;color:var(--red);font-weight:600;margin:6px 0 10px}
+.login-logo{font-size:36px;text-align:center;margin-bottom:2px}
 .toast{position:fixed;top:24px;right:24px;z-index:70;display:flex;align-items:center;gap:14px;background:var(--toast-bg);color:var(--toast-fg);padding:13px 18px;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13.5px;font-weight:600;opacity:0;transform:translateY(-18px);transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none;max-width:calc(100vw - 48px)}
 .toast.show{opacity:1;transform:none;pointer-events:auto}
 .toast button{border:0;background:none;color:var(--yellow);font:700 13px 'Public Sans',sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
@@ -243,6 +252,20 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 </style>
 </head>
 <body>
+
+<!-- ============ LOGIN NRK ============ -->
+<div class="overlay" id="login">
+  <div class="modal card" style="width:min(420px,100%)">
+    <div class="card-h"><span>Login Guru</span></div>
+    <div class="tabpane">
+      <div class="login-logo">🔐</div>
+      <input id="inpNrk" class="nrk-inp" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan NRK Anda">
+      <div id="loginMsg" class="login-msg"></div>
+      <button class="btn primary" id="btnLogin" style="width:100%;justify-content:center">Masuk</button>
+    </div>
+  </div>
+</div>
+
 <div class="margin-line"></div>
 <div class="page">
 
@@ -266,13 +289,16 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
     <button class="btn" id="btnTheme" title="Ganti tema" aria-label="Ganti tema">
       <span class="ic" id="icTheme"></span>
       <span class="txt">Mode Gelap</span></button>
+    <button class="btn" id="btnLogout" title="Ganti akun" aria-label="Ganti akun">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="#ffffff"/><polyline points="16 17 21 12 16 7" stroke="#ffffff"/><line x1="21" y1="12" x2="9" y2="12" stroke="#ffffff"/></svg></span>
+      <span class="txt">Keluar</span></button>
   </section>
 
   <section class="docmeta">
     <div class="field"><label>Nama Guru</label>
-      <select id="m-guru"><option value="">— pilih guru —</option></select></div>
+      <input id="m-guru" type="text" readonly placeholder="Login dengan NRK"></div>
     <div class="field"><label>Mata Pelajaran</label>
-      <input id="m-mapel" type="text" readonly placeholder="Terisi Otomatis"></div>
+      <select id="m-mapel"><option value="">—</option></select></div>
     <div class="field"><label>Kelas</label>
       <select id="m-kelas"><option value="">— pilih kelas —</option></select></div>
     <div class="field"><label>Tahun Ajaran</label><input id="m-tahun" type="text" readonly></div>
@@ -387,7 +413,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 /* ============================================================
    ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
    ============================================================ */
-const SHEET_URL   = "https://script.google.com/macros/s/AKfycbx-p11w209UR_miwNFW1TK4pYj_nRV0mZlfa_FoZb1-R1w9Y0paoWCDl_g-vjee5uP_/exec";
+const SHEET_URL   = "https://script.google.com/macros/s/AKfycbzbfvAm6l_id6V--9_HzjCdWwehIf6unX7sNPwZiBUxGoBN9_PtIjj1J6kQIOirWeds/exec";
 const NAMA_SEKOLAH = "SMPN 110 JAKARTA";
 const NAMA_KEPSEK  = "Iis Ratna Sariningrum, S.Pd., M.M.";
 const NIP_KEPSEK   = "197010311994122001";
@@ -403,7 +429,6 @@ const nz=v=>v==null?"":v;
 const NUMKEYS=["ph1","ph2","ph3","asts","asat"];
 const urlSiap=()=>SHEET_URL.includes("GANTI_DENGAN_URL_EXEC_ANDA")?"":SHEET_URL;
 
-/* ikon tema */
 const ICON_MOON='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="#ffffff"/><path d="M17 4h4" stroke="#fde68a"/><path d="M19 2v4" stroke="#fde68a"/></svg>';
 const ICON_SUN='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" stroke="#ffffff"/><path d="M12 2v2" stroke="#fde68a"/><path d="M12 20v2" stroke="#fde68a"/><path d="m4.93 4.93 1.41 1.41" stroke="#fde68a"/><path d="m17.66 17.66 1.41 1.41" stroke="#fde68a"/><path d="M2 12h2" stroke="#fde68a"/><path d="M20 12h2" stroke="#fde68a"/><path d="m6.34 17.66-1.41 1.41" stroke="#fde68a"/><path d="m19.07 4.93-1.41 1.41" stroke="#fde68a"/></svg>';
 
@@ -432,7 +457,7 @@ function defaultState(){
   return {meta:{mapel:"",kelas:"",guru:"",nip:"",tahun:tahunAjaranOtomatis(),kktp:82},
           rows:[],sort:{key:null,dir:1}};
 }
-let state,saveT,lastDeleted=null,kelasList=[],mapelList=[];
+let state,saveT,lastDeleted=null,kelasList=[],mapelList=[],myMapels=[];
 try{const raw=localStorage.getItem(KEY); const s=raw&&JSON.parse(raw);
   state=(s&&Array.isArray(s.rows))?s:defaultState();
 }catch(e){state=defaultState();}
@@ -471,7 +496,7 @@ function parseSheetText(txt){
   return rows;
 }
 
-/* ---------- hitungan (RUMUS PERMANEN: ((2*RataPH)+ASTS+ASAT)/4) ---------- */
+/* ---------- hitungan ---------- */
 const kktp=()=>+state.meta.kktp||0;
 function computeRow(r){
   const s=r.scores, phs=["ph1","ph2","ph3"].map(k=>s[k]).filter(v=>v!==""&&v!=null).map(Number);
@@ -553,8 +578,8 @@ function renderTable(freshId){
   if(!rows.length){
     const tr=document.createElement("tr"),td=document.createElement("td");
     td.colSpan=14;td.className="empty";
-    td.innerHTML='<div class="big">📗</div>Belum ada data untuk kombinasi guru & kelas ini.<br>Pilih <b>Nama Guru</b> (mapel terisi otomatis), lalu pilih <b>kelas yang diampu</b>.'
-       +'<br><button class="btn primary" data-refresh>⟳ Muat daftar guru & kelas</button>';
+    td.innerHTML='<div class="big">📗</div>Belum ada data untuk kombinasi guru & kelas ini.<br>Pilih <b>kelas yang diampu</b> di atas, lalu isi nilai atau 📥 Impor.'
+       +'<br><button class="btn primary" data-refresh>⟳ Muat ulang daftar</button>';
     tr.appendChild(td);tbody.appendChild(tr);
   }else rows.forEach((r,i)=>tbody.appendChild(rowEl(r,i,r.id===freshId)));
   $("#chipCount").textContent=rows.length+" siswa";
@@ -654,28 +679,55 @@ $$("th[data-sort]").forEach(th=>th.addEventListener("click",()=>{
   renderTable();
 }));
 
-/* ---------- DROPDOWN: GURU → MAPEL (terkunci) → KELAS AMPU ---------- */
-function populateGuru(selected){
-  const sel=$("#m-guru"),cur=selected??state.meta.guru;
-  sel.innerHTML="";
-  const o0=document.createElement("option");o0.value="";o0.textContent="— pilih guru —";sel.appendChild(o0);
-  const gurus=[];
-  mapelList.forEach(m=>{if(m.guru&&!gurus.includes(m.guru))gurus.push(m.guru);});
-  if(cur&&!gurus.includes(cur))gurus.unshift(cur);
-  gurus.forEach(g=>{const o=document.createElement("option");o.value=g;o.textContent=g;sel.appendChild(o);});
-  sel.value=cur||"";
+/* ---------- LOGIN NRK ---------- */
+function loginMsg(t){$("#loginMsg").textContent=t||"";}
+function populateMapelSelect(list){
+  const sel=$("#m-mapel");sel.innerHTML="";
+  if(!list.length){
+    const o=document.createElement("option");o.value="";o.textContent="—";sel.appendChild(o);
+    sel.disabled=true;return;
+  }
+  list.forEach(m=>{const o=document.createElement("option");o.value=m;o.textContent=m;sel.appendChild(o);});
+  sel.disabled=list.length<2;
 }
 function setMapelTampil(v){
   state.meta.mapel=v||"";
   $("#m-mapel").value=v||"";
 }
+async function doLogin(){
+  const nrk=$("#inpNrk").value.trim();
+  if(!nrk){loginMsg("Masukkan NRK Anda.");return;}
+  if(!mapelList.length)await loadLists(false);
+  const rows=mapelList.filter(m=>m.nrk&&String(m.nrk).trim()===nrk);
+  if(!rows.length){loginMsg("NRK tidak ditemukan di tab MAPEL. Hubungi admin.");return;}
+  myMapels=[...new Set(rows.map(r=>r.mapel))];
+  const u=rows[0];
+  state.meta.guru=u.guru||"";state.meta.nip=u.nip||"";
+  $("#m-guru").value=u.guru||"";
+  populateMapelSelect(myMapels);
+  setMapelTampil(myMapels[0]||"");
+  $("#login").hidden=true;loginMsg("");$("#inpNrk").value="";
+  refreshKelasDropdown();renderTable();
+  toast(`✔ Selamat datang, ${u.guru||"Guru"}.`);
+}
+$("#btnLogin").addEventListener("click",doLogin);
+$("#inpNrk").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+$("#btnLogout").addEventListener("click",()=>{
+  state.meta.guru="";state.meta.nip="";state.meta.kelas="";state.rows=[];myMapels=[];
+  $("#m-guru").value="";setMapelTampil("");populateMapelSelect([]);
+  populateKelas(null,null);renderTable();save();
+  $("#login").hidden=false;$("#inpNrk").value="";$("#inpNrk").focus();
+});
+
+/* ---------- DROPDOWN KELAS AMPU ---------- */
 function kelasTerampu(){
-  const guru=(state.meta.guru||"").trim();
-  if(!guru)return null;
-  const match=mapelList.filter(m=>m.guru&&m.guru===guru);
+  const guru=(state.meta.guru||"").trim(), mapel=state.meta.mapel;
+  if(!guru&&!mapel)return null;
+  let match=mapelList.filter(m=>m.guru&&m.guru===guru&&m.mapel===mapel);
+  if(!match.length)match=mapelList.filter(m=>m.guru&&m.guru===guru);
+  if(!match.length)match=mapelList.filter(m=>m.mapel===mapel);
   if(!match.length)return null;
-  const set=new Set();
-  match.forEach(m=>(m.ampu||[]).forEach(k=>set.add(k)));
+  const set=new Set();match.forEach(m=>(m.ampu||[]).forEach(k=>set.add(k)));
   return [...set];
 }
 function populateKelas(selected,allowed){
@@ -700,13 +752,8 @@ function refreshKelasDropdown(){
   populateKelas(null,allowed);
   save();
 }
-$("#m-guru").addEventListener("change",e=>{
-  const v=e.target.value;
-  state.meta.guru=v;
-  const hit=mapelList.find(m=>m.guru===v&&m.nip)||mapelList.find(m=>m.guru===v);
-  setMapelTampil(hit?hit.mapel:"");
-  state.meta.nip=hit?(hit.nip||""):"";
-  save();refreshPanels();
+$("#m-mapel").addEventListener("change",e=>{
+  state.meta.mapel=e.target.value;save();
   refreshKelasDropdown();
   if(state.meta.kelas)loadActive();
 });
@@ -741,7 +788,6 @@ async function loadLists(notify){
   try{
     const j=await gasGet(u);
     kelasList=j.kelas||[];mapelList=j.mapel||[];
-    populateGuru();
     setMapelTampil(state.meta.mapel);
     refreshKelasDropdown();
     if(notify)toast(`✔ Terhubung — ${kelasList.length} kelas · ${mapelList.length} mapel.`);
@@ -770,7 +816,7 @@ async function pullKelas(kelas,mapel){
     setMapelTampil(rm);
     if(!state.meta.guru){
       const hit=mapelList.find(m=>m.mapel===rm&&m.nip)||mapelList.find(m=>m.mapel===rm);
-      if(hit&&hit.guru){state.meta.guru=hit.guru;state.meta.nip=hit.nip||"";populateGuru(hit.guru);}
+      if(hit&&hit.guru){state.meta.guru=hit.guru;state.meta.nip=hit.nip||"";$("#m-guru").value=hit.guru;}
     }
   }
   state.meta.kelas=kelas;populateKelas(kelas,kelasTerampu());
@@ -859,13 +905,10 @@ $("#btnPrint").addEventListener("click",()=>{
   setTimeout(()=>window.print(),120);
 });
 
-/* ---------- meta ---------- */
-populateGuru();
-$("#m-mapel").value=state.meta.mapel||"";
+/* ---------- meta & init ---------- */
 state.meta.tahun=tahunAjaranOtomatis();
 $("#m-tahun").value=state.meta.tahun;
 
-/* ---------- toast & init ---------- */
 let toastT;
 function toast(msg,actLabel,act){
   const t=$("#toast");$("#toastMsg").textContent=msg;
@@ -877,6 +920,7 @@ function toast(msg,actLabel,act){
 $("#todayChip").textContent="📅 "+new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 renderTable();
 loadLists(false);
+$("#inpNrk").focus();
 })();
 </script>
 </body>
