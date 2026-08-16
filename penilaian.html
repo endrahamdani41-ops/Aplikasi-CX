@@ -236,6 +236,8 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   .page,.margin-line,.toast,.overlay{display:none!important}
   #printSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm}
   #printSheet .kop{text-align:center}
+  #printSheet .kop{text-align:center;position:relative;min-height:85px;padding:0 95px}
+  #printSheet .kop .logo{position:absolute;left:0;top:50%;transform:translateY(-50%);width:80px;height:80px;object-fit:contain}
   #printSheet .kop h2{font-size:15pt;font-weight:700;letter-spacing:.02em;margin:0;text-transform:uppercase}
   #printSheet .kop p{font-size:11pt;font-weight:bold;margin:2px 0 0}
   #printSheet hr{border:0;border-top:2.5px solid #000;margin:8px 0 10px}
@@ -254,7 +256,8 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #raporSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm;font-size:12pt}
   #raporSheet .rpage{page-break-after:always}
   #raporSheet .rpage:last-child{page-break-after:auto}
-  #raporSheet .rkop{text-align:center;font-weight:bold}
+  #raporSheet .rkop{text-align:center;font-weight:bold;position:relative;min-height:85px;padding:0 95px}
+  #raporSheet .rkop .logo{position:absolute;left:0;top:50%;transform:translateY(-50%);width:80px;height:80px;object-fit:contain}
   #raporSheet .rkop h2{font-size:12pt;margin:0;text-transform:uppercase}
   #raporSheet .rkop h3{font-size:12pt;margin:2px 0}
   #raporSheet .rkop p{font-size:12pt;margin:2px 0}
@@ -447,10 +450,12 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 /* ============================================================
    ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
    ============================================================ */
-const SHEET_URL   = "https://script.google.com/macros/s/AKfycbwZQwwegzw3LzEl4ntX5P6TJEsaJpgMZwnGREFbSc1FVkn4iT2cnl1XyNiWXz-KIx2X/exec";
+const SHEET_URL   = "https://script.google.com/macros/s/AKfycbzaDyTcEuiFRdnE6Uqnr18FEYtkXKGvue0HmikKM4O45UcoezMzWum2h8jKxjVieUHl/exec";
 const NAMA_SEKOLAH = "SMPN 110 JAKARTA";
 const NAMA_KEPSEK  = "Iis Ratna Sariningrum, S.Pd., M.M.";
 const NIP_KEPSEK   = "197010311994122001";
+const LOGO_URL     = "https://i.ibb.co.com/S7935s95/erasebg-transformed.png";
+const logoTag      = ()=>LOGO_URL?`<img class="logo" src="${LOGO_URL}" onerror="this.style.display='none'">`:"";
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const KEY="rekap-nilai-ph-asts-asat-v1";
@@ -921,7 +926,8 @@ $("#btnPrint").addEventListener("click",()=>{
     <td><b>${fmtR(na)}</b></td><td>${predikat(naR)||"–"}</td>
     <td>${naR==null?"–":(naR>=k?"Tuntas":"Belum")}</td></tr>`;}).join("");
   $("#printSheet").innerHTML=`
-    <div class="kop">
+        <div class="kop">
+      ${logoTag()}
       <h2>${esc(NAMA_SEKOLAH)}</h2>
       <p>PENILAIAN HARIAN</p>
     </div>
@@ -952,6 +958,9 @@ $("#btnPrint").addEventListener("click",()=>{
 function buildRapor(j){
   const m=state.meta;
   const tgl=new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const absen=j.absen||{};
+  const absenVal=(st,k)=>{const a=absen[(st.nama||"").toLowerCase()];return a&&a[k]!==""?a[k]:"–";};
+
   const pages=j.students.map(st=>{
     const rows=j.subjects.map((sb,i)=>{
       const s=sb.nilai[(st.nama||"").toLowerCase()];
@@ -960,7 +969,8 @@ function buildRapor(j){
         <td>${val("ph1")}</td><td>${val("ph2")}</td><td>${val("ph3")}</td><td><b>${val("asts")}</b></td></tr>`;
     }).join("");
     return `<div class="rpage">
-      <div class="rkop">
+          <div class="rkop">
+        ${logoTag()}
         <h2>LAPORAN HASIL</h2>
         <h3>PENILAIAN SUMATIF TENGAH SEMESTER GANJIL</h3>
         <h3>${esc(NAMA_SEKOLAH)}</h3>
@@ -978,9 +988,9 @@ function buildRapor(j){
           <th style="width:50px">KKTP</th><th style="width:50px">PH-1</th><th style="width:50px">PH-2</th>
           <th style="width:50px">PH-3</th><th style="width:60px">ASTS</th></tr></thead>
         <tbody>${rows||'<tr><td colspan="7">Belum ada nilai.</td></tr>'}
-          <tr><td colspan="2" rowspan="3" class="lab">KETIDAKHADIRAN</td><td colspan="5">Izin&nbsp;&nbsp;&nbsp;: –</td></tr>
-          <tr><td colspan="5">Sakit : –</td></tr>
-          <tr><td colspan="5">Alpa&nbsp; : –</td></tr>
+          <tr><td colspan="2" rowspan="3" class="lab">KETIDAKHADIRAN</td><td colspan="5">Izin&nbsp;&nbsp;&nbsp;: ${absenVal(st,"i")}</td></tr>
+          <tr><td colspan="5">Sakit : ${absenVal(st,"s")}</td></tr>
+          <tr><td colspan="5">Alpa&nbsp; : ${absenVal(st,"a")}</td></tr>
         </tbody>
       </table>
       <table class="rfoot">
