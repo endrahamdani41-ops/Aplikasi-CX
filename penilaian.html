@@ -59,6 +59,8 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 #btnImport:hover{box-shadow:0 4px 0 #1e40af;filter:brightness(1.08)}
 #btnPrint{background:#7c3aed;border-color:#5b21b6;color:#fff;box-shadow:0 2px 0 #5b21b6}
 #btnPrint:hover{box-shadow:0 4px 0 #5b21b6;filter:brightness(1.08)}
+#btnRapor{background:#db2777;border-color:#9d174d;color:#fff;box-shadow:0 2px 0 #9d174d}
+#btnRapor:hover{box-shadow:0 4px 0 #9d174d;filter:brightness(1.08)}
 #btnTheme{background:#f59e0b;border-color:#b45309;color:#fff;box-shadow:0 2px 0 #b45309}
 #btnTheme:hover{box-shadow:0 4px 0 #b45309;filter:brightness(1.08)}
 #btnLogout{background:#dc2626;border-color:#991b1b;color:#fff;box-shadow:0 2px 0 #991b1b}
@@ -182,6 +184,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 .toast.show{opacity:1;transform:none;pointer-events:auto}
 .toast button{border:0;background:none;color:var(--yellow);font:700 13px 'Public Sans',sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 #printSheet{display:none}
+#raporSheet{display:none}
 
 /* ============ RESPONSIF ============ */
 @media (max-width:900px){
@@ -247,7 +250,32 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #printSheet table.nt td.nm{text-align:left}
   #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
   #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
-}
+  /* RAPOR */
+  #raporSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm;font-size:12pt}
+  #raporSheet .rpage{page-break-after:always}
+  #raporSheet .rpage:last-child{page-break-after:auto}
+  #raporSheet .rkop{text-align:center;font-weight:bold}
+  #raporSheet .rkop h2{font-size:12pt;margin:0;text-transform:uppercase}
+  #raporSheet .rkop h3{font-size:12pt;margin:2px 0}
+  #raporSheet .rkop p{font-size:12pt;margin:2px 0}
+  #raporSheet hr{border:0;border-top:2.5px solid #000;margin:8px 0}
+  #raporSheet .rmeta{font-size:12pt;margin:4px 0 10px;width:100%;border:0}
+  #raporSheet .rmeta td{border:0;padding:7px 6px 7px 0;vertical-align:top;text-align:left !important}
+  #raporSheet .rmeta td.l1{width:110px}
+  #raporSheet .rmeta td.l2{width:90px}
+  #raporSheet .rmeta td.v2{width:150px}
+  #raporSheet table.rt{width:100%;border-collapse:collapse;font-size:12pt}
+  #raporSheet table.rt th,#raporSheet table.rt td{border:1px solid #000;padding:8px 6px;text-align:center}
+  #raporSheet table.rt th{
+    background:#eee !important;color:#000 !important;
+    font-family:'Times New Roman',Times,serif !important;
+    font-weight:bold;text-transform:none !important;
+    letter-spacing:0 !important;white-space:normal !important;
+    box-shadow:none !important}
+  #raporSheet table.rt td.nm{text-align:left}
+  #raporSheet table.rt td.lab{text-align:center;font-weight:bold;letter-spacing:.05em}
+  #raporSheet .rfoot{width:100%;margin-top:24px;font-size:12pt}
+  #raporSheet .rfoot td{vertical-align:top;padding:4px 8px;border:0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -255,13 +283,15 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 
 <!-- ============ LOGIN NRK ============ -->
 <div class="overlay" id="login">
-    <div class="modal card" style="width:min(350px,100%)">
+  <div class="modal card" style="width:min(350px,100%)">
     <div class="card-h"><span>Login Guru</span></div>
     <div class="tabpane">
       <div class="login-logo">🔐</div>
+      <label class="lbl-nrk" for="inpNrk">NRK / Nomor Induk Guru</label>
       <input id="inpNrk" class="nrk-inp" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan NRK Anda">
       <div id="loginMsg" class="login-msg"></div>
       <button class="btn primary" id="btnLogin" style="width:100%;justify-content:center">Masuk</button>
+      <p class="hint" style="margin-top:10px;text-align:center">NRK terdaftar di tab <b>MAPEL</b> kolom E. Hubungi admin bila belum punya.</p>
     </div>
   </div>
 </div>
@@ -286,6 +316,9 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
     <button class="btn" id="btnPrint" title="Cetak" aria-label="Cetak">
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9" stroke="#ffffff"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke="#ffffff"/><rect x="6" y="14" width="12" height="8" stroke="#ffd23f"/></svg></span>
       <span class="txt">Cetak</span></button>
+    <button class="btn" id="btnRapor" style="display:none" title="Cetak Rapor ASTS (khusus wali kelas)" aria-label="Cetak Rapor ASTS">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z" stroke="#ffffff"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" stroke="#ffffff"/><path d="M22 10v6" stroke="#ffd23f"/></svg></span>
+      <span class="txt">Rapor</span></button>
     <button class="btn" id="btnTheme" title="Ganti tema" aria-label="Ganti tema">
       <span class="ic" id="icTheme"></span>
       <span class="txt">Mode Gelap</span></button>
@@ -406,6 +439,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 
 <div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="toastAct" hidden>Urungkan</button></div>
 <div id="printSheet"></div>
+<div id="raporSheet"></div>
 
 <script>
 (function(){
@@ -413,7 +447,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 /* ============================================================
    ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
    ============================================================ */
-const SHEET_URL   = "https://script.google.com/macros/s/AKfycbzbfvAm6l_id6V--9_HzjCdWwehIf6unX7sNPwZiBUxGoBN9_PtIjj1J6kQIOirWeds/exec";
+const SHEET_URL   = "https://script.google.com/macros/s/AKfycbwZQwwegzw3LzEl4ntX5P6TJEsaJpgMZwnGREFbSc1FVkn4iT2cnl1XyNiWXz-KIx2X/exec";
 const NAMA_SEKOLAH = "SMPN 110 JAKARTA";
 const NAMA_KEPSEK  = "Iis Ratna Sariningrum, S.Pd., M.M.";
 const NIP_KEPSEK   = "197010311994122001";
@@ -457,7 +491,7 @@ function defaultState(){
   return {meta:{mapel:"",kelas:"",guru:"",nip:"",tahun:tahunAjaranOtomatis(),kktp:82},
           rows:[],sort:{key:null,dir:1}};
 }
-let state,saveT,lastDeleted=null,kelasList=[],mapelList=[],myMapels=[];
+let state,saveT,lastDeleted=null,kelasList=[],mapelList=[],myMapels=[],waliList=[];
 try{const raw=localStorage.getItem(KEY); const s=raw&&JSON.parse(raw);
   state=(s&&Array.isArray(s.rows))?s:defaultState();
 }catch(e){state=defaultState();}
@@ -490,7 +524,7 @@ function parseSheetText(txt){
     const nama=(cells[0]||"").replace(/^"|"$/g,"").trim();
     const nums=cells.slice(1,6).map(parseNum);
     if(!nama&&nums.every(v=>v===""))return;
-    rows.push({id:uid(),nis:"",jk:"",nama:nama||("Siswa "+(rows.length+1)),
+    rows.push({id:uid(),nis:"",nisn:"",jk:"",nama:nama||("Siswa "+(rows.length+1)),
       scores:{ph1:nz(nums[0]),ph2:nz(nums[1]),ph3:nz(nums[2]),asts:nz(nums[3]),asat:nz(nums[4])}});
   });
   return rows;
@@ -699,7 +733,13 @@ async function doLogin(){
   if(!nrk){loginMsg("Masukkan NRK Anda.");return;}
   if(!mapelList.length)await loadLists(false);
   const rows=mapelList.filter(m=>m.nrk&&String(m.nrk).trim()===nrk);
-  if(!rows.length){loginMsg("NRK tidak ditemukan di tab MAPEL. Hubungi admin.");return;}
+  if(!rows.length){
+    const serverPunyaNrk=mapelList.some(m=>m.nrk);
+    loginMsg(serverPunyaNrk
+      ?"NRK tidak ditemukan di tab MAPEL. Hubungi admin."
+      :"Server belum mengirim kolom NRK. Deploy ulang Apps Script (pilih New version), lalu Ctrl+F5.");
+    return;
+  }
   myMapels=[...new Set(rows.map(r=>r.mapel))];
   const u=rows[0];
   state.meta.guru=u.guru||"";state.meta.nip=u.nip||"";
@@ -707,14 +747,17 @@ async function doLogin(){
   populateMapelSelect(myMapels);
   setMapelTampil(myMapels[0]||"");
   $("#login").hidden=true;loginMsg("");$("#inpNrk").value="";
+  const wk=waliList.find(w=>w.nrk&&String(w.nrk).trim()===nrk);
+  $("#btnRapor").style.display=wk?"":"none";
   refreshKelasDropdown();renderTable();
-  toast(`✔ Selamat datang, ${u.guru||"Guru"}.`);
+  toast(`✔ Selamat datang, ${u.guru||"Guru"}${wk?" — Wali Kelas "+wk.kelas:""}.`);
 }
 $("#btnLogin").addEventListener("click",doLogin);
 $("#inpNrk").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 $("#btnLogout").addEventListener("click",()=>{
   state.meta.guru="";state.meta.nip="";state.meta.kelas="";state.rows=[];myMapels=[];
   $("#m-guru").value="";setMapelTampil("");populateMapelSelect([]);
+  $("#btnRapor").style.display="none";
   populateKelas(null,null);renderTable();save();
   $("#login").hidden=false;$("#inpNrk").value="";$("#inpNrk").focus();
 });
@@ -787,7 +830,7 @@ async function loadLists(notify){
   if(!u){if(notify)toast("Admin belum mengisi SHEET_URL di kode aplikasi.");return false;}
   try{
     const j=await gasGet(u);
-    kelasList=j.kelas||[];mapelList=j.mapel||[];
+    kelasList=j.kelas||[];mapelList=j.mapel||[];waliList=j.wali||[];
     setMapelTampil(state.meta.mapel);
     refreshKelasDropdown();
     if(notify)toast(`✔ Terhubung — ${kelasList.length} kelas · ${mapelList.length} mapel.`);
@@ -806,7 +849,7 @@ async function pullKelas(kelas,mapel){
   const j=await gasGet(urlSiap()+"?kelas="+encodeURIComponent(kelas)
     +(mapel?"&mapel="+encodeURIComponent(mapel):""));
   state.rows=(j.rows||[]).map(r=>({id:uid(),
-    nis:String(r.nis||""),jk:String(r.jk||"").toUpperCase(),nama:r.nama||"",
+    nis:String(r.nis||""),nisn:String(r.nisn||""),jk:String(r.jk||"").toUpperCase(),nama:r.nama||"",
     scores:{ph1:nz(r.scores.ph1),ph2:nz(r.scores.ph2),ph3:nz(r.scores.ph3),
     asts:nz(r.scores.asts),asat:nz(r.scores.asat)}}));
   if(j.salin)toast("Daftar siswa disalin dari mapel lain — isi nilai lalu simpan ke Sheet.");
@@ -866,7 +909,7 @@ $("#btnTemplate").addEventListener("click",()=>{
   toast("Template CSV diunduh.");
 });
 
-/* ---------- CETAK ---------- */
+/* ---------- CETAK NILAI ---------- */
 $("#btnPrint").addEventListener("click",()=>{
   const rows=viewRows(),k=kktp(),m=state.meta;
   const tgl=new Date().toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
@@ -903,6 +946,69 @@ $("#btnPrint").addEventListener("click",()=>{
       <div>Jakarta, ${tgl}<br>Guru Mata Pelajaran<br><br><br><br><b><u>${esc(m.guru)||"………………………………"}</u></b><br>NIP. ${m.nip?esc(m.nip):""}</div>
     </div>`;
   setTimeout(()=>window.print(),120);
+});
+
+/* ---------- RAPOR ASTS (khusus wali kelas) ---------- */
+function buildRapor(j){
+  const m=state.meta;
+  const tgl=new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const pages=j.students.map(st=>{
+    const rows=j.subjects.map((sb,i)=>{
+      const s=sb.nilai[(st.nama||"").toLowerCase()];
+      const val=k=>(s&&(s[k]!==""&&s[k]!=null))?s[k]:"–";
+      return `<tr><td>${i+1}</td><td class="nm">${esc(sb.mapel)}</td><td>${sb.kktp}</td>
+        <td>${val("ph1")}</td><td>${val("ph2")}</td><td>${val("ph3")}</td><td><b>${val("asts")}</b></td></tr>`;
+    }).join("");
+    return `<div class="rpage">
+      <div class="rkop">
+        <h2>LAPORAN HASIL</h2>
+        <h3>PENILAIAN SUMATIF TENGAH SEMESTER GANJIL</h3>
+        <h3>${esc(NAMA_SEKOLAH)}</h3>
+        <p>TAHUN PELAJARAN ${esc(m.tahun)}</p>
+      </div>
+      <hr><br>
+      <table class="rmeta">
+        <tr><td class="l1">Nama Siswa</td><td>: <b>${esc(st.nama)}</b></td>
+            <td class="l2">Kelas</td><td class="v2">: <b>${esc(j.kelas)}</b></td></tr>
+        <tr><td class="l1">NIS</td><td>: <b>${esc(st.nis)||"–"}</b></td>
+            <td class="l2">NISN</td><td class="v2">: <b>${esc(st.nisn)||"–"}</b></td></tr>
+      </table><br>
+      <table class="rt">
+        <thead><tr><th style="width:30px">NO.</th><th>MATA PELAJARAN</th>
+          <th style="width:50px">KKTP</th><th style="width:50px">PH-1</th><th style="width:50px">PH-2</th>
+          <th style="width:50px">PH-3</th><th style="width:60px">ASTS</th></tr></thead>
+        <tbody>${rows||'<tr><td colspan="7">Belum ada nilai.</td></tr>'}
+          <tr><td colspan="2" rowspan="3" class="lab">KETIDAKHADIRAN</td><td colspan="5">Izin&nbsp;&nbsp;&nbsp;: –</td></tr>
+          <tr><td colspan="5">Sakit : –</td></tr>
+          <tr><td colspan="5">Alpa&nbsp; : –</td></tr>
+        </tbody>
+      </table>
+      <table class="rfoot">
+        <tr><td style="width:50%"></td><td>Diberikan di : Jakarta<br>Tanggal : ${tgl}</td></tr>
+        <tr><td>Mengetahui,<br>Orang Tua / Wali<br><br><br><br>( ……………………………… )</td>
+            <td><br>Wali Kelas<br><br><br><br><b><u>${esc(m.guru)||"………………………………"}</u></b><br>NIP. ${m.nip?esc(m.nip):""}</td></tr>
+      </table>
+    </div>`;
+  }).join("");
+  $("#raporSheet").innerHTML=pages||'<div class="rpage">Belum ada data untuk kelas ini.</div>';
+}
+$("#btnRapor").addEventListener("click",async()=>{
+  const kelas=state.meta.kelas;
+  if(!kelas){toast("Pilih kelas dulu di dropdown atas.");return;}
+  const u=urlSiap();
+  if(!u){toast("Admin belum mengisi SHEET_URL di kode aplikasi.");return;}
+  toast(`⏳ Menyusun rapor ${kelas}…`);
+  try{
+    const j=await gasGet(u+"?rapor="+encodeURIComponent(kelas));
+    if(!j.ok)throw new Error(j.error||"respon tidak valid");
+    if(!j.students||!j.students.length){
+      toast(j.students?"Belum ada data siswa untuk kelas ini."
+                       :"Server belum punya fitur rapor — deploy ulang Apps Script (New version).");
+      return;
+    }
+    buildRapor(j);
+    setTimeout(()=>window.print(),200);
+  }catch(err){toast("✕ Gagal memuat rapor: "+err.message);}
 });
 
 /* ---------- meta & init ---------- */
