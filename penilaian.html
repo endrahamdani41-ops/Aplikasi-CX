@@ -61,6 +61,10 @@ h1 .hl::after{content:"";position:absolute;left:-2%;right:-2%;bottom:6%;height:3
 #btnPrint:hover{box-shadow:0 4px 0 #5b21b6;filter:brightness(1.08)}
 #btnRapor{background:#db2777;border-color:#9d174d;color:#fff;box-shadow:0 2px 0 #9d174d}
 #btnRapor:hover{box-shadow:0 4px 0 #9d174d;filter:brightness(1.08)}
+#btnAbsen{background:#0d9488;border-color:#0f766e;color:#fff;box-shadow:0 2px 0 #0f766e}
+#btnAbsen:hover{box-shadow:0 4px 0 #0f766e;filter:brightness(1.08)}
+#btnMonitor{background:#475569;border-color:#334155;color:#fff;box-shadow:0 2px 0 #334155}
+#btnMonitor:hover{box-shadow:0 4px 0 #334155;filter:brightness(1.08)}
 #btnTheme{background:#f59e0b;border-color:#b45309;color:#fff;box-shadow:0 2px 0 #b45309}
 #btnTheme:hover{box-shadow:0 4px 0 #b45309;filter:brightness(1.08)}
 #btnLogout{background:#dc2626;border-color:#991b1b;color:#fff;box-shadow:0 2px 0 #991b1b}
@@ -177,7 +181,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 /* LOGIN NRK */
 .nrk-inp{width:100%;border:1.5px solid var(--ink);border-radius:9px;background:var(--input-bg);color:var(--ink);padding:11px 14px;font:600 16px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-align:center;transition:.2s}
 .nrk-inp:focus{outline:none;box-shadow:0 0 0 3px rgba(255,210,63,.5);border-color:var(--green)}
-.lbl-nrk{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:2px 0 6px}
 .login-msg{min-height:18px;font-size:12px;color:var(--red);font-weight:600;margin:6px 0 10px}
 .login-logo{font-size:36px;text-align:center;margin-bottom:2px}
 .toast{position:fixed;top:24px;right:24px;z-index:70;display:flex;align-items:center;gap:14px;background:var(--toast-bg);color:var(--toast-fg);padding:13px 18px;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13.5px;font-weight:600;opacity:0;transform:translateY(-18px);transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none;max-width:calc(100vw - 48px)}
@@ -235,7 +238,6 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   body{background:#fff}
   .page,.margin-line,.toast,.overlay{display:none!important}
   #printSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm}
-  #printSheet .kop{text-align:center}
   #printSheet .kop{text-align:center;position:relative;min-height:85px;padding:0 95px}
   #printSheet .kop .logo{position:absolute;left:0;top:50%;transform:translateY(-50%);width:80px;height:80px;object-fit:contain}
   #printSheet .kop h2{font-size:15pt;font-weight:700;letter-spacing:.02em;margin:0;text-transform:uppercase}
@@ -252,7 +254,7 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #printSheet table.nt td.nm{text-align:left}
   #printSheet .ttd{display:flex;justify-content:space-between;margin-top:36px;font-size:11pt;text-align:center}
   #printSheet .note{margin-top:14px;font-size:9.5pt;font-style:italic}
-  /* RAPOR */
+  /* RAPOR — semua teks 12pt */
   #raporSheet{display:block;font-family:'Times New Roman',Times,serif;color:#000;padding:4mm;font-size:12pt}
   #raporSheet .rpage{page-break-after:always}
   #raporSheet .rpage:last-child{page-break-after:auto}
@@ -263,12 +265,12 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #raporSheet .rkop p{font-size:12pt;margin:2px 0}
   #raporSheet hr{border:0;border-top:2.5px solid #000;margin:8px 0}
   #raporSheet .rmeta{font-size:12pt;margin:4px 0 10px;width:100%;border:0}
-  #raporSheet .rmeta td{border:0;padding:7px 6px 7px 0;vertical-align:top;text-align:left !important}
+  #raporSheet .rmeta td{border:0;padding:7px 6px 7px 0;vertical-align:top;text-align:left !important;line-height:1.6}
   #raporSheet .rmeta td.l1{width:110px}
   #raporSheet .rmeta td.l2{width:90px}
   #raporSheet .rmeta td.v2{width:150px}
   #raporSheet table.rt{width:100%;border-collapse:collapse;font-size:12pt}
-  #raporSheet table.rt th,#raporSheet table.rt td{border:1px solid #000;padding:8px 6px;text-align:center}
+  #raporSheet table.rt th,#raporSheet table.rt td{border:1px solid #000;padding:8px 6px;text-align:center;line-height:1.5}
   #raporSheet table.rt th{
     background:#eee !important;color:#000 !important;
     font-family:'Times New Roman',Times,serif !important;
@@ -279,10 +281,11 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   #raporSheet table.rt td.lab{text-align:center;font-weight:bold;letter-spacing:.05em}
   #raporSheet .rfoot{width:100%;margin-top:24px;font-size:12pt}
   #raporSheet .rfoot td{vertical-align:top;padding:4px 8px;border:0}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
-<body>
+url<body>
 
 <!-- ============ LOGIN NRK ============ -->
 <div class="overlay" id="login">
@@ -290,12 +293,10 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
     <div class="card-h"><span>Login Guru</span></div>
     <div class="tabpane">
       <div class="login-logo">🔐</div>
-
       <input id="inpNrk" class="nrk-inp" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan NRK Anda">
       <div id="loginMsg" class="login-msg"></div>
       <button class="btn primary" id="btnLogin" style="width:100%;justify-content:center">Masuk</button>
-
-      </div>
+    </div>
   </div>
 </div>
 
@@ -322,6 +323,12 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
     <button class="btn" id="btnRapor" style="display:none" title="Cetak Rapor ASTS (khusus wali kelas)" aria-label="Cetak Rapor ASTS">
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z" stroke="#ffffff"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" stroke="#ffffff"/><path d="M22 10v6" stroke="#ffd23f"/></svg></span>
       <span class="txt">Rapor</span></button>
+    <button class="btn" id="btnAbsen" style="display:none" title="Isi Absensi (khusus wali kelas)" aria-label="Isi Absensi">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#ffffff"/><path d="M16 2v4" stroke="#ffffff"/><path d="M8 2v4" stroke="#ffffff"/><path d="M3 10h18" stroke="#ffffff"/><path d="m9 16 2 2 4-4" stroke="#ffd23f"/></svg></span>
+      <span class="txt">Absen</span></button>
+    <button class="btn" id="btnMonitor" style="display:none" title="Monitor kelengkapan nilai" aria-label="Monitor kelengkapan nilai">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" stroke="#ffffff"/><path d="M7 15v3" stroke="#ffd23f"/><path d="M11 11v7" stroke="#ffffff"/><path d="M15 7v11" stroke="#ffffff"/><path d="M19 12v6" stroke="#ffd23f"/></svg></span>
+      <span class="txt">Monitor</span></button>
     <button class="btn" id="btnTheme" title="Ganti tema" aria-label="Ganti tema">
       <span class="ic" id="icTheme"></span>
       <span class="txt">Mode Gelap</span></button>
@@ -440,6 +447,40 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
   </div>
 </div>
 
+<!-- MODAL ABSEN -->
+<div class="overlay" id="absenModal" hidden>
+  <div class="modal card">
+    <div class="card-h"><span>Absensi Kelas <span id="absenKelas"></span></span>
+      <button class="mclose" id="absenClose" title="Tutup">✕</button></div>
+    <div class="tabpane">
+      <div class="table-scroll" style="max-height:55vh">
+        <table style="min-width:520px">
+          <thead><tr><th style="text-align:left;min-width:220px">Nama Siswa</th>
+            <th style="width:70px">Izin</th><th style="width:70px">Sakit</th><th style="width:70px">Alpa</th></tr></thead>
+          <tbody id="absenBody"></tbody>
+        </table>
+      </div>
+      <div class="improw">
+        <span class="hint">Isi angka kehadiran semester ini, lalu ⤒ Simpan.</span>
+        <button class="btn primary" id="btnSaveAbsen">⤒ Simpan Absen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MONITOR -->
+<div class="overlay" id="monitorModal" hidden>
+  <div class="modal card">
+    <div class="card-h"><span id="monTitle">Monitor Kelengkapan Nilai</span>
+      <button class="mclose" id="monClose" title="Tutup">✕</button></div>
+    <div class="tabpane">
+      <div id="monSummary" class="chip" style="margin-bottom:12px"></div>
+      <div id="monWrap" class="table-scroll" style="max-height:60vh"></div>
+      <p class="hint" style="margin-top:10px" id="monHint"></p>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="toastAct" hidden>Urungkan</button></div>
 <div id="printSheet"></div>
 <div id="raporSheet"></div>
@@ -450,12 +491,12 @@ textarea:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(255,210
 /* ============================================================
    ⚙️ KONFIGURASI ADMIN — ISI SEKALI, LALU JANGAN SENTUH LAGI
    ============================================================ */
-const SHEET_URL   = "https://script.google.com/macros/s/AKfycbzaDyTcEuiFRdnE6Uqnr18FEYtkXKGvue0HmikKM4O45UcoezMzWum2h8jKxjVieUHl/exec";
+const SHEET_URL   = "https://script.google.com/macros/s/AKfycbw83CVDA-enyK6_mH0ENJpsihlnAuZkX7PvS74AzVBcVxRo3IYJ4IkbneZq9LnJ_HIl/exec";
 const NAMA_SEKOLAH = "SMPN 110 JAKARTA";
 const NAMA_KEPSEK  = "Iis Ratna Sariningrum, S.Pd., M.M.";
 const NIP_KEPSEK   = "197010311994122001";
 const LOGO_URL     = "https://i.ibb.co.com/S7935s95/erasebg-transformed.png";
-const logoTag      = ()=>LOGO_URL?`<img class="logo" src="${LOGO_URL}" onerror="this.style.display='none'">`:"";
+const ADMIN_NRK    = "186043";   // ← NRK yang mendapat monitor semua guru
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const KEY="rekap-nilai-ph-asts-asat-v1";
@@ -467,6 +508,7 @@ const fmtR=v=>(v==null||v==="")?"–":String(Math.round(+v));
 const nz=v=>v==null?"":v;
 const NUMKEYS=["ph1","ph2","ph3","asts","asat"];
 const urlSiap=()=>SHEET_URL.includes("GANTI_DENGAN_URL_EXEC_ANDA")?"":SHEET_URL;
+const logoTag=()=>LOGO_URL?`<img class="logo" src="${LOGO_URL}" onerror="this.style.display='none'">`:"";
 
 const ICON_MOON='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="#ffffff"/><path d="M17 4h4" stroke="#fde68a"/><path d="M19 2v4" stroke="#fde68a"/></svg>';
 const ICON_SUN='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" stroke="#ffffff"/><path d="M12 2v2" stroke="#fde68a"/><path d="M12 20v2" stroke="#fde68a"/><path d="m4.93 4.93 1.41 1.41" stroke="#fde68a"/><path d="m17.66 17.66 1.41 1.41" stroke="#fde68a"/><path d="M2 12h2" stroke="#fde68a"/><path d="M20 12h2" stroke="#fde68a"/><path d="m6.34 17.66-1.41 1.41" stroke="#fde68a"/><path d="m19.07 4.93-1.41 1.41" stroke="#fde68a"/></svg>';
@@ -496,7 +538,7 @@ function defaultState(){
   return {meta:{mapel:"",kelas:"",guru:"",nip:"",tahun:tahunAjaranOtomatis(),kktp:82},
           rows:[],sort:{key:null,dir:1}};
 }
-let state,saveT,lastDeleted=null,kelasList=[],mapelList=[],myMapels=[],waliList=[];
+let state,saveT,lastDeleted=null,kelasList=[],mapelList=[],myMapels=[],waliList=[],loggedInNrk="";
 try{const raw=localStorage.getItem(KEY); const s=raw&&JSON.parse(raw);
   state=(s&&Array.isArray(s.rows))?s:defaultState();
 }catch(e){state=defaultState();}
@@ -752,17 +794,22 @@ async function doLogin(){
   populateMapelSelect(myMapels);
   setMapelTampil(myMapels[0]||"");
   $("#login").hidden=true;loginMsg("");$("#inpNrk").value="";
+  loggedInNrk=nrk;
   const wk=waliList.find(w=>w.nrk&&String(w.nrk).trim()===nrk);
   $("#btnRapor").style.display=wk?"":"none";
+  $("#btnAbsen").style.display=wk?"":"none";
+  $("#btnMonitor").style.display=(wk||nrk===ADMIN_NRK)?"":"none";
   refreshKelasDropdown();renderTable();
   toast(`✔ Selamat datang, ${u.guru||"Guru"}${wk?" — Wali Kelas "+wk.kelas:""}.`);
 }
 $("#btnLogin").addEventListener("click",doLogin);
 $("#inpNrk").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 $("#btnLogout").addEventListener("click",()=>{
-  state.meta.guru="";state.meta.nip="";state.meta.kelas="";state.rows=[];myMapels=[];
+  state.meta.guru="";state.meta.nip="";state.meta.kelas="";state.rows=[];myMapels=[];loggedInNrk="";
   $("#m-guru").value="";setMapelTampil("");populateMapelSelect([]);
   $("#btnRapor").style.display="none";
+  $("#btnAbsen").style.display="none";
+  $("#btnMonitor").style.display="none";
   populateKelas(null,null);renderTable();save();
   $("#login").hidden=false;$("#inpNrk").value="";$("#inpNrk").focus();
 });
@@ -914,6 +961,128 @@ $("#btnTemplate").addEventListener("click",()=>{
   toast("Template CSV diunduh.");
 });
 
+/* ---------- ABSEN (khusus wali kelas) ---------- */
+let absenData={kelas:"",students:[],absen:{}};
+$("#btnAbsen").addEventListener("click",async()=>{
+  const kelas=state.meta.kelas;
+  if(!kelas){toast("Pilih kelas dulu di dropdown atas.");return;}
+  const u=urlSiap();
+  if(!u){toast("Admin belum mengisi SHEET_URL di kode aplikasi.");return;}
+  toast(`⏳ Memuat daftar siswa ${kelas}…`);
+  try{
+    const j=await gasGet(u+"?rapor="+encodeURIComponent(kelas));
+    if(!j.ok)throw new Error(j.error||"respon tidak valid");
+    absenData={kelas:kelas,students:j.students||[],absen:j.absen||{}};
+    $("#absenKelas").textContent=kelas;
+    const tb=$("#absenBody");tb.innerHTML="";
+    absenData.students.forEach(st=>{
+      const a=absenData.absen[(st.nama||"").toLowerCase()]||{};
+      const tr=document.createElement("tr");
+      tr.dataset.nama=st.nama;
+      tr.innerHTML=`<td class="name" style="white-space:normal">${esc(st.nama)}</td>
+        <td><input class="inp-num" data-f="i" value="${(a.i===""||a.i==null)?"":a.i}"></td>
+        <td><input class="inp-num" data-f="s" value="${(a.s===""||a.s==null)?"":a.s}"></td>
+        <td><input class="inp-num" data-f="a" value="${(a.a===""||a.a==null)?"":a.a}"></td>`;
+      tb.appendChild(tr);
+    });
+    $("#absenModal").hidden=false;
+  }catch(err){toast("✕ Gagal memuat: "+err.message);}
+});
+$("#absenClose").addEventListener("click",()=>{$("#absenModal").hidden=true;});
+$("#absenModal").addEventListener("click",e=>{if(e.target.id==="absenModal")$("#absenModal").hidden=true;});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#absenModal").hidden)$("#absenModal").hidden=true;});
+$("#btnSaveAbsen").addEventListener("click",async()=>{
+  const rows=$$("#absenBody tr").map(tr=>({
+    nama:tr.dataset.nama,
+    i:tr.querySelector('[data-f="i"]').value,
+    s:tr.querySelector('[data-f="s"]').value,
+    a:tr.querySelector('[data-f="a"]').value
+  }));
+  try{
+    const j=await gasPost(urlSiap(),{type:"absen",kelas:absenData.kelas,rows:rows});
+    toast(`✔ ${j.tersimpan} data absen tersimpan ke tab ABSEN.`);
+    $("#absenModal").hidden=true;
+  }catch(err){toast("✕ Gagal menyimpan: "+err.message);}
+});
+
+/* ---------- MONITOR (wali kelas = per kelas · admin = semua guru) ---------- */
+$("#btnMonitor").addEventListener("click",()=>{
+  if(loggedInNrk===ADMIN_NRK) bukaMonitorSemua(); else bukaMonitorKelas();
+});
+$("#monClose").addEventListener("click",()=>{$("#monitorModal").hidden=true;});
+$("#monitorModal").addEventListener("click",e=>{if(e.target.id==="monitorModal")$("#monitorModal").hidden=true;});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#monitorModal").hidden)$("#monitorModal").hidden=true;});
+
+async function bukaMonitorKelas(){
+  const kelas=state.meta.kelas, u=urlSiap();
+  if(!u){toast("Admin belum mengisi SHEET_URL di kode aplikasi.");return;}
+  if(!kelas){toast("Pilih kelas wali Anda dulu di dropdown atas.");return;}
+  toast(`⏳ Memuat kelengkapan nilai ${kelas}…`);
+  try{
+    const j=await gasGet(u+"?rapor="+encodeURIComponent(kelas));
+    if(!j.ok)throw new Error(j.error||"respon tidak valid");
+    const total=(j.students||[]).length;
+    const rows=(j.subjects||[]).map(sb=>{
+      let withAsts=0,withAny=0;
+      Object.values(sb.nilai||{}).forEach(s=>{
+        const any=Object.values(s).some(v=>v!==""&&v!=null);
+        if(any)withAny++;
+        if(s&&s.asts!==""&&s.asts!=null)withAsts++;
+      });
+      const status=(total>0&&withAsts>=total)?"LENGKAP":(withAny>0?"SEBAGIAN":"BELUM");
+      return {mapel:sb.mapel,guru:sb.guru||"—",withAsts:withAsts,total:total,status:status};
+    });
+    const lengkap=rows.filter(r=>r.status==="LENGKAP").length;
+    $("#monTitle").textContent=`Kelengkapan Nilai Kelas ${kelas}`;
+    $("#monSummary").textContent=`✔ ${lengkap} dari ${rows.length} mapel lengkap`;
+    $("#monHint").textContent="LENGKAP = seluruh siswa sudah terisi ASTS oleh guru mapelnya.";
+    const col={LENGKAP:"var(--green)",SEBAGIAN:"var(--yellow-text)",BELUM:"var(--red)"};
+    $("#monWrap").innerHTML=`<table style="min-width:760px">
+      <thead><tr><th style="text-align:left">Mata Pelajaran</th><th style="text-align:left">Guru Mapel</th>
+        <th style="width:110px">ASTS Terisi</th><th style="width:110px">Status</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr>
+         <td style="text-align:left;white-space:nowrap">${esc(r.mapel)}</td>
+        <td style="text-align:left;white-space:nowrap">${esc(r.guru)}</td>
+        <td><b>${r.withAsts}/${r.total}</b></td>
+        <td><span style="font:700 10px 'IBM Plex Mono',monospace;padding:3px 9px;border-radius:999px;border:1.5px solid ${col[r.status]};color:${col[r.status]};white-space:nowrap">${r.status}</span></td>
+      </tr>`).join("")}</tbody></table>`;
+    $("#monitorModal").hidden=false;
+  }catch(err){toast("✕ Gagal memuat monitor: "+err.message);}
+}
+
+async function bukaMonitorSemua(){
+  const u=urlSiap();
+  if(!u){toast("Admin belum mengisi SHEET_URL di kode aplikasi.");return;}
+  toast("⏳ Memuat monitor kelengkapan…");
+  try{
+    const j=await gasGet(u+"?monitor=1");
+    if(!j.monitor){toast("Server belum punya fitur monitor — deploy ulang Apps Script (pilih New version).");return;}
+    const list=j.monitor||[];
+    const lengkap=list.filter(t=>t.total>0&&t.terisi===t.total).length;
+    const sebagian=list.filter(t=>t.terisi>0&&t.terisi<t.total).length;
+    $("#monTitle").textContent="Monitor Kelengkapan Nilai — Semua Guru";
+    $("#monSummary").textContent=`✔ ${lengkap} guru lengkap · ◐ ${sebagian} sebagian · total ${list.length} guru`;
+    $("#monHint").textContent="Chip hijau ✔ = kelas ampu sudah terisi nilai.";
+    $("#monWrap").innerHTML=`<table style="min-width:640px">
+      <thead><tr><th style="text-align:left;min-width:180px">Guru</th>
+        <th style="text-align:left">Mapel</th><th style="width:80px">Progres</th>
+        <th style="text-align:left;min-width:220px">Kelas Ampu</th></tr></thead>
+      <tbody>${list.map(t=>{
+        const chips=t.detail.map(d=>
+          `<span style="display:inline-block;margin:1px 3px;padding:2px 8px;border-radius:999px;
+            font:700 10px 'IBM Plex Mono',monospace;white-space:nowrap;
+            border:1.5px solid ${d.terisi?"var(--green)":"var(--line)"};
+            color:${d.terisi?"var(--green)":"var(--muted)"}">${d.kelas}${d.terisi?" ✔":""}</span>`).join("");
+         return `<tr><td style="text-align:left;white-space:nowrap">${esc(t.guru)||"—"}</td>
+          <td style="text-align:left;white-space:nowrap">${esc(t.mapel)}</td>
+
+          <td><b>${t.terisi}/${t.total}</b></td>
+          <td style="text-align:left">${chips||"—"}</td></tr>`;
+      }).join("")}</tbody></table>`;
+    $("#monitorModal").hidden=false;
+  }catch(err){toast("✕ Gagal memuat monitor: "+err.message);}
+}
+
 /* ---------- CETAK NILAI ---------- */
 $("#btnPrint").addEventListener("click",()=>{
   const rows=viewRows(),k=kktp(),m=state.meta;
@@ -925,8 +1094,8 @@ $("#btnPrint").addEventListener("click",()=>{
     <td>${fmtR(rph)}</td><td>${s.asts===""?"–":s.asts}</td><td>${s.asat===""?"–":s.asat}</td>
     <td><b>${fmtR(na)}</b></td><td>${predikat(naR)||"–"}</td>
     <td>${naR==null?"–":(naR>=k?"Tuntas":"Belum")}</td></tr>`;}).join("");
-  $("#printSheet").innerHTML=`
-        <div class="kop">
+  $("#print ").innerHTML=`
+    <div class="kop">
       ${logoTag()}
       <h2>${esc(NAMA_SEKOLAH)}</h2>
       <p>PENILAIAN HARIAN</p>
@@ -960,7 +1129,6 @@ function buildRapor(j){
   const tgl=new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   const absen=j.absen||{};
   const absenVal=(st,k)=>{const a=absen[(st.nama||"").toLowerCase()];return a&&a[k]!==""?a[k]:"–";};
-
   const pages=j.students.map(st=>{
     const rows=j.subjects.map((sb,i)=>{
       const s=sb.nilai[(st.nama||"").toLowerCase()];
@@ -969,7 +1137,7 @@ function buildRapor(j){
         <td>${val("ph1")}</td><td>${val("ph2")}</td><td>${val("ph3")}</td><td><b>${val("asts")}</b></td></tr>`;
     }).join("");
     return `<div class="rpage">
-          <div class="rkop">
+      <div class="rkop">
         ${logoTag()}
         <h2>LAPORAN HASIL</h2>
         <h3>PENILAIAN SUMATIF TENGAH SEMESTER GANJIL</h3>
