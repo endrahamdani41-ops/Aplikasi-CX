@@ -91,7 +91,7 @@ footer{text-align:center;color:var(--muted);padding:30px 0}
     <button class="cta" onclick="showScreen('materi')">Mulai Belajar →</button>
   </div>
   <div class="stack-art">
-    <div class="stack"><div class="block">+</div><div class="block">×</div><div class="block">( )</div></div>
+    <div class="stack"><div class="block">+</div><div class="block">*</div><div class="block">( )</div></div>
   </div>
 </div>
 <div class="grid">
@@ -106,13 +106,13 @@ footer{text-align:center;color:var(--muted);padding:30px 0}
 <div class="grid">
 <div class="card"><h3>📌 Infix</h3><p>Operator berada di antara operand.</p><div class="example">A + B</div><p>Contoh sehari-hari: <b>5 + 3</b>.</p></div>
 <div class="card"><h3>📌 Postfix</h3><p>Operator ditulis setelah operand.</p><div class="example">AB+</div><p>Postfix membantu komputer memproses urutan operasi dengan lebih sederhana.</p></div>
-<div class="card"><h3>📚 Stack</h3><p>Stack memakai prinsip <b>LIFO</b> (Last In, First Out).</p><div class="example">TOP → [ × ] [ + ]</div><p>Dalam konversi, operator disimpan sementara di stack.</p></div>
+<div class="card"><h3>📚 Stack</h3><p>Stack memakai prinsip <b>LIFO</b> (Last In, First Out).</p><div class="example">TOP → [ * ] [ + ]</div><p>Dalam konversi, operator disimpan sementara di stack.</p></div>
 </div>
 <div class="card" style="margin-top:20px">
 <h3>Prioritas Operator</h3>
 <div class="table-wrap"><table class="tbl"><tr><th>Prioritas</th><th>Operator</th><th>Keterangan</th></tr>
 <tr><td>1</td><td>( )</td><td>Tanda kurung</td></tr><tr><td>2</td><td>^</td><td>Pangkat</td></tr>
-<tr><td>3</td><td>× ÷</td><td>Perkalian / Pembagian</td></tr><tr><td>4</td><td>+ -</td><td>Penjumlahan / Pengurangan</td></tr></table></div>
+<tr><td>3</td><td>* /</td><td>Perkalian / Pembagian</td></tr><tr><td>4</td><td>+ -</td><td>Penjumlahan / Pengurangan</td></tr></table></div>
 </div>
 <div class="rule" style="margin-top:20px">
 <div class="card"><h3>1️⃣ Operand</h3><p>Langsung masukkan ke <b>output</b>.</p></div>
@@ -124,22 +124,22 @@ footer{text-align:center;color:var(--muted);padding:30px 0}
 <section id="contoh" class="screen">
 <div class="lesson-head"><div><span class="badge">MATERI 2</span><h2>Contoh Langkah demi Langkah</h2></div><button class="secondary" onclick="showScreen('simulasi')">Coba Simulasi →</button></div>
 <div class="card">
-<h3>Contoh: A + B × C</h3>
-<p>Karena × memiliki prioritas lebih tinggi daripada +, operator × akan diproses lebih dahulu.</p>
+<h3>Contoh: A + B * C</h3>
+<p>Karena * memiliki prioritas lebih tinggi daripada +, operator * akan diproses lebih dahulu.</p>
 <div class="table-wrap"><table class="tbl">
 <tr><th>Simbol</th><th>Output</th><th>Stack</th><th>Alasan</th></tr>
 <tr><td>A</td><td>A</td><td>-</td><td>Operand → output</td></tr>
 <tr><td>+</td><td>A</td><td>+</td><td>Operator → stack</td></tr>
 <tr><td>B</td><td>AB</td><td>+</td><td>Operand → output</td></tr>
-<tr><td>×</td><td>AB</td><td>+ ×</td><td>× lebih tinggi → stack</td></tr>
-<tr><td>C</td><td>ABC</td><td>+ ×</td><td>Operand → output</td></tr>
-<tr><td>Selesai</td><td><b>ABC×+</b></td><td>-</td><td>Keluarkan stack</td></tr>
+<tr><td>*</td><td>AB</td><td>+ *</td><td>* lebih tinggi → stack</td></tr>
+<tr><td>C</td><td>ABC</td><td>+ *</td><td>Operand → output</td></tr>
+<tr><td>Selesai</td><td><b>ABC*+</b></td><td>-</td><td>Keluarkan stack</td></tr>
 </table></div>
-<div class="example">A + B × C → ABC×+</div>
+<div class="example">A + B * C → ABC*+</div>
 </div>
 <div class="grid">
-<div class="card"><h3>Contoh 2</h3><div class="example">(A + B) × C</div><p>Hasil: <b>AB+C×</b></p></div>
-<div class="card"><h3>Contoh 3</h3><div class="example">A × (B + C)</div><p>Hasil: <b>ABC+×</b></p></div>
+<div class="card"><h3>Contoh 2</h3><div class="example">(A + B) * C</div><p>Hasil: <b>AB+C*</b></p></div>
+<div class="card"><h3>Contoh 3</h3><div class="example">A * (B + C)</div><p>Hasil: <b>ABC+*</b></p></div>
 <div class="card"><h3>Contoh 4</h3><div class="example">A + B - C</div><p>Hasil: <b>AB+C-</b></p></div>
 </div>
 </section>
@@ -166,7 +166,7 @@ footer{text-align:center;color:var(--muted);padding:30px 0}
 <section id="drag" class="screen">
 <div class="lesson-head"><div><span class="badge">TANTANGAN</span><h2>Susun Postfix dengan Drag & Drop</h2></div></div>
 <div class="card">
-<h3>Ekspresi: A + B × C</h3><p>Susun token di bawah menjadi postfix yang benar.</p>
+<h3>Ekspresi: A + B * C</h3><p>Susun token di bawah menjadi postfix yang benar.</p>
 <div class="drag-area">
 <div><h3>Token</h3><div id="tokens" class="tokens"></div></div>
 <div><h3>Jawabanmu</h3><div id="dropzone" class="dropzone" ondragover="allowDrop(event)" ondrop="dropToken(event)"></div></div>
@@ -181,10 +181,25 @@ footer{text-align:center;color:var(--muted);padding:30px 0}
 <span class="badge">🏆 BOSS LEVEL</span>
 <h1>Tantangan Bonus</h1>
 <p>Konversikan ekspresi berikut tanpa bantuan contoh:</p>
-<div class="example">(A + B) × C - D ÷ E</div>
+<div class="example">(A + B) * C - D / E</div>
 <input id="bonusInput" placeholder="Tulis postfix..." style="width:min(600px,100%);padding:15px;border-radius:12px;border:1px solid var(--border);background:#07101d;color:white;font-size:18px;text-align:center">
-<br><br><button class="primary" onclick="checkBonus()">Periksa Tantangan</button>
+<br><br>
+<div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+<button class="primary" onclick="checkBonus()">Periksa Tantangan</button>
+<button class="secondary" onclick="showBonusAnswer()">👁️ Lihat Jawaban</button>
+</div>
 <div id="bonusFeedback" class="feedback"></div>
+<div id="bonusAnswer" class="feedback" style="margin-top:12px;text-align:left">
+<b>💡 Jawaban:</b>
+<div class="example" style="margin-bottom:10px">AB+C*DE/-</div>
+<b>Penjelasan:</b>
+<ol>
+<li><b>(A + B)</b> → <b>AB+</b></li>
+<li><b>AB+</b> dikalikan dengan <b>C</b> → <b>AB+C*</b></li>
+<li><b>D / E</b> → <b>DE/</b></li>
+<li>Terakhir operasi pengurangan → <b>AB+C*DE/-</b></li>
+</ol>
+</div>
 </div>
 </section>
 <footer>LessonBoard Informatika Kelas 8 • Infix → Postfix</footer>
@@ -217,13 +232,13 @@ function updateProgress(){
 
 function precedence(op){
  if(op==='^')return 3;
- if(op==='*'||op==='×'||op==='/ '||op==='/')return 2;
+ if(op==='*'||op==='*'||op==='/ '||op==='/')return 2;
  if(op==='+'||op==='-')return 1;
  return 0;
 }
 function infixToPostfix(exp){
  const output=[], stack=[];
- const chars=exp.replace(/\s+/g,'').replace(/x/g,'*').split('');
+ const chars=exp.replace(/\s+/g,'').replace(/×/g,'*').split('');
  for(const c of chars){
    if(/[A-Za-z0-9]/.test(c)) output.push(c);
    else if(c==='(') stack.push(c);
@@ -259,19 +274,19 @@ function escapeHTML(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','
 const questions=[
 ["A + B","AB+","AB+","A+B","BA+","AB-","A"],
 ["A - B","AB-","AB-","BA-","AB+","A-B","A"],
-["A × B","AB×","AB×","BA×","A×B","AB+","A"],
-["A + B × C","ABC×+","ABC×+","AB+C×","AB×C+","A+B×C","B"],
-["A × B + C","AB×C+","AB×C+","ABC+×","AC×B+","AB+C×","B"],
+["A * B","AB*","AB*","BA*","A*B","AB+","A"],
+["A + B * C","ABC*+","ABC*+","AB+C*","AB*C+","A+B*C","B"],
+["A * B + C","AB*C+","AB*C+","ABC+*","AC*B+","AB+C*","B"],
 ["A + B - C","AB+C-","AB+C-","ABC-+","AB-C+","A+BC-","B"],
-["(A + B) × C","AB+C×","AB+C×","ABC+×","AB×C+","A+B×C","A"],
-["A × (B + C)","ABC+×","ABC+×","AB×C+","A+BC×","ABC×+","A"],
-["(A - B) ÷ C","AB-C÷","AB-C÷","ABC-÷","AB÷C-","A-B÷C","A"],
-["A + B × C - D","ABC×+D-","ABC×+D-","AB+C×D-","ABCD×+-","ABC+×D-","A"],
-["(A + B) × (C - D)","AB+CD-×","AB+CD-×","ABC+D-×","AB+CD×-","AB×CD+-","A"],
-["A × B + C × D","AB×CD×+","AB×CD×+","ABC+×D","AB+C×D×","AB×C+D×","A"],
-["A + (B × C - D)","ABC×D-+","ABC×D-+","AB+C×D-","ABC×+D-","ABCD-×+","A"],
-["(A + B) ÷ (C - D)","AB+CD-÷","AB+CD-÷","ABC+D-÷","AB+CD÷-","AB÷CD-+","A"],
-["A × (B + C) - D","ABC+×D-","ABC+×D-","AB+C×D-","ABC×+D-","AB×CD+-","A"]
+["(A + B) * C","AB+C*","AB+C*","ABC+*","AB*C+","A+B*C","A"],
+["A * (B + C)","ABC+*","ABC+*","AB*C+","A+BC*","ABC*+","A"],
+["(A - B) / C","AB-C/","AB-C/","ABC-/","AB/C-","A-B/C","A"],
+["A + B * C - D","ABC*+D-","ABC*+D-","AB+C*D-","ABCD*+-","ABC+*D-","A"],
+["(A + B) * (C - D)","AB+CD-*","AB+CD-*","ABC+D-*","AB+CD*-","AB*CD+-","A"],
+["A * B + C * D","AB*CD*+","AB*CD*+","ABC+*D","AB+C*D*","AB*C+D*","A"],
+["A + (B * C - D)","ABC*D-+","ABC*D-+","AB+C*D-","ABC*+D-","ABCD-*+","A"],
+["(A + B) / (C - D)","AB+CD-/","AB+CD-/","ABC+D-/","AB+CD/-","AB/CD-+","A"],
+["A * (B + C) - D","ABC+*D-","ABC+*D-","AB+C*D-","ABC*+D-","AB*CD+-","A"]
 ];
 let qIndex=0,qScore=0,answered=false;
 function renderQuiz(){
@@ -304,7 +319,7 @@ function nextQuiz(){
 }
 renderQuiz();
 
-let dragItems=['A','B','C','×','+'];
+let dragItems=['A','B','C','*','+'];
 function resetDrag(){
  const t=document.getElementById('tokens'),d=document.getElementById('dropzone');
  t.innerHTML='';d.innerHTML='';
@@ -322,19 +337,28 @@ function dropToken(e){
 function checkDrag(){
  const ans=[...document.querySelectorAll('#dropzone .token')].map(x=>x.textContent).join('');
  const fb=document.getElementById('dragFeedback');fb.classList.add('show');
- if(ans==='ABC×+'){fb.className='feedback show good';fb.innerHTML='🎉 Tepat! ABC×+ adalah postfix dari A + B × C.';addScore(20);completed.add('drag');updateProgress()}
- else{fb.className='feedback show bad';fb.innerHTML='Belum tepat. Ingat: × dikerjakan sebelum +.'}
+ if(ans==='ABC*+'){fb.className='feedback show good';fb.innerHTML='🎉 Tepat! ABC*+ adalah postfix dari A + B * C.';addScore(20);completed.add('drag');updateProgress()}
+ else{fb.className='feedback show bad';fb.innerHTML='Belum tepat. Ingat: * dikerjakan sebelum +.'}
 }
 resetDrag();
 
+function showBonusAnswer(){
+ const box=document.getElementById('bonusAnswer');
+ box.classList.toggle('show');
+ if(box.classList.contains('show')) box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function toggleBonusAnswer(){
+ const el=document.getElementById('bonusAnswer');
+ el.classList.toggle('show');
+}
 function checkBonus(){
  const val=document.getElementById('bonusInput').value.replace(/\s+/g,'');
  const fb=document.getElementById('bonusFeedback');fb.classList.add('show');
- if(val==='AB+C×DE÷-'){
+ if(val==='AB+C*DE/-'){
   fb.className='feedback show good';fb.innerHTML='🏆 LUAR BIASA! Jawaban benar. Kamu mendapatkan <b>50 poin bonus</b>!';
   addScore(50);completed.add('bonus');updateProgress();
  }else{
-  fb.className='feedback show bad';fb.innerHTML='Belum tepat. Coba pecah menjadi: (A+B), ×C, D÷E, lalu tentukan urutan -.';
+  fb.className='feedback show bad';fb.innerHTML='Belum tepat. Coba pecah menjadi: (A+B), *C, D/E, lalu tentukan urutan -.';
  }
 }
 </script>
