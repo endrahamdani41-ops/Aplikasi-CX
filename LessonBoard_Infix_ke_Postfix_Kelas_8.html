@@ -186,20 +186,10 @@ footer{text-align:center;color:var(--muted);padding:30px 0}
 <br><br>
 <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
 <button class="primary" onclick="checkBonus()">Periksa Tantangan</button>
-<button class="secondary" onclick="showBonusAnswer()">👁️ Lihat Jawaban</button>
+
 </div>
 <div id="bonusFeedback" class="feedback"></div>
-<div id="bonusAnswer" class="feedback" style="margin-top:12px;text-align:left">
-<b>💡 Jawaban:</b>
-<div class="example" style="margin-bottom:10px">AB+C*DE/-</div>
-<b>Penjelasan:</b>
-<ol>
-<li><b>(A + B)</b> → <b>AB+</b></li>
-<li><b>AB+</b> dikalikan dengan <b>C</b> → <b>AB+C*</b></li>
-<li><b>D / E</b> → <b>DE/</b></li>
-<li>Terakhir operasi pengurangan → <b>AB+C*DE/-</b></li>
-</ol>
-</div>
+
 </div>
 </section>
 <footer>LessonBoard Informatika Kelas 8 • Infix → Postfix</footer>
@@ -342,15 +332,6 @@ function checkDrag(){
 }
 resetDrag();
 
-function showBonusAnswer(){
- const box=document.getElementById('bonusAnswer');
- box.classList.toggle('show');
- if(box.classList.contains('show')) box.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-function toggleBonusAnswer(){
- const el=document.getElementById('bonusAnswer');
- el.classList.toggle('show');
-}
 function checkBonus(){
  const val=document.getElementById('bonusInput').value.replace(/\s+/g,'');
  const fb=document.getElementById('bonusFeedback');fb.classList.add('show');
