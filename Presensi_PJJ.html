@@ -377,7 +377,7 @@
         <div id="connectionStatus" class="connection-status">Memeriksa...</div>
         <div class="header-controls">
             <button class="icon-btn btn-add-class" onclick="openAddClassModal()" title="Tambah Kelas">➕</button>
-            <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">🔄</button>
+            <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
             <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
             <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
         </div>
@@ -387,7 +387,7 @@
     </div>
 
     <div class="class-selector-bar">
-        <label>Kelas:</label>
+
         <select id="classSelect" class="class-select" onchange="switchClass()">
             <option value="" selected>-- Pilih Kelas --</option>
         </select>
@@ -398,7 +398,7 @@
     </div>
 
     <div class="footer">
-        <strong>SMPN 110 JAKARTA</strong> @2026
+        SMPN 110 JAKARTA @ 2026
     </div>
 </div>
 
@@ -446,7 +446,7 @@
     // ==================================================
     // ✅ URL GOOGLE APPS SCRIPT
     // ==================================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQuGpvwx-NZ9UJH13FgivmMcMIkD9GuoMwE5NkclmpFInssPPRy9ZfG3E-ztYD6-X1PA/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRDDobYvVe353Jf-DMIKmGWIdOicrD72fMMpmMILiAvLpI7GtTFDho4-SkLVgwmyziNg/exec';
 
     const TOTAL_ROWS = 5;
     const TOTAL_COLS = 8;
@@ -560,7 +560,7 @@
             console.error('Refresh error:', err);
             showStatus('⚠️ ' + err.message, false);
         } finally {
-            btnRefresh.innerHTML = '🔄';
+            btnRefresh.innerHTML = '↺';
             btnRefresh.disabled = false;
         }
     }
