@@ -226,7 +226,6 @@
 
         .denah-scroll-area {
             width: 100%;
-            overflow-x: auto;
             padding: 20px 10px;
             display: flex;
             justify-content: center;
@@ -236,8 +235,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            min-width: max-content;
+            gap: 12px;
+            width: 100%;
         }
 
         .row-wrapper {
@@ -254,13 +253,14 @@
             width: var(--seat-w);
             height: var(--seat-h);
             background: var(--seat-empty);
-            border-radius: 10px;
+            border-radius: 12px;
             position: relative;
             cursor: pointer;
             transition: all 0.2s ease;
             border: 2px solid transparent;
             flex-shrink: 0;
             overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
 
         .seat.hidden { visibility: hidden; pointer-events: none; }
@@ -276,10 +276,10 @@
             left: 4px;
             background: var(--primary);
             color: white;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -301,9 +301,9 @@
             right: 0;
             background: var(--seat-name-bg);
             color: var(--seat-name-color);
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             text-align: center;
-            padding: 3px 2px;
+            padding: 4px 2px;
             font-weight: 600;
             z-index: 5;
             white-space: nowrap;
@@ -312,7 +312,7 @@
         }
 
         .empty-icon {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: var(--text-muted);
             position: absolute;
             top: 50%;
@@ -400,16 +400,6 @@
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
         .btn:active { transform: scale(0.97); }
 
-        .footer {
-            text-align: center;
-            padding: 12px;
-            background: var(--bg-footer);
-            border-top: 1px solid var(--border-color);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
         /* ========== LAYAR KOMPUTER — TAMPIL LENGKAP 36 KURSI ========== */
         @media (min-width: 769px) {
             .mobile-page-nav { display: none; }
@@ -418,12 +408,12 @@
             }
         }
 
-        /* ========== LAYAR HP — TAMPIL 9 KURSI SAJA + NAVIGASI HALAMAN ========== */
+        /* ========== LAYAR HP — TAMPIL 9 KURSI SAJA PER HALAMAN ========== */
         @media (max-width: 768px) {
             :root {
-                --seat-w: 95px;
-                --seat-h: 110px;
-                --gap-pair: 10px;
+                --seat-w: 105px;
+                --seat-h: 120px;
+                --gap-pair: 12px;
                 --gap-group: 12px;
                 --btn-size: 40px;
             }
@@ -443,9 +433,11 @@
             .class-select { min-width: 140px; font-size: 0.9rem; padding: 8px 10px; }
 
             .denah-scroll-area { padding: 15px 5px; }
+            .denah-area { gap: 15px; }
+            .row-wrapper { gap: 12px; }
 
-            .seat-num { width: 20px; height: 20px; font-size: 0.7rem; }
-            .seat-name { font-size: 0.6rem; padding: 3px 1px; }
+            .seat-num { width: 24px; height: 24px; font-size: 0.75rem; }
+            .seat-name { font-size: 0.65rem; padding: 4px 2px; }
 
             .modal-box { padding: 18px; }
             .btn { font-size: 0.85rem; padding: 10px 6px; }
@@ -454,8 +446,8 @@
         /* ========== LAYAR SANGAT KECIL ========== */
         @media (max-width: 360px) {
             :root {
-                --seat-w: 85px;
-                --seat-h: 100px;
+                --seat-w: 90px;
+                --seat-h: 105px;
                 --gap-pair: 8px;
                 --gap-group: 10px;
             }
@@ -532,16 +524,16 @@
 
 <script>
     // ==================================================
-    // ⚡ GANTI URL DI BAWAH INI DENGAN URL MILIK ANDA
+    // ⚡ URL SCRIPT GOOGLE APPS — SUDAH DIISI
     // ==================================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjRu2AAub8fKD5PK3s4rkcwEIOEEvyDlMGBSzWO0r-Kf-ekKuI1W-33ygh68KvPfeRfQ/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCsFUt6X9k9FwojivaysZtbTPvdlVKQEICoW70mjb3MUi_ydc-tFlV0DyfuAQ7SaoVGA/exec';
 
     const TOTAL_ROWS = 5;
     const TOTAL_COLS = 8;
     const MAX_ACTIVE_SEATS = 36;
     const MAX_PHOTO_SEND_LENGTH = 80000;
 
-    // Pengaturan tampilan HP
+    // Pengaturan tampilan HP: 9 kursi per halaman
     const IS_MOBILE = window.innerWidth <= 768;
     const SEATS_PER_PAGE = 9; // 3 baris × 3 kolom = 9 kursi per halaman
     let currentPage = 1;
@@ -613,7 +605,7 @@
             console.error('Refresh error:', err);
             showStatus('⚠️ Gagal memuat: ' + err.message, false);
         } finally {
-            btnRefresh.innerHTML = '🔄';
+            btnRefresh.innerHTML = '↺';
             btnRefresh.disabled = false;
         }
     }
@@ -783,7 +775,7 @@
         }, 4000);
     }
 
-    // Navigasi halaman untuk HP
+    // === NAVIGASI HALAMAN HP ===
     function getTotalPages() {
         return Math.ceil(MAX_ACTIVE_SEATS / SEATS_PER_PAGE);
     }
@@ -827,7 +819,7 @@
         updatePageNav();
 
         if (IS_MOBILE) {
-            // === HP: Tampilkan 9 kursi per halaman (3×3) ===
+            // === HP: 9 KURSI PER HALAMAN — 3 BARIS × 3 KOLOM ===
             const startIdx = (currentPage - 1) * SEATS_PER_PAGE;
             const endIdx = Math.min(startIdx + SEATS_PER_PAGE - 1, MAX_ACTIVE_SEATS - 1);
 
@@ -843,7 +835,7 @@
                 container.appendChild(rowDiv);
             }
         } else {
-            // === KOMPUTER: Tampilkan lengkap 36 kursi (5 baris × 8 kolom) ===
+            // === KOMPUTER: LENGKAP 36 KURSI ===
             for (let r = 0; r < TOTAL_ROWS; r++) {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'row-wrapper';
@@ -959,9 +951,7 @@
         renderDenah();
     }
 
-    // ==================================================
-    // ⭐ SIMPAN PAKAI POST — BISA 36 FOTO SEKALIGUS!
-    // ==================================================
+    // === SIMPAN KE GOOGLE SHEET — FORMAT TANPA BARIS & KOLOM ===
     async function saveToGoogleSheet() {
         if (!SCRIPT_URL || SCRIPT_URL.indexOf('GANTI_DENGAN_URL') !== -1) {
             alert('⚠️ Ganti URL SCRIPT_URL di kode HTML terlebih dahulu!');
@@ -986,6 +976,7 @@
                 if (foto.length > MAX_PHOTO_SEND_LENGTH) {
                     foto = foto.substring(0, MAX_PHOTO_SEND_LENGTH);
                 }
+                // FORMAT: Nama|||Foto — TANPA Baris & Kolom
                 kirimData[k] = dataSiswa[k].name + '|||' + foto;
             }
 
