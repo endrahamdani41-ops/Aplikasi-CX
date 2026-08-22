@@ -179,6 +179,39 @@
             text-align: center;
         }
 
+        .page-nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 10px;
+            background: var(--bg-footer);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-weight: 600;
+            color: var(--text-main);
+            min-width: 80px;
+            text-align: center;
+        }
+
         .loading {
             display: inline-block;
             width: 18px;
@@ -377,13 +410,21 @@
             font-weight: 600;
         }
 
-        /* ========== RESPONSIVE — LAYAR HP ========== */
-        @media (max-width: 480px) {
+        /* ========== LAYAR KOMPUTER — TAMPIL LENGKAP 36 KURSI ========== */
+        @media (min-width: 769px) {
+            .mobile-page-nav { display: none; }
+            .denah-area {
+                display: flex !important;
+            }
+        }
+
+        /* ========== LAYAR HP — TAMPIL 9 KURSI SAJA + NAVIGASI HALAMAN ========== */
+        @media (max-width: 768px) {
             :root {
-                --seat-w: 62px;
-                --seat-h: 78px;
-                --gap-pair: 5px;
-                --gap-group: 10px;
+                --seat-w: 95px;
+                --seat-h: 110px;
+                --gap-pair: 10px;
+                --gap-group: 12px;
                 --btn-size: 40px;
             }
 
@@ -401,10 +442,10 @@
             .class-selector-bar { padding: 10px; }
             .class-select { min-width: 140px; font-size: 0.9rem; padding: 8px 10px; }
 
-            .denah-scroll-area { padding: 12px 4px; }
+            .denah-scroll-area { padding: 15px 5px; }
 
-            .seat-num { width: 18px; height: 18px; font-size: 0.65rem; }
-            .seat-name { font-size: 0.58rem; padding: 2px 1px; }
+            .seat-num { width: 20px; height: 20px; font-size: 0.7rem; }
+            .seat-name { font-size: 0.6rem; padding: 3px 1px; }
 
             .modal-box { padding: 18px; }
             .btn { font-size: 0.85rem; padding: 10px 6px; }
@@ -413,12 +454,11 @@
         /* ========== LAYAR SANGAT KECIL ========== */
         @media (max-width: 360px) {
             :root {
-                --seat-w: 54px;
-                --seat-h: 70px;
-                --gap-pair: 4px;
-                --gap-group: 6px;
+                --seat-w: 85px;
+                --seat-h: 100px;
+                --gap-pair: 8px;
+                --gap-group: 10px;
             }
-            .seat-name { font-size: 0.52rem; }
         }
     </style>
 </head>
@@ -431,7 +471,7 @@
             <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
             <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
             <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
-        </div><br>
+        </div><br><br>
         <h1>DENAH TEMPAT DUDUK KELAS</h1>
         <h1>SMPN 110 JAKARTA</h1>
     </div>
@@ -442,10 +482,16 @@
         </select>
     </div>
 
+    <!-- Navigasi Halaman Hanya Muncul di HP -->
+    <div class="page-nav-bar mobile-page-nav" id="pageNav" style="display:none;">
+        <button class="page-btn" onclick="prevPage()" id="btnPrev">◀ Sebelumnya</button>
+        <span class="page-info" id="pageInfo">Hal 1 / 4</span>
+        <button class="page-btn" onclick="nextPage()" id="btnNext">Berikutnya ▶</button>
+    </div>
+
     <div class="denah-scroll-area">
         <div class="denah-area" id="denahArea"></div>
     </div>
-
 
 </div>
 
@@ -495,6 +541,11 @@
     const MAX_ACTIVE_SEATS = 36;
     const MAX_PHOTO_SEND_LENGTH = 80000;
 
+    // Pengaturan tampilan HP
+    const IS_MOBILE = window.innerWidth <= 768;
+    const SEATS_PER_PAGE = 9; // 3 baris × 3 kolom = 9 kursi per halaman
+    let currentPage = 1;
+
     let dataSiswa = {};
     let activeIndex = null;
     let currentClass = '';
@@ -520,6 +571,7 @@
         allData = {};
         dataSiswa = {};
         currentClass = '';
+        currentPage = 1;
 
         try {
             const sep = getUrlSeparator();
@@ -621,11 +673,13 @@
         if (!className) {
             currentClass = '';
             dataSiswa = {};
+            currentPage = 1;
             renderDenah();
             return;
         }
         currentClass = className;
         dataSiswa = allData[className] || {};
+        currentPage = 1;
         saveClassesLocally();
         renderDenah();
         showStatus('📂 Beralih ke ' + className, true);
@@ -729,26 +783,81 @@
         }, 4000);
     }
 
+    // Navigasi halaman untuk HP
+    function getTotalPages() {
+        return Math.ceil(MAX_ACTIVE_SEATS / SEATS_PER_PAGE);
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderDenah();
+        }
+    }
+
+    function nextPage() {
+        if (currentPage < getTotalPages()) {
+            currentPage++;
+            renderDenah();
+        }
+    }
+
+    function updatePageNav() {
+        const navBar = document.getElementById('pageNav');
+        if (!IS_MOBILE || !currentClass) {
+            navBar.style.display = 'none';
+            return;
+        }
+        navBar.style.display = 'flex';
+        document.getElementById('pageInfo').textContent = `Hal ${currentPage} / ${getTotalPages()}`;
+        document.getElementById('btnPrev').disabled = currentPage <= 1;
+        document.getElementById('btnNext').disabled = currentPage >= getTotalPages();
+    }
+
     function renderDenah() {
         const container = document.getElementById('denahArea');
         container.innerHTML = '';
+
         if (!currentClass) {
             container.innerHTML = '<p style="color:var(--text-muted);font-size:1rem;text-align:center;padding:30px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
+            document.getElementById('pageNav').style.display = 'none';
             return;
         }
-        for (let r = 0; r < TOTAL_ROWS; r++) {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'row-wrapper';
-            for (let c = 0; c < TOTAL_COLS; c += 2) {
-                const pairDiv = document.createElement('div');
-                pairDiv.className = 'pair-wrapper';
-                const idxLeft = r * TOTAL_COLS + c;
-                const idxRight = r * TOTAL_COLS + c + 1;
-                pairDiv.appendChild(createSeat(idxLeft));
-                pairDiv.appendChild(createSeat(idxRight));
-                rowDiv.appendChild(pairDiv);
+
+        updatePageNav();
+
+        if (IS_MOBILE) {
+            // === HP: Tampilkan 9 kursi per halaman (3×3) ===
+            const startIdx = (currentPage - 1) * SEATS_PER_PAGE;
+            const endIdx = Math.min(startIdx + SEATS_PER_PAGE - 1, MAX_ACTIVE_SEATS - 1);
+
+            for (let r = 0; r < 3; r++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row-wrapper';
+                for (let c = 0; c < 3; c++) {
+                    const idx = startIdx + r * 3 + c;
+                    if (idx <= endIdx) {
+                        rowDiv.appendChild(createSeat(idx));
+                    }
+                }
+                container.appendChild(rowDiv);
             }
-            container.appendChild(rowDiv);
+        } else {
+            // === KOMPUTER: Tampilkan lengkap 36 kursi (5 baris × 8 kolom) ===
+            for (let r = 0; r < TOTAL_ROWS; r++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row-wrapper';
+                for (let c = 0; c < TOTAL_COLS; c += 2) {
+                    const pairDiv = document.createElement('div');
+                    pairDiv.className = 'pair-wrapper';
+                    const idxLeft = r * TOTAL_COLS + c;
+                    const idxRight = r * TOTAL_COLS + c + 1;
+                    pairDiv.appendChild(createSeat(idxLeft));
+                    pairDiv.appendChild(createSeat(idxRight));
+                    rowDiv.appendChild(pairDiv);
+                }
+                container.appendChild(rowDiv);
+            }
         }
     }
 
