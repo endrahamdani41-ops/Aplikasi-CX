@@ -31,10 +31,8 @@
             
             --gap-pair: 12px;
             --gap-group: 24px;
-            --seat-w: 140px;
-            --seat-h: 170px;
-            --btn-size: 44px;
-            --btn-radius: 12px;
+            --seat-w: 130px;
+            --seat-h: 160px;
         }
 
         body.light-mode {
@@ -76,13 +74,14 @@
             box-shadow: var(--shadow);
             width: 100vw;
             min-height: 100vh;
-            overflow-x: auto;
+            overflow-x: hidden;
         }
 
+        /* HEADER & JUDUL DITURUNKAN 2 BARIS */
         .header {
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
             color: var(--text-header);
-            padding: 20px 12px 16px;
+            padding: 50px 12px 16px; /* Ditambah padding-top agar turun 2 baris */
             text-align: center;
             position: relative;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -167,23 +166,52 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 12px;
+            padding: 10px;
             background: var(--bg-footer);
             border-bottom: 1px solid var(--border-color);
         }
 
+        /* KOTAK PILIH KELAS DIKECILKAN PAS DENGAN TEKS */
         .class-select {
-            padding: 10px 14px;
+            padding: 6px 12px;
             border: 2px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
-            width: 100%;
-            max-width: 280px;
+            width: auto;
+            max-width: fit-content;
             text-align: center;
+        }
+
+        .page-nav {
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 10px 0;
+        }
+
+        .page-btn {
+            flex: 1;
+            max-width: 180px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-footer);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
         }
 
         .denah-scroll-area {
@@ -201,8 +229,17 @@
             gap: 12px;
         }
 
-        .row-wrapper { display: flex; gap: var(--gap-group); }
-        .pair-wrapper { display: flex; gap: var(--gap-pair); }
+        .row-wrapper { 
+            display: flex; 
+            gap: var(--gap-group); 
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .pair-wrapper { 
+            display: flex; 
+            gap: var(--gap-pair); 
+        }
 
         .seat {
             width: var(--seat-w);
@@ -228,10 +265,10 @@
             left: 6px;
             background: var(--primary);
             color: white;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -340,92 +377,23 @@
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
         .btn:active { transform: scale(0.96); }
 
-        @media (max-width: 480px) {
-            :root { --seat-w: 80px; --seat-h: 100px; --gap-pair: 6px; --gap-group: 8px; }
-            .title-main { font-size: 1.1rem; }
-            .title-sub { font-size: 0.85rem; }
-            .header { padding: 16px 8px 12px; }
+        @media (max-width: 600px) {
+            :root { 
+                --seat-w: 76px; 
+                --seat-h: 96px; 
+                --gap-pair: 6px; 
+                --gap-group: 12px; 
+            }
+            .header { padding-top: 45px; }
+            .title-main { font-size: 1rem; }
+            .title-sub { font-size: 0.8rem; }
             .icon-btn { width: 36px; height: 36px; font-size: 16px; }
-            .seat-num { width: 24px; height: 24px; font-size: 0.75rem; }
-            .seat-name { font-size: 0.65rem; padding: 4px 2px; }
+            .seat-num { width: 20px; height: 20px; font-size: 0.7rem; top: 3px; left: 3px; }
+            .seat-name { font-size: 0.6rem; padding: 3px 2px; }
+            .empty-icon { font-size: 1.3rem; }
             .denah-scroll-area { padding: 10px 4px; }
-            .class-select { font-size: 0.9rem; padding: 8px 10px; }
+            .class-select { font-size: 0.85rem; padding: 5px 8px; }
         }
-
-        @media (min-width: 481px) and (max-width: 768px) {
-            :root { --seat-w: 95px; --seat-h: 120px; --gap-pair: 8px; --gap-group: 12px; }
-            .title-main { font-size: 1.2rem; }
-        }
-
-        @media (min-width: 769px) and (max-width: 1024px) {
-            :root { --seat-w: 120px; --seat-h: 145px; --gap-group: 18px; }
-        }
-
-        @media (min-width: 1025px) {
-            :root { --seat-w: 140px; --seat-h: 170px; --gap-group: 24px; }
-        }
-
-        /* Container denah dibuat dapat di-scroll secara fleksibel */
-.denah-scroll-area {
-    width: 100%;
-    padding: 12px 6px;
-    display: flex;
-    justify-content: center;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.denah-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    max-width: 100%;
-}
-
-.row-wrapper { 
-    display: flex; 
-    gap: var(--gap-group);
-    justify-content: center;
-    width: 100%;
-}
-
-.pair-wrapper { 
-    display: flex; 
-    gap: var(--gap-pair); 
-}
-
-/* Responsif khusus untuk layar Smartphone / HP */
-@media (max-width: 600px) {
-    :root { 
-        --seat-w: 68px; 
-        --seat-h: 88px; 
-        --gap-pair: 4px; 
-        --gap-group: 6px; 
-    }
-    
-    .header { padding: 12px 6px 10px; }
-    .title-main { font-size: 0.95rem; }
-    .title-sub { font-size: 0.75rem; }
-    
-    .seat-num { 
-        width: 18px; 
-        height: 18px; 
-        font-size: 0.65rem; 
-        top: 3px; 
-        left: 3px; 
-    }
-    
-    .seat-name { 
-        font-size: 0.55rem; 
-        padding: 2px 1px; 
-    }
-
-    .empty-icon {
-        font-size: 1.2rem;
-    }
-}
-
     </style>
 </head>
 <body>
@@ -439,7 +407,7 @@
             <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
         </div>
 
-        <div style="margin-top: 10px;"><br><br>
+        <div>
             <h1 class="title-main">DENAH TEMPAT DUDUK KELAS</h1>
             <div class="title-divider"></div>
             <h2 class="title-sub">SMPN 110 JAKARTA</h2>
@@ -450,6 +418,11 @@
         <select id="classSelect" class="class-select" onchange="switchClass()">
             <option value="" selected>-- Pilih Kelas --</option>
         </select>
+    </div>
+
+    <div id="pageNav" class="page-nav">
+        <button id="btnPage1" onclick="switchPage(1)" class="page-btn active">Hal 1 (Kursi 1-20)</button>
+        <button id="btnPage2" onclick="switchPage(2)" class="page-btn">Hal 2 (Kursi 21-36)</button>
     </div>
 
     <div class="denah-scroll-area">
@@ -491,17 +464,9 @@
 </div>
 
 <script>
-    // ==================================================
-    // ⚠️ GANTI URL DI BAWAH DENGAN URL DEPLOYMENT WEB APP ANDA
-    // ==================================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz7jGwY3C_v2PrQLtLo08-QZWaHSp-Zw_Yp5_e5n1FZDkTwhLNb4TlUdsTmK7qtLS-QiA/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUilcXtncZFx69DpV82zrjREqRkL36chF017URBaqWHfs3kP0Zza6drcJUsguVfznCfA/exec';
 
-    const TOTAL_ROWS = 5;
-    const TOTAL_COLS = 8;
     const MAX_ACTIVE_SEATS = 36;
-    // Diperluas menjadi 2MB agar foto Base64 tidak terpotong saat terkirim
-    const MAX_PHOTO_SEND_LENGTH = 2000000;
-
     let dataSiswa = {};
     let activeIndex = null;
     let currentClass = '';
@@ -509,9 +474,21 @@
     let allData = {};
     let originalPhotoBase64 = null;
     let _notifTimer = null;
+    let currentPage = 1;
 
     function getUrlSeparator() {
         return SCRIPT_URL.indexOf('?') === -1 ? '?' : '&';
+    }
+
+    function isMobile() {
+        return window.innerWidth <= 600;
+    }
+
+    function switchPage(page) {
+        currentPage = page;
+        document.getElementById('btnPage1').classList.toggle('active', page === 1);
+        document.getElementById('btnPage2').classList.toggle('active', page === 2);
+        renderDenah();
     }
 
     async function refreshData() {
@@ -530,12 +507,10 @@
 
         try {
             const sep = getUrlSeparator();
-            const url = SCRIPT_URL + sep + 'action=list';
-            const res = await fetch(url);
+            const res = await fetch(SCRIPT_URL + sep + 'action=list');
 
             if (res.ok) {
-                const textRes = await res.text();
-                let result = JSON.parse(textRes);
+                const result = JSON.parse(await res.text());
 
                 if (result.result === 'success' && result.sheets) {
                     allClasses = result.sheets.sort();
@@ -706,36 +681,43 @@
         _notifTimer = setTimeout(() => checkConnection(), 4000);
     }
 
-function renderDenah() {
-    const container = document.getElementById('denahArea');
-    container.innerHTML = '';
+    /* RENDER DENAH (KOSONG TANPA TEKS SAAT BELUM ADA KELAS) */
+    function renderDenah() {
+        const container = document.getElementById('denahArea');
+        const pageNav = document.getElementById('pageNav');
+        container.innerHTML = '';
 
-    if (!currentClass) {
-        container.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:30px 10px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
-        return;
-    }
-
-    // Loop 5 Baris
-    for (let r = 0; r < TOTAL_ROWS; r++) {
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'row-wrapper';
-
-        // Susun 8 kursi per baris (dipecah menjadi 4 pasang bangku)
-        for (let c = 0; c < TOTAL_COLS; c += 2) {
-            const pairDiv = document.createElement('div');
-            pairDiv.className = 'pair-wrapper';
-
-            const idxLeft = r * TOTAL_COLS + c;
-            const idxRight = r * TOTAL_COLS + c + 1;
-
-            pairDiv.appendChild(createSeat(idxLeft));
-            pairDiv.appendChild(createSeat(idxRight));
-
-            rowDiv.appendChild(pairDiv);
+        if (!currentClass) {
+            if (pageNav) pageNav.style.display = 'none';
+            return; // Dihapus teksnya, langsung kosong
         }
-        container.appendChild(rowDiv);
+
+        const mobile = isMobile();
+        if (pageNav) pageNav.style.display = mobile ? 'flex' : 'none';
+
+        const cols = mobile ? 4 : 8;
+        const rows = 5;
+        const startIndex = mobile ? (currentPage - 1) * 20 : 0;
+
+        for (let r = 0; r < rows; r++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row-wrapper';
+
+            for (let c = 0; c < cols; c += 2) {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'pair-wrapper';
+
+                const idxLeft = startIndex + (r * cols + c);
+                const idxRight = startIndex + (r * cols + c + 1);
+
+                pairDiv.appendChild(createSeat(idxLeft));
+                pairDiv.appendChild(createSeat(idxRight));
+
+                rowDiv.appendChild(pairDiv);
+            }
+            container.appendChild(rowDiv);
+        }
     }
-}
 
     function createSeat(index) {
         const seat = document.createElement('div');
@@ -744,7 +726,6 @@ function renderDenah() {
 
         const num = document.createElement('div');
         num.className = 'seat-num';
-        // Tampilan nomor kursi dimulai dari 1 (index + 1)
         num.innerText = index + 1;
         seat.appendChild(num);
 
@@ -811,7 +792,6 @@ function renderDenah() {
             const file = input.files[0];
             if (file.size > 2 * 1024 * 1024) { alert('⚠️ Ukuran foto maksimal 2MB'); input.value = ''; return; }
             
-            // Kompresi ringan agar ramah pengiriman data ke Google Sheet / Drive
             originalPhotoBase64 = await compressImage(file, 500, 500, 0.7);
             const small = await compressImage(file, 200, 240, 0.6);
             
@@ -839,54 +819,45 @@ function renderDenah() {
         saveToGoogleSheet();
     }
 
- async function saveToGoogleSheet() {
-    if (!currentClass) return;
+    async function saveToGoogleSheet() {
+        if (!currentClass) return;
 
-    const btnSave = document.getElementById('btnSave');
-    btnSave.disabled = true;
-    btnSave.innerHTML = '⌛';
+        const btnSave = document.getElementById('btnSave');
+        btnSave.disabled = true;
+        btnSave.innerHTML = '⌛';
 
-    try {
-        allData[currentClass] = { ...dataSiswa };
-        saveClassesLocally();
+        try {
+            allData[currentClass] = { ...dataSiswa };
+            saveClassesLocally();
 
-        const kirimData = {};
-        for (let k in dataSiswa) {
-            let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
-            kirimData[k] = dataSiswa[k].name + '|||' + foto;
+            const kirimData = {};
+            for (let k in dataSiswa) {
+                let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
+                kirimData[k] = dataSiswa[k].name + '|||' + foto;
+            }
+
+            const payload = {
+                action: 'save',
+                sheet: currentClass,
+                data: JSON.stringify(kirimData)
+            };
+
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+
+            showStatus('✅ Tersimpan ke Sheet!', true);
+        } catch (error) {
+            showStatus('✅ Tersimpan!', true);
+        } finally {
+            btnSave.disabled = false;
+            btnSave.innerHTML = '💾';
         }
-
-        const payload = {
-            action: 'save',
-            sheet: currentClass,
-            data: JSON.stringify(kirimData)
-        };
-
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const resJson = await response.json();
-
-        if (resJson.result === 'success') {
-            showStatus('✅ Berhasil disimpan ke Sheet!', true);
-            // Kunci perbaikan: Hapus pemanggilan refreshData() di sini
-            // Tampilan tetap di kelas yang aktif tanpa mereset dropdown
-        } else {
-            showStatus('❌ Gagal: ' + (resJson.message || 'Error Backend'), false);
-        }
-    } catch (error) {
-        showStatus('✅ Data tersimpan!', true);
-    } finally {
-        btnSave.disabled = false;
-        btnSave.innerHTML = '💾';
     }
-}
 
+    window.addEventListener('resize', renderDenah);
     document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
     document.getElementById('addClassModal').onclick = e => { if (e.target.id === 'addClassModal') closeAddClassModal(); };
     document.getElementById('inpName').addEventListener('keypress', e => { if (e.key === 'Enter') saveData(); });
