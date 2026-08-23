@@ -81,7 +81,7 @@
         .header {
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
             color: var(--text-header);
-            padding: 50px 12px 16px; /* Ditambah padding-top agar turun 2 baris */
+            padding: 50px 12px 16px;
             text-align: center;
             position: relative;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -171,7 +171,6 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* KOTAK PILIH KELAS DIKECILKAN PAS DENGAN TEKS */
         .class-select {
             padding: 6px 12px;
             border: 2px solid var(--input-border);
@@ -258,6 +257,7 @@
         .seat.hidden { visibility: hidden; pointer-events: none; }
         .seat:active:not(.hidden) { transform: scale(0.95); }
         .seat.filled { border-color: var(--seat-filled-border); background: var(--seat-filled-bg); }
+        .seat.locked { cursor: default; }
 
         .seat-num {
             position: absolute;
@@ -277,7 +277,13 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
 
-        .seat-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .seat-photo { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block; 
+            cursor: zoom-in; /* Mengindikasikan foto bisa di-zoom */
+        }
 
         .seat-name {
             position: absolute;
@@ -377,6 +383,74 @@
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
         .btn:active { transform: scale(0.96); }
 
+        /* MODAL ZOOM FOTO 4X LIPAT */
+        .zoom-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(6px);
+            padding: 16px;
+        }
+
+        .zoom-overlay.active {
+            display: flex;
+        }
+
+        .zoom-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .zoom-img {
+            /* Mengatur ukuran 4x lipat dari ukuran card asal (--seat-w: 130px -> 520px) */
+            width: calc(var(--seat-w) * 4);
+            height: calc(var(--seat-h) * 4);
+            max-width: 85vw;
+            max-height: 75vh;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 4px solid #ffffff;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+        }
+
+        .zoom-caption {
+            margin-top: 12px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        .zoom-close {
+            position: absolute;
+            top: -18px;
+            right: -18px;
+            background: #ef4444;
+            color: white;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
         @media (max-width: 600px) {
             :root { 
                 --seat-w: 76px; 
@@ -393,6 +467,12 @@
             .empty-icon { font-size: 1.3rem; }
             .denah-scroll-area { padding: 10px 4px; }
             .class-select { font-size: 0.85rem; padding: 5px 8px; }
+            
+            /* Zoom di HP tetap proporsional 4x lipat */
+            .zoom-img {
+                width: calc(var(--seat-w) * 4);
+                height: calc(var(--seat-h) * 4);
+            }
         }
     </style>
 </head>
@@ -407,7 +487,7 @@
             <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
         </div>
 
-        <div>
+        <div><br><br>
             <h1 class="title-main">DENAH TEMPAT DUDUK KELAS</h1>
             <div class="title-divider"></div>
             <h2 class="title-sub">SMPN 110 JAKARTA</h2>
@@ -430,6 +510,7 @@
     </div>
 </div>
 
+<!-- MODAL INPUT / EDIT -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
         <h3 id="modalTitle">Input Data Siswa</h3>
@@ -449,6 +530,7 @@
     </div>
 </div>
 
+<!-- MODAL TAMBAH KELAS -->
 <div class="modal-overlay" id="addClassModal">
     <div class="modal-box">
         <h3>Tambah Kelas Baru</h3>
@@ -460,6 +542,15 @@
             <button class="btn btn-primary" onclick="addClass()">Buat Kelas</button>
             <button class="btn btn-secondary" onclick="closeAddClassModal()">Batal</button>
         </div>
+    </div>
+</div>
+
+<!-- MODAL ZOOM FOTO (TAMPIL DI TENGAH 4X LIPAT) -->
+<div class="zoom-overlay" id="zoomModal" onclick="closeZoomModal()">
+    <div class="zoom-content" onclick="event.stopPropagation()">
+        <button class="zoom-close" onclick="closeZoomModal()">✕</button>
+        <img id="zoomImg" class="zoom-img" src="" alt="Zoom Foto">
+        <div id="zoomCaption" class="zoom-caption"></div>
     </div>
 </div>
 
@@ -681,7 +772,6 @@
         _notifTimer = setTimeout(() => checkConnection(), 4000);
     }
 
-    /* RENDER DENAH (KOSONG TANPA TEKS SAAT BELUM ADA KELAS) */
     function renderDenah() {
         const container = document.getElementById('denahArea');
         const pageNav = document.getElementById('pageNav');
@@ -689,7 +779,7 @@
 
         if (!currentClass) {
             if (pageNav) pageNav.style.display = 'none';
-            return; // Dihapus teksnya, langsung kosong
+            return;
         }
 
         const mobile = isMobile();
@@ -722,7 +812,11 @@
     function createSeat(index) {
         const seat = document.createElement('div');
         if (index >= MAX_ACTIVE_SEATS) { seat.className = 'seat hidden'; return seat; }
-        seat.className = 'seat' + (dataSiswa[index] ? ' filled' : '');
+        
+        const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
+        
+        // Jika sudah ada fotonya, beri tanda 'locked' (tidak bisa diedit)
+        seat.className = 'seat' + (dataSiswa[index] ? ' filled' : '') + (hasPhoto ? ' locked' : '');
 
         const num = document.createElement('div');
         num.className = 'seat-num';
@@ -734,8 +828,16 @@
                 const img = document.createElement('img');
                 img.className = 'seat-photo';
                 img.src = dataSiswa[index].photo;
+                
+                // Jika foto diklik -> Buka Tampilan Zoom 4x Lipat
+                img.onclick = (e) => {
+                    e.stopPropagation(); // Mencegah pemicu klik card
+                    openZoomModal(dataSiswa[index].photoOriginal || dataSiswa[index].photo, dataSiswa[index].name);
+                };
+                
                 seat.appendChild(img);
             }
+
             const name = document.createElement('div');
             name.className = 'seat-name';
             name.innerText = dataSiswa[index].name;
@@ -747,8 +849,32 @@
             icon.innerText = '+';
             seat.appendChild(icon);
         }
-        seat.onclick = () => openModal(index);
+
+        // Klik Card: Hanya bisa buka modal input jika BELUM ada fotonya
+        seat.onclick = () => {
+            if (hasPhoto) {
+                // Sudah ada foto -> tidak bisa diedit
+                return;
+            }
+            openModal(index);
+        };
+
         return seat;
+    }
+
+    /* FUNGSI ZOOM FOTO */
+    function openZoomModal(photoSrc, name) {
+        const zoomModal = document.getElementById('zoomModal');
+        const zoomImg = document.getElementById('zoomImg');
+        const zoomCaption = document.getElementById('zoomCaption');
+
+        zoomImg.src = photoSrc;
+        zoomCaption.innerText = name || '';
+        zoomModal.classList.add('active');
+    }
+
+    function closeZoomModal() {
+        document.getElementById('zoomModal').classList.remove('active');
     }
 
     function openModal(index) {
