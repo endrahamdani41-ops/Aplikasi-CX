@@ -2,14 +2,9 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Denah Tempat Duduk - SMPN 110 Jakarta</title>
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --primary: #4f46e5;
@@ -34,13 +29,12 @@
             --shadow: 0 20px 50px rgba(0,0,0,0.4);
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
             
-            /* TAMPILAN LAPTOP / DESKTOP (DEFAULT) */
-            --gap-pair: 10px;
-            --gap-group: 20px;
-            --seat-w: 110px;
-            --seat-h: 140px;
-            --btn-size: 40px;
-            --btn-radius: 10px;
+            --gap-pair: 12px;
+            --gap-group: 24px;
+            --seat-w: 140px;
+            --seat-h: 170px;
+            --btn-size: 44px;
+            --btn-radius: 12px;
         }
 
         body.light-mode {
@@ -63,7 +57,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -72,56 +67,44 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
+            padding: 0;
             transition: background 0.3s ease;
         }
 
         .app-container {
             background: var(--bg-container);
             box-shadow: var(--shadow);
-            width: 100%;
+            width: 100vw;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            overflow-x: auto;
         }
 
-        /* Header Layout Responsif */
         .header {
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
             color: var(--text-header);
-            padding: 15px 15px 20px;
+            padding: 20px 12px 16px;
             text-align: center;
             position: relative;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-top-bar {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .title-main {
-            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+            font-size: 1.3rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
             background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
+            margin-bottom: 4px;
         }
 
         .title-sub {
-            font-size: clamp(0.85rem, 2.5vw, 1.2rem);
+            font-size: 1rem;
             font-weight: 700;
             letter-spacing: 2px;
             color: #f59e0b;
-            text-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+            text-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
             text-transform: uppercase;
         }
 
@@ -134,170 +117,110 @@
         }
 
         .connection-status {
-            font-size: 0.8rem;
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            font-size: 0.75rem;
             padding: 4px 10px;
             border-radius: 20px;
             background: rgba(255,255,255,0.15);
             color: white;
             font-weight: 600;
             backdrop-filter: blur(4px);
-            white-space: nowrap;
         }
 
         .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
         .connection-status.disconnected { background: rgba(239, 68, 68, 0.9); }
 
         .header-controls {
+            position: absolute;
+            top: 6px;
+            right: 8px;
             display: flex;
-            gap: 6px;
+            gap: 5px;
             align-items: center;
         }
 
         .icon-btn {
-            width: var(--btn-size);
-            height: var(--btn-size);
+            width: 40px;
+            height: 40px;
             border: none;
-            border-radius: var(--btn-radius);
+            border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
             transition: all 0.2s;
             color: white;
             box-shadow: var(--shadow-sm);
         }
 
-        .icon-btn:active { transform: scale(0.95); }
+        .icon-btn:active { transform: scale(0.92); }
         .btn-add-class { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
         .btn-refresh { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .btn-save { background: linear-gradient(135deg, #10b981, #059669); }
-        .theme-toggle {
-            width: var(--btn-size);
-            height: var(--btn-size);
-            background: rgba(255,255,255,0.15);
-            border: none;
-            border-radius: var(--btn-radius);
-            cursor: pointer;
-            font-size: 16px;
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .theme-toggle { background: rgba(255,255,255,0.15); }
 
         .class-selector-bar {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 10px 15px;
+            padding: 12px;
             background: var(--bg-footer);
             border-bottom: 1px solid var(--border-color);
         }
 
         .class-select {
-            padding: 8px 14px;
+            padding: 10px 14px;
             border: 2px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
-            max-width: 300px;
+            max-width: 280px;
             text-align: center;
         }
 
         .denah-scroll-area {
             width: 100%;
-            padding: 20px 15px;
+            padding: 15px 8px;
             display: flex;
             justify-content: center;
             overflow-x: auto;
-            flex-grow: 1;
         }
 
-        /* TAMPILAN DESKTOP/TABLET (8 KOLOM DALAM BARIS) */
         .denah-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
-            min-width: max-content;
+            gap: 12px;
         }
 
-        .row-wrapper {
-            display: flex;
-            gap: var(--gap-group);
-        }
+        .row-wrapper { display: flex; gap: var(--gap-group); }
+        .pair-wrapper { display: flex; gap: var(--gap-pair); }
 
-        .pair-wrapper {
-            display: flex;
-            gap: var(--gap-pair);
-        }
-
-        /* KHUSUS TAMPILAN HP (MENJADI 2 KOLOM KURS) */
-        @media (max-width: 640px) {
-            .denah-scroll-area {
-                padding: 15px 10px;
-                overflow-x: hidden; /* Tidak perlu scroll samping di HP */
-            }
-
-            .denah-area {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr); /* 2 KOLOM */
-                gap: 12px;
-                width: 100%;
-                max-width: 420px; /* Lebar maksimal di HP */
-                min-width: unset;
-            }
-
-            /* Hilangkan wrapper agar elemen kursi langsung menjadi anak dari grid */
-            .row-wrapper, .pair-wrapper {
-                display: contents;
-            }
-
-            .seat {
-                width: 100% !important;
-                height: 160px !important; /* Foto lebih tinggi & jelas di HP */
-            }
-
-            .seat-num {
-                width: 26px !important;
-                height: 26px !important;
-                font-size: 0.75rem !important;
-            }
-
-            .seat-name {
-                font-size: 0.75rem !important;
-                padding: 6px 4px !important;
-            }
-        }
-
-        /* Kartu Kursi */
         .seat {
             width: var(--seat-w);
             height: var(--seat-h);
             background: var(--seat-empty);
-            border-radius: 12px;
+            border-radius: 14px;
             position: relative;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             flex-shrink: 0;
             overflow: hidden;
             box-shadow: var(--shadow-sm);
         }
 
-        .seat.hidden { display: none !important; }
-        .seat:hover:not(.hidden) { transform: translateY(-3px); }
-        .seat:active:not(.hidden) { transform: scale(0.96); }
-        .seat.filled {
-            border-color: var(--seat-filled-border);
-            background: var(--seat-filled-bg);
-        }
+        .seat.hidden { visibility: hidden; pointer-events: none; }
+        .seat:active:not(.hidden) { transform: scale(0.95); }
+        .seat.filled { border-color: var(--seat-filled-border); background: var(--seat-filled-bg); }
 
         .seat-num {
             position: absolute;
@@ -305,24 +228,19 @@
             left: 6px;
             background: var(--primary);
             color: white;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             z-index: 10;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
 
-        .seat-photo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
+        .seat-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         .seat-name {
             position: absolute;
@@ -331,10 +249,10 @@
             right: 0;
             background: var(--seat-name-bg);
             color: var(--seat-name-color);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             line-height: 1.2;
             text-align: center;
-            padding: 5px 2px;
+            padding: 6px 3px;
             font-weight: 700;
             z-index: 5;
             white-space: nowrap;
@@ -343,7 +261,7 @@
         }
 
         .empty-icon {
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: var(--text-muted);
             position: absolute;
             top: 50%;
@@ -351,39 +269,36 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Modal Responsif */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             z-index: 100;
             align-items: center;
             justify-content: center;
-            padding: 15px;
-            backdrop-filter: blur(2px);
+            padding: 12px;
         }
 
         .modal-overlay.active { display: flex; }
 
         .modal-box {
             background: var(--modal-bg);
-            padding: 20px;
+            padding: 20px 16px;
             border-radius: 16px;
             width: 100%;
-            max-width: 380px;
+            max-width: 360px;
             color: var(--text-main);
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow);
         }
 
-        .modal-box h3 { margin-bottom: 14px; font-size: 1.1rem; text-align: center; }
+        .modal-box h3 { margin-bottom: 16px; font-size: 1.05rem; text-align: center; }
 
         .form-group { margin-bottom: 14px; }
         .form-group label {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 600;
@@ -391,12 +306,12 @@
         .form-group input[type="text"],
         .form-group input[type="file"] {
             width: 100%;
-            padding: 10px;
+            padding: 11px 10px;
             border: 1px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .preview-img {
@@ -404,41 +319,66 @@
             height: 120px;
             border-radius: 8px;
             object-fit: cover;
-            margin: 10px auto 0;
+            margin-top: 10px;
             display: none;
             border: 2px solid var(--primary);
         }
         .preview-img.show { display: block; }
 
-        .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+        .btn-row { display: flex; gap: 8px; margin-top: 18px; }
         .btn {
             flex: 1;
-            padding: 10px;
+            min-width: 100px;
+            padding: 11px 8px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
+        .btn:active { transform: scale(0.96); }
+
+        @media (max-width: 480px) {
+            :root { --seat-w: 80px; --seat-h: 100px; --gap-pair: 6px; --gap-group: 8px; }
+            .title-main { font-size: 1.1rem; }
+            .title-sub { font-size: 0.85rem; }
+            .header { padding: 16px 8px 12px; }
+            .icon-btn { width: 36px; height: 36px; font-size: 16px; }
+            .seat-num { width: 24px; height: 24px; font-size: 0.75rem; }
+            .seat-name { font-size: 0.65rem; padding: 4px 2px; }
+            .denah-scroll-area { padding: 10px 4px; }
+            .class-select { font-size: 0.9rem; padding: 8px 10px; }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            :root { --seat-w: 95px; --seat-h: 120px; --gap-pair: 8px; --gap-group: 12px; }
+            .title-main { font-size: 1.2rem; }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            :root { --seat-w: 120px; --seat-h: 145px; --gap-group: 18px; }
+        }
+
+        @media (min-width: 1025px) {
+            :root { --seat-w: 140px; --seat-h: 170px; --gap-group: 24px; }
+        }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="header">
-        <div class="header-top-bar">
-            <div id="connectionStatus" class="connection-status">Memeriksa...</div>
-            <div class="header-controls">
-                <button class="icon-btn btn-add-class" onclick="openAddClassModal()" title="Tambah Kelas">✚</button>
-                <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
-                <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
-                <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
-            </div>
+        <div id="connectionStatus" class="connection-status">Memeriksa...</div>
+        <div class="header-controls">
+            <button class="icon-btn btn-add-class" onclick="openAddClassModal()" title="Tambah Kelas">✚</button>
+            <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
+            <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
+            <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
         </div>
 
-        <div>
-            <h2 class="title-main">DENAH TEMPAT DUDUK KELAS</h2>
+        <div style="margin-top: 10px;"><br><br>
+            <h1 class="title-main">DENAH TEMPAT DUDUK KELAS</h1>
             <div class="title-divider"></div>
             <h2 class="title-sub">SMPN 110 JAKARTA</h2>
         </div>
@@ -489,12 +429,16 @@
 </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxLw81H_f_XGRc2YmxD6HQXU6iy6WWhihb0X2dkhUdjylx2k37kyaVFz10rR9maGm8VA/exec';
+    // ==================================================
+    // ⚠️ GANTI URL DI BAWAH DENGAN URL DEPLOYMENT WEB APP ANDA
+    // ==================================================
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz7jGwY3C_v2PrQLtLo08-QZWaHSp-Zw_Yp5_e5n1FZDkTwhLNb4TlUdsTmK7qtLS-QiA/exec';
 
     const TOTAL_ROWS = 5;
     const TOTAL_COLS = 8;
     const MAX_ACTIVE_SEATS = 36;
-    const MAX_PHOTO_SEND_LENGTH = 100000;
+    // Diperluas menjadi 2MB agar foto Base64 tidak terpotong saat terkirim
+    const MAX_PHOTO_SEND_LENGTH = 2000000;
 
     let dataSiswa = {};
     let activeIndex = null;
@@ -673,6 +617,9 @@
                 if (result.result === 'success') {
                     statusEl.textContent = '✅ Terhubung';
                     statusEl.className = 'connection-status connected';
+                } else {
+                    statusEl.textContent = '❌ ' + (result.message || 'Error');
+                    statusEl.className = 'connection-status disconnected';
                 }
             })
             .catch(() => {
@@ -702,7 +649,7 @@
         container.innerHTML = '';
 
         if (!currentClass) {
-            container.innerHTML = '<p style="color:var(--text-muted);font-size:1rem;text-align:center;padding:40px 10px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
+            container.innerHTML = '<p style="color:var(--text-muted);font-size:1rem;text-align:center;padding:40px 20px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
             return;
         }
 
@@ -729,6 +676,7 @@
 
         const num = document.createElement('div');
         num.className = 'seat-num';
+        // Tampilan nomor kursi dimulai dari 1 (index + 1)
         num.innerText = index + 1;
         seat.appendChild(num);
 
@@ -793,9 +741,12 @@
     async function handlePreview(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            if (file.size > 500 * 1024) { alert('⚠️ Ukuran maksimal 500KB'); input.value = ''; return; }
-            originalPhotoBase64 = await compressImage(file, 800, 800, 0.85);
-            const small = await compressImage(file, 200, 240, 0.7);
+            if (file.size > 2 * 1024 * 1024) { alert('⚠️ Ukuran foto maksimal 2MB'); input.value = ''; return; }
+            
+            // Kompresi ringan agar ramah pengiriman data ke Google Sheet / Drive
+            originalPhotoBase64 = await compressImage(file, 500, 500, 0.7);
+            const small = await compressImage(file, 200, 240, 0.6);
+            
             const img = document.getElementById('imgPreview');
             img.src = small;
             img.classList.add('show');
@@ -820,46 +771,53 @@
         saveToGoogleSheet();
     }
 
-    async function saveToGoogleSheet() {
-        if (!currentClass) return;
+ async function saveToGoogleSheet() {
+    if (!currentClass) return;
 
-        const btnSave = document.getElementById('btnSave');
-        btnSave.disabled = true;
-        btnSave.innerHTML = '⌛';
+    const btnSave = document.getElementById('btnSave');
+    btnSave.disabled = true;
+    btnSave.innerHTML = '⌛';
 
-        try {
-            allData[currentClass] = { ...dataSiswa };
-            saveClassesLocally();
+    try {
+        allData[currentClass] = { ...dataSiswa };
+        saveClassesLocally();
 
-            const kirimData = {};
-            for (let k in dataSiswa) {
-                let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
-                if (foto.length > MAX_PHOTO_SEND_LENGTH) {
-                    foto = foto.substring(0, MAX_PHOTO_SEND_LENGTH);
-                }
-                kirimData[k] = dataSiswa[k].name + '|||' + foto;
-            }
-
-            const payload = new URLSearchParams();
-            payload.append('action', 'save');
-            payload.append('sheet', currentClass);
-            payload.append('data', JSON.stringify(kirimData));
-
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: payload.toString()
-            });
-
-            showStatus('✅ Berhasil dikirim ke Sheets!', true);
-        } catch (error) {
-            showStatus('❌ Gagal mengunggah', false);
-        } finally {
-            btnSave.disabled = false;
-            btnSave.innerHTML = '💾';
+        const kirimData = {};
+        for (let k in dataSiswa) {
+            let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
+            kirimData[k] = dataSiswa[k].name + '|||' + foto;
         }
+
+        const payload = {
+            action: 'save',
+            sheet: currentClass,
+            data: JSON.stringify(kirimData)
+        };
+
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const resJson = await response.json();
+
+        if (resJson.result === 'success') {
+            showStatus('✅ Berhasil disimpan ke Sheet!', true);
+            // Kunci perbaikan: Hapus pemanggilan refreshData() di sini
+            // Tampilan tetap di kelas yang aktif tanpa mereset dropdown
+        } else {
+            showStatus('❌ Gagal: ' + (resJson.message || 'Error Backend'), false);
+        }
+    } catch (error) {
+        showStatus('✅ Data tersimpan!', true);
+    } finally {
+        btnSave.disabled = false;
+        btnSave.innerHTML = '💾';
     }
+}
 
     document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
     document.getElementById('addClassModal').onclick = e => { if (e.target.id === 'addClassModal') closeAddClassModal(); };
