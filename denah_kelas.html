@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Denah Tempat Duduk - SMPN 110 Jakarta</title>
     
     <!-- Google Fonts -->
@@ -34,13 +34,13 @@
             --shadow: 0 20px 50px rgba(0,0,0,0.4);
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
             
-            /* DIBESARKAN UNTUK LAYAR PENUH (DESKTOP) */
-            --gap-pair: 12px;
-            --gap-group: 24px;
-            --seat-w: 140px;  /* Dari 80px ke 160px */
-            --seat-h: 170px;  /* Dari 95px ke 190px */
-            --btn-size: 44px;
-            --btn-radius: 12px;
+            /* DINAMIS & RESPONSIF BERDASARKAN VIEWPORT */
+            --gap-pair: clamp(6px, 1.2vw, 12px);
+            --gap-group: clamp(12px, 2.5vw, 24px);
+            --seat-w: clamp(75px, 11vw, 140px);
+            --seat-h: clamp(95px, 14vw, 170px);
+            --btn-size: clamp(36px, 5vw, 44px);
+            --btn-radius: 10px;
         }
 
         body.light-mode {
@@ -72,79 +72,84 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 0; /* Menghilangkan padding luar agar 1 layar penuh */
             transition: background 0.3s ease;
         }
 
         .app-container {
             background: var(--bg-container);
             box-shadow: var(--shadow);
-            width: 100vw;       /* Lebar 100% Layar */
-            min-height: 100vh;  /* Tinggi Minimal 100% Layar */
-            overflow-x: auto;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Header Styling */
+        /* Header Layout Responsif */
         .header {
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
             color: var(--text-header);
-            padding: 25px 20px 20px;
+            padding: 15px 15px 20px;
             text-align: center;
             position: relative;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .title-main {
-            font-size: 1.6rem;
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 4px;
             filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
         }
 
         .title-sub {
-            font-size: 1.2rem;
+            font-size: clamp(0.85rem, 2.5vw, 1.2rem);
             font-weight: 700;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             color: #f59e0b;
             text-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
             text-transform: uppercase;
         }
 
         .title-divider {
-            width: 80px;
+            width: 60px;
             height: 3px;
             background: linear-gradient(90deg, transparent, #f59e0b, transparent);
-            margin: 8px auto;
+            margin: 6px auto;
             border-radius: 2px;
         }
 
         .connection-status {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            font-size: 0.85rem;
-            padding: 6px 14px;
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
+            padding: 4px 10px;
             border-radius: 20px;
             background: rgba(255,255,255,0.15);
             color: white;
             font-weight: 600;
             backdrop-filter: blur(4px);
+            white-space: nowrap;
         }
 
         .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
         .connection-status.disconnected { background: rgba(239, 68, 68, 0.9); }
 
         .header-controls {
-            position: absolute;
-            top: 12px;
-            right: 20px;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
         }
 
@@ -157,7 +162,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: clamp(14px, 3vw, 18px);
             transition: all 0.2s;
             color: white;
             box-shadow: var(--shadow-sm);
@@ -174,8 +179,11 @@
             border: none;
             border-radius: var(--btn-radius);
             cursor: pointer;
-            font-size: 20px;
+            font-size: clamp(14px, 3vw, 18px);
             backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .class-selector-bar {
@@ -183,37 +191,40 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 14px;
+            padding: 10px 15px;
             background: var(--bg-footer);
             border-bottom: 1px solid var(--border-color);
         }
 
         .class-select {
-            padding: 10px 18px;
+            padding: 8px 14px;
             border: 2px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 1.05rem;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
             font-weight: 700;
             cursor: pointer;
-            min-width: 200px;
+            width: 100%;
+            max-width: 300px;
             text-align: center;
         }
 
         .denah-scroll-area {
             width: 100%;
-            padding: 30px 20px;
+            padding: 20px 10px;
             display: flex;
             justify-content: center;
             overflow-x: auto;
+            flex-grow: 1;
         }
 
         .denah-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: clamp(10px, 2vw, 20px);
+            min-width: max-content; /* Mencegah pecah layout di hp kecil */
         }
 
         .row-wrapper {
@@ -226,23 +237,23 @@
             gap: var(--gap-pair);
         }
 
-        /* Kartu Kursi Lebih Besar & Elegan */
+        /* Kartu Kursi Responsif */
         .seat {
             width: var(--seat-w);
             height: var(--seat-h);
             background: var(--seat-empty);
-            border-radius: 16px;
+            border-radius: clamp(8px, 1.5vw, 16px);
             position: relative;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 3px solid transparent;
+            border: 2px solid transparent;
             flex-shrink: 0;
             overflow: hidden;
             box-shadow: var(--shadow-sm);
         }
 
         .seat.hidden { visibility: hidden; pointer-events: none; }
-        .seat:hover:not(.hidden) { transform: translateY(-4px); }
+        .seat:hover:not(.hidden) { transform: translateY(-3px); }
         .seat:active:not(.hidden) { transform: scale(0.96); }
         .seat.filled {
             border-color: var(--seat-filled-border);
@@ -251,20 +262,20 @@
 
         .seat-num {
             position: absolute;
-            top: 8px;
-            left: 8px;
+            top: clamp(4px, 1vw, 8px);
+            left: clamp(4px, 1vw, 8px);
             background: var(--primary);
             color: white;
-            width: 32px;
-            height: 32px;
+            width: clamp(20px, 3.5vw, 30px);
+            height: clamp(20px, 3.5vw, 30px);
             border-radius: 50%;
-            font-size: 0.95rem;
+            font-size: clamp(0.65rem, 1.5vw, 0.85rem);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             z-index: 10;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .seat-photo {
@@ -281,10 +292,10 @@
             right: 0;
             background: var(--seat-name-bg);
             color: var(--seat-name-color);
-            font-size: 0.85rem;  /* Nama siswa lebih jelas */
+            font-size: clamp(0.6rem, 1.4vw, 0.8rem);
             line-height: 1.2;
             text-align: center;
-            padding: 8px 4px;
+            padding: clamp(3px, 0.8vw, 6px) 2px;
             font-weight: 700;
             z-index: 5;
             white-space: nowrap;
@@ -293,7 +304,7 @@
         }
 
         .empty-icon {
-            font-size: 2.5rem;
+            font-size: clamp(1.2rem, 3vw, 2rem);
             color: var(--text-muted);
             position: absolute;
             top: 50%;
@@ -301,7 +312,7 @@
             transform: translate(-50%, -50%);
         }
 
-        /* Modal */
+        /* Modal Responsif */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -311,101 +322,83 @@
             align-items: center;
             justify-content: center;
             padding: 15px;
+            backdrop-filter: blur(2px);
         }
 
         .modal-overlay.active { display: flex; }
 
         .modal-box {
             background: var(--modal-bg);
-            padding: 25px;
+            padding: clamp(15px, 4vw, 25px);
             border-radius: 16px;
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             color: var(--text-main);
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: var(--shadow);
         }
 
-        .modal-box h3 { margin-bottom: 18px; font-size: 1.15rem; text-align: center; }
+        .modal-box h3 { margin-bottom: 14px; font-size: 1.1rem; text-align: center; }
 
-        .form-group { margin-bottom: 16px; }
+        .form-group { margin-bottom: 14px; }
         .form-group label {
             display: block;
-            margin-bottom: 6px;
-            font-size: 0.9rem;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 600;
         }
         .form-group input[type="text"],
         .form-group input[type="file"] {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .preview-img {
-            width: 120px;
-            height: 140px;
-            border-radius: 10px;
+            width: 100px;
+            height: 120px;
+            border-radius: 8px;
             object-fit: cover;
-            margin-top: 10px;
+            margin: 10px auto 0;
             display: none;
             border: 2px solid var(--primary);
         }
         .preview-img.show { display: block; }
 
-        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-row { display: flex; gap: 10px; margin-top: 16px; }
         .btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
-
-        /* Penyesuaian Responsif untuk Layar Kecil / HP */
-        @media (max-width: 1024px) {
-            :root {
-                --seat-w: 110px;
-                --seat-h: 135px;
-                --gap-group: 16px;
-            }
-            .seat-name { font-size: 0.75rem; }
-            .seat-num { width: 26px; height: 26px; font-size: 0.8rem; }
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --seat-w: 95px;
-                --seat-h: 115px;
-                --gap-pair: 8px;
-                --gap-group: 10px;
-            }
-            .title-main { font-size: 1.2rem; }
-            .title-sub { font-size: 0.95rem; }
-        }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="header">
-        <div id="connectionStatus" class="connection-status">Memeriksa...</div>
-        <div class="header-controls">
-            <button class="icon-btn btn-add-class" onclick="openAddClassModal()" title="Tambah Kelas">✚</button>
-            <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
-            <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
-            <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
+        <div class="header-top-bar">
+            <div id="connectionStatus" class="connection-status">Memeriksa...</div>
+            <div class="header-controls">
+                <button class="icon-btn btn-add-class" onclick="openAddClassModal()" title="Tambah Kelas">✚</button>
+                <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
+                <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
+            </div>
         </div>
 
-        <div style="margin-top: 10px;">
+        <div><br><br>
             <h1 class="title-main">DENAH TEMPAT DUDUK KELAS</h1>
             <div class="title-divider"></div>
             <h2 class="title-sub">SMPN 110 JAKARTA</h2>
@@ -670,7 +663,7 @@
         container.innerHTML = '';
 
         if (!currentClass) {
-            container.innerHTML = '<p style="color:var(--text-muted);font-size:1.2rem;text-align:center;padding:50px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
+            container.innerHTML = '<p style="color:var(--text-muted);font-size:1rem;text-align:center;padding:40px 10px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
             return;
         }
 
