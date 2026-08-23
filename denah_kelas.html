@@ -34,12 +34,12 @@
             --shadow: 0 20px 50px rgba(0,0,0,0.4);
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
             
-            /* DINAMIS & RESPONSIF BERDASARKAN VIEWPORT */
-            --gap-pair: clamp(6px, 1.2vw, 12px);
-            --gap-group: clamp(12px, 2.5vw, 24px);
-            --seat-w: clamp(75px, 11vw, 140px);
-            --seat-h: clamp(95px, 14vw, 170px);
-            --btn-size: clamp(36px, 5vw, 44px);
+            /* TAMPILAN LAPTOP / DESKTOP (DEFAULT) */
+            --gap-pair: 10px;
+            --gap-group: 20px;
+            --seat-w: 110px;
+            --seat-h: 140px;
+            --btn-size: 40px;
             --btn-radius: 10px;
         }
 
@@ -134,7 +134,7 @@
         }
 
         .connection-status {
-            font-size: clamp(0.7rem, 2vw, 0.85rem);
+            font-size: 0.8rem;
             padding: 4px 10px;
             border-radius: 20px;
             background: rgba(255,255,255,0.15);
@@ -162,7 +162,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(14px, 3vw, 18px);
+            font-size: 16px;
             transition: all 0.2s;
             color: white;
             box-shadow: var(--shadow-sm);
@@ -179,7 +179,7 @@
             border: none;
             border-radius: var(--btn-radius);
             cursor: pointer;
-            font-size: clamp(14px, 3vw, 18px);
+            font-size: 16px;
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
@@ -202,7 +202,7 @@
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
@@ -212,19 +212,20 @@
 
         .denah-scroll-area {
             width: 100%;
-            padding: 20px 10px;
+            padding: 20px 15px;
             display: flex;
             justify-content: center;
             overflow-x: auto;
             flex-grow: 1;
         }
 
+        /* TAMPILAN DESKTOP/TABLET (8 KOLOM DALAM BARIS) */
         .denah-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: clamp(10px, 2vw, 20px);
-            min-width: max-content; /* Mencegah pecah layout di hp kecil */
+            gap: 15px;
+            min-width: max-content;
         }
 
         .row-wrapper {
@@ -237,12 +238,50 @@
             gap: var(--gap-pair);
         }
 
-        /* Kartu Kursi Responsif */
+        /* KHUSUS TAMPILAN HP (MENJADI 2 KOLOM KURS) */
+        @media (max-width: 640px) {
+            .denah-scroll-area {
+                padding: 15px 10px;
+                overflow-x: hidden; /* Tidak perlu scroll samping di HP */
+            }
+
+            .denah-area {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr); /* 2 KOLOM */
+                gap: 12px;
+                width: 100%;
+                max-width: 420px; /* Lebar maksimal di HP */
+                min-width: unset;
+            }
+
+            /* Hilangkan wrapper agar elemen kursi langsung menjadi anak dari grid */
+            .row-wrapper, .pair-wrapper {
+                display: contents;
+            }
+
+            .seat {
+                width: 100% !important;
+                height: 160px !important; /* Foto lebih tinggi & jelas di HP */
+            }
+
+            .seat-num {
+                width: 26px !important;
+                height: 26px !important;
+                font-size: 0.75rem !important;
+            }
+
+            .seat-name {
+                font-size: 0.75rem !important;
+                padding: 6px 4px !important;
+            }
+        }
+
+        /* Kartu Kursi */
         .seat {
             width: var(--seat-w);
             height: var(--seat-h);
             background: var(--seat-empty);
-            border-radius: clamp(8px, 1.5vw, 16px);
+            border-radius: 12px;
             position: relative;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -252,7 +291,7 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .seat.hidden { visibility: hidden; pointer-events: none; }
+        .seat.hidden { display: none !important; }
         .seat:hover:not(.hidden) { transform: translateY(-3px); }
         .seat:active:not(.hidden) { transform: scale(0.96); }
         .seat.filled {
@@ -262,14 +301,14 @@
 
         .seat-num {
             position: absolute;
-            top: clamp(4px, 1vw, 8px);
-            left: clamp(4px, 1vw, 8px);
+            top: 6px;
+            left: 6px;
             background: var(--primary);
             color: white;
-            width: clamp(20px, 3.5vw, 30px);
-            height: clamp(20px, 3.5vw, 30px);
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            font-size: clamp(0.65rem, 1.5vw, 0.85rem);
+            font-size: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -292,10 +331,10 @@
             right: 0;
             background: var(--seat-name-bg);
             color: var(--seat-name-color);
-            font-size: clamp(0.6rem, 1.4vw, 0.8rem);
+            font-size: 0.7rem;
             line-height: 1.2;
             text-align: center;
-            padding: clamp(3px, 0.8vw, 6px) 2px;
+            padding: 5px 2px;
             font-weight: 700;
             z-index: 5;
             white-space: nowrap;
@@ -304,7 +343,7 @@
         }
 
         .empty-icon {
-            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-size: 1.8rem;
             color: var(--text-muted);
             position: absolute;
             top: 50%;
@@ -329,7 +368,7 @@
 
         .modal-box {
             background: var(--modal-bg);
-            padding: clamp(15px, 4vw, 25px);
+            padding: 20px;
             border-radius: 16px;
             width: 100%;
             max-width: 380px;
@@ -398,8 +437,8 @@
             </div>
         </div>
 
-        <div><br><br>
-            <h1 class="title-main">DENAH TEMPAT DUDUK KELAS</h1>
+        <div>
+            <h2 class="title-main">DENAH TEMPAT DUDUK KELAS</h2>
             <div class="title-divider"></div>
             <h2 class="title-sub">SMPN 110 JAKARTA</h2>
         </div>
