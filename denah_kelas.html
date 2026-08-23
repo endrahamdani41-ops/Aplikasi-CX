@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Denah Tempat Duduk - SMPN 110 Jakarta</title>
+    <title>Denah Tempat Duduk - Multi Kelas</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -21,7 +21,7 @@
             --seat-empty: #e5e7eb;
             --seat-filled-bg: #ffffff;
             --seat-filled-border: #10b981;
-            --seat-name-bg: rgba(0, 0, 0, 0.65);
+            --seat-name-bg: rgba(0, 0, 0, 0.75);
             --seat-name-color: #ffffff;
             --modal-bg: #ffffff;
             --input-bg: #ffffff;
@@ -47,7 +47,7 @@
             --seat-empty: #334155;
             --seat-filled-bg: #1e293b;
             --seat-filled-border: #10b981;
-            --seat-name-bg: rgba(0, 0, 0, 0.75);
+            --seat-name-bg: rgba(0, 0, 0, 0.85);
             --modal-bg: #1e293b;
             --input-bg: #0f172a;
             --input-border: #475569;
@@ -94,12 +94,6 @@
             margin-bottom: 4px;
             font-weight: 700;
             padding-top: 28px;
-        }
-
-        .header h2 {
-            font-size: 0.9rem;
-            font-weight: 400;
-            opacity: 0.9;
         }
 
         .connection-status {
@@ -301,7 +295,8 @@
             right: 0;
             background: var(--seat-name-bg);
             color: var(--seat-name-color);
-            font-size: 0.7rem;
+            font-size: 0.65rem;
+            line-height: 1.1;
             text-align: center;
             padding: 4px 2px;
             font-weight: 600;
@@ -400,15 +395,11 @@
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
         .btn:active { transform: scale(0.97); }
 
-        /* ========== LAYAR KOMPUTER — TAMPIL LENGKAP 36 KURSI ========== */
         @media (min-width: 769px) {
             .mobile-page-nav { display: none; }
-            .denah-area {
-                display: flex !important;
-            }
+            .denah-area { display: flex !important; }
         }
 
-        /* ========== LAYAR HP — TAMPIL 9 KURSI SAJA PER HALAMAN ========== */
         @media (max-width: 768px) {
             :root {
                 --seat-w: 105px;
@@ -417,33 +408,21 @@
                 --gap-group: 12px;
                 --btn-size: 40px;
             }
-
             body { padding: 5px; }
-
             .app-container { border-radius: 12px; }
-
             .header { padding: 12px 8px 16px; }
             .header h1 { font-size: 1rem; padding-top: 24px; }
-            .header h2 { font-size: 0.8rem; }
-
             .connection-status { font-size: 0.68rem; padding: 4px 8px; }
-            .icon-btn { font-size: 16px; }
-
             .class-selector-bar { padding: 10px; }
             .class-select { min-width: 140px; font-size: 0.9rem; padding: 8px 10px; }
-
             .denah-scroll-area { padding: 15px 5px; }
             .denah-area { gap: 15px; }
             .row-wrapper { gap: 12px; }
-
             .seat-num { width: 24px; height: 24px; font-size: 0.75rem; }
             .seat-name { font-size: 0.65rem; padding: 4px 2px; }
-
             .modal-box { padding: 18px; }
-            .btn { font-size: 0.85rem; padding: 10px 6px; }
         }
 
-        /* ========== LAYAR SANGAT KECIL ========== */
         @media (max-width: 360px) {
             :root {
                 --seat-w: 90px;
@@ -474,7 +453,6 @@
         </select>
     </div>
 
-    <!-- Navigasi Halaman Hanya Muncul di HP -->
     <div class="page-nav-bar mobile-page-nav" id="pageNav" style="display:none;">
         <button class="page-btn" onclick="prevPage()" id="btnPrev">◀ Sebelumnya</button>
         <span class="page-info" id="pageInfo">Hal 1 / 4</span>
@@ -484,10 +462,8 @@
     <div class="denah-scroll-area">
         <div class="denah-area" id="denahArea"></div>
     </div>
-
 </div>
 
-<!-- Modal Input Data Siswa -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
         <h3 id="modalTitle">Input Data Siswa</h3>
@@ -496,7 +472,7 @@
             <input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off">
         </div>
         <div class="form-group">
-            <label>Foto Siswa</label>
+            <label>Foto Siswa (Opsional)</label>
             <input type="file" id="inpPhoto" accept="image/*" onchange="handlePreview(this)">
             <img id="imgPreview" class="preview-img">
         </div>
@@ -507,7 +483,6 @@
     </div>
 </div>
 
-<!-- Modal Tambah Kelas -->
 <div class="modal-overlay" id="addClassModal">
     <div class="modal-box">
         <h3>Tambah Kelas Baru</h3>
@@ -523,19 +498,15 @@
 </div>
 
 <script>
-    // ==================================================
-    // ⚡ URL SCRIPT GOOGLE APPS — SUDAH DIISI
-    // ==================================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCsFUt6X9k9FwojivaysZtbTPvdlVKQEICoW70mjb3MUi_ydc-tFlV0DyfuAQ7SaoVGA/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx79n-XiXHuFxYvWMFMVb39uZrkNfM0CULHu6MfyIOe2xDNF6SW2HzVPgfNJr6nENUVSw/exec';
 
     const TOTAL_ROWS = 5;
     const TOTAL_COLS = 8;
     const MAX_ACTIVE_SEATS = 36;
-    const MAX_PHOTO_SEND_LENGTH = 80000;
+    const MAX_PHOTO_SEND_LENGTH = 100000;
 
-    // Pengaturan tampilan HP: 9 kursi per halaman
     const IS_MOBILE = window.innerWidth <= 768;
-    const SEATS_PER_PAGE = 9; // 3 baris × 3 kolom = 9 kursi per halaman
+    const SEATS_PER_PAGE = 9;
     let currentPage = 1;
 
     let dataSiswa = {};
@@ -571,7 +542,10 @@
             const res = await fetch(url);
 
             if (res.ok) {
-                const result = await res.json();
+                const textRes = await res.text();
+                let result;
+                try { result = JSON.parse(textRes); } catch(e) { throw new Error('Format JSON tidak valid'); }
+
                 if (result.result === 'success' && result.sheets) {
                     allClasses = result.sheets;
                     allClasses.sort();
@@ -582,7 +556,8 @@
                         try {
                             const dataRes = await fetch(dataUrl);
                             if (dataRes.ok) {
-                                const dataResult = await dataRes.json();
+                                const dataText = await dataRes.text();
+                                const dataResult = JSON.parse(dataText);
                                 if (dataResult.result === 'success' && dataResult.data) {
                                     allData[cls] = dataResult.data;
                                 }
@@ -735,10 +710,8 @@
         const statusEl = document.getElementById('connectionStatus');
         const sep = getUrlSeparator();
         fetch(SCRIPT_URL + sep + 'action=test')
-            .then(res => {
-                if (!res.ok) throw new Error('HTTP Error');
-                return res.json();
-            })
+            .then(res => res.text())
+            .then(text => JSON.parse(text))
             .then(result => {
                 if (result.result === 'success') {
                     statusEl.textContent = '✅ Terhubung';
@@ -775,7 +748,6 @@
         }, 4000);
     }
 
-    // === NAVIGASI HALAMAN HP ===
     function getTotalPages() {
         return Math.ceil(MAX_ACTIVE_SEATS / SEATS_PER_PAGE);
     }
@@ -819,7 +791,6 @@
         updatePageNav();
 
         if (IS_MOBILE) {
-            // === HP: 9 KURSI PER HALAMAN — 3 BARIS × 3 KOLOM ===
             const startIdx = (currentPage - 1) * SEATS_PER_PAGE;
             const endIdx = Math.min(startIdx + SEATS_PER_PAGE - 1, MAX_ACTIVE_SEATS - 1);
 
@@ -835,7 +806,6 @@
                 container.appendChild(rowDiv);
             }
         } else {
-            // === KOMPUTER: LENGKAP 36 KURSI ===
             for (let r = 0; r < TOTAL_ROWS; r++) {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'row-wrapper';
@@ -873,6 +843,7 @@
             const name = document.createElement('div');
             name.className = 'seat-name';
             name.innerText = dataSiswa[index].name;
+            name.title = dataSiswa[index].name;
             seat.appendChild(name);
         } else {
             const icon = document.createElement('div');
@@ -951,7 +922,6 @@
         renderDenah();
     }
 
-    // === SIMPAN KE GOOGLE SHEET — FORMAT TANPA BARIS & KOLOM ===
     async function saveToGoogleSheet() {
         if (!SCRIPT_URL || SCRIPT_URL.indexOf('GANTI_DENGAN_URL') !== -1) {
             alert('⚠️ Ganti URL SCRIPT_URL di kode HTML terlebih dahulu!');
@@ -976,29 +946,24 @@
                 if (foto.length > MAX_PHOTO_SEND_LENGTH) {
                     foto = foto.substring(0, MAX_PHOTO_SEND_LENGTH);
                 }
-                // FORMAT: Nama|||Foto — TANPA Baris & Kolom
                 kirimData[k] = dataSiswa[k].name + '|||' + foto;
             }
 
-            const res = await fetch(SCRIPT_URL, {
+            const payload = new URLSearchParams();
+            payload.append('action', 'save');
+            payload.append('sheet', currentClass);
+            payload.append('data', JSON.stringify(kirimData));
+
+            await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'save',
-                    sheet: currentClass,
-                    data: kirimData
-                })
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: payload.toString()
             });
 
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-
-            const result = await res.json();
-            if (result.result === 'success') {
-                showStatus('✅ Tersimpan: ' + result.tersimpan + ' kursi!', true);
-            } else {
-                showStatus('⚠️ ' + (result.message || 'Gagal menyimpan'), false);
-            }
+            showStatus('✅ Berhasil dikirim ke Google Sheets!', true);
 
         } catch (error) {
             console.error('Error:', error);
