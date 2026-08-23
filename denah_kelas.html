@@ -364,6 +364,68 @@
         @media (min-width: 1025px) {
             :root { --seat-w: 140px; --seat-h: 170px; --gap-group: 24px; }
         }
+
+        /* Container denah dibuat dapat di-scroll secara fleksibel */
+.denah-scroll-area {
+    width: 100%;
+    padding: 12px 6px;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.denah-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    max-width: 100%;
+}
+
+.row-wrapper { 
+    display: flex; 
+    gap: var(--gap-group);
+    justify-content: center;
+    width: 100%;
+}
+
+.pair-wrapper { 
+    display: flex; 
+    gap: var(--gap-pair); 
+}
+
+/* Responsif khusus untuk layar Smartphone / HP */
+@media (max-width: 600px) {
+    :root { 
+        --seat-w: 68px; 
+        --seat-h: 88px; 
+        --gap-pair: 4px; 
+        --gap-group: 6px; 
+    }
+    
+    .header { padding: 12px 6px 10px; }
+    .title-main { font-size: 0.95rem; }
+    .title-sub { font-size: 0.75rem; }
+    
+    .seat-num { 
+        width: 18px; 
+        height: 18px; 
+        font-size: 0.65rem; 
+        top: 3px; 
+        left: 3px; 
+    }
+    
+    .seat-name { 
+        font-size: 0.55rem; 
+        padding: 2px 1px; 
+    }
+
+    .empty-icon {
+        font-size: 1.2rem;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -644,30 +706,36 @@
         _notifTimer = setTimeout(() => checkConnection(), 4000);
     }
 
-    function renderDenah() {
-        const container = document.getElementById('denahArea');
-        container.innerHTML = '';
+function renderDenah() {
+    const container = document.getElementById('denahArea');
+    container.innerHTML = '';
 
-        if (!currentClass) {
-            container.innerHTML = '<p style="color:var(--text-muted);font-size:1rem;text-align:center;padding:40px 20px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
-            return;
-        }
-
-        for (let r = 0; r < TOTAL_ROWS; r++) {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'row-wrapper';
-            for (let c = 0; c < TOTAL_COLS; c += 2) {
-                const pairDiv = document.createElement('div');
-                pairDiv.className = 'pair-wrapper';
-                const idxLeft = r * TOTAL_COLS + c;
-                const idxRight = r * TOTAL_COLS + c + 1;
-                pairDiv.appendChild(createSeat(idxLeft));
-                pairDiv.appendChild(createSeat(idxRight));
-                rowDiv.appendChild(pairDiv);
-            }
-            container.appendChild(rowDiv);
-        }
+    if (!currentClass) {
+        container.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;text-align:center;padding:30px 10px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
+        return;
     }
+
+    // Loop 5 Baris
+    for (let r = 0; r < TOTAL_ROWS; r++) {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'row-wrapper';
+
+        // Susun 8 kursi per baris (dipecah menjadi 4 pasang bangku)
+        for (let c = 0; c < TOTAL_COLS; c += 2) {
+            const pairDiv = document.createElement('div');
+            pairDiv.className = 'pair-wrapper';
+
+            const idxLeft = r * TOTAL_COLS + c;
+            const idxRight = r * TOTAL_COLS + c + 1;
+
+            pairDiv.appendChild(createSeat(idxLeft));
+            pairDiv.appendChild(createSeat(idxRight));
+
+            rowDiv.appendChild(pairDiv);
+        }
+        container.appendChild(rowDiv);
+    }
+}
 
     function createSeat(index) {
         const seat = document.createElement('div');
