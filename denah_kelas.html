@@ -3,43 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Denah Tempat Duduk - Multi Kelas</title>
+    <title>Denah Tempat Duduk - SMPN 110 Jakarta</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary: #4f46e5;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --bg-page: #f3f4f6;
-            --bg-container: #ffffff;
-            --bg-header: #4f46e5;
-            --text-header: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --bg-footer: #f9fafb;
-            --border-color: #e5e7eb;
-            --seat-empty: #e5e7eb;
-            --seat-filled-bg: #ffffff;
-            --seat-filled-border: #10b981;
-            --seat-name-bg: rgba(0, 0, 0, 0.75);
-            --seat-name-color: #ffffff;
-            --modal-bg: #ffffff;
-            --input-bg: #ffffff;
-            --input-border: #d1d5db;
-            --shadow: 0 20px 50px rgba(0,0,0,0.08);
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
-            --gap-pair: 8px;
-            --gap-group: 16px;
-            --seat-w: 80px;
-            --seat-h: 95px;
-            --btn-size: 44px;
-            --btn-radius: 12px;
-        }
-
-        body.dark-mode {
             --bg-page: #0f172a;
             --bg-container: #1e293b;
-            --bg-header: #312e81;
+            --text-header: #ffffff;
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --bg-footer: #334155;
@@ -48,18 +27,43 @@
             --seat-filled-bg: #1e293b;
             --seat-filled-border: #10b981;
             --seat-name-bg: rgba(0, 0, 0, 0.85);
+            --seat-name-color: #ffffff;
             --modal-bg: #1e293b;
             --input-bg: #0f172a;
             --input-border: #475569;
             --shadow: 0 20px 50px rgba(0,0,0,0.4);
             --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+            
+            /* DIBESARKAN UNTUK LAYAR PENUH (DESKTOP) */
+            --gap-pair: 12px;
+            --gap-group: 24px;
+            --seat-w: 140px;  /* Dari 80px ke 160px */
+            --seat-h: 170px;  /* Dari 95px ke 190px */
+            --btn-size: 44px;
+            --btn-radius: 12px;
+        }
+
+        body.light-mode {
+            --bg-page: #f3f4f6;
+            --bg-container: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --bg-footer: #f9fafb;
+            --border-color: #e5e7eb;
+            --seat-empty: #e5e7eb;
+            --seat-filled-bg: #ffffff;
+            --modal-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-border: #d1d5db;
+            --shadow: 0 20px 50px rgba(0,0,0,0.08);
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
@@ -68,44 +72,68 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 10px;
+            padding: 0; /* Menghilangkan padding luar agar 1 layar penuh */
             transition: background 0.3s ease;
         }
 
         .app-container {
             background: var(--bg-container);
-            border-radius: 16px;
             box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 1200px;
-            overflow: hidden;
+            width: 100vw;       /* Lebar 100% Layar */
+            min-height: 100vh;  /* Tinggi Minimal 100% Layar */
+            overflow-x: auto;
         }
 
+        /* Header Styling */
         .header {
-            background: var(--bg-header);
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
             color: var(--text-header);
-            padding: 16px 12px 24px;
+            padding: 25px 20px 20px;
             text-align: center;
             position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .header h1 {
-            font-size: 1.15rem;
+        .title-main {
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 4px;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
+        }
+
+        .title-sub {
+            font-size: 1.2rem;
             font-weight: 700;
-            padding-top: 28px;
+            letter-spacing: 3px;
+            color: #f59e0b;
+            text-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+            text-transform: uppercase;
+        }
+
+        .title-divider {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+            margin: 8px auto;
+            border-radius: 2px;
         }
 
         .connection-status {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            font-size: 0.75rem;
-            padding: 5px 10px;
+            top: 15px;
+            left: 20px;
+            font-size: 0.85rem;
+            padding: 6px 14px;
             border-radius: 20px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.15);
             color: white;
             font-weight: 600;
+            backdrop-filter: blur(4px);
         }
 
         .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
@@ -113,10 +141,10 @@
 
         .header-controls {
             position: absolute;
-            top: 6px;
-            right: 8px;
+            top: 12px;
+            right: 20px;
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
         }
 
@@ -129,7 +157,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             transition: all 0.2s;
             color: white;
             box-shadow: var(--shadow-sm);
@@ -142,11 +170,12 @@
         .theme-toggle {
             width: var(--btn-size);
             height: var(--btn-size);
-            background: rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.15);
             border: none;
             border-radius: var(--btn-radius);
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
+            backdrop-filter: blur(4px);
         }
 
         .class-selector-bar {
@@ -154,83 +183,37 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 12px;
+            padding: 14px;
             background: var(--bg-footer);
             border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
         }
 
         .class-select {
-            padding: 10px 14px;
+            padding: 10px 18px;
             border: 2px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
-            min-width: 160px;
+            min-width: 200px;
             text-align: center;
         }
-
-        .page-nav-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            padding: 10px;
-            background: var(--bg-footer);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .page-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .page-info {
-            font-weight: 600;
-            color: var(--text-main);
-            min-width: 80px;
-            text-align: center;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
 
         .denah-scroll-area {
             width: 100%;
-            padding: 20px 10px;
+            padding: 30px 20px;
             display: flex;
             justify-content: center;
+            overflow-x: auto;
         }
 
         .denah-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            width: 100%;
+            gap: 20px;
         }
 
         .row-wrapper {
@@ -243,21 +226,23 @@
             gap: var(--gap-pair);
         }
 
+        /* Kartu Kursi Lebih Besar & Elegan */
         .seat {
             width: var(--seat-w);
             height: var(--seat-h);
             background: var(--seat-empty);
-            border-radius: 12px;
+            border-radius: 16px;
             position: relative;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             flex-shrink: 0;
             overflow: hidden;
             box-shadow: var(--shadow-sm);
         }
 
         .seat.hidden { visibility: hidden; pointer-events: none; }
+        .seat:hover:not(.hidden) { transform: translateY(-4px); }
         .seat:active:not(.hidden) { transform: scale(0.96); }
         .seat.filled {
             border-color: var(--seat-filled-border);
@@ -266,19 +251,20 @@
 
         .seat-num {
             position: absolute;
-            top: 4px;
-            left: 4px;
+            top: 8px;
+            left: 8px;
             background: var(--primary);
             color: white;
-            width: 22px;
-            height: 22px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            font-size: 0.75rem;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             z-index: 10;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
 
         .seat-photo {
@@ -295,11 +281,11 @@
             right: 0;
             background: var(--seat-name-bg);
             color: var(--seat-name-color);
-            font-size: 0.65rem;
-            line-height: 1.1;
+            font-size: 0.85rem;  /* Nama siswa lebih jelas */
+            line-height: 1.2;
             text-align: center;
-            padding: 4px 2px;
-            font-weight: 600;
+            padding: 8px 4px;
+            font-weight: 700;
             z-index: 5;
             white-space: nowrap;
             overflow: hidden;
@@ -307,7 +293,7 @@
         }
 
         .empty-icon {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             color: var(--text-muted);
             position: absolute;
             top: 50%;
@@ -315,6 +301,7 @@
             transform: translate(-50%, -50%);
         }
 
+        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -330,44 +317,40 @@
 
         .modal-box {
             background: var(--modal-bg);
-            padding: 22px;
-            border-radius: 14px;
+            padding: 25px;
+            border-radius: 16px;
             width: 100%;
-            max-width: 360px;
+            max-width: 400px;
             color: var(--text-main);
             max-height: 90vh;
             overflow-y: auto;
         }
 
-        .modal-box h3 {
-            margin-bottom: 16px;
-            font-size: 1.05rem;
-            text-align: center;
-        }
+        .modal-box h3 { margin-bottom: 18px; font-size: 1.15rem; text-align: center; }
 
-        .form-group { margin-bottom: 14px; }
+        .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block;
             margin-bottom: 6px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
             font-weight: 600;
         }
         .form-group input[type="text"],
         .form-group input[type="file"] {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         .preview-img {
-            width: 90px;
-            height: 110px;
-            border-radius: 8px;
+            width: 120px;
+            height: 140px;
+            border-radius: 10px;
             object-fit: cover;
             margin-top: 10px;
             display: none;
@@ -375,61 +358,39 @@
         }
         .preview-img.show { display: block; }
 
-        .btn-row {
-            display: flex;
-            gap: 8px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
+        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
         .btn {
             flex: 1;
-            min-width: 100px;
-            padding: 11px 8px;
+            padding: 12px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 0.95rem;
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
-        .btn:active { transform: scale(0.97); }
 
-        @media (min-width: 769px) {
-            .mobile-page-nav { display: none; }
-            .denah-area { display: flex !important; }
+        /* Penyesuaian Responsif untuk Layar Kecil / HP */
+        @media (max-width: 1024px) {
+            :root {
+                --seat-w: 110px;
+                --seat-h: 135px;
+                --gap-group: 16px;
+            }
+            .seat-name { font-size: 0.75rem; }
+            .seat-num { width: 26px; height: 26px; font-size: 0.8rem; }
         }
 
         @media (max-width: 768px) {
             :root {
-                --seat-w: 105px;
-                --seat-h: 120px;
-                --gap-pair: 12px;
-                --gap-group: 12px;
-                --btn-size: 40px;
-            }
-            body { padding: 5px; }
-            .app-container { border-radius: 12px; }
-            .header { padding: 12px 8px 16px; }
-            .header h1 { font-size: 1rem; padding-top: 24px; }
-            .connection-status { font-size: 0.68rem; padding: 4px 8px; }
-            .class-selector-bar { padding: 10px; }
-            .class-select { min-width: 140px; font-size: 0.9rem; padding: 8px 10px; }
-            .denah-scroll-area { padding: 15px 5px; }
-            .denah-area { gap: 15px; }
-            .row-wrapper { gap: 12px; }
-            .seat-num { width: 24px; height: 24px; font-size: 0.75rem; }
-            .seat-name { font-size: 0.65rem; padding: 4px 2px; }
-            .modal-box { padding: 18px; }
-        }
-
-        @media (max-width: 360px) {
-            :root {
-                --seat-w: 90px;
-                --seat-h: 105px;
+                --seat-w: 95px;
+                --seat-h: 115px;
                 --gap-pair: 8px;
                 --gap-group: 10px;
             }
+            .title-main { font-size: 1.2rem; }
+            .title-sub { font-size: 0.95rem; }
         }
     </style>
 </head>
@@ -441,22 +402,20 @@
             <button class="icon-btn btn-add-class" onclick="openAddClassModal()" title="Tambah Kelas">✚</button>
             <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
             <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
-            <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
-        </div><br><br>
-        <h1>DENAH TEMPAT DUDUK KELAS</h1>
-        <h1>SMPN 110 JAKARTA</h1>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <h1 class="title-main">DENAH TEMPAT DUDUK KELAS</h1>
+            <div class="title-divider"></div>
+            <h2 class="title-sub">SMPN 110 JAKARTA</h2>
+        </div>
     </div>
 
     <div class="class-selector-bar">
         <select id="classSelect" class="class-select" onchange="switchClass()">
             <option value="" selected>-- Pilih Kelas --</option>
         </select>
-    </div>
-
-    <div class="page-nav-bar mobile-page-nav" id="pageNav" style="display:none;">
-        <button class="page-btn" onclick="prevPage()" id="btnPrev">◀ Sebelumnya</button>
-        <span class="page-info" id="pageInfo">Hal 1 / 4</span>
-        <button class="page-btn" onclick="nextPage()" id="btnNext">Berikutnya ▶</button>
     </div>
 
     <div class="denah-scroll-area">
@@ -472,7 +431,7 @@
             <input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off">
         </div>
         <div class="form-group">
-            <label>Foto Siswa (Opsional)</label>
+            <label>Foto Siswa</label>
             <input type="file" id="inpPhoto" accept="image/*" onchange="handlePreview(this)">
             <img id="imgPreview" class="preview-img">
         </div>
@@ -505,10 +464,6 @@
     const MAX_ACTIVE_SEATS = 36;
     const MAX_PHOTO_SEND_LENGTH = 100000;
 
-    const IS_MOBILE = window.innerWidth <= 768;
-    const SEATS_PER_PAGE = 9;
-    let currentPage = 1;
-
     let dataSiswa = {};
     let activeIndex = null;
     let currentClass = '';
@@ -523,7 +478,7 @@
 
     async function refreshData() {
         const btnRefresh = document.getElementById('btnRefresh');
-        btnRefresh.innerHTML = '<span class="loading"></span>';
+        btnRefresh.innerHTML = '⌛';
         btnRefresh.disabled = true;
 
         localStorage.removeItem('denah_all_classes_data');
@@ -534,7 +489,6 @@
         allData = {};
         dataSiswa = {};
         currentClass = '';
-        currentPage = 1;
 
         try {
             const sep = getUrlSeparator();
@@ -543,12 +497,10 @@
 
             if (res.ok) {
                 const textRes = await res.text();
-                let result;
-                try { result = JSON.parse(textRes); } catch(e) { throw new Error('Format JSON tidak valid'); }
+                let result = JSON.parse(textRes);
 
                 if (result.result === 'success' && result.sheets) {
-                    allClasses = result.sheets;
-                    allClasses.sort();
+                    allClasses = result.sheets.sort();
 
                     for (let i = 0; i < allClasses.length; i++) {
                         const cls = allClasses[i];
@@ -556,15 +508,12 @@
                         try {
                             const dataRes = await fetch(dataUrl);
                             if (dataRes.ok) {
-                                const dataText = await dataRes.text();
-                                const dataResult = JSON.parse(dataText);
+                                const dataResult = JSON.parse(await dataRes.text());
                                 if (dataResult.result === 'success' && dataResult.data) {
                                     allData[cls] = dataResult.data;
                                 }
                             }
-                        } catch (e) {
-                            allData[cls] = {};
-                        }
+                        } catch (e) { allData[cls] = {}; }
                     }
 
                     localStorage.setItem('denah_classes_list', JSON.stringify(allClasses));
@@ -577,8 +526,7 @@
                 }
             }
         } catch (err) {
-            console.error('Refresh error:', err);
-            showStatus('⚠️ Gagal memuat: ' + err.message, false);
+            showStatus('⚠️ Gagal memuat data', false);
         } finally {
             btnRefresh.innerHTML = '↺';
             btnRefresh.disabled = false;
@@ -587,9 +535,9 @@
 
     window.onload = function() {
         const savedTheme = localStorage.getItem('denah_theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-            document.querySelector('.theme-toggle').textContent = '☀️';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            document.querySelector('.theme-toggle').textContent = '🌙';
         }
 
         const savedAllData = localStorage.getItem('denah_all_classes_data');
@@ -612,12 +560,7 @@
 
     function renderClassSelect() {
         const select = document.getElementById('classSelect');
-        select.innerHTML = '';
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = '-- Pilih Kelas --';
-        defaultOption.selected = true;
-        select.appendChild(defaultOption);
+        select.innerHTML = '<option value="" selected>-- Pilih Kelas --</option>';
 
         if (allClasses.length === 0) {
             const emptyOption = document.createElement('option');
@@ -627,10 +570,9 @@
             select.appendChild(emptyOption);
         } else {
             for (let i = 0; i < allClasses.length; i++) {
-                const cls = allClasses[i];
                 const option = document.createElement('option');
-                option.value = cls;
-                option.textContent = cls;
+                option.value = allClasses[i];
+                option.textContent = allClasses[i];
                 select.appendChild(option);
             }
         }
@@ -640,25 +582,20 @@
         if (!className) {
             currentClass = '';
             dataSiswa = {};
-            currentPage = 1;
             renderDenah();
             return;
         }
         currentClass = className;
         dataSiswa = allData[className] || {};
-        currentPage = 1;
         saveClassesLocally();
         renderDenah();
-        showStatus('📂 Beralih ke ' + className, true);
+        showStatus('📂 Kelas: ' + className, true);
     }
 
     function switchClass() {
-        const select = document.getElementById('classSelect');
-        const newClass = select.value;
+        const newClass = document.getElementById('classSelect').value;
         if (newClass !== currentClass) {
-            if (currentClass) {
-                allData[currentClass] = { ...dataSiswa };
-            }
+            if (currentClass) allData[currentClass] = { ...dataSiswa };
             loadClassData(newClass);
         }
     }
@@ -676,25 +613,14 @@
     async function addClass() {
         const className = document.getElementById('inpClassName').value.trim();
         if (!className) { alert('Nama kelas wajib diisi!'); return; }
-        if (className.toLowerCase().substring(0, 5) !== 'kelas') {
-            alert('Nama kelas harus diawali "Kelas" (contoh: Kelas 7A)');
-            return;
-        }
-        if (allClasses.indexOf(className) !== -1) {
-            alert('Kelas "' + className + '" sudah ada!');
-            return;
-        }
-        if (currentClass) {
-            allData[currentClass] = { ...dataSiswa };
-        }
+        if (allClasses.indexOf(className) !== -1) { alert('Kelas sudah ada!'); return; }
+        
+        if (currentClass) allData[currentClass] = { ...dataSiswa };
 
         try {
             const sep = getUrlSeparator();
-            const url = SCRIPT_URL + sep + 'action=create&sheetName=' + encodeURIComponent(className);
-            await fetch(url, { method: 'GET' });
-        } catch (e) {
-            console.log('Sheet dibuat atau sudah ada');
-        }
+            await fetch(SCRIPT_URL + sep + 'action=create&sheetName=' + encodeURIComponent(className));
+        } catch (e) {}
 
         allClasses.push(className);
         allClasses.sort();
@@ -710,19 +636,14 @@
         const statusEl = document.getElementById('connectionStatus');
         const sep = getUrlSeparator();
         fetch(SCRIPT_URL + sep + 'action=test')
-            .then(res => res.text())
-            .then(text => JSON.parse(text))
+            .then(res => res.json())
             .then(result => {
                 if (result.result === 'success') {
                     statusEl.textContent = '✅ Terhubung';
                     statusEl.className = 'connection-status connected';
-                } else {
-                    statusEl.textContent = '❌ Error';
-                    statusEl.className = 'connection-status disconnected';
                 }
             })
-            .catch(err => {
-                console.error('Koneksi gagal:', err);
+            .catch(() => {
                 statusEl.textContent = '❌ Offline';
                 statusEl.className = 'connection-status disconnected';
             });
@@ -731,51 +652,17 @@
     function toggleTheme() {
         const body = document.body;
         const btn = document.querySelector('.theme-toggle');
-        body.classList.toggle('dark-mode');
-        btn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
-        localStorage.setItem('denah_theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        body.classList.toggle('light-mode');
+        btn.textContent = body.classList.contains('light-mode') ? '🌙' : '☀️';
+        localStorage.setItem('denah_theme', body.classList.contains('light-mode') ? 'light' : 'dark');
     }
 
     function showStatus(message, isSuccess) {
         const connStatus = document.getElementById('connectionStatus');
         connStatus.textContent = message;
-        connStatus.style.background = isSuccess
-            ? 'rgba(16, 185, 129, 0.9)'
-            : 'rgba(245, 158, 11, 0.9)';
+        connStatus.style.background = isSuccess ? 'rgba(16, 185, 129, 0.9)' : 'rgba(245, 158, 11, 0.9)';
         clearTimeout(_notifTimer);
-        _notifTimer = setTimeout(() => {
-            checkConnection();
-        }, 4000);
-    }
-
-    function getTotalPages() {
-        return Math.ceil(MAX_ACTIVE_SEATS / SEATS_PER_PAGE);
-    }
-
-    function prevPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            renderDenah();
-        }
-    }
-
-    function nextPage() {
-        if (currentPage < getTotalPages()) {
-            currentPage++;
-            renderDenah();
-        }
-    }
-
-    function updatePageNav() {
-        const navBar = document.getElementById('pageNav');
-        if (!IS_MOBILE || !currentClass) {
-            navBar.style.display = 'none';
-            return;
-        }
-        navBar.style.display = 'flex';
-        document.getElementById('pageInfo').textContent = `Hal ${currentPage} / ${getTotalPages()}`;
-        document.getElementById('btnPrev').disabled = currentPage <= 1;
-        document.getElementById('btnNext').disabled = currentPage >= getTotalPages();
+        _notifTimer = setTimeout(() => checkConnection(), 4000);
     }
 
     function renderDenah() {
@@ -783,43 +670,23 @@
         container.innerHTML = '';
 
         if (!currentClass) {
-            container.innerHTML = '<p style="color:var(--text-muted);font-size:1rem;text-align:center;padding:30px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
-            document.getElementById('pageNav').style.display = 'none';
+            container.innerHTML = '<p style="color:var(--text-muted);font-size:1.2rem;text-align:center;padding:50px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
             return;
         }
 
-        updatePageNav();
-
-        if (IS_MOBILE) {
-            const startIdx = (currentPage - 1) * SEATS_PER_PAGE;
-            const endIdx = Math.min(startIdx + SEATS_PER_PAGE - 1, MAX_ACTIVE_SEATS - 1);
-
-            for (let r = 0; r < 3; r++) {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'row-wrapper';
-                for (let c = 0; c < 3; c++) {
-                    const idx = startIdx + r * 3 + c;
-                    if (idx <= endIdx) {
-                        rowDiv.appendChild(createSeat(idx));
-                    }
-                }
-                container.appendChild(rowDiv);
+        for (let r = 0; r < TOTAL_ROWS; r++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row-wrapper';
+            for (let c = 0; c < TOTAL_COLS; c += 2) {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'pair-wrapper';
+                const idxLeft = r * TOTAL_COLS + c;
+                const idxRight = r * TOTAL_COLS + c + 1;
+                pairDiv.appendChild(createSeat(idxLeft));
+                pairDiv.appendChild(createSeat(idxRight));
+                rowDiv.appendChild(pairDiv);
             }
-        } else {
-            for (let r = 0; r < TOTAL_ROWS; r++) {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'row-wrapper';
-                for (let c = 0; c < TOTAL_COLS; c += 2) {
-                    const pairDiv = document.createElement('div');
-                    pairDiv.className = 'pair-wrapper';
-                    const idxLeft = r * TOTAL_COLS + c;
-                    const idxRight = r * TOTAL_COLS + c + 1;
-                    pairDiv.appendChild(createSeat(idxLeft));
-                    pairDiv.appendChild(createSeat(idxRight));
-                    rowDiv.appendChild(pairDiv);
-                }
-                container.appendChild(rowDiv);
-            }
+            container.appendChild(rowDiv);
         }
     }
 
@@ -872,7 +739,7 @@
     }
 
     function compressImage(file, maxW, maxH, quality) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = e => {
                 const img = new Image();
@@ -894,19 +761,16 @@
     async function handlePreview(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            if (file.size > 500 * 1024) {
-                alert('⚠️ Ukuran maksimal 500KB');
-                input.value = ''; return;
-            }
+            if (file.size > 500 * 1024) { alert('⚠️ Ukuran maksimal 500KB'); input.value = ''; return; }
             originalPhotoBase64 = await compressImage(file, 800, 800, 0.85);
-            const small = await compressImage(file, 120, 144, 0.6);
+            const small = await compressImage(file, 200, 240, 0.7);
             const img = document.getElementById('imgPreview');
             img.src = small;
             img.classList.add('show');
         }
     }
 
-    function saveData() {
+    async function saveData() {
         const name = document.getElementById('inpName').value.trim();
         const smallPhoto = document.getElementById('imgPreview').classList.contains('show')
             ? document.getElementById('imgPreview').src
@@ -920,21 +784,16 @@
         saveClassesLocally();
         closeModal();
         renderDenah();
+
+        saveToGoogleSheet();
     }
 
     async function saveToGoogleSheet() {
-        if (!SCRIPT_URL || SCRIPT_URL.indexOf('GANTI_DENGAN_URL') !== -1) {
-            alert('⚠️ Ganti URL SCRIPT_URL di kode HTML terlebih dahulu!');
-            return;
-        }
-        if (!currentClass) {
-            alert('⚠️ Pilih kelas terlebih dahulu!');
-            return;
-        }
+        if (!currentClass) return;
 
         const btnSave = document.getElementById('btnSave');
         btnSave.disabled = true;
-        btnSave.innerHTML = '<span class="loading"></span>';
+        btnSave.innerHTML = '⌛';
 
         try {
             allData[currentClass] = { ...dataSiswa };
@@ -957,17 +816,13 @@
             await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: payload.toString()
             });
 
-            showStatus('✅ Berhasil dikirim ke Google Sheets!', true);
-
+            showStatus('✅ Berhasil dikirim ke Sheets!', true);
         } catch (error) {
-            console.error('Error:', error);
-            showStatus('❌ Gagal: ' + error.message, false);
+            showStatus('❌ Gagal mengunggah', false);
         } finally {
             btnSave.disabled = false;
             btnSave.innerHTML = '💾';
