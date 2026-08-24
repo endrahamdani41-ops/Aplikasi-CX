@@ -1179,56 +1179,88 @@
         }
     }
 
-    function createSeat(index) {
-        const seat = document.createElement('div');
-        if (index >= MAX_ACTIVE_SEATS) { seat.className = 'seat hidden'; return seat; }
+function createSeat(index) {
+    const seat = document.createElement('div');
+    if (index >= MAX_ACTIVE_SEATS) { seat.className = 'seat hidden'; return seat; }
+    
+    const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
+    const isSelectedSwap = (swapFirstIndex === index);
+
+    seat.className = 'seat' 
+        + (dataSiswa[index] ? ' filled' : '') 
+        + (hasPhoto && !isMasterUnlocked ? ' locked' : '')
+        + (isSelectedSwap ? ' selected-swap' : '');
+
+    // AKTIFKAN DRAG & DROP JIKA KUNCI TERBUKA
+    if (isMasterUnlocked) {
+        seat.setAttribute('draggable', 'true');
         
-        const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
-        const isSelectedSwap = (swapFirstIndex === index);
+        seat.ondragstart = (e) => {
+            e.dataTransfer.setData('text/plain', index);
+        };
 
-        seat.className = 'seat' 
-            + (dataSiswa[index] ? ' filled' : '') 
-            + (hasPhoto && !isMasterUnlocked ? ' locked' : '')
-            + (isSelectedSwap ? ' selected-swap' : '');
+        seat.ondragover = (e) => {
+            e.preventDefault(); // Diperlukan agar area bisa di-drop
+        };
 
-        const num = document.createElement('div');
-        num.className = 'seat-num';
-        num.innerText = index + 1;
-        seat.appendChild(num);
+        seat.ondrop = (e) => {
+            e.preventDefault();
+            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            const toIndex = index;
 
-        if (dataSiswa[index]) {
-            if (dataSiswa[index].photo) {
-                const img = document.createElement('img');
-                img.className = 'seat-photo';
-                img.src = dataSiswa[index].photo;
-                
-                img.onclick = (e) => {
-                    e.stopPropagation();
-                    openZoomModal(
-                        dataSiswa[index].photoOriginal || dataSiswa[index].photo, 
-                        dataSiswa[index].name,
-                        dataSiswa[index].note || ''
-                    );
-                };
-                
-                seat.appendChild(img);
+            if (fromIndex !== toIndex) {
+                // Tukar posisi data siswa
+                const temp = dataSiswa[fromIndex];
+                dataSiswa[fromIndex] = dataSiswa[toIndex];
+                dataSiswa[toIndex] = temp;
+
+                allData[currentClass] = { ...dataSiswa };
+                saveClassesLocally();
+                saveToGoogleSheet();
+                renderDenah();
+                showStatus(`✅ Kursi ${fromIndex + 1} dipindah ke Kursi ${toIndex + 1}!`, true);
             }
+        };
+    }
 
-            const name = document.createElement('div');
-            name.className = 'seat-name';
-            name.innerText = dataSiswa[index].name;
-            name.title = dataSiswa[index].name;
-            seat.appendChild(name);
-        } else {
-            const icon = document.createElement('div');
-            icon.className = 'empty-icon';
-            icon.innerText = '+';
-            seat.appendChild(icon);
+    const num = document.createElement('div');
+    num.className = 'seat-num';
+    num.innerText = index + 1;
+    seat.appendChild(num);
+
+    if (dataSiswa[index]) {
+        if (dataSiswa[index].photo) {
+            const img = document.createElement('img');
+            img.className = 'seat-photo';
+            img.src = dataSiswa[index].photo;
+            
+            img.onclick = (e) => {
+                e.stopPropagation();
+                openZoomModal(
+                    dataSiswa[index].photoOriginal || dataSiswa[index].photo, 
+                    dataSiswa[index].name,
+                    dataSiswa[index].note || ''
+                );
+            };
+            
+            seat.appendChild(img);
         }
 
-        seat.onclick = () => handleSeatClick(index);
-        return seat;
+        const name = document.createElement('div');
+        name.className = 'seat-name';
+        name.innerText = dataSiswa[index].name;
+        name.title = dataSiswa[index].name;
+        seat.appendChild(name);
+    } else {
+        const icon = document.createElement('div');
+        icon.className = 'empty-icon';
+        icon.innerText = '+';
+        seat.appendChild(icon);
     }
+
+    seat.onclick = () => handleSeatClick(index);
+    return seat;
+}
 
     function openZoomModal(photoSrc, name, note) {
         const zoomModal = document.getElementById('zoomModal');
