@@ -94,14 +94,14 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
-            background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 100%);
+            background: linear-gradient(180deg, #f59e0b 100%, #f59e0b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 4px;
         }
 
         .title-sub {
-            font-size: 1rem;
+            font-size: 1.3rem;
             font-weight: 700;
             letter-spacing: 2px;
             color: #f59e0b;
@@ -371,8 +371,7 @@
             font-weight: 600;
         }
         .form-group input[type="text"],
-        .form-group input[type="file"],
-        .form-group textarea {
+        .form-group input[type="file"] {
             width: 100%;
             padding: 11px 10px;
             border: 1px solid var(--input-border);
@@ -455,15 +454,6 @@
             border-radius: 20px;
         }
 
-        .zoom-note {
-            margin-top: 6px;
-            color: #f59e0b;
-            font-size: 0.9rem;
-            text-align: center;
-            max-width: 320px;
-            font-style: italic;
-        }
-
         .zoom-close {
             position: absolute;
             top: -18px;
@@ -482,9 +472,7 @@
             justify-content: center;
         }
 
-        /* ------------------------------------------------------------- */
-        /* CSS KHUSUS PRINT - 6x6 PASTI 1 HALAMAN A4 & KOP BESAR RAPAT   */
-        /* ------------------------------------------------------------- */
+        /* PRINT MEDIA CONTROL */
         @media print {
             @page {
                 size: A4 portrait;
@@ -518,7 +506,6 @@
                 break-after: avoid !important;
             }
 
-            /* KOP Judul Besar & Rapat */
             .header {
                 background: none !important;
                 color: #000000 !important;
@@ -532,14 +519,14 @@
                 background: none !important;
                 -webkit-text-fill-color: initial !important;
                 color: #000000 !important;
-                font-size: 1.6rem !important; /* Huruf KOP Dibesarkan */
+                font-size: 1.6rem !important;
                 font-weight: 800 !important;
                 margin: 0 !important;
             }
 
             .title-sub {
                 color: #000000 !important;
-                font-size: 1.3rem !important; /* Huruf Sub KOP Dibesarkan */
+                font-size: 1.3rem !important;
                 font-weight: 700 !important;
                 margin-top: 4px !important;
             }
@@ -551,7 +538,6 @@
                 justify-content: center !important;
             }
 
-            /* GRID 6x6 DENGAN GAP 2PX RAPAT */
             .denah-area {
                 display: grid !important;
                 grid-template-columns: repeat(6, 1fr) !important;
@@ -563,7 +549,6 @@
                 display: contents !important;
             }
 
-            /* UKURAN KURSI PRESISI */
             .seat {
                 width: 100% !important;
                 height: 105px !important;
@@ -656,15 +641,13 @@
 
     <div class="toolbar">
         <select id="classSelect" class="class-select" onchange="switchClass()">
-            <option value="" selected>-- Pilih Kelas --</option>
+            <option value="" disabled selected hidden>-- Pilih Kelas --</option>
         </select>
         
-        <!-- FITUR URUTKAN FOTO/SISWA -->
         <select id="sortSelect" class="class-select" onchange="sortSeats()">
-            <option value="" selected disabled>↕️ Urutkan Siswa</option>
+            <option value="" disabled selected hidden>↕️ Urutkan</option>
             <option value="az">🔤 Nama (A - Z)</option>
             <option value="za">🔤 Nama (Z - A)</option>
-            <option value="num">🔢 Nomor Kursi (1-36)</option>
         </select>
 
         <button class="action-btn" id="btnSwapMode" onclick="toggleSwapMode()">🔄 Mode Tukar</button>
@@ -690,10 +673,6 @@
         <div class="form-group">
             <label>Nama Lengkap Siswa</label>
             <input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off">
-        </div>
-        <div class="form-group">
-            <label>Catatan Siswa (Opsional)</label>
-            <textarea id="inpNote" rows="2" placeholder="Contoh: Duduk depan (kacamata), suka ngobrol..."></textarea>
         </div>
         <div class="form-group">
             <label>Foto Siswa</label>
@@ -723,18 +702,17 @@
     </div>
 </div>
 
-<!-- MODAL ZOOM FOTO & CATATAN -->
+<!-- MODAL ZOOM FOTO -->
 <div class="zoom-overlay" id="zoomModal" onclick="closeZoomModal()">
     <div class="zoom-content" onclick="event.stopPropagation()">
         <button class="zoom-close" onclick="closeZoomModal()">✕</button>
         <img id="zoomImg" class="zoom-img" src="" alt="Zoom Foto">
         <div id="zoomCaption" class="zoom-caption"></div>
-        <div id="zoomNote" class="zoom-note"></div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUilcXtncZFx69DpV82zrjREqRkL36chF017URBaqWHfs3kP0Zza6drcJUsguVfznCfA/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxPkRVLwfT1zzpzje6XoPzONwfuWPPTggQePm9Ms4g0nj-b-zZxkFsuy_grZfsOevnGXw/exec';
 
     const MAX_ACTIVE_SEATS = 36;
     let dataSiswa = {};
@@ -746,7 +724,6 @@
     let _notifTimer = null;
     let currentPage = 1;
 
-    // FITUR STATE
     let isMasterUnlocked = false;
     const MASTER_PIN = "1234";
     let isSwapMode = false;
@@ -767,7 +744,6 @@
         renderDenah();
     }
 
-    // MASTER LOCK
     function toggleMasterLock() {
         if (!isMasterUnlocked) {
             const pin = prompt("Masukkan PIN untuk Membuka Mode Edit:");
@@ -791,7 +767,6 @@
         renderDenah();
     }
 
-    // MODE TUKAR POSISI (SWAP)
     function toggleSwapMode() {
         if (!isMasterUnlocked) {
             alert('⚠️ Buka Master Lock 🔒 terlebih dahulu untuk menukar tempat!');
@@ -833,7 +808,6 @@
         openModal(index);
     }
 
-    // FITUR URUTKAN FOTO / SISWA (SORT)
     function sortSeats() {
         if (!currentClass) {
             alert('⚠️ Pilih kelas terlebih dahulu!');
@@ -885,7 +859,6 @@
         document.getElementById('sortSelect').value = "";
     }
 
-    // RANDOMIZER
     function randomizeSeats() {
         if (!currentClass) { alert('⚠️ Pilih kelas terlebih dahulu!'); return; }
         if (!isMasterUnlocked) { alert('⚠️ Buka Master Lock 🔒 untuk mengacak kursi!'); return; }
@@ -913,7 +886,6 @@
         showStatus('🔀 Tempat duduk berhasil diacak!', true);
     }
 
-    // EXPORT PNG
     function exportToImage() {
         const area = document.getElementById('denahArea');
         if (!currentClass || area.children.length === 0) {
@@ -931,7 +903,6 @@
         });
     }
 
-    // PRINT
     function printDenah() {
         if (!currentClass) { alert('⚠️ Pilih kelas terlebih dahulu!'); return; }
         window.print();
@@ -978,8 +949,7 @@
                                             let parts = item.split('|||');
                                             parsedData[k] = {
                                                 name: parts[0] || '',
-                                                photo: parts[1] || '',
-                                                note: parts[2] || ''
+                                                photo: parts[1] || ''
                                             };
                                         }
                                     }
@@ -1033,7 +1003,7 @@
 
     function renderClassSelect() {
         const select = document.getElementById('classSelect');
-        select.innerHTML = '<option value="" selected>-- Pilih Kelas --</option>';
+        select.innerHTML = '<option value="" disabled selected hidden>-- Pilih Kelas --</option>';
 
         if (allClasses.length === 0) {
             const emptyOption = document.createElement('option');
@@ -1179,98 +1149,94 @@
         }
     }
 
-function createSeat(index) {
-    const seat = document.createElement('div');
-    if (index >= MAX_ACTIVE_SEATS) { seat.className = 'seat hidden'; return seat; }
-    
-    const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
-    const isSelectedSwap = (swapFirstIndex === index);
-
-    seat.className = 'seat' 
-        + (dataSiswa[index] ? ' filled' : '') 
-        + (hasPhoto && !isMasterUnlocked ? ' locked' : '')
-        + (isSelectedSwap ? ' selected-swap' : '');
-
-    // AKTIFKAN DRAG & DROP JIKA KUNCI TERBUKA
-    if (isMasterUnlocked) {
-        seat.setAttribute('draggable', 'true');
+    function createSeat(index) {
+        const seat = document.createElement('div');
+        if (index >= MAX_ACTIVE_SEATS) { seat.className = 'seat hidden'; return seat; }
         
-        seat.ondragstart = (e) => {
-            e.dataTransfer.setData('text/plain', index);
-        };
+        const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
+        const isSelectedSwap = (swapFirstIndex === index);
 
-        seat.ondragover = (e) => {
-            e.preventDefault(); // Diperlukan agar area bisa di-drop
-        };
+        seat.className = 'seat' 
+            + (dataSiswa[index] ? ' filled' : '') 
+            + (hasPhoto && !isMasterUnlocked ? ' locked' : '')
+            + (isSelectedSwap ? ' selected-swap' : '');
 
-        seat.ondrop = (e) => {
-            e.preventDefault();
-            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-            const toIndex = index;
-
-            if (fromIndex !== toIndex) {
-                // Tukar posisi data siswa
-                const temp = dataSiswa[fromIndex];
-                dataSiswa[fromIndex] = dataSiswa[toIndex];
-                dataSiswa[toIndex] = temp;
-
-                allData[currentClass] = { ...dataSiswa };
-                saveClassesLocally();
-                saveToGoogleSheet();
-                renderDenah();
-                showStatus(`✅ Kursi ${fromIndex + 1} dipindah ke Kursi ${toIndex + 1}!`, true);
-            }
-        };
-    }
-
-    const num = document.createElement('div');
-    num.className = 'seat-num';
-    num.innerText = index + 1;
-    seat.appendChild(num);
-
-    if (dataSiswa[index]) {
-        if (dataSiswa[index].photo) {
-            const img = document.createElement('img');
-            img.className = 'seat-photo';
-            img.src = dataSiswa[index].photo;
+        // DRAG & DROP JIKA MASTER LOCK TERBUKA
+        if (isMasterUnlocked) {
+            seat.setAttribute('draggable', 'true');
             
-            img.onclick = (e) => {
-                e.stopPropagation();
-                openZoomModal(
-                    dataSiswa[index].photoOriginal || dataSiswa[index].photo, 
-                    dataSiswa[index].name,
-                    dataSiswa[index].note || ''
-                );
+            seat.ondragstart = (e) => {
+                e.dataTransfer.setData('text/plain', index);
             };
-            
-            seat.appendChild(img);
+
+            seat.ondragover = (e) => {
+                e.preventDefault();
+            };
+
+            seat.ondrop = (e) => {
+                e.preventDefault();
+                const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                const toIndex = index;
+
+                if (fromIndex !== toIndex) {
+                    const temp = dataSiswa[fromIndex];
+                    dataSiswa[fromIndex] = dataSiswa[toIndex];
+                    dataSiswa[toIndex] = temp;
+
+                    allData[currentClass] = { ...dataSiswa };
+                    saveClassesLocally();
+                    saveToGoogleSheet();
+                    renderDenah();
+                    showStatus(`✅ Kursi ${fromIndex + 1} dipindah ke Kursi ${toIndex + 1}!`, true);
+                }
+            };
         }
 
-        const name = document.createElement('div');
-        name.className = 'seat-name';
-        name.innerText = dataSiswa[index].name;
-        name.title = dataSiswa[index].name;
-        seat.appendChild(name);
-    } else {
-        const icon = document.createElement('div');
-        icon.className = 'empty-icon';
-        icon.innerText = '+';
-        seat.appendChild(icon);
+        const num = document.createElement('div');
+        num.className = 'seat-num';
+        num.innerText = index + 1;
+        seat.appendChild(num);
+
+        if (dataSiswa[index]) {
+            if (dataSiswa[index].photo) {
+                const img = document.createElement('img');
+                img.className = 'seat-photo';
+                img.src = dataSiswa[index].photo;
+                
+                img.onclick = (e) => {
+                    e.stopPropagation();
+                    openZoomModal(
+                        dataSiswa[index].photoOriginal || dataSiswa[index].photo, 
+                        dataSiswa[index].name
+                    );
+                };
+                
+                seat.appendChild(img);
+            }
+
+            const name = document.createElement('div');
+            name.className = 'seat-name';
+            name.innerText = dataSiswa[index].name;
+            name.title = dataSiswa[index].name;
+            seat.appendChild(name);
+        } else {
+            const icon = document.createElement('div');
+            icon.className = 'empty-icon';
+            icon.innerText = '+';
+            seat.appendChild(icon);
+        }
+
+        seat.onclick = () => handleSeatClick(index);
+        return seat;
     }
 
-    seat.onclick = () => handleSeatClick(index);
-    return seat;
-}
-
-    function openZoomModal(photoSrc, name, note) {
+    function openZoomModal(photoSrc, name) {
         const zoomModal = document.getElementById('zoomModal');
         const zoomImg = document.getElementById('zoomImg');
         const zoomCaption = document.getElementById('zoomCaption');
-        const zoomNote = document.getElementById('zoomNote');
 
         zoomImg.src = photoSrc;
         zoomCaption.innerText = name || '';
-        zoomNote.innerText = note ? `📌 Catatan: ${note}` : '';
         zoomModal.classList.add('active');
     }
 
@@ -1286,7 +1252,6 @@ function createSeat(index) {
         originalPhotoBase64 = null;
         document.getElementById('modalTitle').innerText = currentClass + ' - Kursi No. ' + (index + 1);
         document.getElementById('inpName').value = dataSiswa[index]?.name || '';
-        document.getElementById('inpNote').value = dataSiswa[index]?.note || '';
         document.getElementById('imgPreview').classList.remove('show');
         document.getElementById('inpPhoto').value = '';
         
@@ -1336,7 +1301,6 @@ function createSeat(index) {
 
     async function saveData() {
         const name = document.getElementById('inpName').value.trim();
-        const note = document.getElementById('inpNote').value.trim();
         const smallPhoto = document.getElementById('imgPreview').classList.contains('show')
             ? document.getElementById('imgPreview').src
             : (dataSiswa[activeIndex]?.photo || '');
@@ -1344,7 +1308,7 @@ function createSeat(index) {
 
         if (!name) { alert('Nama wajib diisi!'); return; }
 
-        dataSiswa[activeIndex] = { name: name, note: note, photo: smallPhoto, photoOriginal: origPhoto };
+        dataSiswa[activeIndex] = { name: name, photo: smallPhoto, photoOriginal: origPhoto };
         allData[currentClass] = { ...dataSiswa };
         saveClassesLocally();
         closeModal();
@@ -1377,8 +1341,7 @@ function createSeat(index) {
             const kirimData = {};
             for (let k in dataSiswa) {
                 let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
-                let note = dataSiswa[k].note || '';
-                kirimData[k] = dataSiswa[k].name + '|||' + foto + '|||' + note;
+                kirimData[k] = dataSiswa[k].name + '|||' + foto;
             }
 
             const payload = {
