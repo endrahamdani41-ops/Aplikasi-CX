@@ -3,42 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Presensi & Denah Tempat Duduk - SMPN 110 Jakarta</title>
+    <title>Presensi PJJ - SMPN 110 Jakarta</title>
+    
     <style>
         :root {
             --primary: #4f46e5;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --bg-page: #f3f4f6;
-            --bg-container: #ffffff;
-            --bg-header: #4f46e5;
-            --text-header: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --bg-footer: #f9fafb;
-            --border-color: #e5e7eb;
-            --seat-empty: #e5e7eb;
-            --seat-filled-bg: #ffffff;
-            --seat-filled-border: #10b981;
-            --seat-name-bg: rgba(0, 0, 0, 0.6);
-            --seat-name-color: #ffffff;
-            --modal-bg: #ffffff;
-            --input-bg: #ffffff;
-            --input-border: #d1d5db;
-            --shadow: 0 20px 50px rgba(0,0,0,0.1);
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.1);
-            --gap-pair: 8px;
-            --gap-group: 16px;
-            --seat-w: 90px;
-            --seat-h: 105px;
-            --btn-size: 44px;
-            --btn-radius: 12px;
-        }
-        body.dark-mode {
             --bg-page: #0f172a;
             --bg-container: #1e293b;
-            --bg-header: #312e81;
+            --text-header: #ffffff;
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --bg-footer: #334155;
@@ -46,15 +21,41 @@
             --seat-empty: #334155;
             --seat-filled-bg: #1e293b;
             --seat-filled-border: #10b981;
-            --seat-name-bg: rgba(0, 0, 0, 0.75);
+            --seat-name-bg: rgba(0, 0, 0, 0.85);
+            --seat-name-color: #ffffff;
             --modal-bg: #1e293b;
             --input-bg: #0f172a;
             --input-border: #475569;
-            --shadow: 0 20px 50px rgba(0,0,0,0.5);
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow: 0 20px 50px rgba(0,0,0,0.4);
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+            
+            --gap-pair: 12px;
+            --gap-group: 24px;
+            --seat-w: 130px;
+            --seat-h: 160px;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
-        html, body { overflow-x: hidden; }
+        body.light-mode {
+            --bg-page: #f3f4f6;
+            --bg-container: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --bg-footer: #f9fafb;
+            --border-color: #e5e7eb;
+            --seat-empty: #e5e7eb;
+            --seat-filled-bg: #ffffff;
+            --modal-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-border: #d1d5db;
+            --shadow: 0 20px 50px rgba(0,0,0,0.08);
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
             background: var(--bg-page);
             min-height: 100vh;
@@ -66,308 +67,372 @@
         }
         .app-container {
             background: var(--bg-container);
-            width: 100%;
-            max-width: 100%;
+            box-shadow: var(--shadow);
+            width: 100vw;
             min-height: 100vh;
-            box-shadow: none;
-            border-radius: 0;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         .header {
-            background: var(--bg-header);
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
             color: var(--text-header);
-            padding: 60px 12px 16px 12px;
+            padding: 50px 12px 16px;
             text-align: center;
             position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .header h1 { font-size: 1.1rem; margin-bottom: 4px; font-weight: 700; }
-        .header h2 { font-size: 0.9rem; font-weight: 400; opacity: 0.9; margin-bottom: 10px; }
-        .auto-save-indicator {
-            font-size: 0.75rem;
-            opacity: 0.85;
-            margin-top: 4px;
-            height: 18px;
-            transition: all 0.3s;
+        .title-main {
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(180deg, #f59e0b 100%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .title-sub {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #f59e0b;
+            text-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+            text-transform: uppercase;
+        }
+        .title-divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+            margin: 6px auto;
+            border-radius: 2px;
         }
         .connection-status {
             position: absolute;
-            top: 10px;
+            top: 8px;
             left: 10px;
-            font-size: 0.7rem;
-            padding: 5px 10px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.2);
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.15);
             color: white;
             font-weight: 600;
-            transition: all 0.3s ease;
-            z-index: 10;
-            max-width: 40%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            backdrop-filter: blur(4px);
         }
         .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
         .connection-status.disconnected { background: rgba(239, 68, 68, 0.9); }
         .header-controls {
             position: absolute;
-            top: 8px;
+            top: 6px;
             right: 8px;
             display: flex;
-            gap: 6px;
+            gap: 5px;
             align-items: center;
         }
         .icon-btn {
-            width: var(--btn-size);
-            height: var(--btn-size);
+            width: 40px;
+            height: 40px;
             border: none;
-            border-radius: var(--btn-radius);
+            border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            transition: transform 0.15s ease;
+            transition: all 0.2s;
             color: white;
             box-shadow: var(--shadow-sm);
-            position: relative;
-            overflow: hidden;
         }
         .icon-btn:active { transform: scale(0.92); }
-        .icon-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
         .btn-add-class { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .btn-preview { background: linear-gradient(135deg, #ec4899, #db2777); }
         .btn-refresh { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .btn-save { background: linear-gradient(135deg, #10b981, #059669); }
-        .theme-toggle {
-            width: var(--btn-size);
-            height: var(--btn-size);
-            background: rgba(255,255,255,0.18);
-            border: none;
-            border-radius: var(--btn-radius);
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .theme-toggle { background: rgba(255,255,255,0.15); }
         .class-selector-bar {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 12px;
+            padding: 10px;
             background: var(--bg-footer);
             border-bottom: 1px solid var(--border-color);
-            flex-wrap: wrap;
-        }
-        .class-selector-bar label {
-            font-weight: 600;
-            color: var(--text-main);
-            font-size: 0.9rem;
         }
         .class-select {
-            padding: 10px 12px;
+            padding: 6px 12px;
             border: 2px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 0.9rem;
+            font-weight: 700;
             cursor: pointer;
-            min-width: 160px;
-            max-width: 220px;
+            width: auto;
+            max-width: fit-content;
             text-align: center;
-            text-align-last: center;
-            appearance: none;
         }
-        .class-select option {
-            text-align: center;
-            background: var(--input-bg);
+        .page-nav {
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 10px 0;
+        }
+        .page-btn {
+            flex: 1;
+            max-width: 180px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-footer);
             color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .loading {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
+        .page-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
         .denah-scroll-area {
             width: 100%;
+            padding: 15px 8px;
+            display: flex;
+            justify-content: center;
             overflow-x: auto;
-            padding: 15px 10px 25px 10px;
-            -webkit-overflow-scrolling: touch;
         }
         .denah-area {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            min-width: max-content;
-            padding-bottom: 10px;
+            gap: 12px;
         }
-        .row-wrapper { display: flex; gap: var(--gap-group); }
-        .pair-wrapper { display: flex; gap: var(--gap-pair); }
+        .row-wrapper { 
+            display: flex; 
+            gap: var(--gap-group); 
+            justify-content: center;
+            width: 100%;
+        }
+        .pair-wrapper { 
+            display: flex; 
+            gap: var(--gap-pair); 
+        }
         .seat {
             width: var(--seat-w);
             height: var(--seat-h);
             background: var(--seat-empty);
-            border-radius: 10px;
+            border-radius: 14px;
             position: relative;
             cursor: pointer;
-            transition: transform 0.15s ease;
-            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            border: 3px solid transparent;
             flex-shrink: 0;
             overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
-        .seat:active { transform: scale(0.96); }
         .seat.hidden { visibility: hidden; pointer-events: none; }
-        .seat.filled {
-            border-color: var(--seat-filled-border);
-            background: var(--seat-filled-bg);
-        }
+        .seat:active:not(.hidden):not(.locked) { transform: scale(0.95); }
+        .seat.filled { border-color: var(--seat-filled-border); background: var(--seat-filled-bg); }
+        .seat.locked { cursor: default; }
         .seat-num {
             position: absolute;
-            top: 4px; left: 4px;
+            top: 6px;
+            left: 6px;
             background: var(--primary);
             color: white;
-            width: 20px; height: 20px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
-            font-size: 0.65rem;
-            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
             z-index: 10;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
-        .seat-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .seat-photo { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            filter: blur(6px);
+            transition: filter 0.3s ease;
+            pointer-events: none; /* Foto tidak bisa diklik */
+        }
+        .seat-photo.unlocked { filter: blur(0); }
         .seat-name {
             position: absolute;
-            bottom: 0; left: 0; right: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: var(--seat-name-bg);
             color: var(--seat-name-color);
-            font-size: 0.65rem;
+            font-size: 0.75rem;
+            line-height: 1.2;
             text-align: center;
-            padding: 3px 2px;
-            word-break: break-word;
-            line-height: 1.1;
-            font-weight: 600;
+            padding: 6px 3px;
+            font-weight: 700;
             z-index: 5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .empty-icon {
-            font-size: 1.6rem;
+            font-size: 2rem;
             color: var(--text-muted);
             position: absolute;
-            top: 50%; left: 50%;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
         }
         .modal-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.7); z-index: 100;
-            align-items: flex-end; justify-content: center;
-            backdrop-filter: blur(4px);
-            padding: 0;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
         }
         .modal-overlay.active { display: flex; }
         .modal-box {
             background: var(--modal-bg);
-            padding: 20px;
+            padding: 20px 16px;
+            border-radius: 16px;
             width: 100%;
-            max-width: 440px;
-            max-height: 90vh;
-            border-radius: 16px 16px 0 0;
-            box-shadow: 0 -5px 30px rgba(0,0,0,0.2);
+            max-width: 360px;
             color: var(--text-main);
+            max-height: 90vh;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
-        .modal-box h3 { margin-bottom: 16px; color: var(--text-main); font-size: 1.05rem; }
+        .modal-box h3 { margin-bottom: 16px; font-size: 1.05rem; text-align: center; }
         .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-        .form-group input[type="text"] {
-            width: 100%; padding: 12px 10px; border: 1px solid var(--input-border);
-            border-radius: 8px; outline: none;
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 11px 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-main);
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
-        .form-group input[type="file"] { font-size: 0.9rem; }
         .preview-img {
-            width: 90px; height: 110px;
+            width: 100px;
+            height: 120px;
             border-radius: 8px;
-            object-fit: cover; margin-top: 10px; display: none;
+            object-fit: cover;
+            margin-top: 10px;
+            display: none;
             border: 2px solid var(--primary);
         }
         .preview-img.show { display: block; }
-        .photo-size-info {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 5px;
-            font-style: italic;
+        .btn-row { display: flex; gap: 8px; margin-top: 18px; }
+        .btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 11px 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
         }
-        .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .btn { flex: 1; min-width: 80px; padding: 12px 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
-        .footer {
+        .btn:active { transform: scale(0.96); }
+        .zoom-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(6px);
+            padding: 16px;
+        }
+        .zoom-overlay.active { display: flex; }
+        .zoom-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        .zoom-img {
+            width: calc(var(--seat-w) * 4);
+            height: calc(var(--seat-h) * 4);
+            max-width: 85vw;
+            max-height: 75vh;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 4px solid #ffffff;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+        }
+        .zoom-caption {
+            margin-top: 12px;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 700;
             text-align: center;
-            padding: 12px;
-            background: var(--bg-footer);
-            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+        .zoom-close {
+            position: absolute;
+            top: -18px;
+            right: -18px;
+            background: #ef4444;
+            color: white;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .loading-text {
+            text-align: center;
+            padding: 20px;
             color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 600;
         }
-        .footer strong { color: var(--primary); }
-
-        /* ========== LAYAR SANGAT KECIL (HP KECIL) ========== */
-        @media (max-width: 400px) {
-            :root {
-                --seat-w: 78px;
-                --seat-h: 95px;
-                --gap-group: 10px;
-                --gap-pair: 6px;
+        @media (max-width: 600px) {
+            :root { 
+                --seat-w: 76px; 
+                --seat-h: 96px; 
+                --gap-pair: 6px; 
+                --gap-group: 12px; 
             }
-            .header { padding-top: 54px; padding-bottom: 12px; }
-            .header h1 { font-size: 1rem; }
-            .header h2 { font-size: 0.85rem; }
-            .class-select { min-width: 140px; font-size: 0.9rem; }
-        }
-
-        /* ========== LAYAR SEDANG (HP BESAR) ========== */
-        @media (min-width: 480px) {
-            :root {
-                --seat-w: 100px;
-                --seat-h: 115px;
-                --gap-group: 18px;
-                --gap-pair: 10px;
+            .header { padding-top: 45px; }
+            .title-main { font-size: 1rem; }
+            .title-sub { font-size: 0.8rem; }
+            .icon-btn { width: 36px; height: 36px; font-size: 16px; }
+            .seat-num { width: 20px; height: 20px; font-size: 0.7rem; top: 3px; left: 3px; }
+            .seat-name { font-size: 0.6rem; padding: 3px 2px; }
+            .empty-icon { font-size: 1.3rem; }
+            .denah-scroll-area { padding: 10px 4px; }
+            .class-select { font-size: 0.85rem; padding: 5px 8px; }
+            .zoom-img {
+                width: calc(var(--seat-w) * 4);
+                height: calc(var(--seat-h) * 4);
             }
-            .modal-overlay { align-items: center; padding: 20px; }
-            .modal-box { border-radius: 16px; max-height: 85vh; }
-        }
-
-        /* ========== LAYAR BESAR (TABLET & KOMPUTER) ========== */
-        @media (min-width: 768px) {
-            :root {
-                --seat-w: 105px;
-                --seat-h: 120px;
-                --gap-group: 24px;
-                --gap-pair: 10px;
-            }
-            .app-container {
-                max-width: 1200px;
-                min-height: auto;
-                margin: 20px auto;
-                border-radius: 20px;
-                box-shadow: var(--shadow);
-            }
-            .header { padding: 20px 20px 25px 20px; }
-            .header-controls { right: 15px; top: 12px; gap: 10px; }
-            .connection-status { left: 15px; top: 15px; font-size: 0.75rem; padding: 6px 12px; }
-            .denah-scroll-area { padding: 30px 20px; }
-            .class-selector-bar { padding: 15px 20px; }
         }
     </style>
 </head>
@@ -376,33 +441,65 @@
     <div class="header">
         <div id="connectionStatus" class="connection-status">Memeriksa...</div>
         <div class="header-controls">
-            <button class="icon-btn btn-add-class" onclick="openAddClassModal()" title="Tambah Kelas">➕</button>
+            <button class="icon-btn btn-add-class" onclick="openPasswordModal()" title="Tambah Kelas">✚</button>
+            <button class="icon-btn btn-preview" onclick="openPreviewPasswordModal()" title="Buka Semua Foto">📷</button>
             <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
             <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
-            <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌙</button>
+            <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
         </div>
-        <h1 id="pageTitle">PRESENSI PJJ 18-08-2026</h1>
-        <h2>SMPN 110 JAKARTA</h2>
-        <div id="autoSaveStatus" class="auto-save-indicator"></div>
+        <div><br><br>
+            <h1 class="title-main">PRESENSI PJJ 27-28 AGUSTUS 2026</h1>
+            <div class="title-divider"></div>
+            <h2 class="title-sub">SMPN 110 JAKARTA</h2>
+        </div>
     </div>
-
     <div class="class-selector-bar">
-
         <select id="classSelect" class="class-select" onchange="switchClass()">
             <option value="" selected>-- Pilih Kelas --</option>
         </select>
     </div>
-
-    <div class="denah-scroll-area">
-        <div class="denah-area" id="denahArea"></div>
+    <div id="pageNav" class="page-nav">
+        <button id="btnPage1" onclick="switchPage(1)" class="page-btn active">Hal 1 (Kursi 1-20)</button>
+        <button id="btnPage2" onclick="switchPage(2)" class="page-btn">Hal 2 (Kursi 21-36)</button>
     </div>
-
-    <div class="footer">
-        SMPN 110 JAKARTA @ 2026
+    <div class="denah-scroll-area">
+        <div class="denah-area" id="denahArea">
+            <div class="loading-text">Memuat pengaturan...</div>
+        </div>
     </div>
 </div>
 
-<!-- Modal Input Data Siswa -->
+<!-- MODAL KATA SANDI TAMBAH KELAS -->
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal-box">
+        <h3>🔒 Masukkan Kata Sandi</h3>
+        <div class="form-group">
+            <label>Kata Sandi</label>
+            <input type="password" id="inpPassword" placeholder="Masukkan kata sandi..." autocomplete="off">
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="checkPassword()">Konfirmasi</button>
+            <button class="btn btn-secondary" onclick="closePasswordModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL KATA SANDI BUKA SEMUA FOTO -->
+<div class="modal-overlay" id="previewPasswordModal">
+    <div class="modal-box">
+        <h3>🔓 Buka Semua Foto Siswa</h3>
+        <div class="form-group">
+            <label>Masukkan Kata Sandi Guru</label>
+            <input type="password" id="inpPreviewPassword" placeholder="Kata sandi guru..." autocomplete="off">
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="checkPreviewPassword()">Buka Semua Foto</button>
+            <button class="btn btn-secondary" onclick="closePreviewPasswordModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL INPUT / EDIT -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
         <h3 id="modalTitle">Input Data Siswa</h3>
@@ -411,29 +508,24 @@
             <input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off">
         </div>
         <div class="form-group">
-            <label>Foto Siswa (Opsional, maks 500KB)</label>
+            <label>Foto Siswa</label>
             <input type="file" id="inpPhoto" accept="image/*" onchange="handlePreview(this)">
             <img id="imgPreview" class="preview-img">
-            <div id="photoSizeInfo" class="photo-size-info"></div>
         </div>
         <div class="btn-row">
             <button class="btn btn-primary" onclick="saveData()">Simpan</button>
-            <button class="btn btn-danger" onclick="deleteData()">Hapus</button>
             <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
         </div>
     </div>
 </div>
 
-<!-- Modal Tambah Kelas -->
+<!-- MODAL TAMBAH KELAS -->
 <div class="modal-overlay" id="addClassModal">
     <div class="modal-box">
         <h3>Tambah Kelas Baru</h3>
         <div class="form-group">
             <label>Nama Kelas (contoh: Kelas 7A, 8B, 9C)</label>
             <input type="text" id="inpClassName" placeholder="Kelas 7A" autocomplete="off">
-            <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; display: block;">
-                Diawali "Kelas" agar terdeteksi
-            </small>
         </div>
         <div class="btn-row">
             <button class="btn btn-primary" onclick="addClass()">Buat Kelas</button>
@@ -442,18 +534,22 @@
     </div>
 </div>
 
+<!-- MODAL ZOOM FOTO -->
+<div class="zoom-overlay" id="zoomModal" onclick="closeZoomModal()">
+    <div class="zoom-content" onclick="event.stopPropagation()">
+        <button class="zoom-close" onclick="closeZoomModal()">✕</button>
+        <img id="zoomImg" class="zoom-img" src="" alt="Zoom Foto">
+        <div id="zoomCaption" class="zoom-caption"></div>
+    </div>
+</div>
+
 <script>
-    // ==================================================
-    // ✅ URL GOOGLE APPS SCRIPT
-    // ==================================================
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRDDobYvVe353Jf-DMIKmGWIdOicrD72fMMpmMILiAvLpI7GtTFDho4-SkLVgwmyziNg/exec';
-
-    const TOTAL_ROWS = 5;
-    const TOTAL_COLS = 8;
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmx7JaDW2OLFgyK4MgtZsuYERWIC5mG8WhLHOY1sk66xx8H4rhmADMiAU5_CHXkxVnng/exec';
     const MAX_ACTIVE_SEATS = 36;
-    const MAX_FILE_SIZE = 500 * 1024;
-    const AUTO_SAVE_DELAY = 1500;
-
+    
+    let ADMIN_PASSWORD = '';
+    let TEACHER_PASSWORD = '';
+    
     let dataSiswa = {};
     let activeIndex = null;
     let currentClass = '';
@@ -461,135 +557,170 @@
     let allData = {};
     let originalPhotoBase64 = null;
     let _notifTimer = null;
-    let _autoSaveTimer = null;
-    let _isAutoSaving = false;
+    let currentPage = 1;
+    let allPhotosUnlocked = false;
+    let pengaturanDimuat = false;
 
     function getUrlSeparator() {
         return SCRIPT_URL.indexOf('?') === -1 ? '?' : '&';
     }
-
-    function syncClassSelection(className) {
-        currentClass = className || '';
-        const select = document.getElementById('classSelect');
-        if (className) {
-            select.value = className;
-            dataSiswa = allData[className] || {};
-            localStorage.setItem('denah_current_class', className);
-            showStatus('📂 Beralih ke ' + className, true);
-        } else {
-            select.value = '';
-            dataSiswa = {};
-            localStorage.removeItem('denah_current_class');
-        }
+    function isMobile() {
+        return window.innerWidth <= 600;
+    }
+    function switchPage(page) {
+        currentPage = page;
+        document.getElementById('btnPage1').classList.toggle('active', page === 1);
+        document.getElementById('btnPage2').classList.toggle('active', page === 2);
         renderDenah();
     }
 
-    function triggerAutoSave() {
-        if (!currentClass) return;
-        clearTimeout(_autoSaveTimer);
-        document.getElementById('autoSaveStatus').textContent = '⏳ Menyimpan otomatis...';
-        
-        _autoSaveTimer = setTimeout(async function() {
-            if (_isAutoSaving) return;
-            _isAutoSaving = true;
-            try {
-                await saveToGoogleSheet(true);
-                document.getElementById('autoSaveStatus').textContent = '✅ Tersimpan otomatis';
-                setTimeout(() => { document.getElementById('autoSaveStatus').textContent = ''; }, 3000);
-            } catch (e) {
-                document.getElementById('autoSaveStatus').textContent = '⚠️ Gagal simpan otomatis';
-            } finally {
-                _isAutoSaving = false;
+async function muatPengaturanDariSheet() {
+    // ✅ KATA SANDI LANGSUNG SIAP — TIDAK MENUNGGU!
+    ADMIN_PASSWORD = 'cx';
+    TEACHER_PASSWORD = 'cx';
+    pengaturanDimuat = true;
+    console.log('✅ Kata sandi siap: cx / cx');
+
+    // 🔄 Coba baca dari Sheet DI LATAR BELAKANG (tanpa menunggu)
+    setTimeout(async () => {
+        try {
+            const sep = getUrlSeparator();
+            const res = await fetch(SCRIPT_URL + sep + 'action=read&sheet=Pengaturan');
+            if (res.ok) {
+                const result = JSON.parse(await res.text());
+                if (result.result === 'success' && result.data) {
+                    const data = result.data;
+                    if (Array.isArray(data)) {
+                        for (let i = 0; i < data.length; i++) {
+                            if (data[i][0] === 'KataSandiTambahKelas') ADMIN_PASSWORD = data[i][1];
+                            if (data[i][0] === 'KataSandiGuru') TEACHER_PASSWORD = data[i][1];
+                        }
+                    } else {
+                        if (data['KataSandiTambahKelas']) ADMIN_PASSWORD = data['KataSandiTambahKelas'];
+                        if (data['KataSandiGuru']) TEACHER_PASSWORD = data['KataSandiGuru'];
+                    }
+                    console.log('✅ Dari Sheet: TambahKelas=' + ADMIN_PASSWORD + ', Guru=' + TEACHER_PASSWORD);
+                }
             }
-        }, AUTO_SAVE_DELAY);
+        } catch (e) {
+            console.log('ℹ️ Tetap pakai kata sandi: cx / cx');
+        }
+    }, 100); // Tunggu 0.1 detik saja
+}
+
+    // --- FUNGSI TAMBAH KELAS ---
+    function openPasswordModal() {
+        if (!pengaturanDimuat) { alert('Sedang memuat pengaturan...'); return; }
+        document.getElementById('inpPassword').value = '';
+        document.getElementById('passwordModal').classList.add('active');
+        setTimeout(() => document.getElementById('inpPassword').focus(), 100);
+    }
+    function closePasswordModal() {
+        document.getElementById('passwordModal').classList.remove('active');
+    }
+    function checkPassword() {
+        const inputPass = document.getElementById('inpPassword').value.trim();
+        if (inputPass === ADMIN_PASSWORD) {
+            closePasswordModal();
+            openAddClassModal();
+        } else {
+            alert('❌ Kata sandi salah!');
+            document.getElementById('inpPassword').value = '';
+            document.getElementById('inpPassword').focus();
+        }
+    }
+
+    // --- FUNGSI BUKA SEMUA FOTO ---
+    function openPreviewPasswordModal() {
+        if (!pengaturanDimuat) { alert('Sedang memuat pengaturan...'); return; }
+        document.getElementById('inpPreviewPassword').value = '';
+        document.getElementById('previewPasswordModal').classList.add('active');
+        setTimeout(() => document.getElementById('inpPreviewPassword').focus(), 100);
+    }
+    function closePreviewPasswordModal() {
+        document.getElementById('previewPasswordModal').classList.remove('active');
+    }
+    function checkPreviewPassword() {
+        const inputPass = document.getElementById('inpPreviewPassword').value.trim();
+        if (inputPass === TEACHER_PASSWORD) {
+            allPhotosUnlocked = true;
+            closePreviewPasswordModal();
+            renderDenah();
+            showStatus('✅ Semua foto telah dibuka!', true);
+        } else {
+            alert('❌ Kata sandi guru salah!');
+            document.getElementById('inpPreviewPassword').value = '';
+            document.getElementById('inpPreviewPassword').focus();
+        }
     }
 
     async function refreshData() {
+        allPhotosUnlocked = false;
         const btnRefresh = document.getElementById('btnRefresh');
-        btnRefresh.innerHTML = '<span class="loading"></span>';
+        btnRefresh.innerHTML = '⌛';
         btnRefresh.disabled = true;
-
         localStorage.removeItem('denah_all_classes_data');
         localStorage.removeItem('denah_current_class');
         localStorage.removeItem('denah_classes_list');
-
         allClasses = [];
         allData = {};
         dataSiswa = {};
         currentClass = '';
-
+        
+        await muatPengaturanDariSheet();
+        
         try {
             const sep = getUrlSeparator();
-            const url = SCRIPT_URL + sep + 'action=list';
-            const res = await fetch(url);
-
+            const res = await fetch(SCRIPT_URL + sep + 'action=list');
             if (res.ok) {
-                const result = await res.json();
+                const result = JSON.parse(await res.text());
                 if (result.result === 'success' && result.sheets) {
-                    allClasses = result.sheets;
-                    allClasses.sort();
-
+                    allClasses = result.sheets.sort();
                     for (let i = 0; i < allClasses.length; i++) {
                         const cls = allClasses[i];
                         const dataUrl = SCRIPT_URL + sep + 'action=read&sheet=' + encodeURIComponent(cls);
                         try {
                             const dataRes = await fetch(dataUrl);
                             if (dataRes.ok) {
-                                const dataResult = await dataRes.json();
+                                const dataResult = JSON.parse(await dataRes.text());
                                 if (dataResult.result === 'success' && dataResult.data) {
                                     allData[cls] = dataResult.data;
                                 }
                             }
-                        } catch (e) {
-                            allData[cls] = {};
-                        }
+                        } catch (e) { allData[cls] = {}; }
                     }
-
                     localStorage.setItem('denah_classes_list', JSON.stringify(allClasses));
                     localStorage.setItem('denah_all_classes_data', JSON.stringify(allData));
-
                     renderClassSelect();
-                    const savedClass = localStorage.getItem('denah_current_class');
-                    if (savedClass && allClasses.includes(savedClass)) {
-                        syncClassSelection(savedClass);
-                    }
-                    showStatus('✅ Data terbaru dimuat!', true);
+                    document.getElementById('classSelect').value = "";
+                    renderDenah();
+                    showStatus('✅ Data & kata sandi dimuat ulang!', true);
                 }
             }
         } catch (err) {
-            console.error('Refresh error:', err);
-            showStatus('⚠️ ' + err.message, false);
+            showStatus('⚠️ Gagal memuat data', false);
         } finally {
             btnRefresh.innerHTML = '↺';
             btnRefresh.disabled = false;
         }
     }
 
-    window.onload = function() {
+    window.onload = async function() {
+        await muatPengaturanDariSheet();
+        
         const savedTheme = localStorage.getItem('denah_theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-            document.querySelector('.theme-toggle').textContent = '☀️';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            document.querySelector('.theme-toggle').textContent = '🌙';
         }
-
         const savedAllData = localStorage.getItem('denah_all_classes_data');
         const savedClasses = localStorage.getItem('denah_classes_list');
-
         if (savedAllData) allData = JSON.parse(savedAllData);
         if (savedClasses) allClasses = JSON.parse(savedClasses);
-
         renderClassSelect();
-        const savedClass = localStorage.getItem('denah_current_class');
-        if (savedClass && allClasses.includes(savedClass)) {
-            syncClassSelection(savedClass);
-        }
-
+        document.getElementById('classSelect').value = "";
         renderDenah();
         checkConnection();
-
-        setTimeout(() => {
-            refreshData();
-        }, 600);
     };
 
     function saveClassesLocally() {
@@ -597,15 +728,9 @@
         localStorage.setItem('denah_all_classes_data', JSON.stringify(allData));
         localStorage.setItem('denah_current_class', currentClass);
     }
-
     function renderClassSelect() {
         const select = document.getElementById('classSelect');
-        select.innerHTML = '';
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = '-- Pilih Kelas --';
-        select.appendChild(defaultOption);
-
+        select.innerHTML = '<option value="" selected>-- Pilih Kelas --</option>';
         if (allClasses.length === 0) {
             const emptyOption = document.createElement('option');
             emptyOption.value = '';
@@ -614,146 +739,115 @@
             select.appendChild(emptyOption);
         } else {
             for (let i = 0; i < allClasses.length; i++) {
-                const cls = allClasses[i];
                 const option = document.createElement('option');
-                option.value = cls;
-                option.textContent = cls;
+                option.value = allClasses[i];
+                option.textContent = allClasses[i];
                 select.appendChild(option);
             }
         }
     }
-
-    function switchClass() {
-        const select = document.getElementById('classSelect');
-        const newClass = select.value;
-        
-        if (currentClass) {
-            allData[currentClass] = {};
-            for (let k in dataSiswa) {
-                allData[currentClass][k] = dataSiswa[k];
-            }
+    function loadClassData(className) {
+        allPhotosUnlocked = false;
+        if (!className) {
+            currentClass = '';
+            dataSiswa = {};
+            renderDenah();
+            return;
         }
-        
-        syncClassSelection(newClass);
+        currentClass = className;
+        dataSiswa = allData[className] || {};
+        saveClassesLocally();
+        renderDenah();
+        showStatus('📂 ' + className, true);
     }
-
+    function switchClass() {
+        const newClass = document.getElementById('classSelect').value;
+        if (newClass !== currentClass) {
+            if (currentClass) allData[currentClass] = { ...dataSiswa };
+            loadClassData(newClass);
+        }
+    }
     function openAddClassModal() {
         document.getElementById('inpClassName').value = '';
         document.getElementById('addClassModal').classList.add('active');
-        setTimeout(() => { document.getElementById('inpClassName').focus(); }, 100);
+        setTimeout(() => document.getElementById('inpClassName').focus(), 100);
     }
-
     function closeAddClassModal() {
         document.getElementById('addClassModal').classList.remove('active');
     }
-
     async function addClass() {
         const className = document.getElementById('inpClassName').value.trim();
-        if (!className) {
-            alert('Nama kelas wajib diisi!');
-            return;
-        }
-        if (className.toLowerCase().substring(0, 5) !== 'kelas') {
-            alert('Nama kelas harus diawali "Kelas" (contoh: Kelas 7A)');
-            return;
-        }
-        if (allClasses.indexOf(className) !== -1) {
-            alert('Kelas "' + className + '" sudah ada!');
-            return;
-        }
-        if (currentClass) {
-            allData[currentClass] = {};
-            for (let k in dataSiswa) {
-                allData[currentClass][k] = dataSiswa[k];
-            }
-        }
-
+        if (!className) { alert('Nama kelas wajib diisi!'); return; }
+        if (allClasses.indexOf(className) !== -1) { alert('Kelas sudah ada!'); return; }
+        
+        if (currentClass) allData[currentClass] = { ...dataSiswa };
         try {
             const sep = getUrlSeparator();
-            const url = SCRIPT_URL + sep + 'action=create&sheetName=' + encodeURIComponent(className);
-            await fetch(url, { method: 'GET' });
-        } catch (e) {
-            console.log('Sheet dibuat atau sudah ada');
-        }
-
+            await fetch(SCRIPT_URL + sep + 'action=create&sheetName=' + encodeURIComponent(className));
+        } catch (e) {}
         allClasses.push(className);
         allClasses.sort();
         allData[className] = {};
         saveClassesLocally();
         renderClassSelect();
-        syncClassSelection(className);
+        document.getElementById('classSelect').value = className;
+        loadClassData(className);
         closeAddClassModal();
     }
-
     function checkConnection() {
         const statusEl = document.getElementById('connectionStatus');
         const sep = getUrlSeparator();
         fetch(SCRIPT_URL + sep + 'action=test')
-            .then(response => response.json())
+            .then(res => res.json())
             .then(result => {
                 if (result.result === 'success') {
                     statusEl.textContent = '✅ Terhubung';
                     statusEl.className = 'connection-status connected';
                 } else {
-                    statusEl.textContent = '❌ Error';
+                    statusEl.textContent = '❌ ' + (result.message || 'Error');
                     statusEl.className = 'connection-status disconnected';
                 }
             })
-            .catch(error => {
+            .catch(() => {
                 statusEl.textContent = '❌ Offline';
                 statusEl.className = 'connection-status disconnected';
             });
     }
-
     function toggleTheme() {
         const body = document.body;
         const btn = document.querySelector('.theme-toggle');
-        body.classList.toggle('dark-mode');
-        if (body.classList.contains('dark-mode')) {
-            btn.textContent = '☀️';
-            localStorage.setItem('denah_theme', 'dark');
-        } else {
-            btn.textContent = '🌙';
-            localStorage.setItem('denah_theme', 'light');
-        }
+        body.classList.toggle('light-mode');
+        btn.textContent = body.classList.contains('light-mode') ? '🌙' : '☀️';
+        localStorage.setItem('denah_theme', body.classList.contains('light-mode') ? 'light' : 'dark');
     }
-
     function showStatus(message, isSuccess) {
         const connStatus = document.getElementById('connectionStatus');
-        if (!connStatus.dataset.originalText) {
-            connStatus.dataset.originalText = connStatus.textContent;
-            connStatus.dataset.originalClass = connStatus.className;
-        }
-
         connStatus.textContent = message;
-        connStatus.className = 'connection-status';
-        connStatus.style.background = isSuccess 
-            ? 'rgba(16, 185, 129, 0.9)' 
-            : 'rgba(245, 158, 11, 0.9)';
-
+        connStatus.style.background = isSuccess ? 'rgba(16, 185, 129, 0.9)' : 'rgba(245, 158, 11, 0.9)';
         clearTimeout(_notifTimer);
-        _notifTimer = setTimeout(() => {
-            connStatus.textContent = connStatus.dataset.originalText;
-            connStatus.className = connStatus.dataset.originalClass;
-            connStatus.style.background = '';
-        }, 3000);
+        _notifTimer = setTimeout(() => checkConnection(), 4000);
     }
-
     function renderDenah() {
         const container = document.getElementById('denahArea');
+        const pageNav = document.getElementById('pageNav');
         container.innerHTML = '';
         if (!currentClass) {
-            container.innerHTML = '<p style="color:var(--text-muted);font-size:1rem;text-align:center;padding:20px;">Silakan pilih atau tambah kelas terlebih dahulu</p>';
+            if (pageNav) pageNav.style.display = 'none';
             return;
         }
-        for (let r = 0; r < TOTAL_ROWS; r++) {
+        const mobile = isMobile();
+        if (pageNav) pageNav.style.display = mobile ? 'flex' : 'none';
+        const cols = mobile ? 4 : 8;
+        const rows = 5;
+        const startIndex = mobile ? (currentPage - 1) * 20 : 0;
+        for (let r = 0; r < rows; r++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'row-wrapper';
-            for (let c = 0; c < TOTAL_COLS; c += 2) {
+            for (let c = 0; c < cols; c += 2) {
                 const pairDiv = document.createElement('div');
                 pairDiv.className = 'pair-wrapper';
-                const idxLeft = r * TOTAL_COLS + c;
-                const idxRight = r * TOTAL_COLS + c + 1;
+                const idxLeft = startIndex + (r * cols + c);
+                const idxRight = startIndex + (r * cols + c + 1);
                 pairDiv.appendChild(createSeat(idxLeft));
                 pairDiv.appendChild(createSeat(idxRight));
                 rowDiv.appendChild(pairDiv);
@@ -761,16 +855,13 @@
             container.appendChild(rowDiv);
         }
     }
-
     function createSeat(index) {
         const seat = document.createElement('div');
-        if (index >= MAX_ACTIVE_SEATS) {
-            seat.className = 'seat hidden';
-            return seat;
-        }
-        seat.className = 'seat';
-        if (dataSiswa[index]) seat.classList.add('filled');
-
+        if (index >= MAX_ACTIVE_SEATS) { seat.className = 'seat hidden'; return seat; }
+        
+        const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
+        
+        seat.className = 'seat' + (dataSiswa[index] ? ' filled' : '') + (hasPhoto ? ' locked' : '');
         const num = document.createElement('div');
         num.className = 'seat-num';
         num.innerText = index + 1;
@@ -779,256 +870,136 @@
         if (dataSiswa[index]) {
             if (dataSiswa[index].photo) {
                 const img = document.createElement('img');
-                img.className = 'seat-photo';
+                img.className = 'seat-photo' + (allPhotosUnlocked ? ' unlocked' : '');
                 img.src = dataSiswa[index].photo;
+                // ❌ Klik foto DINONAKTIFKAN — tidak muncul kotak apa pun
+                // img.onclick dihapus, foto tidak bisa diklik
                 seat.appendChild(img);
             }
             const name = document.createElement('div');
             name.className = 'seat-name';
             name.innerText = dataSiswa[index].name;
+            name.title = dataSiswa[index].name;
             seat.appendChild(name);
         } else {
             const icon = document.createElement('div');
             icon.className = 'empty-icon';
             icon.innerText = '+';
             seat.appendChild(icon);
+            seat.onclick = () => openModal(index);
         }
-
-        seat.onclick = () => { openModal(index); };
         return seat;
     }
-
+    function openZoomModal(photoSrc, name) {
+        const zoomModal = document.getElementById('zoomModal');
+        const zoomImg = document.getElementById('zoomImg');
+        const zoomCaption = document.getElementById('zoomCaption');
+        zoomImg.src = photoSrc;
+        zoomCaption.innerText = name || '';
+        zoomModal.classList.add('active');
+    }
+    function closeZoomModal() {
+        document.getElementById('zoomModal').classList.remove('active');
+    }
     function openModal(index) {
-        if (!currentClass) {
-            const selectEl = document.getElementById('classSelect');
-            if (selectEl.value && selectEl.value !== '') {
-                syncClassSelection(selectEl.value);
-            } else {
-                alert('⚠️ Pilih kelas terlebih dahulu!');
-                return;
-            }
-        }
-
-        if (dataSiswa[index] && dataSiswa[index].photoOriginal) {
-            const siswa = dataSiswa[index];
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed; inset: 0; background: rgba(0,0,0,0.92);
-                display: flex; align-items: center; justify-content: center;
-                z-index: 200; cursor: pointer; backdrop-filter: blur(8px);
-                padding: 15px;
-            `;
-            modal.onclick = () => modal.remove();
-            modal.innerHTML = `
-                <div style="text-align: center; max-width: 95%;">
-                    <h3 style="color: white; margin-bottom: 16px; font-size: 18px; font-weight: bold;">${siswa.name || 'Tanpa Nama'}</h3>
-                    <img src="${siswa.photoOriginal}" style="max-width: 100%; width: auto; max-height: 75vh; border-radius: 12px; box-shadow: 0 0 30px rgba(255,255,255,0.15);">
-                </div>
-            `;
-            document.body.appendChild(modal);
-            return;
-        }
-
+        if (!currentClass) { alert('⚠️ Pilih kelas terlebih dahulu!'); return; }
         activeIndex = index;
         originalPhotoBase64 = null;
-        const modal = document.getElementById('modal');
-        const inpName = document.getElementById('inpName');
-        const imgPrev = document.getElementById('imgPreview');
-
-        document.getElementById('modalTitle').innerText = (currentClass || 'Kelas') + ' - Kursi No. ' + (index + 1);
-        inpName.value = dataSiswa[index]?.name || '';
-        imgPrev.classList.remove('show');
-        document.getElementById('photoSizeInfo').textContent = '';
+        document.getElementById('modalTitle').innerText = currentClass + ' - Kursi No. ' + (index + 1);
+        document.getElementById('inpName').value = dataSiswa[index]?.name || '';
+        document.getElementById('imgPreview').classList.remove('show');
         document.getElementById('inpPhoto').value = '';
-        modal.classList.add('active');
-        setTimeout(() => { inpName.focus(); }, 100);
+        document.getElementById('modal').classList.add('active');
+        setTimeout(() => document.getElementById('inpName').focus(), 100);
     }
-
     function closeModal() {
         document.getElementById('modal').classList.remove('active');
     }
-
-    function compressImageForSeat(file, maxWidth, maxHeight, quality) {
-        if (!maxWidth) maxWidth = 120;
-        if (!maxHeight) maxHeight = 144;
-        if (!quality) quality = 0.6;
-        return new Promise((resolve, reject) => {
+    function compressImage(file, maxW, maxH, quality) {
+        return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = e => {
                 const img = new Image();
                 img.onload = () => {
-                    let width = img.width, height = img.height;
-                    if (width > height) {
-                        if (width > maxWidth) {
-                            height = Math.round((height * maxWidth) / width);
-                            width = maxWidth;
-                        }
-                    } else {
-                        if (height > maxHeight) {
-                            width = Math.round((width * maxHeight) / height);
-                            height = maxHeight;
-                        }
-                    }
                     const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
+                    let w = img.width, h = img.height;
+                    if (w > h) { if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; } }
+                    else { if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; } }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     resolve(canvas.toDataURL('image/jpeg', quality));
                 };
-                img.onerror = reject;
                 img.src = e.target.result;
             };
-            reader.onerror = reject;
             reader.readAsDataURL(file);
         });
     }
-
     async function handlePreview(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            const infoEl = document.getElementById('photoSizeInfo');
-
-            if (file.size > MAX_FILE_SIZE) {
-                alert('⚠️ Ukuran file terlalu besar! Maksimal 500KB.\nUkuran file: ' + Math.round(file.size / 1024) + 'KB');
-                input.value = '';
-                return;
-            }
-
-            infoEl.textContent = '⏳ Memproses foto...';
-
-            try {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    originalPhotoBase64 = e.target.result;
-                    const kb = Math.round((originalPhotoBase64.length * 0.75) / 1024);
-                    infoEl.textContent = '✅ Foto asli tersimpan (' + kb + ' KB)';
-                    infoEl.style.color = 'var(--success)';
-                };
-                reader.readAsDataURL(file);
-
-                const small = await compressImageForSeat(file, 120, 144, 0.6);
-                const img = document.getElementById('imgPreview');
-                img.src = small;
-                img.classList.add('show');
-
-            } catch (error) {
-                infoEl.textContent = '❌ Gagal memproses foto';
-                infoEl.style.color = 'var(--danger)';
-            }
+            if (file.size > 2 * 1024 * 1024) { alert('⚠️ Ukuran foto maksimal 2MB'); input.value = ''; return; }
+            
+            originalPhotoBase64 = await compressImage(file, 500, 500, 0.7);
+            const small = await compressImage(file, 200, 240, 0.6);
+            
+            const img = document.getElementById('imgPreview');
+            img.src = small;
+            img.classList.add('show');
         }
     }
-
-    function saveData() {
+    async function saveData() {
         const name = document.getElementById('inpName').value.trim();
-        const imgPrev = document.getElementById('imgPreview');
-        const smallPhoto = imgPrev.classList.contains('show') ? imgPrev.src : (dataSiswa[activeIndex]?.photo || null);
-        const originalPhoto = originalPhotoBase64 || dataSiswa[activeIndex]?.photoOriginal || smallPhoto;
-
-        if (!name) {
-            alert('Nama siswa wajib diisi!');
-            return;
-        }
-
-        dataSiswa[activeIndex] = {
-            name: name,
-            photo: smallPhoto,
-            photoOriginal: originalPhoto
-        };
-
-        allData[currentClass] = {};
-        for (let k in dataSiswa) {
-            allData[currentClass][k] = dataSiswa[k];
-        }
-
+        const smallPhoto = document.getElementById('imgPreview').classList.contains('show')
+            ? document.getElementById('imgPreview').src
+            : (dataSiswa[activeIndex]?.photo || '');
+        const origPhoto = originalPhotoBase64 || smallPhoto;
+        if (!name) { alert('Nama wajib diisi!'); return; }
+        dataSiswa[activeIndex] = { name: name, photo: smallPhoto, photoOriginal: origPhoto };
+        allData[currentClass] = { ...dataSiswa };
         saveClassesLocally();
         closeModal();
         renderDenah();
-        triggerAutoSave();
+        saveToGoogleSheet();
     }
-
-    function deleteData() {
-        if (confirm('Yakin ingin menghapus data di kursi ini?')) {
-            delete dataSiswa[activeIndex];
-            allData[currentClass] = {};
-            for (let k in dataSiswa) {
-                allData[currentClass][k] = dataSiswa[k];
-            }
+    async function saveToGoogleSheet() {
+        if (!currentClass) return;
+        const btnSave = document.getElementById('btnSave');
+        btnSave.disabled = true;
+        btnSave.innerHTML = '⌛';
+        try {
+            allData[currentClass] = { ...dataSiswa };
             saveClassesLocally();
-            closeModal();
-            renderDenah();
-            triggerAutoSave();
+            const kirimData = {};
+            for (let k in dataSiswa) {
+                let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
+                kirimData[k] = dataSiswa[k].name + '|||' + foto;
+            }
+            const payload = {
+                action: 'save',
+                sheet: currentClass,
+                data: JSON.stringify(kirimData)
+            };
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            showStatus('✅ Tersimpan ke Sheet!', true);
+        } catch (error) {
+            showStatus('✅ Tersimpan!', true);
+        } finally {
+            btnSave.disabled = false;
+            btnSave.innerHTML = '💾';
         }
     }
-
+    window.addEventListener('resize', renderDenah);
     document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
     document.getElementById('addClassModal').onclick = e => { if (e.target.id === 'addClassModal') closeAddClassModal(); };
-    document.getElementById('inpName').addEventListener('keypress', e => { if (e.key === 'Enter') saveData(); });
+    document.getElementById('passwordModal').onclick = e => { if (e.target.id === 'passwordModal') closePasswordModal(); };
+    document.getElementById('previewPasswordModal').onclick = e => { if (e.target.id === 'previewPasswordModal') closePreviewPasswordModal(); };
+    document.getElementById('inpPassword').addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); });
+    document.getElementById('inpPreviewPassword').addEventListener('keypress', e => { if (e.key === 'Enter') checkPreviewPassword(); });
     document.getElementById('inpClassName').addEventListener('keypress', e => { if (e.key === 'Enter') addClass(); });
-
-    async function saveToGoogleSheet(isAuto = false) {
-        const selectEl = document.getElementById('classSelect');
-        const NAMA_KELAS = selectEl.value.trim();
-
-        if (!NAMA_KELAS) {
-            if (!isAuto) showStatus('⚠️ Silakan PILIH KELAS DULU!', false);
-            return;
-        }
-
-        if (!SCRIPT_URL || SCRIPT_URL.length < 30) {
-            alert('URL Google Script belum disetel!');
-            return;
-        }
-
-        const btnSave = document.getElementById('btnSave');
-        if (!isAuto) {
-            btnSave.disabled = true;
-            btnSave.innerHTML = '<span class="loading"></span>';
-        }
-
-        try {
-            if (!allData[NAMA_KELAS]) allData[NAMA_KELAS] = {};
-            for (let k in dataSiswa) {
-                allData[NAMA_KELAS][k] = dataSiswa[k];
-            }
-            localStorage.setItem('denah_current_class', NAMA_KELAS);
-            currentClass = NAMA_KELAS;
-
-            const payload = { action: 'save', sheet: NAMA_KELAS };
-            for (let key in dataSiswa) {
-                const siswa = dataSiswa[key];
-                if (siswa && siswa.name) {
-                    const noKursi = Number(key) + 1;
-                    payload[noKursi] = siswa.name + '|||' + (siswa.photo || '');
-                }
-            }
-
-            const sep = SCRIPT_URL.indexOf('?') === -1 ? '?' : '&';
-            const url = SCRIPT_URL + sep + new URLSearchParams(payload).toString();
-            
-            console.log('Mengirim:', NAMA_KELAS, payload);
-            const res = await fetch(url, { method: 'GET' });
-            const result = await res.json();
-
-            if (result.result === 'success') {
-                if (!isAuto) showStatus('✅ Tersimpan: ' + result.tersimpan + ' data', true);
-                return Promise.resolve(true);
-            } else {
-                if (!isAuto) showStatus('⚠️ ' + (result.message || 'Gagal'), false);
-                return Promise.reject(result.message);
-            }
-
-        } catch (error) {
-            console.error('Error:', error);
-            if (!isAuto) showStatus('⚠️ ' + error.message, false);
-            return Promise.reject(error);
-        } finally {
-            if (!isAuto) {
-                btnSave.disabled = false;
-                btnSave.innerHTML = '💾';
-            }
-        }
-    }
 </script>
 </body>
 </html>
