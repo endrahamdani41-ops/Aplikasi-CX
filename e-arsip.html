@@ -221,7 +221,7 @@
 
 <div class="loading" id="loading">
   <div style="font-size: 3rem; margin-bottom: 10px;">⏳</div>
-  <h3>Mengunggah File ke Google Cloud...</h3>
+  <h3>Mengunggah arsip ke Sheet !</h3>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -323,7 +323,7 @@ async function loadCloudData() {
 function renderCerts(certs) {
   const list = document.getElementById('certList');
   if (!certs || certs.length === 0) {
-    list.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Belum ada sertifikat di Cloud.</p>';
+    list.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Belum ada arsip di Sheet !</p>';
     return;
   }
 
@@ -346,7 +346,7 @@ function renderCerts(certs) {
 }
 
 async function deleteCloudData(id) {
-  if (!confirm('Yakin hapus dari Google Sheet & Drive?')) return;
+  if (!confirm('Yakin hapus dari Sheet ?')) return;
   
   showLoading(true);
   try {
@@ -366,7 +366,7 @@ async function deleteCloudData(id) {
     
     const result = await res.json();
     if(result.status === 'success') {
-      showToast('Sertifikat berhasil dihapus!');
+      showToast('Arsip berhasil dihapus !');
       loadCloudData();
     } else {
       showToast('Gagal menghapus: ' + result.message, true);
