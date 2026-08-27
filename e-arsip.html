@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>My Certificates - Pengelola Sertifikat Cloud</title>
+<title>E-ARSIP</title>
 <style>
   :root {
     --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -189,32 +189,32 @@
 <body>
 <div class="container">
   <header>
-    <button class="theme-toggle" id="themeToggle">🌙 Mode Gelap</button>
-    <h1>📜 My Certificates</h1>
-    <p>Simpan Full ke Google Sheets & Google Drive</p>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+    <h1>📜 E-ARSIP</h1>
+
   </header>
 
   <div class="card">
-    <h2 style="margin-bottom: 15px;">➕ Upload Sertifikat Baru</h2>
+    <h2 style="margin-bottom: 15px;">➕ Upload Arsip</h2>
     <div class="upload-area" id="uploadArea">
       <div class="icon">📁</div>
-      <p>Klik di sini atau seret file sertifikat</p>
+      <p>Pilih Arsip</p>
       <input type="file" id="fileInput" accept="image/*,application/pdf" hidden />
       <p id="fileName" style="margin-top:10px; color:#667eea; font-weight:600;"></p>
     </div>
 
     <div style="margin-top: 15px;">
       <div class="form-group">
-        <label for="certName">Nama Sertifikat *</label>
-        <input type="text" id="certName" placeholder="cth: Sertifikat Digital Marketing" />
+  
+        <input type="text" id="certName" placeholder="Masukkan Nama Arsip" />
       </div>
     </div>
 
-    <button class="btn btn-primary" id="saveBtn">☁️ Upload ke Cloud (Sheet & Drive)</button>
+    <button class="btn btn-primary" id="saveBtn">☁️ Upload ke Sheet</button>
   </div>
 
   <div class="card">
-    <h2 style="margin-bottom: 15px;">📚 Sertifikat Tersimpan (Cloud)</h2>
+    <h2 style="margin-bottom: 15px;">📚 Arsip Tersimpan</h2>
     <div id="certList" class="cert-grid"></div>
   </div>
 </div>
@@ -233,13 +233,13 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8f-2vC3dgahFN_6c6a
 const themeToggle = document.getElementById('themeToggle');
 if (localStorage.getItem('darkMode') === 'true') {
   document.body.classList.add('dark-mode');
-  themeToggle.textContent = '☀️ Mode Terang';
+  themeToggle.textContent = '☀️';
 }
 themeToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   const isDark = document.body.classList.contains('dark-mode');
   localStorage.setItem('darkMode', isDark);
-  themeToggle.textContent = isDark ? '☀️ Mode Terang' : '🌙 Mode Gelap';
+  themeToggle.textContent = isDark ? '☀️' : '🌙';
 });
 
 let selectedFile = null;
