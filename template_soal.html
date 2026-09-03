@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konverter Soal (Auto Kunci Jawaban)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Calibri', 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 30px; }
+        h1 { text-align: center; color: #333; margin-bottom: 20px; font-size: 26px; }
+        .input-section { background: #f8f9fa; padding: 25px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #e9ecef; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #495057; }
+        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ced4da; border-radius: 5px; font-size: 14px; font-family: inherit; }
+        input[type="text"]:focus { outline: none; border-color: #667eea; }
+        
+        .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+        .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+        .file-input-label { display: block; padding: 15px; background: #667eea; color: white; text-align: center; border-radius: 5px; cursor: pointer; transition: background 0.3s; font-weight: bold; }
+        .file-input-label:hover { background: #5568d3; }
+        
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .btn { padding: 12px 25px; border: none; border-radius: 5px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.3s; color: white; }
+        .btn-primary { background: #667eea; } .btn-primary:hover { background: #5568d3; }
+        .btn-success { background: #10b981; } .btn-success:hover { background: #059669; }
+        .btn-info { background: #3b82f6; } .btn-info:hover { background: #2563eb; }
+        
+        .output-section { margin-top: 25px; }
+        .output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .stats { background: #e0e7ff; padding: 10px 15px; border-radius: 5px; font-weight: bold; color: #3730a3; display: none; }
+        
+        #output { 
+            background: #ffffff; border: 2px solid #e5e5e5; border-radius: 8px; 
+            padding: 30px; font-family: 'Calibri', 'Arial', sans-serif; 
+            font-size: 11pt; min-height: 200px; color: #000;
+        }
+        #output p { margin: 0 !important; padding: 0 !important; line-height: 1 !important; mso-line-height-rule: exactly; }
+        #output p.spacer { height: 12pt !important; line-height: 12pt !important; }
+        #output ol.opsi-list { margin: 0 !important; padding-left: 20px !important; list-style-type: lower-alpha; line-height: 1 !important; }
+        #output ol.opsi-list li { margin-bottom: 0 !important; line-height: 1 !important; padding: 0 !important; }
+        #output img { max-width: 120px; height: auto; margin: 2px 0; display: block; }
+        
+        .instructions { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-bottom: 20px; border-radius: 5px; color: #856404; }
+        .instructions h3 { margin-bottom: 8px; } .instructions ul { margin-left: 20px; }
+        .file-info { margin-top: 10px; font-size: 13px; color: #10b981; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Konverter Soal (Auto Kunci Jawaban)</h1>
+        
+        <div class="instructions">
+            <h3> Cara Penggunaan:</h3>
+            <ul>
+                <li>Masukkan <b>Kategori</b> soal.</li>
+                <li><b>Upload file .docx</b>. Aplikasi akan otomatis mengisi Kunci Jawaban jika soal ada di "Bank Soal".</li>
+                <li>Klik <b>Proses Soal</b>, lalu <b>Copy Hasil</b> dan Paste (Ctrl+V) di Word.</li>
+            </ul>
+        </div>
+        
+        <div class="input-section">
+            <div class="form-group">
+                <label for="kategori">Kategori:</label>
+                <input type="text" id="kategori" placeholder="Contoh: ph-1 informatika-7" value="ph-1 informatika-7">
+            </div>
+            
+            <div class="form-group">
+                <label>Upload File Soal (.docx):</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".docx">
+                    <label for="fileInput" class="file-input-label"> Klik untuk upload file soal</label>
+                </div>
+                <div id="fileInfo" class="file-info"></div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="prosesSoal()">🔄 Proses Soal</button>
+                <button class="btn btn-success" onclick="copyRichText()">📋 Copy Hasil</button>
+                <button class="btn btn-info" onclick="downloadDocx()">💾 Download .docx</button>
+            </div>
+        </div>
+        
+        <div class="output-section">
+            <div class="output-header">
+                <h2>Hasil Konversi:</h2>
+                <div id="stats" class="stats"></div>
+            </div>
+            <div id="output">Hasil akan muncul di sini...</div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.1.0/docx.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <script>
+        let currentOutputHTML = '';
+        let totalSoal = 0;
+        let parsedQuestions = [];
+        let rawHtmlContent = '';
+
+        // ==========================================
+        // BANK KUNCI JAWABAN OTOMATIS
+        // Tambahkan soal dan jawaban (a/b/c/d) di sini
+        // ==========================================
+        const bankKunci = {
+            "disebut apakah karakter pada scratch": "a",
+            "disebut apakah perintah pada scratch": "b"
+        };
+        // ==========================================
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileInfo = document.getElementById('fileInfo');
+            fileInfo.textContent = '';
+            if (!file) return;
+            
+            fileInfo.textContent = '⏳ Memproses...';
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                mammoth.convertToHtml({ arrayBuffer: e.target.result }, {
+                    convertImage: mammoth.images.imgElement(function(image) {
+                        return image.read("base64").then(function(imageBuffer) {
+                            return { src: "data:" + image.contentType + ";base64," + imageBuffer };
+                        });
+                    })
+                }).then(function(result) {
+                    rawHtmlContent = result.value;
+                    fileInfo.textContent = `✅ File '${file.name}' berhasil dibaca!`;
+                }).catch(function(err) {
+                    fileInfo.textContent = '❌ Gagal: ' + err.message;
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function parseHtmlToQuestions(htmlString) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, 'text/html');
+            const questions = [];
+            const labels = ['a', 'b', 'c', 'd'];
+            
+            const orderedLists = doc.querySelectorAll('ol');
+            
+            if (orderedLists.length > 0) {
+                let currentQ = null;
+                let optionCount = 0;
+                let isFirstOl = true;
+                
+                orderedLists.forEach(ol => {
+                    const items = ol.querySelectorAll('li');
+                    items.forEach((li) => {
+                        const text = li.innerText.trim();
+                        const img = li.querySelector('img');
+                        
+                        if (isFirstOl && optionCount === 0) {
+                            currentQ = { text: text, options: [], images: {} };
+                            if (img) currentQ.questionImage = img.src;
+                            isFirstOl = false;
+                        } else if (currentQ && optionCount < 4) {
+                            currentQ.options.push({ label: labels[optionCount], text: text });
+                            if (img) currentQ.images[labels[optionCount]] = img.src;
+                            optionCount++;
+                            
+                            if (optionCount === 4) {
+                                questions.push(currentQ);
+                                currentQ = null;
+                                optionCount = 0;
+                                isFirstOl = true;
+                            }
+                        }
+                    });
+                });
+            }
+            
+            if (questions.length === 0) {
+                const paragraphs = doc.body.querySelectorAll('p');
+                let currentQ = null;
+                let currentOptIndex = -1;
+                
+                paragraphs.forEach(p => {
+                    const text = p.innerText.trim();
+                    const img = p.querySelector('img');
+                    
+                    const qMatch = text.match(/^(\d+)[.\)]\s+(.*)/);
+                    if (qMatch) {
+                        const nomor = parseInt(qMatch[1]);
+                        const isi = qMatch[2];
+                        
+                        if (nomor === 1 || currentOptIndex === 3) {
+                            if (currentQ && currentOptIndex === 3) questions.push(currentQ);
+                            currentQ = { text: isi, options: [], images: {} };
+                            currentOptIndex = -1;
+                            if (img) currentQ.questionImage = img.src;
+                            return;
+                        }
+                        if (currentQ && nomor >= 1 && nomor <= 4) {
+                            currentOptIndex = nomor - 1;
+                            currentQ.options.push({ label: labels[nomor-1], text: isi });
+                            if (img) currentQ.images[labels[nomor-1]] = img.src;
+                            return;
+                        }
+                    }
+                    
+                    const optMatch = text.match(/^([a-dA-D])[.\)]\s*(.*)/);
+                    if (currentQ && optMatch) {
+                        const label = optMatch[1].toLowerCase();
+                        const idx = label.charCodeAt(0) - 97;
+                        currentQ.options[idx] = { label: label, text: optMatch[2] };
+                        if (img) currentQ.images[label] = img.src;
+                        return;
+                    }
+                    
+                    if (img && !text && currentQ) {
+                        if (currentOptIndex === -1) currentQ.questionImage = img.src;
+                        else if (currentQ.options[currentOptIndex]) {
+                            currentQ.images[currentQ.options[currentOptIndex].label] = img.src;
+                        }
+                    }
+                });
+                
+                if (currentQ && currentOptIndex === 3) questions.push(currentQ);
+            }
+            
+            return questions;
+        }
+
+        function prosesSoal() {
+            if (!rawHtmlContent) { alert('Mohon upload file .docx terlebih dahulu!'); return; }
+            
+            const kategori = document.getElementById('kategori').value.trim() || 'umum';
+            parsedQuestions = parseHtmlToQuestions(rawHtmlContent);
+            
+            if (parsedQuestions.length === 0) { 
+                alert('Tidak ada soal yang terdeteksi.'); 
+                return; 
+            }
+            
+            totalSoal = parsedQuestions.length;
+            let htmlOutput = '';
+            
+            const pStyle = 'margin:0;padding:0;line-height:1;mso-line-height-rule:exactly;font-size:11pt;font-family:Calibri,sans-serif;';
+            const spacerStyle = 'margin:0;padding:0;height:12pt;line-height:12pt;mso-line-height-rule:exactly;';
+
+            parsedQuestions.forEach((soal, index) => {
+                const no = index + 1;
+                
+                // CEK BANK KUNCI JAWABAN OTOMATIS
+                let kunciJawaban = "-";
+                const soalClean = soal.text.toLowerCase().replace(/[?]/g, '').trim();
+                if (bankKunci[soalClean]) {
+                    kunciJawaban = bankKunci[soalClean];
+                }
+
+                htmlOutput += `<p style="${pStyle}"><b>No:</b> ${no}</p>`;
+                htmlOutput += `<p style="${pStyle}"><b>Kategori:</b> ${kategori}</p>`;
+                htmlOutput += `<p style="${pStyle}"><b>Soal :</b> ${soal.text}</p>`;
+                
+                if (soal.questionImage) {
+                    htmlOutput += `<p style="${pStyle}"><img src="${soal.questionImage}" alt="Gambar Soal" width="120"></p>`;
+                }
+                
+                htmlOutput += `<p style="${pStyle}"><b>Opsi:</b></p>`;
+                htmlOutput += `<ol style="margin:0;padding-left:20px;line-height:1;list-style-type:lower-alpha;">`;
+                soal.options.forEach((opsi) => {
+                    if (opsi) {
+                        htmlOutput += `<li style="margin:0;padding:0;line-height:1;">${opsi.text}`;
+                        if (soal.images[opsi.label]) {
+                            htmlOutput += `<br><img src="${soal.images[opsi.label]}" alt="Opsi ${opsi.label}" width="120">`;
+                        }
+                        htmlOutput += `</li>`;
+                    }
+                });
+                htmlOutput += `</ol>`;
+                
+                // Tampilkan Kunci Jawaban yang sudah diisi otomatis
+                htmlOutput += `<p style="${pStyle}"><b>Kunci Jawaban:</b> ${kunciJawaban}</p>`;
+                htmlOutput += `<p style="${pStyle}"><b>Poin:</b> 1</p>`;
+                htmlOutput += `<p style="${pStyle}"><b>Pembahasan:</b> -</p>`;
+                htmlOutput += `<p style="${spacerStyle}">&nbsp;</p>`;
+            });
+
+            currentOutputHTML = htmlOutput;
+            document.getElementById('output').innerHTML = htmlOutput;
+            document.getElementById('stats').style.display = 'block';
+            document.getElementById('stats').textContent = `✅ Berhasil memproses ${totalSoal} soal (Kunci Jawaban otomatis diisi)`;
+        }
+
+        function copyRichText() {
+            if (!currentOutputHTML) { alert('Proses soal terlebih dahulu!'); return; }
+            const outputDiv = document.getElementById('output');
+            const range = document.createRange();
+            range.selectNodeContents(outputDiv);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            
+            try {
+                document.execCommand('copy');
+                alert('✅ Berhasil disalin! Buka Word dan tekan Ctrl+V.');
+            } catch (err) { alert('Gagal menyalin. Silakan blok manual.'); }
+            window.getSelection().removeAllRanges();
+        }
+
+        async function downloadDocx() {
+            if (!currentOutputHTML) { alert('Proses soal terlebih dahulu!'); return; }
+            const { Document, Packer, Paragraph, TextRun, ImageRun } = docx;
+            const children = [];
+
+            const base64ToUint8Array = (base64) => {
+                const raw = window.atob(base64.split(',')[1]);
+                const uInt8Array = new Uint8Array(raw.length);
+                for (let i = 0; i < raw.length; ++i) uInt8Array[i] = raw.charCodeAt(i);
+                return uInt8Array;
+            };
+
+            parsedQuestions.forEach((soal, index) => {
+                let kunciJawaban = "-";
+                const soalClean = soal.text.toLowerCase().replace(/[?]/g, '').trim();
+                if (bankKunci[soalClean]) kunciJawaban = bankKunci[soalClean];
+
+                children.push(new Paragraph({ children: [new TextRun({ text: `No: ${index + 1}`, bold: true })], spacing: { line: 240 } }));
+                children.push(new Paragraph({ children: [new TextRun({ text: "Kategori: ", bold: true }), new TextRun(document.getElementById('kategori').value)], spacing: { line: 240 } }));
+                children.push(new Paragraph({ children: [new TextRun({ text: "Soal : ", bold: true }), new TextRun(soal.text)], spacing: { line: 240 } }));
+                
+                if (soal.questionImage) {
+                    children.push(new Paragraph({ children: [new ImageRun({ data: base64ToUint8Array(soal.questionImage), transformation: { width: 100, height: 100 }, type: "jpg" })], spacing: { line: 240 } }));
+                }
+
+                children.push(new Paragraph({ children: [new TextRun({ text: "Opsi:", bold: true })], spacing: { line: 240 } }));
+                soal.options.forEach(opsi => {
+                    if (opsi) {
+                        children.push(new Paragraph({ children: [new TextRun(`${opsi.label}. ${opsi.text}`)], indent: { left: 360 }, spacing: { line: 240 } }));
+                        if (soal.images[opsi.label]) {
+                            children.push(new Paragraph({ children: [new ImageRun({ data: base64ToUint8Array(soal.images[opsi.label]), transformation: { width: 100, height: 100 }, type: "jpg" })], indent: { left: 360 }, spacing: { line: 240 } }));
+                        }
+                    }
+                });
+
+                children.push(new Paragraph({ children: [new TextRun({ text: "Kunci Jawaban: ", bold: true }), new TextRun(kunciJawaban)], spacing: { line: 240 } }));
+                children.push(new Paragraph({ children: [new TextRun({ text: "Poin: ", bold: true }), new TextRun("1")], spacing: { line: 240 } }));
+                children.push(new Paragraph({ children: [new TextRun({ text: "Pembahasan: ", bold: true }), new TextRun("-")], spacing: { line: 240 } }));
+                children.push(new Paragraph({ children: [new TextRun("")], spacing: { line: 240 } }));
+                children.push(new Paragraph({ children: [new TextRun("")], spacing: { line: 240 } }));
+            });
+
+            const doc = new Document({ sections: [{ properties: {}, children: children }] });
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, `Soal_${totalSoal}.docx`);
+        }
+    </script>
+</body>
+</html>
