@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hardware Sorting Master - Game Edukasi Informatika SMP</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- MediaPipe Hands CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Mirroring canvas agar gerakan tangan cermin alami */
+    .mirror {
+      transform: scaleX(-1);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col select-none">
+
+  <!-- Header & Bar Game Status -->
+  <header class="bg-slate-900 border-b border-slate-800 py-3 px-6 shadow-xl">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/30">
+          <i class="fa-solid fa-gamepad text-2xl text-white"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-wide text-indigo-400">Hardware Sorting Master</h1>
+          <p class="text-xs text-slate-400">Game Edukasi Informatika Fase D (SMP)</p>
+        </div>
+      </div>
+
+      <!-- Live Game Dashboard Stats -->
+      <div class="flex items-center gap-4 sm:gap-6">
+        <div class="text-center">
+          <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Level</span>
+          <span id="level-badge" class="text-xs font-black text-indigo-400 bg-indigo-950/80 px-2.5 py-0.5 rounded-full border border-indigo-800">Lvl 1</span>
+        </div>
+        <div class="text-center">
+          <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Skor</span>
+          <span id="score-text" class="text-xl sm:text-2xl font-black text-amber-400">0</span>
+        </div>
+        <div class="text-center">
+          <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Waktu</span>
+          <span id="timer-text" class="text-xl sm:text-2xl font-black text-emerald-400">60s</span>
+        </div>
+        <div class="text-center">
+          <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Nyawa</span>
+          <div id="lives-container" class="flex gap-1 text-red-500 text-base sm:text-lg">
+            <i class="fa-solid fa-heart"></i>
+            <i class="fa-solid fa-heart"></i>
+            <i class="fa-solid fa-heart"></i>
+          </div>
+        </div>
+        
+        <!-- Tombol Buka Modal Edukasi (Tab Standar Edukasi) -->
+        <div class="flex items-center border-l border-slate-800 pl-4">
+          <button id="open-edu-modal-btn" class="flex items-center gap-2 px-3 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 rounded-lg text-xs font-semibold transition border border-indigo-500/30 shadow-md">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Panduan & Edukasi</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+    <!-- Area Video Kamera & Game Play Area -->
+    <section class="lg:col-span-3 flex flex-col items-center">
+      <div class="relative w-full aspect-video bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-800 flex items-center justify-center">
+        <!-- Element Video Hidden untuk stream kamera -->
+        <video id="webcam" class="hidden" playsinline></video>
+        
+        <!-- Canvas untuk pemprosesan render game & video -->
+        <canvas id="output-canvas" class="w-full h-full mirror object-cover"></canvas>
+
+        <!-- Menu Utama / Start Game Overlay -->
+        <div id="start-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-30">
+          <div class="w-16 h-16 bg-indigo-600/20 border-2 border-indigo-500 rounded-full flex items-center justify-center text-indigo-400 text-3xl mb-3 animate-bounce">
+            <i class="fa-solid fa-microchip"></i>
+          </div>
+          <h2 class="text-2xl font-black text-white mb-1">Hardware Sorting Master</h2>
+          <p class="text-xs text-indigo-300 font-semibold mb-6 uppercase tracking-widest">Informatika Fase D - Sistem Komputer</p>
+
+          <div class="flex gap-3">
+            <button id="show-guide-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-5 py-3.5 rounded-xl border border-slate-700 transition flex items-center gap-2 text-sm">
+              <i class="fa-solid fa-circle-info"></i>
+              <span>Info & Standar Edukasi</span>
+            </button>
+            <button id="start-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-indigo-600/40 transition transform hover:scale-105 active:scale-95 flex items-center gap-3 text-sm">
+              <i class="fa-solid fa-play"></i>
+              <span>Mulai Permainan</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="gameover-overlay" class="hidden absolute inset-0 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-40">
+          <i class="fa-solid fa-trophy text-amber-400 text-5xl mb-3 animate-pulse"></i>
+          <h2 class="text-3xl font-black text-white mb-1">Permainan Selesai!</h2>
+          <p class="text-slate-400 text-xs mb-4">Hasil Evaluasi Pengenalan Perangkat Keras Komputer</p>
+          
+          <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl mb-6 w-64">
+            <div class="text-xs text-slate-400 mb-1">Total Skor Akhir</div>
+            <div id="final-score" class="text-4xl font-extrabold text-amber-400">0</div>
+            <div id="evaluation-text" class="text-xs text-emerald-400 mt-2 font-medium">Bagus Sekali!</div>
+          </div>
+
+          <button id="restart-btn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-600/40 transition transform hover:scale-105 active:scale-95 flex items-center gap-2 text-sm">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Main Lagi</span>
+          </button>
+        </div>
+
+        <!-- Loading Model Overlay -->
+        <div id="loading-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-20">
+          <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm font-medium text-slate-300">Memuat AI MediaPipe Hands...</p>
+        </div>
+
+        <!-- Pesan Error Akses Kamera -->
+        <div id="error-message" class="hidden absolute inset-0 bg-slate-950/95 p-6 flex flex-col items-center justify-center text-center z-50">
+          <i class="fa-solid fa-video-slash text-red-500 text-4xl mb-3"></i>
+          <h3 class="text-lg font-semibold text-white mb-1">Akses Kamera Gagal</h3>
+          <p id="error-text" class="text-sm text-slate-400 max-w-md">Izinkan akses kamera di browser Anda untuk dapat memainkan game ini.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sidebar Petunjuk & Pilihan Kategori Active -->
+    <section class="flex flex-col gap-4">
+      
+      <!-- Kartu Target Mode Kategori Terpilih -->
+      <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800 shadow-xl">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Kategori Terpilih (Tangan Kiri)</h3>
+        
+        <div id="active-category-box" class="bg-indigo-950/50 border border-indigo-700/50 p-4 rounded-xl flex items-center gap-3">
+          <span id="active-category-icon" class="text-3xl">☝️</span>
+          <div>
+            <div id="active-category-name" class="font-bold text-indigo-300 text-sm">INPUT DEVICE</div>
+            <div id="active-category-desc" class="text-xs text-slate-400">1 Jari Terangkat</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panduan Kontrol Jari Ringkas -->
+      <div class="bg-slate-900 rounded-2xl p-4 border border-slate-800 flex-1">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Kontrol Jari Tangan Kiri:</h3>
+        <ul class="space-y-2 text-xs">
+          <li class="flex items-center gap-2 p-2 rounded-lg bg-slate-800/60 border border-slate-700/50">
+            <span class="text-base">☝️</span>
+            <div>
+              <span class="font-bold text-slate-200 block">1 Jari = Input Device</span>
+              <span class="text-slate-400 text-[10px]">Keyboard, Mouse, Scanner, Mic</span>
+            </div>
+          </li>
+          <li class="flex items-center gap-2 p-2 rounded-lg bg-slate-800/60 border border-slate-700/50">
+            <span class="text-base">✌️</span>
+            <div>
+              <span class="font-bold text-slate-200 block">2 Jari = Process Device</span>
+              <span class="text-slate-400 text-[10px]">CPU, GPU, RAM, Motherboard</span>
+            </div>
+          </li>
+          <li class="flex items-center gap-2 p-2 rounded-lg bg-slate-800/60 border border-slate-700/50">
+            <span class="text-base">🤟</span>
+            <div>
+              <span class="font-bold text-slate-200 block">3 Jari = Output Device</span>
+              <span class="text-slate-400 text-[10px]">Monitor, Printer, Speaker</span>
+            </div>
+          </li>
+          <li class="flex items-center gap-2 p-2 rounded-lg bg-slate-800/60 border border-slate-700/50">
+            <span class="text-base">🖖</span>
+            <div>
+              <span class="font-bold text-slate-200 block">4 Jari = Storage Device</span>
+              <span class="text-slate-400 text-[10px]">SSD, Harddisk, Flashdisk</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL STANDAR GAME EDUKASI (4 TAB INTEGRATED) -->
+  <div id="edu-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="bg-slate-800/80 px-6 py-4 border-b border-slate-700/80 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-indigo-600 rounded-lg text-white">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Standar Game Edukasi Informatika</h3>
+            <p class="text-xs text-slate-400">Modul Pembelajaran Interaktif MediaPipe</p>
+          </div>
+        </div>
+        <button id="close-edu-modal-btn" class="text-slate-400 hover:text-white text-lg transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Tab Navigation Menu -->
+      <div class="flex border-b border-slate-800 bg-slate-950/40 overflow-x-auto">
+        <button data-tab="tab-tp" class="tab-btn active-tab flex-1 py-3 px-4 text-xs font-bold border-b-2 border-indigo-500 text-indigo-400 flex items-center justify-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-bullseye"></i>
+          <span>1. Tujuan Pembelajaran</span>
+        </button>
+        <button data-tab="tab-rules" class="tab-btn flex-1 py-3 px-4 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>2. Aturan Permainan</span>
+        </button>
+        <button data-tab="tab-levels" class="tab-btn flex-1 py-3 px-4 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>3. Tingkat Kesulitan</span>
+        </button>
+        <button data-tab="tab-dev" class="tab-btn flex-1 py-3 px-4 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-code"></i>
+          <span>4. Pengembang</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="p-6 overflow-y-auto flex-1 space-y-4 text-xs leading-relaxed text-slate-300">
+        
+        <!-- TAB 1: TUJUAN PEMBELAJARAN -->
+        <div id="tab-tp" class="tab-content space-y-3">
+          <div class="bg-indigo-950/40 border border-indigo-800/40 p-4 rounded-xl">
+            <span class="text-indigo-400 font-bold block mb-1 uppercase tracking-wider text-[11px]">Mata Pelajaran & Sasaran</span>
+            <p class="text-slate-200 font-medium">Informatika - Fase D (SMP Kelas 7, 8, & 9) / Elemen Sistem Komputer (SK)</p>
+          </div>
+
+          <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl">
+            <strong class="text-indigo-300 font-bold block mb-1">Capaian Pembelajaran (CP):</strong>
+            <p>Peserta didik mampu mengidentifikasi komponen, fungsi, dan mekanisme kerja sistem komputer dalam melakukan pemrosesan data (siklus Input - Process - Output - Storage).</p>
+          </div>
+
+          <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl">
+            <strong class="text-indigo-300 font-bold block mb-1">Tujuan Pembelajaran (TP):</strong>
+            <ul class="list-disc list-inside space-y-1 text-slate-300">
+              <li>Peserta didik dapat mengklasifikasikan perangkat keras (*hardware*) komputer ke dalam kategori Input, Process, Output, dan Storage secara tepat.</li>
+              <li>Peserta didik dapat mengidentifikasi fungsi masing-masing komponen perangkat keras dalam sistem komputer.</li>
+              <li>Melatih koordinasi motorik-visual dan kecepatan berpikir dalam pengelompokkan data secara interaktif.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- TAB 2: ATURAN PERMAINAN -->
+        <div id="tab-rules" class="tab-content hidden space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="bg-slate-800/50 border border-slate-700/50 p-3 rounded-xl">
+              <span class="text-emerald-400 font-bold block mb-1"><i class="fa-solid fa-hand mr-1"></i> Deteksi Dua Tangan</span>
+              <p>Tunjukkan kedua tangan ke kamera. Sinar laser energi akan membentang otomatis antara Tangan Kiri dan Tangan Kanan Anda.</p>
+            </div>
+            <div class="bg-slate-800/50 border border-slate-700/50 p-3 rounded-xl">
+              <span class="text-cyan-400 font-bold block mb-1"><i class="fa-solid fa-hand-pointer mr-1"></i> Kontrol Jari (Tangan Kiri)</span>
+              <p>Acungkan jumlah jari Tangan Kiri untuk memilih kategori target (1 Jari = Input, 2 Jari = Process, 3 Jari = Output, 4 Jari = Storage).</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl space-y-2">
+            <strong class="text-amber-400 font-bold block">Sistem Poin & Aturan Main:</strong>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Arahkan **sinar laser** untuk memotong item perangkat keras yang jatuh meluncur dari atas.</li>
+              <li>Mendapatkan **+100 Poin** jika kategori jari yang Anda acungkan **sesuai** dengan jenis item yang dipotong laser.</li>
+              <li>Kehilangan **1 Nyawa** jika memotong item dengan kategori jari yang **salah**.</li>
+              <li>Permainan berlangsung selama **60 detik** atau hingga nyawa habis.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- TAB 3: TINGKAT KESULITAN (LEVELING) -->
+        <div id="tab-levels" class="tab-content hidden space-y-3">
+          <p class="text-slate-400">Pilih tingkat kesulitan permainan sebelum memulai untuk menyesuaikan kecepatan simulasi:</p>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div data-level-select="1" class="level-card cursor-pointer bg-indigo-950/40 border-2 border-indigo-500 p-4 rounded-xl transition hover:scale-105">
+              <span class="text-indigo-400 font-bold block mb-1">Level 1: Pemula</span>
+              <p class="text-[11px] text-slate-300 mb-2">Ditujukan untuk pengenalan dasar (Kelas 7 SMP).</p>
+              <span class="text-[10px] text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded">Kecepatan Lambat</span>
+            </div>
+
+            <div data-level-select="2" class="level-card cursor-pointer bg-slate-800/60 border border-slate-700 p-4 rounded-xl transition hover:scale-105">
+              <span class="text-slate-200 font-bold block mb-1">Level 2: Menengah</span>
+              <p class="text-[11px] text-slate-400 mb-2">Latihan ketangkasan sedang (Kelas 8 SMP).</p>
+              <span class="text-[10px] text-amber-400 font-semibold bg-amber-950/60 px-2 py-0.5 rounded">Kecepatan Sedang</span>
+            </div>
+
+            <div data-level-select="3" class="level-card cursor-pointer bg-slate-800/60 border border-slate-700 p-4 rounded-xl transition hover:scale-105">
+              <span class="text-slate-200 font-bold block mb-1">Level 3: Ahli</span>
+              <p class="text-[11px] text-slate-400 mb-2">Tantangan evaluasi cepat (Kelas 9 SMP).</p>
+              <span class="text-[10px] text-red-400 font-semibold bg-red-950/60 px-2 py-0.5 rounded">Kecepatan Tinggi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: PENGEMBANG -->
+        <div id="tab-dev" class="tab-content hidden space-y-3">
+          <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl flex items-center gap-4">
+            <div class="w-14 h-14 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+              <i class="fa-solid fa-laptop-code"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-white text-sm">Tim Pengembang Edukasi MediaPipe</h4>
+              <p class="text-indigo-400 text-[11px]">Pengembang Media Pembelajaran Informatika SMP</p>
+              <p class="text-slate-400 text-[10px] mt-1">Spesialisasi: Computer Vision & AI Interaktif dalam Pendidikan</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl space-y-1 text-[11px]">
+            <strong class="text-slate-200 block mb-1">Teknologi yang Digunakan:</strong>
+            <p>• **MediaPipe Hands AI** - Deteksi gesture dan landmark 21 sendi tangan real-time.</p>
+            <p>• **HTML5 Canvas API** - Engine grafis render laser energi dan objek jatuh.</p>
+            <p>• **Web Audio API** - Synthesizer efek suara interaktif tanpa file external audio.</p>
+            <p>• **Tailwind CSS** - Framework antarmuka modern yang responsif.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-800/80 px-6 py-3 border-t border-slate-700/80 flex justify-end">
+        <button id="modal-start-game-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2 rounded-xl transition text-xs flex items-center gap-2">
+          <i class="fa-solid fa-play"></i>
+          <span>Paham & Mulai Permainan</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer Identitas Pengembang -->
+  <footer class="bg-slate-950 border-t border-slate-800 py-3 px-6 text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+    <div>
+      <span class="font-semibold text-slate-400">Pengembang Game:</span> Tim Edukasi MediaPipe (Informatika SMP)
+    </div>
+    <div class="flex items-center gap-4 text-[11px]">
+      <span>Teknologi: HTML5, MediaPipe Hands AI, Web Audio API</span>
+      <span>&copy; 2026 EduGame Informatika</span>
+    </div>
+  </footer>
+
+  <!-- Script Logic Game & AI MediaPipe -->
+  <script>
+    // Referensi Elemen DOM
+    const videoElement = document.getElementById('webcam');
+    const canvasElement = document.getElementById('output-canvas');
+    const canvasCtx = canvasElement.getContext('2d');
+    
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const startOverlay = document.getElementById('start-overlay');
+    const gameoverOverlay = document.getElementById('gameover-overlay');
+    const errorMessage = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+
+    const startBtn = document.getElementById('start-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const showGuideBtn = document.getElementById('show-guide-btn');
+
+    const scoreText = document.getElementById('score-text');
+    const timerText = document.getElementById('timer-text');
+    const levelBadge = document.getElementById('level-badge');
+    const finalScoreText = document.getElementById('final-score');
+    const evaluationText = document.getElementById('evaluation-text');
+    const livesContainer = document.getElementById('lives-container');
+
+    const activeCategoryName = document.getElementById('active-category-name');
+    const activeCategoryDesc = document.getElementById('active-category-desc');
+    const activeCategoryIcon = document.getElementById('active-category-icon');
+
+    // Modal & Tab Handler
+    const eduModal = document.getElementById('edu-modal');
+    const openEduModalBtn = document.getElementById('open-edu-modal-btn');
+    const closeEduModalBtn = document.getElementById('close-edu-modal-btn');
+    const modalStartGameBtn = document.getElementById('modal-start-game-btn');
+
+    openEduModalBtn.addEventListener('click', () => eduModal.classList.remove('hidden'));
+    showGuideBtn.addEventListener('click', () => eduModal.classList.remove('hidden'));
+    closeEduModalBtn.addEventListener('click', () => eduModal.classList.add('hidden'));
+    modalStartGameBtn.addEventListener('click', () => {
+      eduModal.classList.add('hidden');
+      startGame();
+    });
+
+    // Tab Switching Logic
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+
+        tabBtns.forEach(b => {
+          b.classList.remove('active-tab', 'border-indigo-500', 'text-indigo-400');
+          b.classList.add('border-transparent', 'text-slate-400');
+        });
+
+        btn.classList.add('active-tab', 'border-indigo-500', 'text-indigo-400');
+        btn.classList.remove('border-transparent', 'text-slate-400');
+
+        tabContents.forEach(content => {
+          if (content.id === targetTab) {
+            content.classList.remove('hidden');
+          } else {
+            content.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // Web Audio Synthesizer (SFX Efek Suara)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'hit') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
+      }
+    }
+
+    // Database Perangkat Keras Komputer (Fase D SMP)
+    const HARDWARE_ITEMS = [
+      { name: 'Keyboard', category: 'INPUT', icon: '⌨️' },
+      { name: 'Mouse', category: 'INPUT', icon: '🖱️' },
+      { name: 'Microphone', category: 'INPUT', icon: '🎙️' },
+      { name: 'Scanner', category: 'INPUT', icon: '📄' },
+      { name: 'CPU / Processor', category: 'PROCESS', icon: '🔲' },
+      { name: 'GPU / VGA', category: 'PROCESS', icon: '🖥️' },
+      { name: 'RAM Memory', category: 'PROCESS', icon: '📟' },
+      { name: 'Motherboard', category: 'PROCESS', icon: '🟩' },
+      { name: 'Monitor', category: 'OUTPUT', icon: '🖥️' },
+      { name: 'Printer', category: 'OUTPUT', icon: '🖨️' },
+      { name: 'Speaker', category: 'OUTPUT', icon: '🔊' },
+      { name: 'SSD Storage', category: 'STORAGE', icon: '💾' },
+      { name: 'Harddisk (HDD)', category: 'STORAGE', icon: '💽' },
+      { name: 'Flashdisk USB', category: 'STORAGE', icon: '🔌' }
+    ];
+
+    const CATEGORY_MAP = {
+      1: { code: 'INPUT', name: 'INPUT DEVICE', icon: '☝️', desc: '1 Jari Terangkat' },
+      2: { code: 'PROCESS', name: 'PROCESS DEVICE', icon: '✌️', desc: '2 Jari Terangkat' },
+      3: { code: 'OUTPUT', name: 'OUTPUT DEVICE', icon: '🤟', desc: '3 Jari Terangkat' },
+      4: { code: 'STORAGE', name: 'STORAGE DEVICE', icon: '🖖', desc: '4 Jari Terangkat' }
+    };
+
+    // Level Configuration
+    const LEVEL_CONFIG = {
+      1: { speedMin: 1.2, speedMax: 2.0, spawnInterval: 90, label: 'Lvl 1' }, // Pemula
+      2: { speedMin: 2.0, speedMax: 3.2, spawnInterval: 60, label: 'Lvl 2' }, // Menengah
+      3: { speedMin: 3.2, speedMax: 4.5, spawnInterval: 40, label: 'Lvl 3' }  // Ahli
+    };
+
+    let selectedLevel = 1;
+
+    // Selector Level UI Event Handler dari Tab Level
+    document.querySelectorAll('[data-level-select]').forEach(card => {
+      card.addEventListener('click', (e) => {
+        document.querySelectorAll('[data-level-select]').forEach(c => {
+          c.className = "level-card cursor-pointer bg-slate-800/60 border border-slate-700 p-4 rounded-xl transition hover:scale-105";
+        });
+        const target = e.currentTarget;
+        target.className = "level-card cursor-pointer bg-indigo-950/40 border-2 border-indigo-500 p-4 rounded-xl transition hover:scale-105";
+        selectedLevel = parseInt(target.getAttribute('data-level-select'));
+        levelBadge.innerText = LEVEL_CONFIG[selectedLevel].label;
+      });
+    });
+
+    // State Permainan
+    let gameState = 'STOPPED';
+    let score = 0;
+    let timer = 60;
+    let lives = 3;
+    let timerInterval = null;
+    let fallingItems = [];
+    let spawnCounter = 0;
+
+    let selectedCategoryCode = 'INPUT';
+
+    // Menghitung Jari Terangkat Tangan Kiri
+    function countFingers(landmarks, handedness) {
+      let count = 0;
+      const fingerTips = [8, 12, 16, 20];
+      const fingerPips = [6, 10, 14, 18];
+
+      for (let i = 0; i < 4; i++) {
+        if (landmarks[fingerTips[i]].y < landmarks[fingerPips[i]].y) {
+          count++;
+        }
+      }
+
+      const thumbTip = landmarks[4];
+      const thumbIp = landmarks[3];
+      if (handedness === 'Left') {
+        if (thumbTip.x > thumbIp.x) count++;
+      } else {
+        if (thumbTip.x < thumbIp.x) count++;
+      }
+
+      return count;
+    }
+
+    function getPalmCenter(landmarks) {
+      const x = (landmarks[0].x + landmarks[5].x + landmarks[9].x + landmarks[17].x) / 4;
+      const y = (landmarks[0].y + landmarks[5].y + landmarks[9].y + landmarks[17].y) / 4;
+      return { x, y };
+    }
+
+    // Deteksi Tabrakan Garis Laser (Line) dengan Lingkaran Item (Circle)
+    function checkLineCircleCollision(p1, p2, circle) {
+      const x1 = p1.x * canvasElement.width;
+      const y1 = p1.y * canvasElement.height;
+      const x2 = p2.x * canvasElement.width;
+      const y2 = p2.y * canvasElement.height;
+
+      const cx = circle.x;
+      const cy = circle.y;
+      const r = circle.radius;
+
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      if (len === 0) return false;
+
+      const dot = (((cx - x1) * (x2 - x1)) + ((cy - y1) * (y2 - y1))) / (len * len);
+      const closestX = x1 + (dot * (x2 - x1));
+      const closestY = y1 + (dot * (y2 - y1));
+
+      const onSegment = dot >= 0 && dot <= 1;
+      if (!onSegment) return false;
+
+      const dist = Math.hypot(cx - closestX, cy - closestY);
+      return dist <= r;
+    }
+
+    // Spawn Perangkat Keras Baru
+    function spawnHardwareItem() {
+      const config = LEVEL_CONFIG[selectedLevel];
+      const randomItem = HARDWARE_ITEMS[Math.floor(Math.random() * HARDWARE_ITEMS.length)];
+      const radius = 35;
+      const x = radius + Math.random() * (canvasElement.width - (radius * 2));
+      const speed = config.speedMin + Math.random() * (config.speedMax - config.speedMin);
+      
+      fallingItems.push({
+        ...randomItem,
+        x: x,
+        y: -radius,
+        radius: radius,
+        speed: speed
+      });
+    }
+
+    // Mulai Permainan
+    function startGame() {
+      score = 0;
+      timer = 60;
+      lives = 3;
+      fallingItems = [];
+      gameState = 'PLAYING';
+
+      scoreText.innerText = score;
+      timerText.innerText = `${timer}s`;
+      levelBadge.innerText = LEVEL_CONFIG[selectedLevel].label;
+      updateLivesUI();
+
+      startOverlay.classList.add('hidden');
+      gameoverOverlay.classList.add('hidden');
+
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (gameState === 'PLAYING') {
+          timer--;
+          timerText.innerText = `${timer}s`;
+          if (timer <= 0) {
+            endGame();
+          }
+        }
+      }, 1000);
+    }
+
+    // Selesai Permainan
+    function endGame() {
+      gameState = 'GAMEOVER';
+      clearInterval(timerInterval);
+      finalScoreText.innerText = score;
+
+      if (score >= 1000) {
+        evaluationText.innerText = "Luar Biasa! Pemahaman Perangkat Keras Sangat Baik! 🌟";
+      } else if (score >= 500) {
+        evaluationText.innerText = "Bagus Sekali! Terus Tingkatkan Pemahaman Komputer! 👍";
+      } else {
+        evaluationText.innerText = "Tetap Semangat! Pelajari Kembali Fungsi Hardware! 📚";
+      }
+
+      gameoverOverlay.classList.remove('hidden');
+    }
+
+    function updateLivesUI() {
+      livesContainer.innerHTML = '';
+      for (let i = 0; i < 3; i++) {
+        if (i < lives) {
+          livesContainer.innerHTML += '<i class="fa-solid fa-heart text-red-500"></i>';
+        } else {
+          livesContainer.innerHTML += '<i class="fa-solid fa-heart text-slate-700"></i>';
+        }
+      }
+    }
+
+    // Gambar Sinar Laser
+    function drawLaser(ctx, p1, p2) {
+      const x1 = p1.x * canvasElement.width;
+      const y1 = p1.y * canvasElement.height;
+      const x2 = p2.x * canvasElement.width;
+      const y2 = p2.y * canvasElement.height;
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+
+      // Outer Glow
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.lineWidth = 20;
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+      ctx.shadowBlur = 30;
+      ctx.shadowColor = '#EF4444';
+      ctx.stroke();
+
+      // Core Line
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // Callback MediaPipe Hasil Frame
+    function onResults(results) {
+      if (!loadingOverlay.classList.contains('hidden')) {
+        loadingOverlay.classList.add('hidden');
+      }
+
+      canvasElement.width = videoElement.videoWidth;
+      canvasElement.height = videoElement.videoHeight;
+
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      
+      // Render Video Kamera
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+      let leftHandPoint = null;
+      let rightHandPoint = null;
+
+      if (results.multiHandLandmarks && results.multiHandedness) {
+        for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+          const classification = results.multiHandedness[i];
+          const landmarks = results.multiHandLandmarks[i];
+          const realHand = classification.label === 'Left' ? 'Right' : 'Left';
+
+          const palmCenter = getPalmCenter(landmarks);
+          const color = realHand === 'Left' ? '#10B981' : '#06B6D4';
+
+          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: color, lineWidth: 2 });
+          drawLandmarks(canvasCtx, landmarks, { color: '#FFFFFF', fillColor: color, radius: 4 });
+
+          if (realHand === 'Left') {
+            leftHandPoint = palmCenter;
+            const fingers = countFingers(landmarks, realHand);
+            if (CATEGORY_MAP[fingers]) {
+              selectedCategoryCode = CATEGORY_MAP[fingers].code;
+              activeCategoryName.innerText = CATEGORY_MAP[fingers].name;
+              activeCategoryDesc.innerText = CATEGORY_MAP[fingers].desc;
+              activeCategoryIcon.innerText = CATEGORY_MAP[fingers].icon;
+            }
+          } else if (realHand === 'Right') {
+            rightHandPoint = palmCenter;
+          }
+        }
+      }
+
+      // Render Laser jika kedua tangan ada
+      let isLaserActive = false;
+      if (leftHandPoint && rightHandPoint) {
+        drawLaser(canvasCtx, leftHandPoint, rightHandPoint);
+        isLaserActive = true;
+      }
+
+      // Update & Render Game Logic jika sedang PLAYING
+      if (gameState === 'PLAYING') {
+        spawnCounter++;
+        const config = LEVEL_CONFIG[selectedLevel];
+        if (spawnCounter % config.spawnInterval === 0) {
+          spawnHardwareItem();
+        }
+
+        for (let i = fallingItems.length - 1; i >= 0; i--) {
+          const item = fallingItems[i];
+          item.y += item.speed;
+
+          // Render Item Perangkat Keras (Circle Badge)
+          canvasCtx.save();
+          canvasCtx.beginPath();
+          canvasCtx.arc(item.x, item.y, item.radius, 0, Math.PI * 2);
+          canvasCtx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+          canvasCtx.strokeStyle = '#6366F1';
+          canvasCtx.lineWidth = 3;
+          canvasCtx.fill();
+          canvasCtx.stroke();
+
+          // Render Icon & Text
+          canvasCtx.font = '22px sans-serif';
+          canvasCtx.textAlign = 'center';
+          canvasCtx.textBaseline = 'middle';
+          canvasCtx.fillText(item.icon, item.x, item.y - 6);
+
+          canvasCtx.font = 'bold 9px sans-serif';
+          canvasCtx.fillStyle = '#FFFFFF';
+          canvasCtx.fillText(item.name, item.x, item.y + 16);
+          canvasCtx.restore();
+
+          // Cek Tabrakan Sinar Laser
+          if (isLaserActive && checkLineCircleCollision(leftHandPoint, rightHandPoint, item)) {
+            if (item.category === selectedCategoryCode) {
+              score += 100;
+              scoreText.innerText = score;
+              playSound('hit');
+            } else {
+              lives--;
+              updateLivesUI();
+              playSound('wrong');
+              if (lives <= 0) endGame();
+            }
+            fallingItems.splice(i, 1);
+            continue;
+          }
+
+          // Cek jika item lewat ke bawah layar
+          if (item.y - item.radius > canvasElement.height) {
+            fallingItems.splice(i, 1);
+          }
+        }
+      }
+
+      canvasCtx.restore();
+    }
+
+    // Inisialisasi MediaPipe Hands
+    const hands = new Hands({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 2,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.6,
+      minTrackingConfidence: 0.6
+    });
+
+    hands.onResults(onResults);
+
+    // Inisialisasi Kamera
+    function startCamera() {
+      camera = new Camera(videoElement, {
+        onFrame: async () => {
+          await hands.send({ image: videoElement });
+        },
+        width: 1280,
+        height: 720
+      });
+
+      camera.start().catch(err => {
+        console.error("Kamera Error:", err);
+        loadingOverlay.classList.add('hidden');
+        errorMessage.classList.remove('hidden');
+        errorText.innerText = "Gagal memuat kamera webcam. Pastikan perangkat memiliki webcam dan izin akses telah diberikan.";
+      });
+    }
+
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+
+    window.onload = () => {
+      startCamera();
+    };
+  </script>
+</body>
+</html>
