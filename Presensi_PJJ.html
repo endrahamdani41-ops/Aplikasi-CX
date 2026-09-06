@@ -4,435 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Presensi PJJ - SMPN 110 Jakarta</title>
-    
     <style>
         :root {
-            --primary: #4f46e5;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg-page: #0f172a;
-            --bg-container: #1e293b;
-            --text-header: #ffffff;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --bg-footer: #334155;
-            --border-color: #475569;
-            --seat-empty: #334155;
-            --seat-filled-bg: #1e293b;
-            --seat-filled-border: #10b981;
-            --seat-name-bg: rgba(0, 0, 0, 0.85);
-            --seat-name-color: #ffffff;
-            --modal-bg: #1e293b;
-            --input-bg: #0f172a;
-            --input-border: #475569;
-            --shadow: 0 20px 50px rgba(0,0,0,0.4);
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
-            
-            --gap-pair: 12px;
-            --gap-group: 24px;
-            --seat-w: 130px;
-            --seat-h: 160px;
+            --primary: #4f46e5; --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+            --bg-page: #0f172a; --bg-container: #1e293b; --text-header: #ffffff;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --bg-footer: #334155;
+            --border-color: #475569; --seat-empty: #334155; --seat-filled-bg: #1e293b;
+            --seat-filled-border: #10b981; --seat-name-bg: rgba(0, 0, 0, 0.85);
+            --seat-name-color: #ffffff; --modal-bg: #1e293b; --input-bg: #0f172a;
+            --input-border: #475569; --shadow: 0 20px 50px rgba(0,0,0,0.4);
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.3); --gap-pair: 12px; --gap-group: 24px;
+            --seat-w: 130px; --seat-h: 160px;
         }
         body.light-mode {
-            --bg-page: #f3f4f6;
-            --bg-container: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --bg-footer: #f9fafb;
-            --border-color: #e5e7eb;
-            --seat-empty: #e5e7eb;
-            --seat-filled-bg: #ffffff;
-            --modal-bg: #ffffff;
-            --input-bg: #ffffff;
-            --input-border: #d1d5db;
-            --shadow: 0 20px 50px rgba(0,0,0,0.08);
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+            --bg-page: #f3f4f6; --bg-container: #ffffff; --text-main: #1f2937;
+            --text-muted: #6b7280; --bg-footer: #f9fafb; --border-color: #e5e7eb;
+            --seat-empty: #e5e7eb; --seat-filled-bg: #ffffff; --modal-bg: #ffffff;
+            --input-bg: #ffffff; --input-border: #d1d5db;
+            --shadow: 0 20px 50px rgba(0,0,0,0.08); --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: var(--bg-page);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 0;
-            transition: background 0.3s ease;
-        }
-        .app-container {
-            background: var(--bg-container);
-            box-shadow: var(--shadow);
-            width: 100vw;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
-            color: var(--text-header);
-            padding: 50px 12px 16px;
-            text-align: center;
-            position: relative;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .title-main {
-            font-size: 1.3rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(180deg, #f59e0b 100%, #f59e0b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 4px;
-        }
-        .title-sub {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #f59e0b;
-            text-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
-            text-transform: uppercase;
-        }
-        .title-divider {
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
-            margin: 6px auto;
-            border-radius: 2px;
-        }
-        .connection-status {
-            position: absolute;
-            top: 8px;
-            left: 10px;
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.15);
-            color: white;
-            font-weight: 600;
-            backdrop-filter: blur(4px);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-page); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 0; transition: background 0.3s ease; }
+        .app-container { background: var(--bg-container); box-shadow: var(--shadow); width: 100vw; min-height: 100vh; overflow-x: hidden; }
+        .header { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); color: var(--text-header); padding: 50px 12px 16px; text-align: center; position: relative; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .title-main { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(180deg, #f59e0b 100%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+        .title-sub { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; color: #f59e0b; text-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); text-transform: uppercase; }
+        .title-divider { width: 60px; height: 3px; background: linear-gradient(90deg, transparent, #f59e0b, transparent); margin: 6px auto; border-radius: 2px; }
+        .title-date { font-size: 0.95rem; font-weight: 600; color: #fbbf24; margin-top: 6px; letter-spacing: 1px; }
+        .connection-status { position: absolute; top: 8px; left: 10px; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.15); color: white; font-weight: 600; backdrop-filter: blur(4px); }
         .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
         .connection-status.disconnected { background: rgba(239, 68, 68, 0.9); }
-        .header-controls {
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-        .icon-btn {
-            width: 40px;
-            height: 40px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.2s;
-            color: white;
-            box-shadow: var(--shadow-sm);
-        }
+        .header-controls { position: absolute; top: 6px; right: 8px; display: flex; gap: 5px; align-items: center; }
+        .icon-btn { width: 40px; height: 40px; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; color: white; box-shadow: var(--shadow-sm); }
         .icon-btn:active { transform: scale(0.92); }
         .btn-add-class { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
         .btn-preview { background: linear-gradient(135deg, #ec4899, #db2777); }
         .btn-refresh { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .btn-save { background: linear-gradient(135deg, #10b981, #059669); }
+        .btn-backup { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .theme-toggle { background: rgba(255,255,255,0.15); }
-        .class-selector-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 10px;
-            background: var(--bg-footer);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .class-select {
-            padding: 6px 12px;
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
-            background: var(--input-bg);
-            color: var(--text-main);
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            width: auto;
-            max-width: fit-content;
-            text-align: center;
-        }
-        .page-nav {
-            display: none;
-            justify-content: center;
-            gap: 10px;
-            padding: 12px 10px 0;
-        }
-        .page-btn {
-            flex: 1;
-            max-width: 180px;
-            padding: 10px 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            background: var(--bg-footer);
-            color: var(--text-main);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .page-btn.active {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
-        }
-        .denah-scroll-area {
-            width: 100%;
-            padding: 15px 8px;
-            display: flex;
-            justify-content: center;
-            overflow-x: auto;
-        }
-        .denah-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-        .row-wrapper { 
-            display: flex; 
-            gap: var(--gap-group); 
-            justify-content: center;
-            width: 100%;
-        }
-        .pair-wrapper { 
-            display: flex; 
-            gap: var(--gap-pair); 
-        }
-        .seat {
-            width: var(--seat-w);
-            height: var(--seat-h);
-            background: var(--seat-empty);
-            border-radius: 14px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 3px solid transparent;
-            flex-shrink: 0;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-        }
+        .class-selector-bar { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: var(--bg-footer); border-bottom: 1px solid var(--border-color); }
+        .class-select { padding: 6px 12px; border: 2px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main); font-size: 0.9rem; font-weight: 700; cursor: pointer; width: auto; max-width: fit-content; text-align: center; }
+        .page-nav { display: none; justify-content: center; gap: 10px; padding: 12px 10px 0; }
+        .page-btn { flex: 1; max-width: 180px; padding: 10px 12px; font-size: 0.85rem; font-weight: 700; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-footer); color: var(--text-main); cursor: pointer; transition: all 0.2s; }
+        .page-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }
+        .denah-scroll-area { width: 100%; padding: 15px 8px; display: flex; justify-content: center; overflow-x: auto; }
+        .denah-area { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .row-wrapper { display: flex; gap: var(--gap-group); justify-content: center; width: 100%; }
+        .pair-wrapper { display: flex; gap: var(--gap-pair); }
+        .seat { width: var(--seat-w); height: var(--seat-h); background: var(--seat-empty); border-radius: 14px; position: relative; cursor: pointer; transition: all 0.2s ease; border: 3px solid transparent; flex-shrink: 0; overflow: hidden; box-shadow: var(--shadow-sm); }
         .seat.hidden { visibility: hidden; pointer-events: none; }
         .seat:active:not(.hidden):not(.locked) { transform: scale(0.95); }
         .seat.filled { border-color: var(--seat-filled-border); background: var(--seat-filled-bg); }
         .seat.locked { cursor: default; }
-        .seat-num {
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            background: var(--primary);
-            color: white;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            z-index: 10;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-        .seat-photo { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            filter: blur(6px);
-            transition: filter 0.3s ease;
-            pointer-events: none; /* Foto tidak bisa diklik */
-        }
-        .seat-photo.unlocked { filter: blur(0); }
-        .seat-name {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--seat-name-bg);
-            color: var(--seat-name-color);
-            font-size: 0.75rem;
-            line-height: 1.2;
-            text-align: center;
-            padding: 6px 3px;
-            font-weight: 700;
-            z-index: 5;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .empty-icon {
-            font-size: 2rem;
-            color: var(--text-muted);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.75);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-        }
+        .seat-num { position: absolute; top: 6px; left: 6px; background: var(--primary); color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        .seat-photo { width: 100%; height: 100%; object-fit: cover; filter: blur(6px); transition: filter 0.3s ease; pointer-events: none; }
+        .seat-photo.unlocked { filter: blur(0); pointer-events: auto; cursor: zoom-in; }
+        .seat-name { position: absolute; bottom: 0; left: 0; right: 0; background: var(--seat-name-bg); color: var(--seat-name-color); font-size: 0.75rem; line-height: 1.2; text-align: center; padding: 6px 3px; font-weight: 700; z-index: 5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .empty-icon { font-size: 2rem; color: var(--text-muted); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 12px; }
         .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: var(--modal-bg);
-            padding: 20px 16px;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 360px;
-            color: var(--text-main);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
+        .modal-box { background: var(--modal-bg); padding: 20px 16px; border-radius: 16px; width: 100%; max-width: 360px; color: var(--text-main); max-height: 90vh; overflow-y: auto; }
         .modal-box h3 { margin-bottom: 16px; font-size: 1.05rem; text-align: center; }
         .form-group { margin-bottom: 14px; }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-        .form-group input[type="text"],
-        .form-group input[type="password"],
-        .form-group input[type="file"] {
-            width: 100%;
-            padding: 11px 10px;
-            border: 1px solid var(--input-border);
-            border-radius: 8px;
-            background: var(--input-bg);
-            color: var(--text-main);
-            font-size: 0.95rem;
-        }
-        .preview-img {
-            width: 100px;
-            height: 120px;
-            border-radius: 8px;
-            object-fit: cover;
-            margin-top: 10px;
-            display: none;
-            border: 2px solid var(--primary);
-        }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .form-group input[type="text"], .form-group input[type="password"], .form-group input[type="file"] { width: 100%; padding: 11px 10px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main); font-size: 0.95rem; }
+        .preview-img { width: 100px; height: 120px; border-radius: 8px; object-fit: cover; margin-top: 10px; display: none; border: 2px solid var(--primary); }
         .preview-img.show { display: block; }
         .btn-row { display: flex; gap: 8px; margin-top: 18px; }
-        .btn {
-            flex: 1;
-            min-width: 100px;
-            padding: 11px 8px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
+        .btn { flex: 1; min-width: 100px; padding: 11px 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: var(--input-border); color: var(--text-main); }
         .btn:active { transform: scale(0.96); }
-        .zoom-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(6px);
-            padding: 16px;
-        }
+        .zoom-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 16px; }
         .zoom-overlay.active { display: flex; }
-        .zoom-content {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 90vw;
-            max-height: 90vh;
-        }
-        .zoom-img {
-            width: calc(var(--seat-w) * 4);
-            height: calc(var(--seat-h) * 4);
-            max-width: 85vw;
-            max-height: 75vh;
-            object-fit: cover;
-            border-radius: 16px;
-            border: 4px solid #ffffff;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
-        }
-        .zoom-caption {
-            margin-top: 12px;
-            color: #ffffff;
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 6px 16px;
-            border-radius: 20px;
-        }
-        .zoom-close {
-            position: absolute;
-            top: -18px;
-            right: -18px;
-            background: #ef4444;
-            color: white;
-            border: 2px solid #ffffff;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-        .loading-text {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-muted);
-        }
+        .zoom-content { position: relative; display: flex; flex-direction: column; align-items: center; max-width: 90vw; max-height: 90vh; }
+        .zoom-img { width: calc(var(--seat-w) * 4); height: calc(var(--seat-h) * 4); max-width: 85vw; max-height: 75vh; object-fit: cover; border-radius: 16px; border: 4px solid #ffffff; box-shadow: 0 25px 50px rgba(0,0,0,0.7); }
+        .zoom-caption { margin-top: 12px; color: #ffffff; font-size: 1.1rem; font-weight: 700; text-align: center; background: rgba(0, 0, 0, 0.7); padding: 6px 16px; border-radius: 20px; }
+        .zoom-close { position: absolute; top: -18px; right: -18px; background: #ef4444; color: white; border: 2px solid #ffffff; border-radius: 50%; width: 36px; height: 36px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .loading-text { text-align: center; padding: 20px; color: var(--text-muted); }
         @media (max-width: 600px) {
-            :root { 
-                --seat-w: 76px; 
-                --seat-h: 96px; 
-                --gap-pair: 6px; 
-                --gap-group: 12px; 
-            }
+            :root { --seat-w: 76px; --seat-h: 96px; --gap-pair: 6px; --gap-group: 12px; }
             .header { padding-top: 45px; }
             .title-main { font-size: 1rem; }
             .title-sub { font-size: 0.8rem; }
+            .title-date { font-size: 0.75rem; }
             .icon-btn { width: 36px; height: 36px; font-size: 16px; }
             .seat-num { width: 20px; height: 20px; font-size: 0.7rem; top: 3px; left: 3px; }
             .seat-name { font-size: 0.6rem; padding: 3px 2px; }
             .empty-icon { font-size: 1.3rem; }
             .denah-scroll-area { padding: 10px 4px; }
             .class-select { font-size: 0.85rem; padding: 5px 8px; }
-            .zoom-img {
-                width: calc(var(--seat-w) * 4);
-                height: calc(var(--seat-h) * 4);
-            }
+            .zoom-img { width: calc(var(--seat-w) * 4); height: calc(var(--seat-h) * 4); }
         }
     </style>
 </head>
@@ -443,14 +106,15 @@
         <div class="header-controls">
             <button class="icon-btn btn-add-class" onclick="openPasswordModal()" title="Tambah Kelas">✚</button>
             <button class="icon-btn btn-preview" onclick="openPreviewPasswordModal()" title="Buka Semua Foto">📷</button>
+            <button class="icon-btn btn-backup" onclick="backupAndReset()" title="Backup & Reset Hari Ini">📦</button>
             <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
             <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
             <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
         </div>
         <div><br><br>
-            <h1 class="title-main">PRESENSI PJJ 27-28 AGUSTUS 2026</h1>
-            <div class="title-divider"></div>
-            <h2 class="title-sub">SMPN 110 JAKARTA</h2>
+            <h1 class="title-main">SMPN 110 JAKARTA</h1>
+            <h2 class="title-sub">PRESENSI PJJ</h2><br>
+            <div class="title-date" id="tanggalPJJ">Memuat tanggal...</div><br>
         </div>
     </div>
     <div class="class-selector-bar">
@@ -469,72 +133,35 @@
     </div>
 </div>
 
-<!-- MODAL KATA SANDI TAMBAH KELAS -->
 <div class="modal-overlay" id="passwordModal">
     <div class="modal-box">
         <h3>🔒 Masukkan Kata Sandi</h3>
-        <div class="form-group">
-            <label>Kata Sandi</label>
-            <input type="password" id="inpPassword" placeholder="Masukkan kata sandi..." autocomplete="off">
-        </div>
-        <div class="btn-row">
-            <button class="btn btn-primary" onclick="checkPassword()">Konfirmasi</button>
-            <button class="btn btn-secondary" onclick="closePasswordModal()">Batal</button>
-        </div>
+        <div class="form-group"><label>Kata Sandi</label><input type="password" id="inpPassword" placeholder="Masukkan kata sandi..." autocomplete="off"></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="checkPassword()">Konfirmasi</button><button class="btn btn-secondary" onclick="closePasswordModal()">Batal</button></div>
     </div>
 </div>
-
-<!-- MODAL KATA SANDI BUKA SEMUA FOTO -->
 <div class="modal-overlay" id="previewPasswordModal">
     <div class="modal-box">
         <h3>🔓 Buka Semua Foto Siswa</h3>
-        <div class="form-group">
-            <label>Masukkan Kata Sandi Guru</label>
-            <input type="password" id="inpPreviewPassword" placeholder="Kata sandi guru..." autocomplete="off">
-        </div>
-        <div class="btn-row">
-            <button class="btn btn-primary" onclick="checkPreviewPassword()">Buka Semua Foto</button>
-            <button class="btn btn-secondary" onclick="closePreviewPasswordModal()">Batal</button>
-        </div>
+        <div class="form-group"><label>Masukkan Kata Sandi Guru</label><input type="password" id="inpPreviewPassword" placeholder="Kata sandi guru..." autocomplete="off"></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="checkPreviewPassword()">Buka Semua Foto</button><button class="btn btn-secondary" onclick="closePreviewPasswordModal()">Batal</button></div>
     </div>
 </div>
-
-<!-- MODAL INPUT / EDIT -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
         <h3 id="modalTitle">Input Data Siswa</h3>
-        <div class="form-group">
-            <label>Nama Lengkap Siswa</label>
-            <input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off">
-        </div>
-        <div class="form-group">
-            <label>Foto Siswa</label>
-            <input type="file" id="inpPhoto" accept="image/*" onchange="handlePreview(this)">
-            <img id="imgPreview" class="preview-img">
-        </div>
-        <div class="btn-row">
-            <button class="btn btn-primary" onclick="saveData()">Simpan</button>
-            <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
-        </div>
+        <div class="form-group"><label>Nama Lengkap Siswa</label><input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off"></div>
+        <div class="form-group"><label>Foto Siswa</label><input type="file" id="inpPhoto" accept="image/*" onchange="handlePreview(this)"><img id="imgPreview" class="preview-img"></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="saveData()">Simpan</button><button class="btn btn-secondary" onclick="closeModal()">Batal</button></div>
     </div>
 </div>
-
-<!-- MODAL TAMBAH KELAS -->
 <div class="modal-overlay" id="addClassModal">
     <div class="modal-box">
         <h3>Tambah Kelas Baru</h3>
-        <div class="form-group">
-            <label>Nama Kelas (contoh: Kelas 7A, 8B, 9C)</label>
-            <input type="text" id="inpClassName" placeholder="Kelas 7A" autocomplete="off">
-        </div>
-        <div class="btn-row">
-            <button class="btn btn-primary" onclick="addClass()">Buat Kelas</button>
-            <button class="btn btn-secondary" onclick="closeAddClassModal()">Batal</button>
-        </div>
+        <div class="form-group"><label>Nama Kelas (contoh: Kelas 7A, 8B, 9C)</label><input type="text" id="inpClassName" placeholder="Kelas 7A" autocomplete="off"></div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="addClass()">Buat Kelas</button><button class="btn btn-secondary" onclick="closeAddClassModal()">Batal</button></div>
     </div>
 </div>
-
-<!-- MODAL ZOOM FOTO -->
 <div class="zoom-overlay" id="zoomModal" onclick="closeZoomModal()">
     <div class="zoom-content" onclick="event.stopPropagation()">
         <button class="zoom-close" onclick="closeZoomModal()">✕</button>
@@ -546,10 +173,10 @@
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmx7JaDW2OLFgyK4MgtZsuYERWIC5mG8WhLHOY1sk66xx8H4rhmADMiAU5_CHXkxVnng/exec';
     const MAX_ACTIVE_SEATS = 36;
+    const SHEET_DILARANG = ['Pengaturan', 'pengaturan', 'PENGATURAN'];
     
-    let ADMIN_PASSWORD = '';
-    let TEACHER_PASSWORD = '';
-    
+    let ADMIN_PASSWORD = 'cx';
+    let TEACHER_PASSWORD = 'cx';
     let dataSiswa = {};
     let activeIndex = null;
     let currentClass = '';
@@ -561,11 +188,36 @@
     let allPhotosUnlocked = false;
     let pengaturanDimuat = false;
 
-    function getUrlSeparator() {
-        return SCRIPT_URL.indexOf('?') === -1 ? '?' : '&';
+    // ============================================
+    // ✅ FUNGSI TANGGAL OTOMATIS BAHASA INDONESIA
+    // ============================================
+    const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    
+    function formatTanggalIndonesia(tanggal) {
+        const hari = NAMA_HARI[tanggal.getDay()];
+        const tgl = tanggal.getDate();
+        const bulan = NAMA_BULAN[tanggal.getMonth()];
+        const tahun = tanggal.getFullYear();
+        return `${hari}, ${tgl} ${bulan} ${tahun}`;
     }
-    function isMobile() {
-        return window.innerWidth <= 600;
+    
+    function updateTanggalPJJ() {
+        const sekarang = new Date();
+        const tanggalFormatted = formatTanggalIndonesia(sekarang);
+        const el = document.getElementById('tanggalPJJ');
+        if (el) {
+            el.innerHTML = `${tanggalFormatted}`;
+        }
+        // Update title halaman juga
+        document.title = `Presensi PJJ - ${tanggalFormatted} - SMPN 110 Jakarta`;
+    }
+
+    function getUrlSeparator() { return SCRIPT_URL.indexOf('?') === -1 ? '?' : '&'; }
+    function isMobile() { return window.innerWidth <= 600; }
+    function getTodayDate() {
+        const d = new Date();
+        return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
     }
     function switchPage(page) {
         currentPage = page;
@@ -574,72 +226,86 @@
         renderDenah();
     }
 
-async function muatPengaturanDariSheet() {
-    // ✅ KATA SANDI LANGSUNG SIAP — TIDAK MENUNGGU!
-    ADMIN_PASSWORD = 'cx';
-    TEACHER_PASSWORD = 'cx';
-    pengaturanDimuat = true;
-    console.log('✅ Kata sandi siap: cx / cx');
+    async function muatPengaturanDariSheet() {
+        pengaturanDimuat = true;
+        setTimeout(async () => {
+            try {
+                const sep = getUrlSeparator();
+                const res = await fetch(SCRIPT_URL + sep + 'action=read&sheet=Pengaturan');
+                if (res.ok) {
+                    const result = JSON.parse(await res.text());
+                    if (result.result === 'success' && result.data) {
+                        const data = result.data;
+                        if (Array.isArray(data)) {
+                            for (let i = 0; i < data.length; i++) {
+                                if (data[i][0] === 'KataSandiTambahKelas') ADMIN_PASSWORD = data[i][1];
+                                if (data[i][0] === 'KataSandiGuru') TEACHER_PASSWORD = data[i][1];
+                            }
+                        } else {
+                            if (data['KataSandiTambahKelas']) ADMIN_PASSWORD = data['KataSandiTambahKelas'];
+                            if (data['KataSandiGuru']) TEACHER_PASSWORD = data['KataSandiGuru'];
+                        }
+                    }
+                }
+            } catch (e) { console.log('ℹ️ Pakai default: cx / cx'); }
+        }, 100);
+    }
 
-    // 🔄 Coba baca dari Sheet DI LATAR BELAKANG (tanpa menunggu)
-    setTimeout(async () => {
+    async function backupAndReset() {
+        if (!currentClass) { alert('⚠️ Pilih kelas terlebih dahulu!'); return; }
+        const today = getTodayDate();
+        const backupSheetName = `Backup_${currentClass}_${today}`;
+        if (!confirm(`⚠️ PERINGATAN BACKUP & RESET!\n\nSistem akan:\n1. Membuat sheet baru: "${backupSheetName}"\n2. Menyalin semua data & foto ke sana.\n3. MENGHAPUS data di "${currentClass}" agar siap untuk hari baru.\n\nLanjutkan?`)) { return; }
+        const pass = prompt("Masukkan Kata Sandi Admin untuk konfirmasi:");
+        if (pass !== ADMIN_PASSWORD) { alert("❌ Kata sandi salah!"); return; }
+        showStatus('⏳ Sedang membackup & mereset data...', false);
         try {
             const sep = getUrlSeparator();
-            const res = await fetch(SCRIPT_URL + sep + 'action=read&sheet=Pengaturan');
-            if (res.ok) {
-                const result = JSON.parse(await res.text());
-                if (result.result === 'success' && result.data) {
-                    const data = result.data;
-                    if (Array.isArray(data)) {
-                        for (let i = 0; i < data.length; i++) {
-                            if (data[i][0] === 'KataSandiTambahKelas') ADMIN_PASSWORD = data[i][1];
-                            if (data[i][0] === 'KataSandiGuru') TEACHER_PASSWORD = data[i][1];
-                        }
-                    } else {
-                        if (data['KataSandiTambahKelas']) ADMIN_PASSWORD = data['KataSandiTambahKelas'];
-                        if (data['KataSandiGuru']) TEACHER_PASSWORD = data['KataSandiGuru'];
-                    }
-                    console.log('✅ Dari Sheet: TambahKelas=' + ADMIN_PASSWORD + ', Guru=' + TEACHER_PASSWORD);
-                }
+            await fetch(SCRIPT_URL + sep + 'action=create&sheetName=' + encodeURIComponent(backupSheetName));
+            const kirimDataBackup = {};
+            for (let k in dataSiswa) {
+                let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
+                kirimDataBackup[k] = dataSiswa[k].name + '|||' + foto;
             }
-        } catch (e) {
-            console.log('ℹ️ Tetap pakai kata sandi: cx / cx');
+            await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'save', sheet: backupSheetName, data: JSON.stringify(kirimDataBackup) }) });
+            dataSiswa = {};
+            allData[currentClass] = {};
+            saveClassesLocally();
+            await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'save', sheet: currentClass, data: JSON.stringify({}) }) });
+            if (!allClasses.includes(backupSheetName)) {
+                allClasses.push(backupSheetName);
+                allClasses.sort();
+                allData[backupSheetName] = kirimDataBackup;
+            }
+            renderClassSelect();
+            renderDenah();
+            showStatus(`✅ Backup ke ${backupSheetName} berhasil & Data direset!`, true);
+        } catch (error) {
+            console.error(error);
+            showStatus(' Gagal melakukan backup & reset', false);
         }
-    }, 100); // Tunggu 0.1 detik saja
-}
+    }
 
-    // --- FUNGSI TAMBAH KELAS ---
     function openPasswordModal() {
         if (!pengaturanDimuat) { alert('Sedang memuat pengaturan...'); return; }
         document.getElementById('inpPassword').value = '';
         document.getElementById('passwordModal').classList.add('active');
         setTimeout(() => document.getElementById('inpPassword').focus(), 100);
     }
-    function closePasswordModal() {
-        document.getElementById('passwordModal').classList.remove('active');
-    }
+    function closePasswordModal() { document.getElementById('passwordModal').classList.remove('active'); }
     function checkPassword() {
         const inputPass = document.getElementById('inpPassword').value.trim();
-        if (inputPass === ADMIN_PASSWORD) {
-            closePasswordModal();
-            openAddClassModal();
-        } else {
-            alert('❌ Kata sandi salah!');
-            document.getElementById('inpPassword').value = '';
-            document.getElementById('inpPassword').focus();
-        }
+        if (inputPass === ADMIN_PASSWORD) { closePasswordModal(); openAddClassModal(); } 
+        else { alert('❌ Kata sandi salah!'); document.getElementById('inpPassword').value = ''; document.getElementById('inpPassword').focus(); }
     }
 
-    // --- FUNGSI BUKA SEMUA FOTO ---
     function openPreviewPasswordModal() {
         if (!pengaturanDimuat) { alert('Sedang memuat pengaturan...'); return; }
         document.getElementById('inpPreviewPassword').value = '';
         document.getElementById('previewPasswordModal').classList.add('active');
         setTimeout(() => document.getElementById('inpPreviewPassword').focus(), 100);
     }
-    function closePreviewPasswordModal() {
-        document.getElementById('previewPasswordModal').classList.remove('active');
-    }
+    function closePreviewPasswordModal() { document.getElementById('previewPasswordModal').classList.remove('active'); }
     function checkPreviewPassword() {
         const inputPass = document.getElementById('inpPreviewPassword').value.trim();
         if (inputPass === TEACHER_PASSWORD) {
@@ -657,25 +323,19 @@ async function muatPengaturanDariSheet() {
     async function refreshData() {
         allPhotosUnlocked = false;
         const btnRefresh = document.getElementById('btnRefresh');
-        btnRefresh.innerHTML = '⌛';
-        btnRefresh.disabled = true;
+        btnRefresh.innerHTML = '⌛'; btnRefresh.disabled = true;
         localStorage.removeItem('denah_all_classes_data');
         localStorage.removeItem('denah_current_class');
         localStorage.removeItem('denah_classes_list');
-        allClasses = [];
-        allData = {};
-        dataSiswa = {};
-        currentClass = '';
-        
+        allClasses = []; allData = {}; dataSiswa = {}; currentClass = '';
         await muatPengaturanDariSheet();
-        
         try {
             const sep = getUrlSeparator();
             const res = await fetch(SCRIPT_URL + sep + 'action=list');
             if (res.ok) {
                 const result = JSON.parse(await res.text());
                 if (result.result === 'success' && result.sheets) {
-                    allClasses = result.sheets.sort();
+                    allClasses = result.sheets.filter(sheet => !SHEET_DILARANG.includes(sheet)).sort();
                     for (let i = 0; i < allClasses.length; i++) {
                         const cls = allClasses[i];
                         const dataUrl = SCRIPT_URL + sep + 'action=read&sheet=' + encodeURIComponent(cls);
@@ -683,9 +343,7 @@ async function muatPengaturanDariSheet() {
                             const dataRes = await fetch(dataUrl);
                             if (dataRes.ok) {
                                 const dataResult = JSON.parse(await dataRes.text());
-                                if (dataResult.result === 'success' && dataResult.data) {
-                                    allData[cls] = dataResult.data;
-                                }
+                                if (dataResult.result === 'success' && dataResult.data) { allData[cls] = dataResult.data; }
                             }
                         } catch (e) { allData[cls] = {}; }
                     }
@@ -697,26 +355,25 @@ async function muatPengaturanDariSheet() {
                     showStatus('✅ Data & kata sandi dimuat ulang!', true);
                 }
             }
-        } catch (err) {
-            showStatus('⚠️ Gagal memuat data', false);
-        } finally {
-            btnRefresh.innerHTML = '↺';
-            btnRefresh.disabled = false;
-        }
+        } catch (err) { showStatus('⚠️ Gagal memuat data', false); } 
+        finally { btnRefresh.innerHTML = '↺'; btnRefresh.disabled = false; }
     }
 
     window.onload = async function() {
-        await muatPengaturanDariSheet();
+        // ✅ Tampilkan tanggal otomatis saat halaman dimuat
+        updateTanggalPJJ();
         
+        await muatPengaturanDariSheet();
         const savedTheme = localStorage.getItem('denah_theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-mode');
-            document.querySelector('.theme-toggle').textContent = '🌙';
-        }
+        if (savedTheme === 'light') { document.body.classList.add('light-mode'); document.querySelector('.theme-toggle').textContent = ''; }
         const savedAllData = localStorage.getItem('denah_all_classes_data');
         const savedClasses = localStorage.getItem('denah_classes_list');
-        if (savedAllData) allData = JSON.parse(savedAllData);
-        if (savedClasses) allClasses = JSON.parse(savedClasses);
+        if (savedAllData) {
+            const parsedData = JSON.parse(savedAllData);
+            allData = {};
+            for (let key in parsedData) { if (!SHEET_DILARANG.includes(key)) { allData[key] = parsedData[key]; } }
+        }
+        if (savedClasses) { allClasses = JSON.parse(savedClasses).filter(sheet => !SHEET_DILARANG.includes(sheet)); }
         renderClassSelect();
         document.getElementById('classSelect').value = "";
         renderDenah();
@@ -733,29 +390,31 @@ async function muatPengaturanDariSheet() {
         select.innerHTML = '<option value="" selected>-- Pilih Kelas --</option>';
         if (allClasses.length === 0) {
             const emptyOption = document.createElement('option');
-            emptyOption.value = '';
-            emptyOption.textContent = '(Belum ada kelas)';
-            emptyOption.disabled = true;
+            emptyOption.value = ''; emptyOption.textContent = '(Belum ada kelas)'; emptyOption.disabled = true;
             select.appendChild(emptyOption);
         } else {
             for (let i = 0; i < allClasses.length; i++) {
                 const option = document.createElement('option');
-                option.value = allClasses[i];
-                option.textContent = allClasses[i];
+                option.value = allClasses[i]; option.textContent = allClasses[i];
                 select.appendChild(option);
             }
         }
     }
     function loadClassData(className) {
         allPhotosUnlocked = false;
-        if (!className) {
-            currentClass = '';
-            dataSiswa = {};
-            renderDenah();
-            return;
-        }
+        if (!className) { currentClass = ''; dataSiswa = {}; renderDenah(); return; }
         currentClass = className;
-        dataSiswa = allData[className] || {};
+        const rawData = allData[className] || {};
+        dataSiswa = {};
+        for (let key in rawData) {
+            const value = rawData[key];
+            if (typeof value === 'string' && value.includes('|||')) {
+                const parts = value.split('|||');
+                dataSiswa[key] = { name: parts[0] || '', photo: parts[1] || '', photoOriginal: parts[1] || '' };
+            } else if (typeof value === 'object' && value !== null) {
+                dataSiswa[key] = value;
+            }
+        }
         saveClassesLocally();
         renderDenah();
         showStatus('📂 ' + className, true);
@@ -772,27 +431,20 @@ async function muatPengaturanDariSheet() {
         document.getElementById('addClassModal').classList.add('active');
         setTimeout(() => document.getElementById('inpClassName').focus(), 100);
     }
-    function closeAddClassModal() {
-        document.getElementById('addClassModal').classList.remove('active');
-    }
+    function closeAddClassModal() { document.getElementById('addClassModal').classList.remove('active'); }
     async function addClass() {
         const className = document.getElementById('inpClassName').value.trim();
         if (!className) { alert('Nama kelas wajib diisi!'); return; }
         if (allClasses.indexOf(className) !== -1) { alert('Kelas sudah ada!'); return; }
-        
         if (currentClass) allData[currentClass] = { ...dataSiswa };
         try {
             const sep = getUrlSeparator();
             await fetch(SCRIPT_URL + sep + 'action=create&sheetName=' + encodeURIComponent(className));
         } catch (e) {}
-        allClasses.push(className);
-        allClasses.sort();
-        allData[className] = {};
-        saveClassesLocally();
-        renderClassSelect();
+        allClasses.push(className); allClasses.sort(); allData[className] = {};
+        saveClassesLocally(); renderClassSelect();
         document.getElementById('classSelect').value = className;
-        loadClassData(className);
-        closeAddClassModal();
+        loadClassData(className); closeAddClassModal();
     }
     function checkConnection() {
         const statusEl = document.getElementById('connectionStatus');
@@ -800,18 +452,10 @@ async function muatPengaturanDariSheet() {
         fetch(SCRIPT_URL + sep + 'action=test')
             .then(res => res.json())
             .then(result => {
-                if (result.result === 'success') {
-                    statusEl.textContent = '✅ Terhubung';
-                    statusEl.className = 'connection-status connected';
-                } else {
-                    statusEl.textContent = '❌ ' + (result.message || 'Error');
-                    statusEl.className = 'connection-status disconnected';
-                }
+                if (result.result === 'success') { statusEl.textContent = '✅ Terhubung'; statusEl.className = 'connection-status connected'; } 
+                else { statusEl.textContent = '❌ ' + (result.message || 'Error'); statusEl.className = 'connection-status disconnected'; }
             })
-            .catch(() => {
-                statusEl.textContent = '❌ Offline';
-                statusEl.className = 'connection-status disconnected';
-            });
+            .catch(() => { statusEl.textContent = '❌ Offline'; statusEl.className = 'connection-status disconnected'; });
     }
     function toggleTheme() {
         const body = document.body;
@@ -831,10 +475,7 @@ async function muatPengaturanDariSheet() {
         const container = document.getElementById('denahArea');
         const pageNav = document.getElementById('pageNav');
         container.innerHTML = '';
-        if (!currentClass) {
-            if (pageNav) pageNav.style.display = 'none';
-            return;
-        }
+        if (!currentClass) { if (pageNav) pageNav.style.display = 'none'; return; }
         const mobile = isMobile();
         if (pageNav) pageNav.style.display = mobile ? 'flex' : 'none';
         const cols = mobile ? 4 : 8;
@@ -858,22 +499,20 @@ async function muatPengaturanDariSheet() {
     function createSeat(index) {
         const seat = document.createElement('div');
         if (index >= MAX_ACTIVE_SEATS) { seat.className = 'seat hidden'; return seat; }
-        
         const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
-        
         seat.className = 'seat' + (dataSiswa[index] ? ' filled' : '') + (hasPhoto ? ' locked' : '');
         const num = document.createElement('div');
         num.className = 'seat-num';
         num.innerText = index + 1;
         seat.appendChild(num);
-
         if (dataSiswa[index]) {
             if (dataSiswa[index].photo) {
                 const img = document.createElement('img');
                 img.className = 'seat-photo' + (allPhotosUnlocked ? ' unlocked' : '');
                 img.src = dataSiswa[index].photo;
-                // ❌ Klik foto DINONAKTIFKAN — tidak muncul kotak apa pun
-                // img.onclick dihapus, foto tidak bisa diklik
+                if (allPhotosUnlocked) {
+                    img.onclick = (e) => { e.stopPropagation(); openZoomModal(dataSiswa[index].photo, dataSiswa[index].name); };
+                }
                 seat.appendChild(img);
             }
             const name = document.createElement('div');
@@ -891,6 +530,7 @@ async function muatPengaturanDariSheet() {
         return seat;
     }
     function openZoomModal(photoSrc, name) {
+        if (!allPhotosUnlocked) { alert('🔒 Masukkan kata sandi guru terlebih dahulu!'); return; }
         const zoomModal = document.getElementById('zoomModal');
         const zoomImg = document.getElementById('zoomImg');
         const zoomCaption = document.getElementById('zoomCaption');
@@ -898,9 +538,7 @@ async function muatPengaturanDariSheet() {
         zoomCaption.innerText = name || '';
         zoomModal.classList.add('active');
     }
-    function closeZoomModal() {
-        document.getElementById('zoomModal').classList.remove('active');
-    }
+    function closeZoomModal() { document.getElementById('zoomModal').classList.remove('active'); }
     function openModal(index) {
         if (!currentClass) { alert('⚠️ Pilih kelas terlebih dahulu!'); return; }
         activeIndex = index;
@@ -912,9 +550,7 @@ async function muatPengaturanDariSheet() {
         document.getElementById('modal').classList.add('active');
         setTimeout(() => document.getElementById('inpName').focus(), 100);
     }
-    function closeModal() {
-        document.getElementById('modal').classList.remove('active');
-    }
+    function closeModal() { document.getElementById('modal').classList.remove('active'); }
     function compressImage(file, maxW, maxH, quality) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -938,10 +574,8 @@ async function muatPengaturanDariSheet() {
         if (input.files && input.files[0]) {
             const file = input.files[0];
             if (file.size > 2 * 1024 * 1024) { alert('⚠️ Ukuran foto maksimal 2MB'); input.value = ''; return; }
-            
             originalPhotoBase64 = await compressImage(file, 500, 500, 0.7);
             const small = await compressImage(file, 200, 240, 0.6);
-            
             const img = document.getElementById('imgPreview');
             img.src = small;
             img.classList.add('show');
@@ -949,9 +583,7 @@ async function muatPengaturanDariSheet() {
     }
     async function saveData() {
         const name = document.getElementById('inpName').value.trim();
-        const smallPhoto = document.getElementById('imgPreview').classList.contains('show')
-            ? document.getElementById('imgPreview').src
-            : (dataSiswa[activeIndex]?.photo || '');
+        const smallPhoto = document.getElementById('imgPreview').classList.contains('show') ? document.getElementById('imgPreview').src : (dataSiswa[activeIndex]?.photo || '');
         const origPhoto = originalPhotoBase64 || smallPhoto;
         if (!name) { alert('Nama wajib diisi!'); return; }
         dataSiswa[activeIndex] = { name: name, photo: smallPhoto, photoOriginal: origPhoto };
@@ -964,8 +596,7 @@ async function muatPengaturanDariSheet() {
     async function saveToGoogleSheet() {
         if (!currentClass) return;
         const btnSave = document.getElementById('btnSave');
-        btnSave.disabled = true;
-        btnSave.innerHTML = '⌛';
+        btnSave.disabled = true; btnSave.innerHTML = '⌛';
         try {
             allData[currentClass] = { ...dataSiswa };
             saveClassesLocally();
@@ -974,23 +605,11 @@ async function muatPengaturanDariSheet() {
                 let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
                 kirimData[k] = dataSiswa[k].name + '|||' + foto;
             }
-            const payload = {
-                action: 'save',
-                sheet: currentClass,
-                data: JSON.stringify(kirimData)
-            };
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
-            });
+            const payload = { action: 'save', sheet: currentClass, data: JSON.stringify(kirimData) };
+            await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
             showStatus('✅ Tersimpan ke Sheet!', true);
-        } catch (error) {
-            showStatus('✅ Tersimpan!', true);
-        } finally {
-            btnSave.disabled = false;
-            btnSave.innerHTML = '💾';
-        }
+        } catch (error) { showStatus('✅ Tersimpan!', true); } 
+        finally { btnSave.disabled = false; btnSave.innerHTML = '💾'; }
     }
     window.addEventListener('resize', renderDenah);
     document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
