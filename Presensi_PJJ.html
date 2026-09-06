@@ -40,7 +40,6 @@
         .btn-add-class { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
         .btn-preview { background: linear-gradient(135deg, #ec4899, #db2777); }
         .btn-refresh { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .btn-save { background: linear-gradient(135deg, #10b981, #059669); }
         .btn-backup { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .theme-toggle { background: rgba(255,255,255,0.15); }
         .class-selector-bar { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: var(--bg-footer); border-bottom: 1px solid var(--border-color); }
@@ -108,7 +107,7 @@
             <button class="icon-btn btn-preview" onclick="openPreviewPasswordModal()" title="Buka Semua Foto">📷</button>
             <button class="icon-btn btn-backup" onclick="backupAndReset()" title="Backup & Reset Hari Ini">📦</button>
             <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
-            <button class="icon-btn btn-save" id="btnSave" onclick="saveToGoogleSheet()" title="Simpan ke Google Sheets">💾</button>
+            <!-- Tombol Simpan (💾) sudah dihapus karena proses save sudah otomatis -->
             <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
         </div>
         <div><br><br>
@@ -188,9 +187,6 @@
     let allPhotosUnlocked = false;
     let pengaturanDimuat = false;
 
-    // ============================================
-    // ✅ FUNGSI TANGGAL OTOMATIS BAHASA INDONESIA
-    // ============================================
     const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     
@@ -209,7 +205,6 @@
         if (el) {
             el.innerHTML = `${tanggalFormatted}`;
         }
-        // Update title halaman juga
         document.title = `Presensi PJJ - ${tanggalFormatted} - SMPN 110 Jakarta`;
     }
 
@@ -282,7 +277,7 @@
             showStatus(`✅ Backup ke ${backupSheetName} berhasil & Data direset!`, true);
         } catch (error) {
             console.error(error);
-            showStatus(' Gagal melakukan backup & reset', false);
+            showStatus('❌ Gagal melakukan backup & reset', false);
         }
     }
 
@@ -360,12 +355,10 @@
     }
 
     window.onload = async function() {
-        // ✅ Tampilkan tanggal otomatis saat halaman dimuat
         updateTanggalPJJ();
-        
         await muatPengaturanDariSheet();
         const savedTheme = localStorage.getItem('denah_theme');
-        if (savedTheme === 'light') { document.body.classList.add('light-mode'); document.querySelector('.theme-toggle').textContent = ''; }
+        if (savedTheme === 'light') { document.body.classList.add('light-mode'); document.querySelector('.theme-toggle').textContent = '🌙'; }
         const savedAllData = localStorage.getItem('denah_all_classes_data');
         const savedClasses = localStorage.getItem('denah_classes_list');
         if (savedAllData) {
@@ -452,7 +445,7 @@
         fetch(SCRIPT_URL + sep + 'action=test')
             .then(res => res.json())
             .then(result => {
-                if (result.result === 'success') { statusEl.textContent = '✅ Terhubung'; statusEl.className = 'connection-status connected'; } 
+                if (result.result === 'success') { statusEl.textContent = '✅ Data terhubung !'; statusEl.className = 'connection-status connected'; } 
                 else { statusEl.textContent = '❌ ' + (result.message || 'Error'); statusEl.className = 'connection-status disconnected'; }
             })
             .catch(() => { statusEl.textContent = '❌ Offline'; statusEl.className = 'connection-status disconnected'; });
@@ -591,12 +584,10 @@
         saveClassesLocally();
         closeModal();
         renderDenah();
-        saveToGoogleSheet();
+        saveToGoogleSheet(); // <-- OTOMATIS TERPANGGIL DI SINI
     }
     async function saveToGoogleSheet() {
         if (!currentClass) return;
-        const btnSave = document.getElementById('btnSave');
-        btnSave.disabled = true; btnSave.innerHTML = '⌛';
         try {
             allData[currentClass] = { ...dataSiswa };
             saveClassesLocally();
@@ -607,9 +598,10 @@
             }
             const payload = { action: 'save', sheet: currentClass, data: JSON.stringify(kirimData) };
             await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
-            showStatus('✅ Tersimpan ke Sheet!', true);
-        } catch (error) { showStatus('✅ Tersimpan!', true); } 
-        finally { btnSave.disabled = false; btnSave.innerHTML = '💾'; }
+            showStatus('✅ Data tersimpan !', true);
+        } catch (error) { 
+            showStatus('⚠️ Gagal sync ke Sheet (disimpan lokal)', false); 
+        }
     }
     window.addEventListener('resize', renderDenah);
     document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
