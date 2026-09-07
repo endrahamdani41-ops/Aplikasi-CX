@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Konverter Soal Portal Sekolah</title>
     
-    <!-- Library Mammoth.js untuk membaca file .docx -->
+    <!-- Library Mammoth.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
     <style>
-        /* Variabel Warna untuk Mode Terang (Default) */
         :root {
             --bg-body: #f4f6f9;
             --bg-container: #ffffff;
@@ -24,9 +23,10 @@
             --upload-border: #1a73e8;
             --preview-bg: #ffffff;
             --preview-text: #000000;
+            --img-box-bg: #ffffff;
+            --img-box-border: #cccccc;
         }
 
-        /* Variabel Warna untuk Mode Gelap */
         [data-theme="dark"] {
             --bg-body: #121212;
             --bg-container: #1e1e1e;
@@ -41,6 +41,8 @@
             --upload-border: #64b5f6;
             --preview-bg: #2a2a2a;
             --preview-text: #e0e0e0;
+            --img-box-bg: #ffffff;
+            --img-box-border: #555555;
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.3s, color 0.3s; }
@@ -59,7 +61,6 @@
         label { font-weight: bold; display: block; margin-bottom: 5px; }
         input[type="text"], input[type="file"], select { width: 100%; padding: 10px; border: 1px solid var(--input-border); border-radius: 4px; font-size: 14px; background-color: var(--input-bg); color: var(--text-color); }
         
-        /* Area Upload File */
         .upload-area {
             border: 2px dashed var(--upload-border);
             padding: 25px;
@@ -80,7 +81,23 @@
         
         .q-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 15px; margin-bottom: 15px; border-radius: 6px; }
         .q-card h4 { margin: 0 0 10px 0; color: var(--text-color); }
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; align-items: center; }
+        
+        /* Pengaturan ukuran gambar opsi agar sama besar dan rapi */
+        .options-grid img, .preview-box img {
+            width: 38px !important;
+            height: 38px !important;
+            object-fit: contain;
+            vertical-align: middle;
+            display: inline-block;
+            margin: 2px 0;
+            background: var(--img-box-bg);
+            padding: 3px;
+            border-radius: 5px;
+            border: 1px solid var(--img-box-border);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
         .key-select { margin-top: 10px; font-weight: bold; }
         .key-select select { padding: 5px 10px; border-radius: 4px; border: 1px solid var(--input-border); width: auto; }
 
@@ -104,7 +121,7 @@
 
 <div class="container">
     <div class="header-bar">
-        <h2>Konverter Soal</h2>
+        <h2>Konverter Soal PSTS</h2>
         <button class="btn-theme" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
     </div>
     
@@ -119,9 +136,8 @@
         </div>
     </div>
 
-    <!-- Section Upload -->
     <div class="upload-area">
-        <label for="fileInput">📁 Klik di sini untuk memilih File Soal (.docx atau .txt)</label>
+        <label for="fileInput">Klik di sini untuk memilih File Soal (.docx atau .txt)</label>
         <input type="file" id="fileInput" accept=".docx, .txt" style="display:none;" onchange="handleFileUpload(this)">
         <p id="fileNameDisplay">Belum ada file yang dipilih</p>
     </div>
@@ -133,7 +149,7 @@
     </div>
 
     <div class="form-group" id="outputGroup" style="display:none;">
-        <label>Hasil Format Template (Dengan Numbering Asli Word A, B, C, D):</label>
+        <label>Hasil Format Template (Dengan Numbering Asli Word A, B, C, D & Gambar):</label>
         <div id="richPreview" class="preview-box"></div>
         <div class="btn-group">
             <button class="btn-primary" onclick="copyRichOutput()">Salin Hasil ke Microsoft Word</button>
@@ -144,11 +160,9 @@
 <script>
     let parsedData = [];
 
-    // Fungsi Toggle Dark / Light Mode
     function toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
         document.documentElement.setAttribute('data-theme', targetTheme);
         localStorage.setItem('theme', targetTheme);
         updateThemeButton(targetTheme);
@@ -156,23 +170,57 @@
 
     function updateThemeButton(theme) {
         const btn = document.getElementById('themeToggleBtn');
-        if (theme === 'dark') {
-            btn.innerHTML = '☀️';
-        } else {
-            btn.innerHTML = '🌙';
-        }
+        btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
     }
 
-    // Memuat preferensi tema saat halaman dibuka
     (function initTheme() {
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateThemeButton(savedTheme);
     })();
 
-    // Fungsi hapus penomoran lama dari teks opsi jika ada
-    function cleanOptionText(str) {
-        return str.replace(/^([a-zA-D0-9][\.\)]\s*)+/, '').trim();
+    function normalizeImgSize(htmlStr) {
+        if (!htmlStr) return '';
+        // Menyuntikkan dimensi seragam 38x38px ke semua tag img
+        return htmlStr.replace(/<img\b([^>]*)>/gi, function(match, p1) {
+            let cleanP1 = p1.replace(/\s*(width|height|style)=["'][^"']*["']/gi, '');
+            return `<img ${cleanP1} width="38" height="38" style="width:38px; height:38px; object-fit:contain; vertical-align:middle;">`;
+        });
+    }
+
+    function cleanText(html) {
+        if (!html) return '';
+        let str = html.trim();
+        str = str.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '').trim();
+        return str;
+    }
+
+    function cleanQuestionText(htmlStr) {
+        let str = cleanText(htmlStr);
+        str = str.replace(/^(<[^>]+>)*\s*(soal\s*\d+[\:\.]?\s*|\d+[\.\)]\s*)+(<\/[^>]+>)*/i, '').trim();
+        str = str.replace(/^(soal\s*\d+[\:\.]?\s*|\d+[\.\)]\s*)+/i, '').trim();
+        return normalizeImgSize(str);
+    }
+
+    function cleanOptionText(htmlStr) {
+        let str = cleanText(htmlStr);
+        str = str.replace(/^(<[^>]+>)*\s*([a-zA-D0-9][\.\)]\s*)+(<\/[^>]+>)*/i, '$1').trim();
+        str = str.replace(/^([a-zA-D0-9][\.\)]\s*)+/, '').trim();
+        return normalizeImgSize(str);
+    }
+
+    function isJunkBlock(html) {
+        if (!html) return true;
+        if (/<img\b[^>]*>/i.test(html)) return false;
+
+        const textOnly = html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+        if (textOnly === '') return true;
+
+        if (/^([a-d0-9][\.\)]?)$/i.test(textOnly)) {
+            return true;
+        }
+
+        return false;
     }
 
     function handleFileUpload(input) {
@@ -180,16 +228,15 @@
         if (!file) return;
 
         document.getElementById('fileNameDisplay').innerHTML = `File terpilih: <strong>${file.name}</strong>`;
-
         const fileExt = file.name.split('.').pop().toLowerCase();
 
         if (fileExt === 'docx') {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const arrayBuffer = e.target.result;
-                mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+                mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
                     .then(function(result) {
-                        processRawText(result.value);
+                        processHtmlText(result.value);
                     })
                     .catch(function(err) {
                         alert("Gagal membaca file .docx: " + err.message);
@@ -203,13 +250,86 @@
             };
             reader.readAsText(file);
         } else {
-            alert("Format file tidak didukung! Harap upload file .docx atau .txt");
+            alert("Format file tidak didukung!");
         }
     }
 
+    function extractBlocks(container) {
+        let blocks = [];
+
+        function traverse(node) {
+            node.childNodes.forEach(child => {
+                if (child.nodeType === Node.ELEMENT_NODE) {
+                    const tag = child.tagName.toLowerCase();
+
+                    if (tag === 'ol' || tag === 'ul') {
+                        traverse(child);
+                    } else if (tag === 'li') {
+                        const subList = child.querySelector('ol, ul');
+                        if (subList) {
+                            const clone = child.cloneNode(true);
+                            const subInClone = clone.querySelector('ol, ul');
+                            if (subInClone) subInClone.remove();
+
+                            if (clone.innerHTML.trim() !== '') {
+                                blocks.push(clone.innerHTML.trim());
+                            }
+                            traverse(subList);
+                        } else {
+                            if (child.innerHTML.trim() !== '') {
+                                blocks.push(child.innerHTML.trim());
+                            }
+                        }
+                    } else if (tag === 'p') {
+                        if (!child.closest('li') && child.innerHTML.trim() !== '') {
+                            blocks.push(child.innerHTML.trim());
+                        }
+                    } else {
+                        traverse(child);
+                    }
+                }
+            });
+        }
+
+        traverse(container);
+        return blocks.filter(b => !isJunkBlock(b));
+    }
+
+    function processHtmlText(htmlString) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlString;
+
+        const blocks = extractBlocks(tempDiv);
+
+        parsedData = [];
+        let index = 1;
+
+        for (let i = 0; i < blocks.length; i += 5) {
+            if (i + 4 < blocks.length) {
+                parsedData.push({
+                    no: index++,
+                    soal: cleanQuestionText(blocks[i]),
+                    opsi: [
+                        cleanOptionText(blocks[i+1]),
+                        cleanOptionText(blocks[i+2]),
+                        cleanOptionText(blocks[i+3]),
+                        cleanOptionText(blocks[i+4])
+                    ],
+                    kunci: 'A'
+                });
+            }
+        }
+
+        if (parsedData.length === 0) {
+            alert("Tidak ada soal yang terdeteksi dari file tsb.");
+            return;
+        }
+
+        renderEditor();
+    }
+
     function processRawText(text) {
-        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
-        
+        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '' && !isJunkBlock(l));
         parsedData = [];
         let index = 1;
 
@@ -217,7 +337,7 @@
             if (i + 4 < lines.length) {
                 parsedData.push({
                     no: index++,
-                    soal: lines[i],
+                    soal: cleanQuestionText(lines[i]),
                     opsi: [
                         cleanOptionText(lines[i+1]),
                         cleanOptionText(lines[i+2]),
@@ -230,7 +350,7 @@
         }
 
         if (parsedData.length === 0) {
-            alert("Tidak ada soal yang terdeteksi dari file tsb.");
+            alert("Tidak ada soal yang terdeteksi.");
             return;
         }
 
