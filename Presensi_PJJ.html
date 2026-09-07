@@ -107,7 +107,6 @@
             <button class="icon-btn btn-preview" onclick="openPreviewPasswordModal()" title="Buka Semua Foto">📷</button>
             <button class="icon-btn btn-backup" onclick="backupAndReset()" title="Backup & Reset Hari Ini">📦</button>
             <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Data Terbaru">↺</button>
-            <!-- Tombol Simpan (💾) sudah dihapus karena proses save sudah otomatis -->
             <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
         </div>
         <div><br><br>
@@ -347,7 +346,7 @@
                     renderClassSelect();
                     document.getElementById('classSelect').value = "";
                     renderDenah();
-                    showStatus('✅ Data diperbaharui !', true);
+                    showStatus('✅ Data diperbaharui!', true);
                 }
             }
         } catch (err) { showStatus('⚠️ Gagal memuat data', false); } 
@@ -445,7 +444,7 @@
         fetch(SCRIPT_URL + sep + 'action=test')
             .then(res => res.json())
             .then(result => {
-                if (result.result === 'success') { statusEl.textContent = '✅ Data terhubung !'; statusEl.className = 'connection-status connected'; } 
+                if (result.result === 'success') { statusEl.textContent = '✅ Terhubung'; statusEl.className = 'connection-status connected'; } 
                 else { statusEl.textContent = '❌ ' + (result.message || 'Error'); statusEl.className = 'connection-status disconnected'; }
             })
             .catch(() => { statusEl.textContent = '❌ Offline'; statusEl.className = 'connection-status disconnected'; });
@@ -544,6 +543,7 @@
         setTimeout(() => document.getElementById('inpName').focus(), 100);
     }
     function closeModal() { document.getElementById('modal').classList.remove('active'); }
+    
     function compressImage(file, maxW, maxH, quality) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -563,17 +563,35 @@
             reader.readAsDataURL(file);
         });
     }
+
+    // ✅ PERBAIKAN: Kompresi lebih agresif & validasi panjang base64
     async function handlePreview(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            if (file.size > 2 * 1024 * 1024) { alert('⚠️ Ukuran foto maksimal 2MB'); input.value = ''; return; }
-            originalPhotoBase64 = await compressImage(file, 500, 500, 0.7);
-            const small = await compressImage(file, 200, 240, 0.6);
+            if (file.size > 1.5 * 1024 * 1024) { 
+                alert('⚠️ Ukuran foto maksimal 1.5MB agar muat di Google Sheets'); 
+                input.value = ''; 
+                return; 
+            }
+            
+            // Kompres lebih kecil agar base64 tidak melebihi batas 50.000 karakter Google Sheets
+            originalPhotoBase64 = await compressImage(file, 300, 300, 0.6);
+            const small = await compressImage(file, 150, 180, 0.5);
+            
+            // Validasi panjang string base64
+            if (originalPhotoBase64.length > 45000) {
+                alert('⚠️ Foto terlalu besar setelah kompresi. Silakan gunakan foto dengan resolusi lebih rendah.');
+                input.value = '';
+                originalPhotoBase64 = null;
+                return;
+            }
+            
             const img = document.getElementById('imgPreview');
             img.src = small;
             img.classList.add('show');
         }
     }
+
     async function saveData() {
         const name = document.getElementById('inpName').value.trim();
         const smallPhoto = document.getElementById('imgPreview').classList.contains('show') ? document.getElementById('imgPreview').src : (dataSiswa[activeIndex]?.photo || '');
@@ -584,25 +602,53 @@
         saveClassesLocally();
         closeModal();
         renderDenah();
-        saveToGoogleSheet(); // <-- OTOMATIS TERPANGGIL DI SINI
+        saveToGoogleSheet();
     }
+
+    // ✅ PERBAIKAN: Sistem "Merge" agar data lama tidak tertimpa/hilang
     async function saveToGoogleSheet() {
         if (!currentClass) return;
         try {
-            allData[currentClass] = { ...dataSiswa };
-            saveClassesLocally();
-            const kirimData = {};
+            // 1. Ambil data yang sudah ada di Sheet terlebih dahulu
+            const sep = getUrlSeparator();
+            const dataUrl = SCRIPT_URL + sep + 'action=read&sheet=' + encodeURIComponent(currentClass);
+            const dataRes = await fetch(dataUrl);
+            const dataResult = dataRes.ok ? JSON.parse(await dataRes.text()) : { result: 'error' };
+            
+            let existingData = {};
+            if (dataResult.result === 'success' && dataResult.data) {
+                existingData = dataResult.data;
+            }
+            
+            // 2. Gabungkan dengan data siswa yang baru diupdate
+            const kirimData = { ...existingData };
             for (let k in dataSiswa) {
                 let foto = dataSiswa[k].photoOriginal || dataSiswa[k].photo || '';
                 kirimData[k] = dataSiswa[k].name + '|||' + foto;
             }
-            const payload = { action: 'save', sheet: currentClass, data: JSON.stringify(kirimData) };
-            await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
-            showStatus('✅ Data tersimpan !', true);
-        } catch (error) { 
-            showStatus('⚠️ Gagal sync ke Sheet (disimpan lokal)', false); 
+            
+            // 3. Simpan data gabungan ke Sheet
+            allData[currentClass] = { ...dataSiswa };
+            saveClassesLocally();
+            
+            const payload = {
+                action: 'save',
+                sheet: currentClass,
+                data: JSON.stringify(kirimData)
+            };
+            
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            showStatus('✅ Tersimpan otomatis ke Sheet!', true);
+        } catch (error) {
+            console.error('Error saving:', error);
+            showStatus('⚠️ Gagal sync ke Sheet (disimpan lokal)', false);
         }
     }
+
     window.addEventListener('resize', renderDenah);
     document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
     document.getElementById('addClassModal').onclick = e => { if (e.target.id === 'addClassModal') closeAddClassModal(); };
