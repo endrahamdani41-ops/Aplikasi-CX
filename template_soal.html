@@ -1,642 +1,341 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter Template Soal</title>
+    <title>Konverter Soal Portal Sekolah</title>
+    
+    <!-- Library Mammoth.js untuk membaca file .docx -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
     <style>
+        /* Variabel Warna untuk Mode Terang (Default) */
         :root {
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --container-bg: #ffffff;
+            --bg-body: #f4f6f9;
+            --bg-container: #ffffff;
             --text-color: #333333;
-            --section-bg: #f8f9fa;
-            --border-color: #e9ecef;
-            --label-color: #495057;
+            --heading-color: #1a73e8;
+            --border-color: #e0e0e0;
+            --card-bg: #f9f9f9;
+            --card-border: #ddd;
             --input-bg: #ffffff;
-            --input-border: #ced4da;
-            --input-text: #000000;
-            --output-bg: #ffffff;
-            --output-border: #e5e5e5;
-            --output-text: #000000;
-            --stats-bg: #e0e7ff;
-            --stats-text: #3730a3;
-            --instruction-bg: #fff3cd;
-            --instruction-border: #ffc107;
-            --instruction-text: #856404;
-            
-            --container-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px rgba(0, 0, 0, 0.15);
-            --container-border: #d1d5db;
+            --input-border: #ccc;
+            --upload-bg: #f8faff;
+            --upload-border: #1a73e8;
+            --preview-bg: #ffffff;
+            --preview-text: #000000;
         }
 
-        body.dark-mode {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            --container-bg: #1e293b;
-            --text-color: #f1f5f9;
-            --section-bg: #0f172a;
-            --border-color: #334155;
-            --label-color: #cbd5e1;
-            --input-bg: #1e293b;
-            --input-border: #475569;
-            --input-text: #f8fafc;
-            --output-bg: #0f172a;
-            --output-border: #334155;
-            --output-text: #f8fafc;
-            --stats-bg: #312e81;
-            --stats-text: #e0e7ff;
-            --instruction-bg: #422006;
-            --instruction-border: #b45309;
-            --instruction-text: #fef08a;
-            
-            --container-shadow: 0 0 20px rgba(129, 140, 248, 0.6), 0 0 40px rgba(129, 140, 248, 0.3);
-            --container-border: #6366f1;
+        /* Variabel Warna untuk Mode Gelap */
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-container: #1e1e1e;
+            --text-color: #e0e0e0;
+            --heading-color: #64b5f6;
+            --border-color: #333333;
+            --card-bg: #2a2a2a;
+            --card-border: #444;
+            --input-bg: #2d2d2d;
+            --input-border: #555;
+            --upload-bg: #1a2234;
+            --upload-border: #64b5f6;
+            --preview-bg: #2a2a2a;
+            --preview-text: #e0e0e0;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Calibri', 'Arial', sans-serif; background: var(--bg-gradient); min-height: 100vh; padding: 20px; color: var(--text-color); transition: background 0.3s; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.3s, color 0.3s; }
+        body { margin: 20px; background-color: var(--bg-body); color: var(--text-color); }
+        .container { max-width: 1000px; margin: 0 auto; background: var(--bg-container); padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
-        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
-        .theme-toggle-btn { 
-            background: #f59e0b; 
-            border: none; 
-            color: white; 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: all 0.3s; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-        .theme-toggle-btn:hover { background: #d97706; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
+        h2 { margin: 0; color: var(--heading-color); }
 
-        .container { 
-            max-width: 1000px; 
-            margin: 0 auto; 
-            background: var(--container-bg); 
-            border-radius: 12px; 
-            padding: 30px; 
-            border: 1px solid var(--container-border);
-            box-shadow: var(--container-shadow) !important; 
-            transition: all 0.3s ease-in-out; 
+        .btn-theme { background: transparent; border: 2px solid var(--heading-color); color: var(--heading-color); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .btn-theme:hover { background: var(--heading-color); color: #fff; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="file"], select { width: 100%; padding: 10px; border: 1px solid var(--input-border); border-radius: 4px; font-size: 14px; background-color: var(--input-bg); color: var(--text-color); }
+        
+        /* Area Upload File */
+        .upload-area {
+            border: 2px dashed var(--upload-border);
+            padding: 25px;
+            text-align: center;
+            border-radius: 6px;
+            background: var(--upload-bg);
+            margin-bottom: 15px;
         }
+        .upload-area label { font-size: 16px; color: var(--heading-color); cursor: pointer; }
+        .upload-area p { margin: 5px 0 0 0; opacity: 0.8; font-size: 13px; }
+
+        .btn-group { margin: 15px 0; display: flex; gap: 10px; }
+        button { padding: 10px 20px; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: bold; color: #fff; }
+        .btn-primary { background-color: #1a73e8; }
+        .btn-primary:hover { background-color: #1557b0; }
+        .btn-success { background-color: #34a853; }
+        .btn-success:hover { background-color: #2d8e47; }
         
-        h1 { text-align: center; color: var(--text-color); margin-bottom: 20px; font-size: 26px; }
-        
-        .input-section { background: var(--section-bg); padding: 25px; border-radius: 8px; margin-bottom: 25px; border: 1px solid var(--border-color); transition: all 0.3s; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--label-color); }
-        input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--input-border); background: var(--input-bg); color: var(--input-text); border-radius: 5px; font-size: 14px; font-family: inherit; transition: all 0.3s; }
-        input[type="text"]:focus { outline: none; border-color: #667eea; }
-        
-        .upload-action-row {
-            display: flex;
-            gap: 10px;
-            align-items: stretch;
-            flex-wrap: wrap;
-            margin-top: 15px;
+        .q-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 15px; margin-bottom: 15px; border-radius: 6px; }
+        .q-card h4 { margin: 0 0 10px 0; color: var(--text-color); }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .key-select { margin-top: 10px; font-weight: bold; }
+        .key-select select { padding: 5px 10px; border-radius: 4px; border: 1px solid var(--input-border); width: auto; }
+
+        .preview-box {
+            background: var(--preview-bg);
+            color: var(--preview-text);
+            border: 2px dashed #34a853;
+            padding: 20px;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.25;
         }
-        
-        .file-input-wrapper { position: relative; overflow: hidden; width: 100%; }
-        .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
-        
-        .file-input-label { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 12px 15px; 
-            background: #6366f1; 
-            color: white; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            transition: background 0.3s; 
-            font-weight: bold; 
-            text-align: center; 
-        }
-        .file-input-label:hover { background: #4f46e5; }
-        .file-input-label.kunci-label { background: #8b5cf6; }
-        .file-input-label.kunci-label:hover { background: #7c3aed; }
-        
-        .btn { flex: 1; min-width: 180px; padding: 12px 15px; border: none; border-radius: 5px; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.3s; color: white; white-space: nowrap; display: flex; align-items: center; justify-content: center; }
-        
-        .btn-proses { background: #10b981; } 
-        .btn-proses:hover { background: #059669; }
-        
-        .btn-download { background: #0284c7; } 
-        .btn-download:hover { background: #0369a1; }
-        
-        .output-section { margin-top: 25px; }
-        .output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .stats { background: var(--stats-bg); padding: 10px 15px; border-radius: 5px; font-weight: bold; color: var(--stats-text); display: none; transition: all 0.3s; }
-        
-        #output { 
-            background: var(--output-bg); border: 2px solid var(--output-border); border-radius: 8px; 
-            padding: 30px; font-family: 'Calibri', 'Arial', sans-serif; 
-            font-size: 11pt; min-height: 200px; color: var(--output-text); transition: all 0.3s;
-        }
-        #output p { margin: 0 !important; padding: 0 !important; line-height: 1.2 !important; }
-        #output p.spacer { height: 12pt !important; line-height: 12pt !important; }
-        #output ol.opsi-list { margin: 0 !important; padding-left: 20px !important; list-style-type: lower-alpha; line-height: 1.2 !important; }
-        #output ol.opsi-list li { margin-bottom: 2px !important; padding: 0 !important; }
-        #output img { max-width: 150px; height: auto; margin: 4px 0; display: block; }
-        
-        .instructions { background: var(--instruction-bg); border-left: 4px solid var(--instruction-border); padding: 15px; margin-bottom: 20px; border-radius: 5px; color: var(--instruction-text); transition: all 0.3s; }
-        .instructions h3 { margin-bottom: 8px; } .instructions ul { margin-left: 20px; }
-        .file-info { margin-top: 6px; font-size: 13px; color: #10b981; font-weight: bold; }
+        .preview-box ol { margin-top: 0; margin-bottom: 0; padding-left: 28px; }
+        .preview-box p { margin: 0; padding: 0; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header-bar">
-            <h1>📝 Konverter Template Soal</h1>
-            <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">🌙</button>
-        </div>
-        
-        <div class="instructions">
-            <h3> Cara Penggunaan:</h3>
-            <ul>
-                <li>Isi <b>Kategori</b> soal</li>
-                <li>Upload file <b>Soal (.docx)</b></li>
-                <li>Upload file <b>Kunci Jawaban (.docx)</b></li>
-                <li>Klik <b>Proses Soal</b>, lalu <b>Download .docx</b></li>
-            </ul>
-        </div>
-        
-        <div class="input-section">
-            <div class="form-group">
-                <label for="kategori">Kategori:</label>
-                <input type="text" id="kategori" placeholder="Contoh: ph-1 informatika-7">
-            </div>
-            
-            <div class="form-group">
-                <label>1. File Soal (.docx):</label>
-                <div class="file-input-wrapper">
-                    <input type="file" id="fileInputSoal" accept=".docx">
-                    <label for="fileInputSoal" class="file-input-label">📁 Upload File Soal</label>
-                </div>
-                <div id="fileInfoSoal" class="file-info"></div>
-            </div>
 
-            <div class="form-group">
-                <label>2. File Kunci Jawaban (.docx)</label>
-                <div class="file-input-wrapper">
-                    <input type="file" id="fileInputKunci" accept=".docx">
-                    <label for="fileInputKunci" class="file-input-label kunci-label">🔑 Upload File Kunci Jawaban</label>
-                </div>
-                <div id="fileInfoKunci" class="file-info"></div>
-            </div>
-
-            <div class="upload-action-row">
-                <button class="btn btn-proses" onclick="prosesSoal()">🔄 Proses Soal</button>
-                <button class="btn btn-download" onclick="downloadDocx()">💾 Download .docx</button>
-            </div>
-        </div>
-        
-        <div class="output-section">
-            <div class="output-header">
-                <h2>Hasil Konversi:</h2>
-                <div id="stats" class="stats"></div>
-            </div>
-            <div id="output">Hasil akan muncul di sini...</div>
-        </div>
+<div class="container">
+    <div class="header-bar">
+        <h2>Konverter Soal Portal Sekolah</h2>
+        <button class="btn-theme" id="themeToggleBtn" onclick="toggleTheme()">🌙</button>
     </div>
     
-    <!-- Library Eksternal -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    
-    <script>
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const themeBtn = document.getElementById('themeToggle');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                themeBtn.innerHTML = '☀️';
-            }
+    <div class="form-row">
+        <div class="form-group">
+            <label for="kategoriInput">Kategori Default:</label>
+            <input type="text" id="kategoriInput">
+        </div>
+        <div class="form-group">
+            <label for="poinInput">Poin Default per Soal:</label>
+            <input type="text" id="poinInput" value="1">
+        </div>
+    </div>
+
+    <!-- Section Upload -->
+    <div class="upload-area">
+        <label for="fileInput">📁 Klik di sini untuk memilih File Soal (.docx atau .txt)</label>
+        <input type="file" id="fileInput" accept=".docx, .txt" style="display:none;" onchange="handleFileUpload(this)">
+        <p id="fileNameDisplay">Belum ada file yang dipilih</p>
+    </div>
+
+    <div id="editorSection"></div>
+
+    <div class="btn-group" id="generateGroup" style="display:none;">
+        <button class="btn-success" onclick="generateFormat()">Generate Format Template Word</button>
+    </div>
+
+    <div class="form-group" id="outputGroup" style="display:none;">
+        <label>Hasil Format Template (Dengan Numbering Asli Word A, B, C, D):</label>
+        <div id="richPreview" class="preview-box"></div>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="copyRichOutput()">Salin Hasil ke Microsoft Word</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let parsedData = [];
+
+    // Fungsi Toggle Dark / Light Mode
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', targetTheme);
+        localStorage.setItem('theme', targetTheme);
+        updateThemeButton(targetTheme);
+    }
+
+    function updateThemeButton(theme) {
+        const btn = document.getElementById('themeToggleBtn');
+        if (theme === 'dark') {
+            btn.innerHTML = '☀️';
+        } else {
+            btn.innerHTML = '🌙';
         }
+    }
 
-        function toggleTheme() {
-            const body = document.body;
-            const themeBtn = document.getElementById('themeToggle');
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                themeBtn.innerHTML = '☀️';
-            } else {
-                localStorage.setItem('theme', 'light');
-                themeBtn.innerHTML = '🌙';
-            }
-        }
+    // Memuat preferensi tema saat halaman dibuka
+    (function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeButton(savedTheme);
+    })();
 
-        initTheme();
+    // Fungsi hapus penomoran lama dari teks opsi jika ada
+    function cleanOptionText(str) {
+        return str.replace(/^([a-zA-D0-9][\.\)]\s*)+/, '').trim();
+    }
 
-        let currentOutputHTML = '';
-        let totalSoal = 0;
-        let parsedQuestions = [];
-        let rawHtmlSoal = '';
-        let kunciJawabanMap = {};
+    function handleFileUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
 
-        const bankKunci = {
-            "disebut apakah karakter pada scratch": "a",
-            "disebut apakah perintah pada scratch": "b",
-            "apa maksud dari block berikut": "b"
-        };
+        document.getElementById('fileNameDisplay').innerHTML = `File terpilih: <strong>${file.name}</strong>`;
 
-        // Event listener pembacaan File Soal
-        document.getElementById('fileInputSoal').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const info = document.getElementById('fileInfoSoal');
-            info.textContent = '';
-            if (!file) return;
-            
-            info.textContent = '⏳ Memproses file soal...';
+        const fileExt = file.name.split('.').pop().toLowerCase();
+
+        if (fileExt === 'docx') {
             const reader = new FileReader();
-            
             reader.onload = function(e) {
-                mammoth.convertToHtml({ arrayBuffer: e.target.result }, {
-                    styleMap: ["r[color] => span[style]"],
-                    convertImage: mammoth.images.imgElement(function(image) {
-                        return image.read("base64").then(function(imageBuffer) {
-                            return { src: "data:" + image.contentType + ";base64," + imageBuffer };
-                        });
+                const arrayBuffer = e.target.result;
+                mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+                    .then(function(result) {
+                        processRawText(result.value);
                     })
-                }).then(function(result) {
-                    rawHtmlSoal = result.value;
-                    info.textContent = `✅ File Soal '${file.name}' berhasil dibaca!`;
-                }).catch(function(err) {
-                    info.textContent = '❌ Gagal membaca file soal: ' + err.message;
-                });
+                    .catch(function(err) {
+                        alert("Gagal membaca file .docx: " + err.message);
+                    });
             };
             reader.readAsArrayBuffer(file);
-        });
-
-        // Event listener pembacaan File Kunci Jawaban Terpisah (Mendukung convertToHtml)
-        document.getElementById('fileInputKunci').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const info = document.getElementById('fileInfoKunci');
-            info.textContent = '';
-            if (!file) return;
-            
-            info.textContent = '⏳ Memproses file kunci jawaban...';
+        } else if (fileExt === 'txt') {
             const reader = new FileReader();
-            
             reader.onload = function(e) {
-                mammoth.convertToHtml({ arrayBuffer: e.target.result }).then(function(result) {
-                    parseKunciJawabanText(result.value);
-                    const totalKunci = Object.keys(kunciJawabanMap).length;
-                    info.textContent = `✅ File Kunci '${file.name}' berhasil dibaca! (${totalKunci} kunci terdeteksi)`;
-                }).catch(function(err) {
-                    info.textContent = '❌ Gagal membaca file kunci: ' + err.message;
-                });
+                processRawText(e.target.result);
             };
-            reader.readAsArrayBuffer(file);
-        });
+            reader.readAsText(file);
+        } else {
+            alert("Format file tidak didukung! Harap upload file .docx atau .txt");
+        }
+    }
 
-        // Fungsi Parsing Kunci Jawaban Super Kuat (List, Tabel, Spasi Lebar \u00a0 / Tab)
-        function parseKunciJawabanText(htmlOrText) {
-            kunciJawabanMap = {};
+    function processRawText(text) {
+        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+        
+        parsedData = [];
+        let index = 1;
 
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlOrText, 'text/html');
-            
-            const elements = doc.querySelectorAll('p, li, tr, td');
-            let items = [];
-
-            if (elements.length > 0) {
-                elements.forEach(el => {
-                    const txt = el.innerText || el.textContent;
-                    if (txt && txt.trim()) items.push(txt.trim());
+        for (let i = 0; i < lines.length; i += 5) {
+            if (i + 4 < lines.length) {
+                parsedData.push({
+                    no: index++,
+                    soal: lines[i],
+                    opsi: [
+                        cleanOptionText(lines[i+1]),
+                        cleanOptionText(lines[i+2]),
+                        cleanOptionText(lines[i+3]),
+                        cleanOptionText(lines[i+4])
+                    ],
+                    kunci: 'A'
                 });
-            } else {
-                items = htmlOrText.split('\n');
             }
+        }
 
-            let autoNumberIndex = 1;
+        if (parsedData.length === 0) {
+            alert("Tidak ada soal yang terdeteksi dari file tsb.");
+            return;
+        }
 
-            items.forEach(item => {
-                const clean = item.replace(/\u00a0/g, ' ').replace(/\t/g, ' ').trim();
-                if (!clean) return;
+        renderEditor();
+    }
 
-                // Mode A: Ada nomor dan kunci (misal: "1. A", "1        A", "No 1: A")
-                const matchWithNo = clean.match(/^(?:No\.?\s*)?(\d+)[\.\s:=|\)\-–]*\s*([a-eA-E])\b/i);
-                
-                if (matchWithNo) {
-                    const noSoal = parseInt(matchWithNo[1], 10);
-                    const kunci = matchWithNo[2].toLowerCase();
-                    kunciJawabanMap[noSoal] = kunci;
-                    return;
-                }
+    function renderEditor() {
+        const container = document.getElementById('editorSection');
+        container.innerHTML = '<h3>Atur Kunci Jawaban Soal:</h3>';
 
-                // Mode B: List Otomatis Word (<ol><li>A</li></ol>), nomor tidak muncul di teks
-                const singleKeyMatch = clean.match(/^([a-eA-E])$/i);
-                if (singleKeyMatch) {
-                    kunciJawabanMap[autoNumberIndex] = singleKeyMatch[1].toLowerCase();
-                    autoNumberIndex++;
-                }
+        const labels = ['A', 'B', 'C', 'D'];
+
+        parsedData.forEach((q, idx) => {
+            const card = document.createElement('div');
+            card.className = 'q-card';
+            
+            let opsiHtml = '';
+            q.opsi.forEach((opt, oIdx) => {
+                opsiHtml += `<div><strong>${labels[oIdx]}.</strong> ${opt}</div>`;
             });
 
-            // Fallback: Pemindaian global jika format berupa tabel polos tanpa tag baku
-            if (Object.keys(kunciJawabanMap).length === 0) {
-                const plainText = doc.body.innerText || htmlOrText;
-                const normalized = plainText.replace(/\u00a0/g, ' ').replace(/\t/g, ' ');
-                const matches = [...normalized.matchAll(/(\d+)[\.\s:=|\)\-–]*\s*([a-eA-E])(?!\w)/gi)];
-                
-                matches.forEach(m => {
-                    const noSoal = parseInt(m[1], 10);
-                    const kunci = m[2].toLowerCase();
-                    kunciJawabanMap[noSoal] = kunci;
-                });
-            }
-        }
+            card.innerHTML = `
+                <h4>Soal ${q.no}: ${q.soal}</h4>
+                <div class="options-grid">${opsiHtml}</div>
+                <div class="key-select">
+                    <label>Pilih Kunci Jawaban: </label>
+                    <select onchange="parsedData[${idx}].kunci = this.value">
+                        <option value="A" ${q.kunci === 'A' ? 'selected' : ''}>A</option>
+                        <option value="B" ${q.kunci === 'B' ? 'selected' : ''}>B</option>
+                        <option value="C" ${q.kunci === 'C' ? 'selected' : ''}>C</option>
+                        <option value="D" ${q.kunci === 'D' ? 'selected' : ''}>D</option>
+                    </select>
+                </div>
+            `;
+            container.appendChild(card);
+        });
 
-        function cleanText(str) {
-            return str.replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
-        }
+        document.getElementById('generateGroup').style.display = 'block';
+        document.getElementById('outputGroup').style.display = 'none';
+    }
 
-        function getCleanKey(str) {
-            return str.toLowerCase().replace(/[?.,!:\-_]/g, '').replace(/\s+/g, ' ').trim();
-        }
+    function generateFormat() {
+        const kategori = document.getElementById('kategoriInput').value;
+        const poin = document.getElementById('poinInput').value;
+        const previewDiv = document.getElementById('richPreview');
+        
+        let htmlContent = '';
 
-        function isRedElement(el) {
-            if (!el) return false;
-            const html = el.innerHTML || el.outerHTML || '';
-            const redRegex = /color:\s*(red|#ff0000|#f00|rgb\(\s*255\s*,\s*0\s*,\s*0\s*\))/i;
-            return redRegex.test(html);
-        }
-
-        function parseHtmlToQuestions(htmlString) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlString, 'text/html');
-            const questions = [];
-            const labels = ['a', 'b', 'c', 'd', 'e'];
+        parsedData.forEach((q) => {
+            htmlContent += `<p>No: ${q.no}</p>`;
+            htmlContent += `<p>Kategori: ${kategori}</p>`;
+            htmlContent += `<p>Soal : ${q.soal}</p>`;
+            htmlContent += `<p>Opsi:</p>`;
             
-            const orderedLists = doc.querySelectorAll('ol');
-            
-            if (orderedLists.length > 0) {
-                let currentQ = null;
-                let optionCount = 0;
-                let isFirstOl = true;
-                
-                orderedLists.forEach(ol => {
-                    const items = ol.querySelectorAll('li');
-                    items.forEach((li) => {
-                        const text = cleanText(li.innerText);
-                        const img = li.querySelector('img');
-                        const hasRed = isRedElement(li);
-                        
-                        if (isFirstOl && optionCount === 0) {
-                            currentQ = { text: text, options: [], images: {}, detectedKey: null };
-                            if (img) currentQ.questionImage = img.src;
-                            isFirstOl = false;
-                        } else if (currentQ && optionCount < 4) {
-                            const currentLabel = labels[optionCount];
-                            currentQ.options.push({ label: currentLabel, text: text });
-                            if (img) currentQ.images[currentLabel] = img.src;
-                            if (hasRed) currentQ.detectedKey = currentLabel;
-                            
-                            optionCount++;
-                            
-                            if (optionCount === 4) {
-                                questions.push(currentQ);
-                                currentQ = null;
-                                optionCount = 0;
-                                isFirstOl = true;
-                            }
-                        }
-                    });
-                });
-            }
-            
-            if (questions.length === 0) {
-                const paragraphs = doc.body.querySelectorAll('p');
-                let currentQ = null;
-                let currentOptIndex = -1;
-                
-                paragraphs.forEach(p => {
-                    const text = cleanText(p.innerText);
-                    const img = p.querySelector('img');
-                    const hasRed = isRedElement(p);
-                    
-                    const qMatch = text.match(/^(?:No\s*:\s*)?(\d+)[\.\)]\s*(.*)/i);
-                    
-                    if (qMatch && !text.match(/^([a-eA-E])[\.\)]/)) {
-                        if (currentQ && currentQ.options.length > 0) {
-                            questions.push(currentQ);
-                        }
-                        currentQ = { text: qMatch[2], options: [], images: {}, detectedKey: null };
-                        currentOptIndex = -1;
-                        if (img) currentQ.questionImage = img.src;
-                        return;
-                    }
-                    
-                    const optMatch = text.match(/^([a-eA-E])[\.\)]\s*(.*)/);
-                    if (currentQ && optMatch) {
-                        const label = optMatch[1].toLowerCase();
-                        const optText = optMatch[2] || '';
-                        
-                        currentQ.options.push({ label: label, text: optText });
-                        currentOptIndex = currentQ.options.length - 1;
-                        
-                        if (img) currentQ.images[label] = img.src;
-                        if (hasRed) currentQ.detectedKey = label;
-                        return;
-                    }
-                    
-                    if (img && currentQ && currentOptIndex >= 0) {
-                        const currentLabel = labels[currentOptIndex];
-                        if (!currentQ.images[currentLabel]) {
-                            currentQ.images[currentLabel] = img.src;
-                        }
-                        if (hasRed) currentQ.detectedKey = currentLabel;
-                    }
-                });
-                
-                if (currentQ && currentQ.options.length > 0) {
-                    questions.push(currentQ);
-                }
-            }
-            
-            return questions;
-        }
+            htmlContent += `<ol type="A">`;
+            q.opsi.forEach((opt) => {
+                htmlContent += `<li>${opt}</li>`;
+            });
+            htmlContent += `</ol>`;
 
-        function prosesSoal() {
+            htmlContent += `<p>Kunci Jawaban: ${q.kunci}</p>`;
+            htmlContent += `<p>Poin: ${poin}</p>`;
+            htmlContent += `<p>Pembahasan: -</p>`;
+            htmlContent += `<br>`;
+        });
+
+        previewDiv.innerHTML = htmlContent;
+        document.getElementById('outputGroup').style.display = 'block';
+        document.getElementById('outputGroup').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function copyRichOutput() {
+        const previewDiv = document.getElementById('richPreview');
+
+        if (navigator.clipboard && window.ClipboardItem) {
             try {
-                if (!rawHtmlSoal) { alert('Mohon upload file Soal (.docx) terlebih dahulu!'); return; }
-                
-                const kategori = document.getElementById('kategori').value.trim() || 'umum';
-                parsedQuestions = parseHtmlToQuestions(rawHtmlSoal);
-                
-                if (parsedQuestions.length === 0) { 
-                    alert('Tidak ada soal yang terdeteksi. Pastikan format penomoran standar.'); 
-                    return; 
-                }
-                
-                totalSoal = parsedQuestions.length;
-                let htmlOutput = '';
-                
-                const pStyle = 'margin:0;padding:0;line-height:1.2;font-size:11pt;font-family:Calibri,sans-serif;';
-                const spacerStyle = 'margin:0;padding:0;height:12pt;line-height:12pt;';
-
-                parsedQuestions.forEach((soal, index) => {
-                    const no = index + 1;
-                    let kunciJawaban = "-";
-                    
-                    // Priority 1: File kunci jawaban terpisah
-                    if (kunciJawabanMap[no]) {
-                        kunciJawaban = kunciJawabanMap[no];
-                    } 
-                    // Priority 2: Deteksi warna MERAH dari file soal
-                    else if (soal.detectedKey) {
-                        kunciJawaban = soal.detectedKey;
-                    } 
-                    // Priority 3: Bank kunci internal
-                    else {
-                        const soalClean = getCleanKey(soal.text);
-                        if (bankKunci[soalClean]) kunciJawaban = bankKunci[soalClean];
-                    }
-
-                    htmlOutput += `<p style="${pStyle}"><b>No:</b> ${no}</p>`;
-                    htmlOutput += `<p style="${pStyle}"><b>Kategori:</b> ${kategori}</p>`;
-                    htmlOutput += `<p style="${pStyle}"><b>Soal :</b> ${soal.text}</p>`;
-                    
-                    if (soal.questionImage) {
-                        htmlOutput += `<p style="${pStyle}"><img src="${soal.questionImage}" alt="Gambar Soal"></p>`;
-                    }
-                    
-                    htmlOutput += `<p style="${pStyle}"><b>Opsi:</b></p>`;
-                    htmlOutput += `<ol class="opsi-list" style="margin:0;padding-left:20px;list-style-type:lower-alpha;">`;
-                    soal.options.forEach((opsi) => {
-                        if (opsi) {
-                            htmlOutput += `<li>${opsi.text}`;
-                            if (soal.images[opsi.label]) {
-                                htmlOutput += `<br><img src="${soal.images[opsi.label]}" alt="Opsi ${opsi.label}">`;
-                            }
-                            htmlOutput += `</li>`;
-                        }
-                    });
-                    htmlOutput += `</ol>`;
-                    
-                    htmlOutput += `<p style="${pStyle}"><b>Kunci Jawaban:</b> ${kunciJawaban}</p>`;
-                    htmlOutput += `<p style="${pStyle}"><b>Poin:</b> 1</p>`;
-                    htmlOutput += `<p style="${pStyle}"><b>Pembahasan:</b> -</p>`;
-                    htmlOutput += `<p style="${spacerStyle}">&nbsp;</p>`;
-                });
-
-                currentOutputHTML = htmlOutput;
-                document.getElementById('output').innerHTML = htmlOutput;
-                document.getElementById('stats').style.display = 'block';
-                document.getElementById('stats').textContent = `✅ Berhasil memproses ${totalSoal} soal`;
-            } catch (err) {
-                alert('Terjadi kesalahan saat memproses soal: ' + err.message);
-                console.error(err);
+                const htmlBlob = new Blob([previewDiv.innerHTML], { type: 'text/html' });
+                const textBlob = new Blob([previewDiv.innerText], { type: 'text/plain' });
+                const data = [new ClipboardItem({
+                    'text/html': htmlBlob,
+                    'text/plain': textBlob
+                })];
+                await navigator.clipboard.write(data);
+                alert("Berhasil disalin! Buka Microsoft Word dan tekan Ctrl+V.");
+                return;
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        async function downloadDocx() {
-            if (!currentOutputHTML || parsedQuestions.length === 0) { 
-                alert('Silakan upload dan proses soal terlebih dahulu!'); 
-                return; 
-            }
+        const range = document.createRange();
+        range.selectNodeContents(previewDiv);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
 
-            try {
-                const docxLib = window.docx;
-                if (!docxLib) {
-                    alert('Library docx gagal dimuat. Periksa koneksi internet Anda.');
-                    return;
-                }
-
-                const { Document, Packer, Paragraph, TextRun, ImageRun, LevelFormat } = docxLib;
-                const children = [];
-                const kategoriVal = document.getElementById('kategori').value.trim() || 'umum';
-
-                const processBase64Image = (base64Str) => {
-                    const parts = base64Str.split(',');
-                    const mimeMatch = parts[0].match(/:(.*?);/);
-                    const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-                    const raw = window.atob(parts[1]);
-                    const uInt8Array = new Uint8Array(raw.length);
-                    for (let i = 0; i < raw.length; ++i) {
-                        uInt8Array[i] = raw.charCodeAt(i);
-                    }
-                    return { data: uInt8Array, mimeType: mime };
-                };
-
-                const numberingConfigs = [];
-
-                parsedQuestions.forEach((soal, index) => {
-                    const no = index + 1;
-                    let kunciJawaban = "-";
-                    
-                    if (kunciJawabanMap[no]) {
-                        kunciJawaban = kunciJawabanMap[no];
-                    } else if (soal.detectedKey) {
-                        kunciJawaban = soal.detectedKey;
-                    } else {
-                        const soalClean = getCleanKey(soal.text);
-                        if (bankKunci[soalClean]) kunciJawaban = bankKunci[soalClean];
-                    }
-
-                    const numRef = `num-opsi-${index}`;
-                    numberingConfigs.push({
-                        reference: numRef,
-                        levels: [{
-                            level: 0,
-                            format: LevelFormat.LOWER_LETTER,
-                            text: "%1.",
-                            alignment: docxLib.AlignmentType.LEFT,
-                            style: { paragraph: { indent: { left: 720, hanging: 360 } } }
-                        }]
-                    });
-
-                    children.push(new Paragraph({ children: [new TextRun({ text: `No: ${no}`, bold: true })] }));
-                    children.push(new Paragraph({ children: [new TextRun({ text: "Kategori: ", bold: true }), new TextRun(kategoriVal)] }));
-                    children.push(new Paragraph({ children: [new TextRun({ text: "Soal : ", bold: true }), new TextRun(soal.text)] }));
-                    
-                    if (soal.questionImage) {
-                        const imgData = processBase64Image(soal.questionImage);
-                        children.push(new Paragraph({
-                            children: [new ImageRun({ data: imgData.data, transformation: { width: 120, height: 120 } })]
-                        }));
-                    }
-
-                    children.push(new Paragraph({ children: [new TextRun({ text: "Opsi:", bold: true })] }));
-                    
-                    soal.options.forEach(opsi => {
-                        if (opsi) {
-                            children.push(new Paragraph({
-                                numbering: { reference: numRef, level: 0 },
-                                children: [new TextRun({ text: opsi.text })]
-                            }));
-                            
-                            if (soal.images[opsi.label]) {
-                                const imgData = processBase64Image(soal.images[opsi.label]);
-                                children.push(new Paragraph({
-                                    children: [new ImageRun({ data: imgData.data, transformation: { width: 100, height: 100 } })],
-                                    indent: { left: 720 }
-                                }));
-                            }
-                        }
-                    });
-
-                    children.push(new Paragraph({ children: [new TextRun({ text: "Kunci Jawaban: ", bold: true }), new TextRun(kunciJawaban)] }));
-                    children.push(new Paragraph({ children: [new TextRun({ text: "Poin: ", bold: true }), new TextRun("1")] }));
-                    children.push(new Paragraph({ children: [new TextRun({ text: "Pembahasan: ", bold: true }), new TextRun("-")] }));
-                    children.push(new Paragraph({ children: [new TextRun("")] }));
-                });
-
-                const doc = new Document({
-                    numbering: { config: numberingConfigs },
-                    sections: [{ properties: {}, children: children }]
-                });
-
-                const blob = await Packer.toBlob(doc);
-                saveAs(blob, `Soal_${kategoriVal}_${totalSoal}.docx`);
-            } catch (error) {
-                console.error("Gagal men-download docx:", error);
-                alert("Terjadi kesalahan saat membuat file Word: " + error.message);
-            }
+        try {
+            document.execCommand('copy');
+            alert("Berhasil disalin! Silakan paste (Ctrl+V) ke Microsoft Word.");
+        } catch (err) {
+            alert("Gagal menyalin otomatis. Silakan blok tampilan hasil lalu tekan Ctrl+C.");
         }
-    </script>
+        selection.removeAllRanges();
+    }
+</script>
+
 </body>
 </html>
