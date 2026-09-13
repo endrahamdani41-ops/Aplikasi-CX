@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asesmen Diagnostik - Informatika Kelas VII</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+  }
+  .container {
+    max-width: 850px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+  .header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+  }
+  .header h1 { font-size: 28px; margin-bottom: 8px; }
+  .header p { font-size: 15px; opacity: 0.95; }
+  .progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+    margin-top: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: white;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .content { padding: 30px; }
+  .step { display: none; animation: fadeIn 0.5s; }
+  .step.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .step-title {
+    font-size: 22px;
+    color: #4a5568;
+    margin-bottom: 8px;
+    border-left: 5px solid #4facfe;
+    padding-left: 12px;
+  }
+  .step-subtitle {
+    color: #718096;
+    margin-bottom: 25px;
+    font-size: 14px;
+  }
+  .form-group { margin-bottom: 22px; }
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2d3748;
+  }
+  .form-group input[type="text"],
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: border 0.3s;
+  }
+  .form-group input[type="text"]:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #4facfe;
+  }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    background: #f7fafc;
+  }
+  .option:hover {
+    border-color: #4facfe;
+    background: #ebf8ff;
+    transform: translateX(5px);
+  }
+  .option input { margin-right: 12px; transform: scale(1.3); cursor: pointer; }
+  .option.selected {
+    border-color: #4facfe;
+    background: #bee3f8;
+    font-weight: 600;
+  }
+  .question-box {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+  }
+  .question-box .q-num {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  .question-text { font-size: 16px; margin-bottom: 15px; font-weight: 500; }
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #edf2f7;
+  }
+  .btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-prev { background: #e2e8f0; color: #4a5568; }
+  .btn-prev:hover { background: #cbd5e0; }
+  .btn-next {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(79,172,254,0.4); }
+  .btn-submit {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+  }
+  .btn-print {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+  }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Hasil */
+  .result-box {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .result-box h2 { font-size: 28px; margin-bottom: 10px; }
+  .score-display {
+    font-size: 56px;
+    font-weight: bold;
+    margin: 15px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+  .group-card {
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border-left: 6px solid;
+  }
+  .group-a { background: #fed7d7; border-color: #e53e3e; }
+  .group-b { background: #fef5e7; border-color: #ed8936; }
+  .group-c { background: #c6f6d5; border-color: #38a169; }
+  .group-card h3 { margin-bottom: 8px; font-size: 18px; }
+  .group-card p { font-size: 14px; line-height: 1.6; }
+  .detail-section {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+  .detail-section h3 {
+    color: #4a5568;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+  }
+  .answer-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid #4facfe;
+  }
+  .answer-item.correct { border-left-color: #38a169; }
+  .answer-item.wrong { border-left-color: #e53e3e; }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 8px;
+  }
+  .badge-correct { background: #c6f6d5; color: #22543d; }
+  .badge-wrong { background: #fed7d7; color: #742a2a; }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .container { box-shadow: none; }
+    .nav-buttons, .btn-print { display: none !important; }
+    .step { display: block !important; page-break-inside: avoid; }
+    .step:not(.result-step) { display: none !important; }
+  }
+  @media (max-width: 600px) {
+    .header h1 { font-size: 22px; }
+    .content { padding: 20px; }
+    .btn { padding: 10px 20px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🎮 Asesmen Diagnostik Informatika</h1>
+    <p>Kelas VII • Pemrograman Visual Scratch</p>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="content">
+
+    <!-- STEP 1: DATA DIRI -->
+    <div class="step active" data-step="1">
+      <h2 class="step-title">👋 Selamat Datang!</h2>
+      <p class="step-subtitle">Sebelum mulai, yuk kenalan dulu. Isi data dirimu ya!</p>
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="nama" placeholder="Ketik nama lengkapmu di sini...">
+      </div>
+      <div class="form-group">
+        <label>Kelas / No. Absen</label>
+        <input type="text" id="kelas" placeholder="Contoh: VII-A / 12">
+      </div>
+      <div class="form-group">
+        <label>Tanggal</label>
+        <input type="text" id="tanggal" placeholder="Contoh: 5 September 2026">
+      </div>
+      <div class="nav-buttons">
+        <span></span>
+        <button class="btn btn-next" onclick="nextStep()">Mulai ➜</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: NON-KOGNITIF -->
+    <div class="step" data-step="2">
+      <h2 class="step-title">💭 Perasaan & Gaya Belajarmu</h2>
+      <p class="step-subtitle">Jawab dengan jujur ya, tidak ada jawaban benar atau salah!</p>
+
+      <div class="question-box">
+        <div class="question-text"><span class="q-num">1</span> Bagaimana perasaanmu saat menggunakan komputer/laptop untuk belajar?</div>
+        <div class="options" data-name="q_emosi">
+          <label class="option"><input type="radio" name="q_emosi" value="4"> Sangat antusias dan senang 💻</label>
+          <label class="option"><input type="radio" name="q_emosi" value="3"> Biasa saja, asal ada panduannya 😐</label>
+          <label class="option"><input type="radio" name="q_emosi" value="2"> Agak cemas takut salah pencet 😓</label>
+          <label class="option"><input type="radio" name="q_emosi" value="1"> Tidak suka, lebih suka HP 📱</label>
+        </div>
+      </div>
+
+      <div class="question-box">
+        <div class="question-text"><span class="q-num">2</span> Saat belajar membuat program, cara belajar seperti apa yang paling kamu sukai?</div>
+        <div class="options" data-name="q_gaya">
+          <label class="option"><input type="radio" name="q_gaya" value="visual"> 👀 Melihat contoh di layar (Visual)</label>
+          <label class="option"><input type="radio" name="q_gaya" value="auditori"> 👂 Mendengar penjelasan guru (Auditori)</label>
+          <label class="option"><input type="radio" name="q_gaya" value="kinestetik"> 🖐️ Langsung praktik sendiri (Kinestetik)</label>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-prev" onclick="prevStep()">⬅ Kembali</button>
+        <button class="btn btn-next" onclick="nextStep()">Lanjut ➜</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: KOGNITIF -->
+    <div class="step" data-step="3">
+      <h2 class="step-title">🧠 Tes Logika & Pemrograman</h2>
+      <p class="step-subtitle">Uji kemampuan berpikir komputasional-mu! Pilih jawaban yang paling tepat.</p>
+
+      <div class="question-box">
+        <div class="question-text"><span class="q-num">1</span> Urutan yang paling tepat untuk membuat teh manis hangat:<br>
+          (1) Menuang air panas (2) Menyiapkan gelas, teh, gula (3) Mengaduk (4) Memasukkan teh & gula</div>
+        <div class="options">
+          <label class="option"><input type="radio" name="q1" value="a"> a. (2)-(4)-(1)-(3)</label>
+          <label class="option"><input type="radio" name="q1" value="b"> b. (1)-(2)-(3)-(4)</label>
+          <label class="option"><input type="radio" name="q1" value="c"> c. (2)-(1)-(4)-(3)</label>
+          <label class="option"><input type="radio" name="q1" value="d"> d. (4)-(2)-(1)-(3)</label>
+        </div>
+      </div>
+
+      <div class="question-box">
+        <div class="question-text"><span class="q-num">2</span> Robot diperintah: Maju 3 langkah → Belok Kanan → Maju 2 langkah → Maju 1 langkah. Robot menabrak tembok! Di mana kesalahannya?</div>
+        <div class="options">
+          <label class="option"><input type="radio" name="q2" value="a"> a. Seharusnya tidak perlu maju 3 langkah</label>
+          <label class="option"><input type="radio" name="q2" value="b"> b. Ada perintah belok yang hilang setelah "Maju 2 langkah"</label>
+          <label class="option"><input type="radio" name="q2" value="c"> c. Robot salah memahami "Belok Kanan"</label>
+          <label class="option"><input type="radio" name="q2" value="d"> d. Tidak ada yang salah, robotnya rusak</label>
+        </div>
+      </div>
+
+      <div class="question-box">
+        <div class="question-text"><span class="q-num">3</span> Agar karakter Scratch berkata "Halo!" <b>HANYA JIKA</b> tombol spasi ditekan, logika yang tepat adalah...</div>
+        <div class="options">
+          <label class="option"><input type="radio" name="q3" value="a"> a. Jika spasi ditekan, karakter diam saja</label>
+          <label class="option"><input type="radio" name="q3" value="b"> b. Karakter terus berkata tanpa peduli tombol</label>
+          <label class="option"><input type="radio" name="q3" value="c"> c. Jika spasi ditekan, maka karakter berkata "Halo!"</label>
+          <label class="option"><input type="radio" name="q3" value="d"> d. Jika karakter berkata, spasi tertekan sendiri</label>
+        </div>
+      </div>
+
+      <div class="question-box">
+        <div class="question-text"><span class="q-num">4</span> Seberapa percaya diri kamu menggunakan mouse/touchpad untuk drag-and-drop?</div>
+        <div class="options">
+          <label class="option"><input type="radio" name="q4" value="4"> Sangat percaya diri 💪</label>
+          <label class="option"><input type="radio" name="q4" value="3"> Cukup bisa, tapi kadang kaku</label>
+          <label class="option"><input type="radio" name="q4" value="2"> Kurang percaya diri, lebih suka layar sentuh</label>
+          <label class="option"><input type="radio" name="q4" value="1"> Belum pernah menggunakan mouse</label>
+        </div>
+      </div>
+
+      <div class="question-box">
+        <div class="question-text"><span class="q-num">5</span> Apakah kamu pernah mencoba Scratch, Code.org, atau Blockly sebelumnya?</div>
+        <div class="options">
+          <label class="option"><input type="radio" name="q5" value="3"> Pernah, dan cukup paham</label>
+          <label class="option"><input type="radio" name="q5" value="2"> Pernah, tapi hanya sekilas/lupa</label>
+          <label class="option"><input type="radio" name="q5" value="1"> Belum pernah sama sekali</label>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-prev" onclick="prevStep()">⬅ Kembali</button>
+        <button class="btn btn-next" onclick="nextStep()">Lanjut ➜</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: REFLEKSI -->
+    <div class="step" data-step="4">
+      <h2 class="step-title">📝 Refleksi Diri</h2>
+      <p class="step-subtitle">Ceritakan pengalamanmu, ini akan membantu Bapak/Ibu Guru mengajar lebih baik!</p>
+
+      <div class="form-group">
+        <label>✨ Apa hal paling menyenangkan dari belajar komputer/program?</label>
+        <textarea id="refleksi1" placeholder="Tuliskan di sini..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>🤔 Apa kesulitan terbesar yang pernah kamu rasakan saat belajar menggunakan komputer?</label>
+        <textarea id="refleksi2" placeholder="Tuliskan di sini..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>🎮 Jika bisa membuat game/animasi apa pun di Scratch, kamu ingin membuat apa?</label>
+        <textarea id="refleksi3" placeholder="Tuliskan di sini..."></textarea>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-prev" onclick="prevStep()">⬅ Kembali</button>
+        <button class="btn btn-submit" onclick="submitForm()">✅ Selesai & Lihat Hasil</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: HASIL -->
+    <div class="step result-step" data-step="5">
+      <div class="result-box">
+        <h2>🎉 Terima Kasih, <span id="resultNama">Siswa</span>!</h2>
+        <p>Asesmen Diagnostik-mu telah selesai</p>
+        <div class="score-display" id="scoreDisplay">0</div>
+        <p>Skor Kognitif (dari 100)</p>
+      </div>
+
+      <div class="detail-section">
+        <h3>📊 Detail Jawaban Kognitif</h3>
+        <div id="detailJawaban"></div>
+      </div>
+
+      <div class="detail-section">
+        <h3>🎯 Rekomendasi Kelompok Belajarmu</h3>
+        <div id="rekomendasiKelompok"></div>
+      </div>
+
+      <div class="detail-section">
+        <h3>💡 Gaya Belajar Favoritmu</h3>
+        <p id="gayaBelajar"></p>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-print" onclick="window.print()">🖨️ Cetak Hasil</button>
+        <button class="btn btn-next" onclick="location.reload()">🔄 Isi Ulang</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 5;
+
+  // Styling opsi terpilih
+  document.querySelectorAll('.option input').forEach(input => {
+    input.addEventListener('change', function() {
+      const group = this.closest('.options');
+      group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      this.closest('.option').classList.add('selected');
+    });
+  });
+
+  function updateProgress() {
+    const pct = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+    currentStep = n;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep() {
+    if (currentStep === 1) {
+      const nama = document.getElementById('nama').value.trim();
+      if (!nama) { alert('Mohon isi nama lengkapmu dulu ya!'); return; }
+    }
+    if (currentStep < totalSteps) showStep(currentStep + 1);
+  }
+
+  function prevStep() {
+    if (currentStep > 1) showStep(currentStep - 1);
+  }
+
+  function submitForm() {
+    // Ambil data
+    const nama = document.getElementById('nama').value || 'Siswa';
+    const kelas = document.getElementById('kelas').value || '-';
+    const emosi = parseInt(document.querySelector('input[name="q_emosi"]:checked')?.value || 3);
+    const gaya = document.querySelector('input[name="q_gaya"]:checked')?.value || 'kinestetik';
+    const motorik = parseInt(document.querySelector('input[name="q4"]:checked')?.value || 3);
+    const pengalaman = parseInt(document.querySelector('input[name="q5"]:checked')?.value || 1);
+
+    // Kunci jawaban kognitif
+    const kunci = { q1: 'a', q2: 'b', q3: 'c' };
+    const jawaban = {
+      q1: document.querySelector('input[name="q1"]:checked')?.value,
+      q2: document.querySelector('input[name="q2"]:checked')?.value,
+      q3: document.querySelector('input[name="q3"]:checked')?.value
+    };
+
+    // Hitung skor kognitif (3 soal × 20 poin = 60, ditambah bobot motorik & pengalaman)
+    let benar = 0;
+    const detail = [];
+    const penjelasan = {
+      q1: 'Urutan benar: siapkan alat → masukkan teh/gula → tuang air → aduk.',
+      q2: 'Setelah maju 2 langkah, robot perlu belok lagi agar tidak menabrak.',
+      q3: 'Percabangan IF-THEN: aksi hanya terjadi jika kondisi terpenuhi.'
+    };
+
+    ['q1','q2','q3'].forEach(q => {
+      const isCorrect = jawaban[q] === kunci[q];
+      if (isCorrect) benar++;
+      detail.push({
+        no: q.replace('q',''),
+        benar: isCorrect,
+        jawaban: jawaban[q] || '(tidak dijawab)',
+        kunci: kunci[q],
+        penjelasan: penjelasan[q]
+      });
+    });
+
+    // Skor akhir: (benar/3 × 60) + (motorik/4 × 20) + (pengalaman/3 × 20)
+    const skorKognitif = Math.round((benar/3)*60 + (motorik/4)*20 + (pengalaman/3)*20);
+
+    // Tampilkan hasil
+    document.getElementById('resultNama').textContent = nama;
+    document.getElementById('scoreDisplay').textContent = skorKognitif;
+
+    // Detail jawaban
+    let detailHtml = '';
+    detail.forEach(d => {
+      const cls = d.benar ? 'correct' : 'wrong';
+      const badge = d.benar
+        ? '<span class="badge badge-correct">✓ Benar</span>'
+        : '<span class="badge badge-wrong">✗ Salah</span>';
+      detailHtml += `
+        <div class="answer-item ${cls}">
+          <b>Soal ${d.no}</b> ${badge}<br>
+          Jawabanmu: <b>${d.jawaban.toUpperCase()}</b> ${!d.benar ? `| Kunci: <b>${d.kunci.toUpperCase()}</b>` : ''}<br>
+          <small style="color:#718096;">💡 ${d.penjelasan}</small>
+        </div>
+      `;
+    });
+    document.getElementById('detailJawaban').innerHTML = detailHtml;
+
+    // Rekomendasi kelompok
+    let kelompok, kelompokClass, strategi;
+    if (skorKognitif < 50 || emosi <= 2) {
+      kelompok = 'Kelompok A — Perlu Bimbingan Penuh';
+      kelompokClass = 'group-a';
+      strategi = 'Kamu akan belajar dengan pendekatan bertahap. Bapak/Ibu Guru akan mendampingi lebih intensif, dimulai dari aktivitas unplugged (tanpa komputer) untuk membangun fondasi logika, baru kemudian praktik di Scratch. Tidak perlu khawatir, semua dimulai dari dasar! 💪';
+    } else if (skorKognitif < 75) {
+      kelompok = 'Kelompok B — Sedang Berkembang';
+      kelompokClass = 'group-b';
+      strategi = 'Kamu memiliki dasar yang baik! Kamu akan belajar dengan panduan step-by-step dan tantangan bertahap. Fokus pada penguatan logika percabangan dan perulangan. Kamu siap untuk membuat proyek Scratch pertamamu! 🚀';
+    } else {
+      kelompok = 'Kelompok C — Mahir / Pengayaan';
+      kelompokClass = 'group-c';
+      strategi = 'Luar biasa! Kamu sudah siap untuk tantangan lebih tinggi. Kamu akan diberikan proyek mandiri yang lebih kompleks dan berkesempatan menjadi tutor sebaya untuk membantu teman-temanmu. Ayo eksplorasi fitur-fitur Scratch yang lebih canggih! 🌟';
+    }
+
+    document.getElementById('rekomendasiKelompok').innerHTML = `
+      <div class="group-card ${kelompokClass}">
+        <h3>🏆 ${kelompok}</h3>
+        <p>${strategi}</p>
+      </div>
+    `;
+
+    // Gaya belajar
+    const gayaMap = {
+      visual: '👀 <b>Visual</b> — Kamu belajar paling baik dengan melihat gambar, diagram, video, dan contoh di layar. Bapak/Ibu Guru akan banyak menampilkan demonstrasi visual untukmu.',
+      auditori: '👂 <b>Auditori</b> — Kamu belajar paling baik dengan mendengarkan penjelasan dan diskusi. Bapak/Ibu Guru akan memastikan penjelasan lisan yang jelas untukmu.',
+      kinestetik: '🖐️ <b>Kinestetik</b> — Kamu belajar paling baik dengan langsung praktik dan mencoba sendiri. Siapkan energimu untuk banyak eksplorasi di Scratch!'
+    };
+    document.getElementById('gayaBelajar').innerHTML = gayaMap[gaya];
+
+    showStep(5);
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
