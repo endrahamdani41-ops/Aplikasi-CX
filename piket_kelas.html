@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal Piket Kelas</title>
+    <title>Jadwal Piket Kelas - Editable</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -92,24 +92,26 @@
         td { 
             border: 1px solid var(--border-color); 
             padding: 10px; 
-            vertical-align: middle; /* Diubah ke middle agar lebih rapi */
-            height: 45px; /* Tinggi tetap agar seragam */
-            overflow: hidden; /* Mencegah teks keluar batas */
+            vertical-align: middle;
+            /* Hapus height tetap agar bisa memanjang sesuai isi */
+            height: auto; 
+            min-height: 45px;
         }
 
-        /* PERUBAHAN UTAMA DI SINI */
+        /* PERUBAHAN UTAMA: Nama Siswa Lengkap & Wrap */
         .student-name {
             color: var(--student-female);
             font-weight: 500;
             padding: 5px;
             border: 1px dashed transparent;
             
-            /* Agar teks 1 baris */
-            white-space: nowrap; 
-            overflow: hidden;
-            text-overflow: ellipsis; /* Menambahkan ... jika teks kepanjangan */
+            /* Membiarkan teks turun ke bawah (wrap) */
+            white-space: normal; 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             width: 100%;
             display: block;
+            line-height: 1.3; /* Jarak antar baris jika nama panjang */
         }
 
         .student-name.male { color: var(--student-male); }
@@ -117,7 +119,6 @@
         .student-name:hover { 
             border-color: var(--border-color); 
             background: var(--input-bg); 
-            /* Saat hover, tampilkan tooltip native browser jika teks terpotong */
             cursor: pointer; 
         }
         
@@ -125,9 +126,6 @@
             outline: none; 
             border-color: #2196F3; 
             background: var(--bg-container); 
-            /* Saat edit, biarkan teks wrap agar bisa diedit semua */
-            white-space: normal; 
-            overflow: visible;
             z-index: 10;
             position: relative;
         }
@@ -368,8 +366,6 @@
             .container { box-shadow: none; }
             .footer-line strong { color: #000 !important; }
             .student-name.male { color: #000 !important; }
-            /* Saat print, pastikan teks tidak terpotong */
-            .student-name { white-space: normal !important; overflow: visible !important; font-size: 10px !important; }
         }
 
         @media screen and (max-width: 768px) {
@@ -401,9 +397,9 @@
     <div class="container">
         <div class="top-buttons">
             <button onclick="toggleImport()" class="icon-btn import" id="importBtn" title="Import Siswa">📥</button>
-            <button onclick="syncToSheet()" class="icon-btn sync" id="syncBtn" title="Simpan ke Google Sheet">☁️</button>
+            <button onclick="syncToSheet()" class="icon-btn sync" id="syncBtn" title="Simpan ke Google Sheet">️💾</button>
             <button onclick="loadFromSheet()" class="icon-btn load" id="loadBtn" title="Load dari Google Sheet">📂</button>
-            <button onclick="showDeleteConfirm()" class="icon-btn delete" title="Hapus Data">️🗑️</button>
+            <button onclick="showDeleteConfirm()" class="icon-btn delete" title="Hapus Data">🗑️</button>
             <button onclick="window.print()" class="icon-btn print" title="Cetak">🖨️</button>
             <button onclick="toggleDarkMode()" class="icon-btn dark-mode" title="Mode Gelap/Terang">🌙</button>
         </div>
@@ -510,7 +506,7 @@
                 const div = document.createElement('div');
                 div.className = 'student-name';
                 div.contentEditable = true;
-                // Set title attribute untuk tooltip saat hover jika teks terpotong
+                // Set title attribute untuk tooltip saat hover
                 div.oninput = function() { this.title = this.innerText; };
                 td.appendChild(div);
                 row.appendChild(td);
@@ -555,7 +551,7 @@
                     div.contentEditable = true;
                     if (rowIndex < columns[colIndex].length) {
                         div.textContent = columns[colIndex][rowIndex].name;
-                        div.title = columns[colIndex][rowIndex].name; // Tooltip
+                        div.title = columns[colIndex][rowIndex].name; // Tooltip nama lengkap
                         if (columns[colIndex][rowIndex].gender === 'L') div.classList.add('male');
                     }
                     td.appendChild(div);
@@ -640,7 +636,7 @@
                 showStatus('✅ Data berhasil dikirim ke Google Sheet!');
                 localStorage.setItem('scheduleData', JSON.stringify(data));
             } catch (error) {
-                showStatus(' Gagal menyimpan: ' + error.message, 'error');
+                showStatus('❌ Gagal menyimpan: ' + error.message, 'error');
             } finally {
                 syncBtn.classList.remove('loading');
                 syncBtn.disabled = false;
@@ -682,7 +678,7 @@
                                 div.className = 'student-name';
                                 div.contentEditable = true;
                                 div.innerText = cellData.text || '';
-                                div.title = cellData.text || ''; // Tooltip
+                                div.title = cellData.text || ''; // Tooltip nama lengkap
                                 if (cellData.isMale) div.classList.add('male');
                                 td.appendChild(div);
                                 row.appendChild(td);
@@ -732,7 +728,7 @@
                             div.contentEditable = true;
                             if (typeof cellData === 'object') {
                                 div.innerText = cellData.text || '';
-                                div.title = cellData.text || ''; // Tooltip
+                                div.title = cellData.text || ''; // Tooltip nama lengkap
                                 if (cellData.isMale) div.classList.add('male');
                             } else {
                                 div.innerText = cellData || '';
