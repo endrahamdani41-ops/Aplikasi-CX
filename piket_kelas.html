@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal Piket Kelas - Editable</title>
+    <title>Jadwal Piket Kelas</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -89,19 +89,48 @@
             border: 2px solid var(--header-border);
         }
 
-        td { border: 1px solid var(--border-color); padding: 10px; vertical-align: top; min-height: 40px; }
+        td { 
+            border: 1px solid var(--border-color); 
+            padding: 10px; 
+            vertical-align: middle; /* Diubah ke middle agar lebih rapi */
+            height: 45px; /* Tinggi tetap agar seragam */
+            overflow: hidden; /* Mencegah teks keluar batas */
+        }
 
+        /* PERUBAHAN UTAMA DI SINI */
         .student-name {
             color: var(--student-female);
             font-weight: 500;
-            min-height: 25px;
             padding: 5px;
             border: 1px dashed transparent;
+            
+            /* Agar teks 1 baris */
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis; /* Menambahkan ... jika teks kepanjangan */
+            width: 100%;
+            display: block;
         }
 
         .student-name.male { color: var(--student-male); }
-        .student-name:hover { border-color: var(--border-color); background: var(--input-bg); }
-        .student-name:focus { outline: none; border-color: #2196F3; background: var(--bg-container); }
+        
+        .student-name:hover { 
+            border-color: var(--border-color); 
+            background: var(--input-bg); 
+            /* Saat hover, tampilkan tooltip native browser jika teks terpotong */
+            cursor: pointer; 
+        }
+        
+        .student-name:focus { 
+            outline: none; 
+            border-color: #2196F3; 
+            background: var(--bg-container); 
+            /* Saat edit, biarkan teks wrap agar bisa diedit semua */
+            white-space: normal; 
+            overflow: visible;
+            z-index: 10;
+            position: relative;
+        }
 
         .top-buttons {
             position: absolute;
@@ -339,6 +368,8 @@
             .container { box-shadow: none; }
             .footer-line strong { color: #000 !important; }
             .student-name.male { color: #000 !important; }
+            /* Saat print, pastikan teks tidak terpotong */
+            .student-name { white-space: normal !important; overflow: visible !important; font-size: 10px !important; }
         }
 
         @media screen and (max-width: 768px) {
@@ -370,9 +401,9 @@
     <div class="container">
         <div class="top-buttons">
             <button onclick="toggleImport()" class="icon-btn import" id="importBtn" title="Import Siswa">📥</button>
-            <button onclick="syncToSheet()" class="icon-btn sync" id="syncBtn" title="Simpan ke Google Sheet">️💾</button>
+            <button onclick="syncToSheet()" class="icon-btn sync" id="syncBtn" title="Simpan ke Google Sheet">☁️</button>
             <button onclick="loadFromSheet()" class="icon-btn load" id="loadBtn" title="Load dari Google Sheet">📂</button>
-            <button onclick="showDeleteConfirm()" class="icon-btn delete" title="Hapus Data">🗑️</button>
+            <button onclick="showDeleteConfirm()" class="icon-btn delete" title="Hapus Data">️🗑️</button>
             <button onclick="window.print()" class="icon-btn print" title="Cetak">🖨️</button>
             <button onclick="toggleDarkMode()" class="icon-btn dark-mode" title="Mode Gelap/Terang">🌙</button>
         </div>
@@ -435,7 +466,7 @@
     </div>
 
     <script>
-        const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyqNJ163zd2FhAplQdSmAhskFKR6oFq2io6likf1qsRhOGiTPww9-aWzOiH2uCpnwWY6A/exec';
+        const SHEET_URL = 'https://script.google.com/macros/s/AKfybxbfa101PX1FQ7NCTxLH7uBC2Ngos126YccWsyRgOEuFkfWHrBNBJQ80-9nZMop8LkS-GQ/exec';
 
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
@@ -479,6 +510,8 @@
                 const div = document.createElement('div');
                 div.className = 'student-name';
                 div.contentEditable = true;
+                // Set title attribute untuk tooltip saat hover jika teks terpotong
+                div.oninput = function() { this.title = this.innerText; };
                 td.appendChild(div);
                 row.appendChild(td);
             }
@@ -522,6 +555,7 @@
                     div.contentEditable = true;
                     if (rowIndex < columns[colIndex].length) {
                         div.textContent = columns[colIndex][rowIndex].name;
+                        div.title = columns[colIndex][rowIndex].name; // Tooltip
                         if (columns[colIndex][rowIndex].gender === 'L') div.classList.add('male');
                     }
                     td.appendChild(div);
@@ -606,123 +640,76 @@
                 showStatus('✅ Data berhasil dikirim ke Google Sheet!');
                 localStorage.setItem('scheduleData', JSON.stringify(data));
             } catch (error) {
-                showStatus('❌ Gagal menyimpan: ' + error.message, 'error');
+                showStatus(' Gagal menyimpan: ' + error.message, 'error');
             } finally {
                 syncBtn.classList.remove('loading');
                 syncBtn.disabled = false;
             }
         }
 
- async function loadFromSheet() {
-    const loadBtn = document.getElementById('loadBtn');
-    loadBtn.classList.add('loading');
-    loadBtn.disabled = true;
+        async function loadFromSheet() {
+            const loadBtn = document.getElementById('loadBtn');
+            loadBtn.classList.add('loading');
+            loadBtn.disabled = true;
 
-    try {
-        const response = await fetch(SHEET_URL + '?action=load');
-        
-        // Cek apakah response adalah JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('URL Sheet tidak valid. Response bukan JSON.');
-        }
-        
-        const result = await response.json();
+            try {
+                const response = await fetch(SHEET_URL + '?action=load');
+                
+                // Cek apakah response adalah JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('URL Sheet tidak valid. Response bukan JSON.');
+                }
+                
+                const result = await response.json();
 
-        if (result.success) {
-            const data = result.data;
-            document.getElementById('title1').innerText = data.title1 || 'JADWAL PIKET KELAS';
-            document.getElementById('title2').innerText = data.title2 || 'TAHUN PELAJARAN 2026-2027';
-            document.getElementById('footer1').innerText = data.footer1 || 'JAKARTA, 15-09-2026';
-            document.getElementById('footer2').innerText = data.footer2 || '_________________________';
+                if (result.success) {
+                    const data = result.data;
+                    document.getElementById('title1').innerText = data.title1 || 'JADWAL PIKET KELAS';
+                    document.getElementById('title2').innerText = data.title2 || 'TAHUN PELAJARAN 2026-2027';
+                    document.getElementById('footer1').innerText = data.footer1 || 'JAKARTA, 15-09-2026';
+                    document.getElementById('footer2').innerText = data.footer2 || '_________________________';
 
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
+                    const tbody = document.getElementById('tableBody');
+                    tbody.innerHTML = '';
 
-            if (data.rows && data.rows.length > 0) {
-                data.rows.forEach(rowData => {
-                    const row = document.createElement('tr');
-                    rowData.forEach(cellData => {
-                        const td = document.createElement('td');
-                        const div = document.createElement('div');
-                        div.className = 'student-name';
-                        div.contentEditable = true;
-                        div.innerText = cellData.text || '';
-                        if (cellData.isMale) div.classList.add('male');
-                        td.appendChild(div);
-                        row.appendChild(td);
-                    });
-                    tbody.appendChild(row);
-                });
+                    if (data.rows && data.rows.length > 0) {
+                        data.rows.forEach(rowData => {
+                            const row = document.createElement('tr');
+                            rowData.forEach(cellData => {
+                                const td = document.createElement('td');
+                                const div = document.createElement('div');
+                                div.className = 'student-name';
+                                div.contentEditable = true;
+                                div.innerText = cellData.text || '';
+                                div.title = cellData.text || ''; // Tooltip
+                                if (cellData.isMale) div.classList.add('male');
+                                td.appendChild(div);
+                                row.appendChild(td);
+                            });
+                            tbody.appendChild(row);
+                        });
+                    }
+
+                    localStorage.setItem('scheduleData', JSON.stringify({
+                        title1: data.title1, title2: data.title2,
+                        footer1: data.footer1, footer2: data.footer2,
+                        rows: data.rows
+                    }));
+
+                    showStatus(`✅ Berhasil load dari Sheet! (${data.rows.length} baris)`);
+                } else {
+                    showStatus('❌ Gagal load: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                console.error('Load error:', error);
+                showStatus('❌ Gagal load: URL Sheet tidak valid atau tidak bisa diakses.', 'error');
+            } finally {
+                loadBtn.classList.remove('loading');
+                loadBtn.disabled = false;
             }
-
-            localStorage.setItem('scheduleData', JSON.stringify({
-                title1: data.title1, title2: data.title2,
-                footer1: data.footer1, footer2: data.footer2,
-                rows: data.rows
-            }));
-
-            showStatus(`✅ Berhasil load dari Sheet! (${data.rows.length} baris)`);
-        } else {
-            showStatus(' Gagal load: ' + (result.error || 'Unknown error'), 'error');
-        }
-    } catch (error) {
-        console.error('Load error:', error);
-        showStatus('❌ Gagal load: URL Sheet tidak valid atau tidak bisa diakses. Cek konfigurasi Apps Script.', 'error');
-    } finally {
-        loadBtn.classList.remove('loading');
-        loadBtn.disabled = false;
-    }
-}
-
-async function syncToSheet() {
-    const syncBtn = document.getElementById('syncBtn');
-    syncBtn.classList.add('loading');
-    syncBtn.disabled = true;
-
-    const data = {
-        action: 'save',
-        title1: document.getElementById('title1').innerText,
-        title2: document.getElementById('title2').innerText,
-        footer1: document.getElementById('footer1').innerText,
-        footer2: document.getElementById('footer2').innerText,
-        rows: []
-    };
-
-    const rows = document.querySelectorAll('#tableBody tr');
-    rows.forEach(row => {
-        const rowData = [];
-        const cells = row.querySelectorAll('.student-name');
-        cells.forEach(cell => {
-            rowData.push({ text: cell.innerText, isMale: cell.classList.contains('male') });
-        });
-        data.rows.push(rowData);
-    });
-
-    try {
-        // Test URL dulu
-        const testResponse = await fetch(SHEET_URL + '?action=load', { method: 'HEAD' });
-        if (!testResponse.ok) {
-            throw new Error('URL Sheet tidak bisa diakses (HTTP ' + testResponse.status + ')');
         }
 
-        await fetch(SHEET_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(data)
-        });
-
-        showStatus('✅ Data berhasil dikirim ke Google Sheet!');
-        localStorage.setItem('scheduleData', JSON.stringify(data));
-    } catch (error) {
-        console.error('Sync error:', error);
-        showStatus('❌ Gagal simpan: ' + error.message + '. Pastikan URL Sheet benar dan Apps Script sudah di-deploy.', 'error');
-    } finally {
-        syncBtn.classList.remove('loading');
-        syncBtn.disabled = false;
-    }
-}
         function loadDataLocal() {
             const saved = localStorage.getItem('scheduleData');
             if (saved) {
@@ -745,9 +732,11 @@ async function syncToSheet() {
                             div.contentEditable = true;
                             if (typeof cellData === 'object') {
                                 div.innerText = cellData.text || '';
+                                div.title = cellData.text || ''; // Tooltip
                                 if (cellData.isMale) div.classList.add('male');
                             } else {
                                 div.innerText = cellData || '';
+                                div.title = cellData || '';
                             }
                             td.appendChild(div);
                             row.appendChild(td);
