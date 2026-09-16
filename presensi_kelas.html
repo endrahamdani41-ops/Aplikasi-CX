@@ -6,148 +6,497 @@
   <title>Presensi & Laporan Kelas - SMPN 110 Jakarta</title>
   <style>
     :root {
-      --primary: #1e3a8a;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #1e293b;
-      --subtext: #64748b;
-      --border: #e2e8f0;
-      --input-border: #cbd5e1;
-      --th-bg: #f1f5f9;
-      --th-text: #334155;
-    }
-
-    /* Mode Gelap (Dark Mode) */
-    [data-theme="dark"] {
       --primary: #3b82f6;
+      --primary-dark: #2563eb;
       --bg: #0f172a;
       --card-bg: #1e293b;
       --text: #f8fafc;
       --subtext: #94a3b8;
       --border: #334155;
       --input-border: #475569;
-      --th-bg: #334155;
+      --th-bg: #1e293b;
       --th-text: #f8fafc;
+      --hover-bg: #334155;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #8b5cf6;
+    }
+
+    [data-theme="light"] {
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --subtext: #64748b;
+      --border: #e2e8f0;
+      --input-border: #cbd5e1;
+      --th-bg: #f8fafc;
+      --th-text: #1e293b;
+      --hover-bg: #f1f5f9;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
+      background: linear-gradient(135deg, var(--bg) 0%, #1e293b 100%);
       color: var(--text);
-      margin: 0;
-      padding: 20px;
-      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+      padding: 30px 20px;
+      transition: all 0.3s ease;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
       background: var(--card-bg);
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
     }
 
     .header-top { 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
-      margin-bottom: 8px; 
+      margin-bottom: 30px; 
     }
-    
+
     .theme-toggle {
-      background: transparent; 
-      border: 1px solid var(--input-border); 
-      color: var(--text);
-      padding: 6px 12px; 
-      border-radius: 20px; 
-      cursor: pointer; 
-      font-size: 13px; 
-      display: flex; 
-      align-items: center; 
-      gap: 6px;
-      transition: all 0.2s;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     }
-    
-    .theme-toggle:hover { background-color: var(--th-bg); }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
 
     .header { 
       text-align: center; 
-      border-bottom: 2px solid var(--border); 
-      padding-bottom: 16px; 
-      margin-bottom: 20px; 
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid var(--border);
     }
-    .header h1 { margin: 0; color: var(--primary); font-size: 22px; }
-    .header p { margin: 4px 0 0; color: var(--subtext); font-size: 14px; }
 
-    /* Navigasi Tab Menu */
+    .header h1 {
+      margin: 0;
+      background: linear-gradient(135deg, var(--primary), var(--info));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      margin: 10px 0 0;
+      color: var(--subtext);
+      font-size: 15px;
+      font-weight: 400;
+    }
+
     .nav-tabs { 
       display: flex; 
-      gap: 8px; 
-      margin-bottom: 20px; 
-      border-bottom: 1px solid var(--border); 
-      padding-bottom: 10px; 
-    }
-    .tab-btn { 
-      padding: 8px 16px; 
-      border: none; 
-      background: transparent; 
-      color: var(--subtext); 
-      font-weight: 600; 
-      cursor: pointer; 
-      border-radius: 6px; 
-      font-size: 14px; 
-      transition: all 0.2s;
-    }
-    .tab-btn.active { 
-      background-color: var(--primary); 
-      color: white; 
+      gap: 10px; 
+      margin-bottom: 30px;
+      padding: 5px;
+      background: var(--th-bg);
+      border-radius: 12px;
     }
 
-    .controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
-    .form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
-    
-    label { font-size: 12px; font-weight: 600; color: var(--subtext); }
-    input, select, button { 
-      padding: 10px; 
-      border: 1px solid var(--input-border); 
-      border-radius: 6px; 
-      font-size: 14px; 
-      background-color: var(--card-bg); 
+    .tab-btn { 
+      flex: 1;
+      padding: 12px 24px;
+      border: none;
+      background: transparent;
+      color: var(--subtext);
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--hover-bg);
       color: var(--text);
     }
 
-    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
-    th { background-color: var(--th-bg); font-size: 13px; color: var(--th-text); }
-    
-    .radio-group { display: flex; gap: 12px; }
-    .radio-group label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text); }
-    
-    .btn-submit { 
-      background-color: var(--primary); 
-      color: white; 
-      border: none; 
-      width: 100%; 
-      padding: 12px; 
-      font-size: 15px; 
-      font-weight: 600; 
-      cursor: pointer; 
-      border-radius: 6px; 
-      transition: opacity 0.2s;
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
     }
-    .btn-submit:disabled { background-color: #94a3b8; cursor: not-allowed; }
-    
-    .loading-text { text-align: center; color: var(--subtext); padding: 20px; }
-    .alert { padding: 12px; border-radius: 6px; margin-top: 16px; display: none; font-size: 14px; }
-    .alert-success { background-color: #dcfce7; color: #166534; }
-    .alert-error { background-color: #fee2e2; color: #991b1b; }
-    [data-theme="dark"] .alert-success { background-color: #064e3b; color: #a7f3d0; }
-    [data-theme="dark"] .alert-error { background-color: #7f1d1d; color: #fecaca; }
 
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--subtext);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select {
+      padding: 12px 16px;
+      border: 2px solid var(--input-border);
+      border-radius: 10px;
+      font-size: 14px;
+      background: var(--card-bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Elegant Table Styling */
+    .table-container {
+      background: var(--card-bg);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    thead {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+
+    th {
+      padding: 18px 16px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: none;
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background: var(--hover-bg);
+      transform: scale(1.01);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(59, 130, 246, 0.03);
+    }
+
+    tbody tr:nth-child(odd) {
+      background: transparent;
+    }
+
+    .no-column {
+      width: 60px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .nisn-column {
+      font-family: 'Courier New', monospace;
+      color: var(--subtext);
+      font-size: 13px;
+    }
+
+    .nama-column {
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 300px;
+    }
+
+    /* Modern Radio Buttons */
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .radio-option {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .radio-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .radio-custom {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--input-border);
+      border-radius: 50%;
+      margin-right: 6px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .radio-option:hover .radio-custom {
+      border-color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    .radio-option input[type="radio"]:checked ~ .radio-custom {
+      border-color: var(--primary);
+      background: var(--primary);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .radio-option input[type="radio"]:checked ~ .radio-custom::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .radio-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--subtext);
+      transition: all 0.2s ease;
+    }
+
+    .radio-option:hover .radio-label {
+      color: var(--text);
+    }
+
+    .radio-option input[type="radio"]:checked ~ .radio-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Status specific colors */
+    .radio-option input[value="Hadir"]:checked ~ .radio-custom {
+      border-color: var(--success);
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+    }
+
+    .radio-option input[value="Sakit"]:checked ~ .radio-custom {
+      border-color: var(--warning);
+      background: var(--warning);
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
+    }
+
+    .radio-option input[value="Izin"]:checked ~ .radio-custom {
+      border-color: var(--info);
+      background: var(--info);
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+    }
+
+    .radio-option input[value="Alpa"]:checked ~ .radio-custom {
+      border-color: var(--danger);
+      background: var(--danger);
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      background: var(--input-border);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .loading-text {
+      text-align: center;
+      color: var(--subtext);
+      padding: 40px;
+      font-size: 15px;
+    }
+
+    .alert {
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      display: none;
+      font-size: 14px;
+      font-weight: 500;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border: 2px solid var(--success);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border: 2px solid var(--danger);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 12px 10px;
+      }
+
+      .radio-group {
+        gap: 8px;
+      }
+
+      .radio-label {
+        font-size: 12px;
+      }
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--input-border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
@@ -156,7 +505,8 @@
   <div class="header-top">
     <div></div>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
-      <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+      <span id="themeIcon">🌙</span>
+      <span id="themeText">Dark Mode</span>
     </button>
   </div>
 
@@ -165,23 +515,23 @@
     <p>Aplikasi Presensi & Laporan Harian Siswa</p>
   </div>
 
-  <!-- Menu Navigasi Tab -->
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('presensi', this)">Form Presensi</button>
-    <button class="tab-btn" onclick="switchTab('laporan', this)">Laporan Kehadiran</button>
+    <button class="tab-btn active" onclick="switchTab('presensi', this)">
+      <span>📋</span> Form Presensi
+    </button>
+    <button class="tab-btn" onclick="switchTab('laporan', this)">
+      <span>📊</span> Laporan Kehadiran
+    </button>
   </div>
 
-  <!-- TAB 1: FORM PRESENSI -->
   <div id="tab-presensi" class="tab-content active">
     <div class="controls">
       <div class="form-group">
-        <label for="tanggal">Tanggal</label>
-        <!-- Pemicu otomatis ganti tanggal -->
+        <label for="tanggal"> Tanggal</label>
         <input type="date" id="tanggal" onchange="ambilSiswaDariSheet()">
       </div>
       <div class="form-group">
-        <label for="kelas">Pilih Kelas</label>
-        <!-- Pemicu otomatis ganti kelas -->
+        <label for="kelas">🏫 Pilih Kelas</label>
         <select id="kelas" onchange="ambilSiswaDariSheet()">
           <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
           <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
@@ -193,37 +543,45 @@
       </div>
     </div>
 
-    <div id="loading" class="loading-text" style="display: none;">Memuat data siswa dan presensi...</div>
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>NISN</th>
-          <th>Nama Siswa</th>
-          <th>Status Kehadiran</th>
-        </tr>
-      </thead>
-      <tbody id="student-list"></tbody>
-    </table>
-    <button class="btn-submit" id="btnSimpan" onclick="kirimPresensi()">Simpan Ke Google Sheets</button>
+    <div id="loading" class="loading-text" style="display: none;">
+      <div class="spinner"></div>
+      <span>Memuat data siswa dan presensi...</span>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th class="no-column">No</th>
+            <th>NISN</th>
+            <th>Nama Siswa</th>
+            <th>Status Kehadiran</th>
+          </tr>
+        </thead>
+        <tbody id="student-list"></tbody>
+      </table>
+    </div>
+
+    <button class="btn-submit" id="btnSimpan" onclick="kirimPresensi()">
+      💾 Simpan Ke Google Sheets
+    </button>
   </div>
 
-  <!-- TAB 2: LAPORAN KEHADIRAN -->
   <div id="tab-laporan" class="tab-content">
     <div class="controls">
       <div class="form-group">
-        <label for="lap-periode">Periode Laporan</label>
+        <label for="lap-periode">📆 Periode Laporan</label>
         <select id="lap-periode">
           <option value="minggu">Per Minggu</option>
           <option value="bulan">Per Bulan</option>
         </select>
       </div>
       <div class="form-group">
-        <label for="lap-tanggal">Acuan Tanggal</label>
+        <label for="lap-tanggal">📅 Acuan Tanggal</label>
         <input type="date" id="lap-tanggal">
       </div>
       <div class="form-group">
-        <label for="lap-kelas">Pilih Kelas</label>
+        <label for="lap-kelas"> Pilih Kelas</label>
         <select id="lap-kelas">
           <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
           <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
@@ -235,44 +593,51 @@
       </div>
       <div class="form-group" style="justify-content: flex-end;">
         <label>&nbsp;</label>
-        <button class="btn-submit" onclick="muatLaporan()" style="padding: 10px;">Tampilkan Laporan</button>
+        <button class="btn-submit" onclick="muatLaporan()" style="padding: 12px;">
+          🔍 Tampilkan Laporan
+        </button>
       </div>
     </div>
 
-    <div id="loading-laporan" class="loading-text" style="display: none;">Menghitung rekapitulasi presensi...</div>
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>NISN</th>
-          <th>Nama Siswa</th>
-          <th>Hadir</th>
-          <th>Sakit</th>
-          <th>Izin</th>
-          <th>Alpa</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody id="laporan-list">
-        <tr><td colspan="8" style="text-align:center;">Pilih filter lalu klik 'Tampilkan Laporan'.</td></tr>
-      </tbody>
-    </table>
+    <div id="loading-laporan" class="loading-text" style="display: none;">
+      <div class="spinner"></div>
+      <span>Menghitung rekapitulasi presensi...</span>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th class="no-column">No</th>
+            <th>NISN</th>
+            <th>Nama Siswa</th>
+            <th>Hadir</th>
+            <th>Sakit</th>
+            <th>Izin</th>
+            <th>Alpa</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="laporan-list">
+          <tr><td colspan="8" style="text-align:center; padding: 40px;">Pilih filter lalu klik 'Tampilkan Laporan'.</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div id="alertBox" class="alert"></div>
 </div>
 
 <script>
-  // ⚠️ PASTIKAN URL SCRIPT SESUAI DENGAN HASIL DEPLOYMENT TERBARU ANDA
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx0DnSIbai3gC1QwBXsUW-yIaaFxEbGLrth0vyl7zvmibCfWWlfK2VCqryfhUJ1h5eHw/exec";
 
   let siswaList = [];
   let alertTimeout = null;
 
-  document.getElementById('tanggal').valueAsDate = new Date();
-  document.getElementById('lap-tanggal').valueAsDate = new Date();
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('tanggal').value = today;
+  document.getElementById('lap-tanggal').value = today;
 
-  // --- NOTIFIKASI OTOMATIS HILANG DALAM 3 DETIK ---
   function showAlert(message, type) {
     const alertBox = document.getElementById('alertBox');
     alertBox.className = `alert alert-${type}`;
@@ -286,7 +651,6 @@
     }, 3000);
   }
 
-  // --- TAB NAVIGATION ---
   function switchTab(tabName, btn) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -295,34 +659,32 @@
     if (tabName === 'presensi') ambilSiswaDariSheet();
   }
 
-  // --- THEME LOGIC ---
   function initTheme() {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      updateThemeUI(true);
+    if (savedTheme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      updateThemeUI(false);
     }
   }
 
   function toggleTheme() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     if (isDark) {
-      document.documentElement.removeAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme', 'light');
       localStorage.setItem('theme', 'light');
       updateThemeUI(false);
     } else {
-      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.removeAttribute('data-theme');
       localStorage.setItem('theme', 'dark');
       updateThemeUI(true);
     }
   }
 
   function updateThemeUI(isDark) {
-    document.getElementById('themeIcon').innerText = isDark ? '☀️' : '🌙';
-    document.getElementById('themeText').innerText = isDark ? 'Light Mode' : 'Dark Mode';
+    document.getElementById('themeIcon').innerText = isDark ? '🌙' : '☀️';
+    document.getElementById('themeText').innerText = isDark ? 'Dark Mode' : 'Light Mode';
   }
 
-  // --- AMBIL SISWA & STATUS PRESENSI TERINPUT ---
   async function ambilSiswaDariSheet() {
     const kelas = document.getElementById('kelas').value;
     const tanggal = document.getElementById('tanggal').value;
@@ -333,7 +695,6 @@
     loading.style.display = 'block';
     
     try {
-      // Mengirimkan parameter kelas dan tanggal untuk mendeteksi data presensi
       const response = await fetch(`${SCRIPT_URL}?kelas=${kelas}&tanggal=${tanggal}`);
       const result = await response.json();
 
@@ -350,31 +711,45 @@
     }
   }
 
-  // --- RENDER TABEL DENGAN CENTANG RADIO AUTOMATIS ---
   function renderTabelSiswa() {
     const tbody = document.getElementById('student-list');
     tbody.innerHTML = '';
 
     if (siswaList.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Tidak ada data siswa untuk kelas ini.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px;">Tidak ada data siswa untuk kelas ini.</td></tr>';
       return;
     }
 
     siswaList.forEach((siswa, index) => {
-      // Menggunakan status tersimpan (Hadir/Sakit/Izin/Alpa) dari Sheets
       const st = siswa.status || "Hadir";
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${index + 1}</td>
-        <td>${siswa.nisn}</td>
-        <td><strong>${siswa.nama}</strong></td>
+        <td class="no-column">${index + 1}</td>
+        <td class="nisn-column">${siswa.nisn}</td>
+        <td class="nama-column" title="${siswa.nama}">${siswa.nama}</td>
         <td>
           <div class="radio-group">
-            <label><input type="radio" name="status-${index}" value="Hadir" ${st === 'Hadir' ? 'checked' : ''}> Hadir</label>
-            <label><input type="radio" name="status-${index}" value="Sakit" ${st === 'Sakit' ? 'checked' : ''}> Sakit</label>
-            <label><input type="radio" name="status-${index}" value="Izin" ${st === 'Izin' ? 'checked' : ''}> Izin</label>
-            <label><input type="radio" name="status-${index}" value="Alpa" ${st === 'Alpa' ? 'checked' : ''}> Alpa</label>
+            <label class="radio-option">
+              <input type="radio" name="status-${index}" value="Hadir" ${st === 'Hadir' ? 'checked' : ''}>
+              <span class="radio-custom"></span>
+              <span class="radio-label">Hadir</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="status-${index}" value="Sakit" ${st === 'Sakit' ? 'checked' : ''}>
+              <span class="radio-custom"></span>
+              <span class="radio-label">Sakit</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="status-${index}" value="Izin" ${st === 'Izin' ? 'checked' : ''}>
+              <span class="radio-custom"></span>
+              <span class="radio-label">Izin</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="status-${index}" value="Alpa" ${st === 'Alpa' ? 'checked' : ''}>
+              <span class="radio-custom"></span>
+              <span class="radio-label">Alpa</span>
+            </label>
           </div>
         </td>
       `;
@@ -382,7 +757,6 @@
     });
   }
 
-  // --- SIMPAN PRESENSI ---
   async function kirimPresensi() {
     const tanggal = document.getElementById('tanggal').value;
     const kelas = document.getElementById('kelas').value;
@@ -395,26 +769,25 @@
     });
 
     btnSimpan.disabled = true;
-    btnSimpan.innerText = "Mengirim Data...";
+    btnSimpan.innerHTML = '<div class="spinner" style="display:inline-block;vertical-align:middle;margin-right:10px;"></div> Mengirim Data...';
 
     try {
       await fetch(SCRIPT_URL, { 
         method: "POST", 
         mode: "no-cors", 
-        headers: { "Content-Type": "application/json" }, 
+        headers: { "Content-Type": "text/plain" }, 
         body: JSON.stringify(payload) 
       });
       
-      showAlert("Presensi berhasil disimpan ke Google Sheets!", "success");
+      showAlert("✅ Presensi berhasil disimpan ke Google Sheets!", "success");
     } catch (error) {
-      showAlert("Gagal menyimpan data.", "error");
+      showAlert(" Gagal menyimpan data.", "error");
     } finally {
       btnSimpan.disabled = false;
-      btnSimpan.innerText = "Simpan Ke Google Sheets";
+      btnSimpan.innerHTML = '💾 Simpan Ke Google Sheets';
     }
   }
 
-  // --- REKAP LAPORAN ---
   async function muatLaporan() {
     const periode = document.getElementById('lap-periode').value;
     const tanggal = document.getElementById('lap-tanggal').value;
@@ -432,20 +805,20 @@
       if (result.status === "success") {
         const data = result.data;
         if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Tidak ada data laporan pada periode ini.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 40px;">Tidak ada data laporan pada periode ini.</td></tr>';
           return;
         }
         data.forEach((item, index) => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${item.nisn}</td>
-            <td><strong>${item.nama}</strong></td>
-            <td>${item.Hadir}</td>
-            <td>${item.Sakit}</td>
-            <td>${item.Izin}</td>
-            <td>${item.Alpa}</td>
-            <td><strong>${item.Total}</strong></td>
+            <td class="no-column">${index + 1}</td>
+            <td class="nisn-column">${item.nisn}</td>
+            <td class="nama-column" title="${item.nama}">${item.nama}</td>
+            <td style="color: var(--success); font-weight: 600;">${item.Hadir}</td>
+            <td style="color: var(--warning); font-weight: 600;">${item.Sakit}</td>
+            <td style="color: var(--info); font-weight: 600;">${item.Izin}</td>
+            <td style="color: var(--danger); font-weight: 600;">${item.Alpa}</td>
+            <td style="font-weight: 700; color: var(--primary);">${item.Total}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -459,7 +832,6 @@
     }
   }
 
-  // Inisialisasi awal
   initTheme();
   ambilSiswaDariSheet();
 </script>
