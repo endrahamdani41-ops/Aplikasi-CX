@@ -67,27 +67,33 @@
       position: relative;
     }
 
-    .theme-toggle {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      border: none;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
-    }
+.theme-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: transparent;
+  border: none; /* Menghilangkan lingkaran/border */
+  color: var(--text);
+  padding: 8px;
+  border-radius: 0; /* Menghilangkan bentuk membulat */
+  cursor: pointer;
+  font-size: 16px; /* Ukuran ikon sedikit diperbesar */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  box-shadow: none;
+}
 
-    .theme-toggle:active {
-      transform: scale(0.95);
-    }
+.theme-toggle:hover {
+  background: transparent; /* Tetap transparan tanpa background */
+  transform: scale(1.1); /* Efek membesar sedikit saat disentuh/hover */
+  opacity: 0.8;
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
 
     .header h1 {
       margin: 0;
@@ -603,10 +609,10 @@
   <div class="header">
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
       <span id="themeIcon"></span>
-      <span id="themeText">Dark</span>
+      <span id="themeText">🌙</span>
     </button>
     <h1>SMPN 110 JAKARTA</h1>
-    <p>Aplikasi Presensi & Laporan Harian Siswa</p>
+    <p>TAHUN PELAJARAN 2026 / 2027</p>
   </div>
 
   <div id="alertBox" class="alert"></div>
@@ -819,7 +825,7 @@
 
   function updateThemeUI(isDark) {
     document.getElementById('themeIcon').innerText = isDark ? '🌙' : '☀️';
-    document.getElementById('themeText').innerText = isDark ? 'Dark' : 'Light';
+    document.getElementById('themeText').innerText = isDark ? '' : '';
   }
 
   async function ambilSiswaDariSheet() {
