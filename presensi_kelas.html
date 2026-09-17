@@ -67,33 +67,32 @@
       position: relative;
     }
 
-.theme-toggle {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: transparent;
-  border: none; /* Menghilangkan lingkaran/border */
-  color: var(--text);
-  padding: 8px;
-  border-radius: 0; /* Menghilangkan bentuk membulat */
-  cursor: pointer;
-  font-size: 16px; /* Ukuran ikon sedikit diperbesar */
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.3s ease;
-  box-shadow: none;
-}
+    .theme-toggle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      padding: 8px;
+      border-radius: 0;
+      cursor: pointer;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: none;
+    }
 
-.theme-toggle:hover {
-  background: transparent; /* Tetap transparan tanpa background */
-  transform: scale(1.1); /* Efek membesar sedikit saat disentuh/hover */
-  opacity: 0.8;
-}
+    .theme-toggle:hover {
+      transform: scale(1.15);
+      opacity: 0.8;
+    }
 
-.theme-toggle:active {
-  transform: scale(0.95);
-}
+    .theme-toggle:active {
+      transform: scale(0.95);
+    }
 
     .header h1 {
       margin: 0;
@@ -118,7 +117,7 @@
       gap: 8px; 
       margin-bottom: 20px;
       padding: 4px;
-      background: var(--th-bg);
+      background: rgba(59, 130, 246, 0.1);
       border-radius: 10px;
       overflow: hidden;
     }
@@ -200,7 +199,7 @@
     }
 
     .table-wrapper::-webkit-scrollbar-track {
-      background: var(--th-bg);
+      background: var(--hover-bg);
       border-radius: 3px;
     }
 
@@ -235,13 +234,8 @@
       white-space: nowrap;
     }
 
-    th:first-child {
-      border-top-left-radius: 12px;
-    }
-
-    th:last-child {
-      border-top-right-radius: 12px;
-    }
+    th:first-child { border-top-left-radius: 12px; }
+    th:last-child { border-top-right-radius: 12px; }
 
     td {
       padding: 12px;
@@ -282,7 +276,6 @@
       white-space: nowrap;
     }
 
-    /* PERBAIKAN: Nama siswa tampil lengkap 1 baris */
     .nama-column {
       font-weight: 600;
       color: var(--text);
@@ -435,30 +428,13 @@
     }
 
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .alert-success {
-      background: rgba(16, 185, 129, 0.95);
-      color: white;
-    }
-
-    .alert-error {
-      background: rgba(239, 68, 68, 0.95);
-      color: white;
-    }
-
-    .alert-info {
-      background: rgba(59, 130, 246, 0.95);
-      color: white;
-    }
+    .alert-success { background: rgba(16, 185, 129, 0.95); color: white; }
+    .alert-error { background: rgba(239, 68, 68, 0.95); color: white; }
+    .alert-info { background: rgba(59, 130, 246, 0.95); color: white; }
 
     .tab-content {
       display: none;
@@ -466,19 +442,11 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .tab-content.active {
-      display: block;
-    }
+    .tab-content.active { display: block; }
 
     .spinner {
       display: inline-block;
@@ -492,11 +460,7 @@
       vertical-align: middle;
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .empty-state {
       text-align: center;
@@ -511,95 +475,27 @@
     }
 
     @media (min-width: 640px) {
-      body {
-        padding: 30px 20px;
-      }
-
-      .container {
-        padding: 30px;
-        border-radius: 20px;
-      }
-
-      .header h1 {
-        font-size: 28px;
-      }
-
-      .controls {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      table {
-        min-width: 700px;
-      }
-
-      th, td {
-        padding: 14px 16px;
-      }
+      body { padding: 30px 20px; }
+      .container { padding: 30px; border-radius: 20px; }
+      .header h1 { font-size: 28px; }
+      .controls { grid-template-columns: repeat(2, 1fr); }
+      table { min-width: 700px; }
+      th, td { padding: 14px 16px; }
     }
 
     @media (min-width: 1024px) {
-      .container {
-        max-width: 1200px;
-        padding: 40px;
-      }
-
-      .header h1 {
-        font-size: 32px;
-      }
-
-      .controls {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      }
-
-      table {
-        min-width: auto;
-      }
-    }
-
-    @media (max-height: 500px) and (orientation: landscape) {
-      .header {
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-      }
-
-      .header h1 {
-        font-size: 20px;
-      }
-
-      .nav-tabs {
-        margin-bottom: 15px;
-      }
-
-      table {
-        font-size: 12px;
-      }
-
-      th, td {
-        padding: 10px 8px;
-      }
+      .container { max-width: 1200px; padding: 40px; }
+      .header h1 { font-size: 32px; }
+      .controls { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+      table { min-width: auto; }
     }
 
     @media (max-width: 480px) {
-      .radio-group {
-        gap: 8px;
-      }
-
-      .radio-label {
-        font-size: 11px;
-      }
-
-      .radio-custom {
-        width: 20px;
-        height: 20px;
-      }
-
-      .nama-column {
-        min-width: 180px;
-      }
-
-      .header h1 {
-        font-size: 20px;
-      }
+      .radio-group { gap: 6px; }
+      .radio-label { font-size: 11px; }
+      .radio-custom { width: 20px; height: 20px; }
+      .nama-column { min-width: 180px; }
+      .header h1 { font-size: 20px; }
     }
   </style>
 </head>
@@ -607,9 +503,8 @@
 
 <div class="container">
   <div class="header">
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti Mode Tampilan">
       <span id="themeIcon"></span>
-      <span id="themeText">🌙</span>
     </button>
     <h1>SMPN 110 JAKARTA</h1>
     <p>TAHUN PELAJARAN 2026 / 2027</p>
@@ -618,12 +513,8 @@
   <div id="alertBox" class="alert"></div>
 
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('presensi', this)">
-      📝 Form Presensi
-    </button>
-    <button class="tab-btn" onclick="switchTab('laporan', this)">
-      📊 Laporan
-    </button>
+    <button class="tab-btn active" onclick="switchTab('presensi', this)">📝 Form Presensi</button>
+    <button class="tab-btn" onclick="switchTab('laporan', this)">📊 Laporan</button>
   </div>
 
   <!-- TAB PRESENSI -->
@@ -631,30 +522,18 @@
     <div class="controls">
       <div class="form-group">
         <label for="tanggal">📅 Tanggal</label>
-        <input type="date" id="tanggal" onchange="ambilSiswaDariSheet()">
+        <input type="date" id="tanggal">
       </div>
       <div class="form-group">
-        <label for="kelas">🏫 Pilih Kelas</label>
+        <label for="kelas"> Kelas</label>
         <select id="kelas" onchange="ambilSiswaDariSheet()">
           <option value="" disabled selected>Pilih Kelas</option>
-          <option value="7A">7A</option>
-          <option value="7B">7B</option>
-          <option value="7C">7C</option>
-          <option value="7D">7D</option>
-          <option value="7E">7E</option>
-          <option value="7F">7F</option>
-          <option value="8A">8A</option>
-          <option value="8B">8B</option>
-          <option value="8C">8C</option>
-          <option value="8D">8D</option>
-          <option value="8E">8E</option>
-          <option value="8F">8F</option>
-          <option value="9A">9A</option>
-          <option value="9B">9B</option>
-          <option value="9C">9C</option>
-          <option value="9D">9D</option>
-          <option value="9E">9E</option>
-          <option value="9F">9F</option>
+          <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
+          <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
+          <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option>
+          <option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
+          <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
+          <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
         </select>
       </div>
     </div>
@@ -668,7 +547,7 @@
       <table>
         <thead>
           <tr>
-            <th>No</th>
+            <th class="no-column">No</th>
             <th>NIS</th>
             <th>Nama Siswa</th>
             <th>Status Kehadiran</th>
@@ -678,16 +557,14 @@
           <tr>
             <td colspan="4" class="empty-state">
               <div class="empty-state-icon">📚</div>
-              <p>Pilih tanggal dan kelas untuk memuat data siswa</p>
+              <p>Pilih kelas untuk memuat data siswa</p>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <button class="btn-submit" id="btnSimpan" onclick="kirimPresensi()">
-      💾 Simpan Data
-    </button>
+    <button class="btn-submit" id="btnSimpan" onclick="kirimPresensi()">💾 Simpan Data</button>
   </div>
 
   <!-- TAB LAPORAN -->
@@ -708,31 +585,17 @@
         <label for="lap-kelas">🏫 Kelas</label>
         <select id="lap-kelas">
           <option value="" disabled selected>Pilih Kelas</option>
-          <option value="7A">7A</option>
-          <option value="7B">7B</option>
-          <option value="7C">7C</option>
-          <option value="7D">7D</option>
-          <option value="7E">7E</option>
-          <option value="7F">7F</option>
-          <option value="8A">8A</option>
-          <option value="8B">8B</option>
-          <option value="8C">8C</option>
-          <option value="8D">8D</option>
-          <option value="8E">8E</option>
-          <option value="8F">8F</option>
-          <option value="9A">9A</option>
-          <option value="9B">9B</option>
-          <option value="9C">9C</option>
-          <option value="9D">9D</option>
-          <option value="9E">9E</option>
-          <option value="9F">9F</option>
+          <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
+          <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
+          <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option>
+          <option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
+          <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
+          <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
         </select>
       </div>
       <div class="form-group">
         <label>&nbsp;</label>
-        <button class="btn-submit" onclick="muatLaporan()" style="padding: 12px;">
-          🔍 Tampilkan
-        </button>
+        <button class="btn-submit" onclick="muatLaporan()" style="padding: 12px;">🔍 Tampilkan</button>
       </div>
     </div>
 
@@ -745,13 +608,13 @@
       <table>
         <thead>
           <tr>
-            <th>No</th>
+            <th class="no-column">No</th>
             <th>NIS</th>
             <th>Nama</th>
-            <th style="color: #10b981;">H</th>
-            <th style="color: #f59e0b;">S</th>
-            <th style="color: #8b5cf6;">I</th>
-            <th style="color: #ef4444;">A</th>
+            <th style="color: #4ade80;">Hadir</th>
+            <th style="color: #fbbf24;">Sakit</th>
+            <th style="color: #a78bfa;">Izin</th>
+            <th style="color: #f87171;">Alpa</th>
             <th>Total</th>
           </tr>
         </thead>
@@ -769,7 +632,7 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx0DnSIbai3gC1QwBXsUW-yIaaFxEbGLrth0vyl7zvmibCfWWlfK2VCqryfhUJ1h5eHw/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVxdbVSlj2jeSRRpIktPBKTQG1OIna-8gItaYiSv39GWGyVm5DalH-_LPczK6afGECTQ/exec";
 
   let siswaList = [];
   let alertTimeout = null;
@@ -785,11 +648,7 @@
     alertBox.style.display = "block";
 
     if (alertTimeout) clearTimeout(alertTimeout);
-
-    alertTimeout = setTimeout(() => {
-      alertBox.style.display = "none";
-    }, 5000);
-    
+    alertTimeout = setTimeout(() => { alertBox.style.display = "none"; }, 5000);
     alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
@@ -798,9 +657,9 @@
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(`tab-${tabName}`).classList.add('active');
     btn.classList.add('active');
-    
     if (tabName === 'presensi') {
-      ambilSiswaDariSheet();
+      const kelas = document.getElementById('kelas').value;
+      if (kelas) ambilSiswaDariSheet();
     }
   }
 
@@ -827,7 +686,6 @@
 
   function updateThemeUI(isDark) {
     document.getElementById('themeIcon').innerText = isDark ? '🌙' : '☀️';
-    document.getElementById('themeText').innerText = isDark ? '' : '';
   }
 
   async function ambilSiswaDariSheet() {
@@ -836,6 +694,16 @@
     const tbody = document.getElementById('student-list');
     const loading = document.getElementById('loading');
     
+    if (!kelas) {
+      tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><div class="empty-state-icon">📚</div><p>Silakan pilih kelas terlebih dahulu</p></td></tr>`;
+      return;
+    }
+
+    if (!tanggal) {
+      showAlert("⚠️ Silakan pilih tanggal terlebih dahulu", "info");
+      return;
+    }
+
     tbody.innerHTML = '';
     loading.style.display = 'block';
     
@@ -846,33 +714,15 @@
 
       if (result.status === "success") {
         siswaList = result.data;
-        
-        if (result.message) {
-          showAlert(result.message, "info");
-        }
-        
+        if (result.message) showAlert(result.message, "info");
         renderTabelSiswa();
       } else {
         showAlert("❌ " + result.message, "error");
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="4" class="empty-state">
-              <div class="empty-state-icon">⚠️</div>
-              <p>${result.message || 'Gagal memuat data'}</p>
-            </td>
-          </tr>
-        `;
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><div class="empty-state-icon">⚠️</div><p>${result.message || 'Gagal memuat data'}</p></td></tr>`;
       }
     } catch (error) {
-      showAlert("❌ Gagal terhubung ke server. Periksa koneksi internet Anda.", "error");
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="4" class="empty-state">
-            <div class="empty-state-icon">📡</div>
-            <p>Koneksi gagal. Periksa URL script dan koneksi internet.</p>
-          </td>
-        </tr>
-      `;
+      showAlert(" Gagal terhubung ke server. Periksa koneksi internet Anda.", "error");
+      tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><div class="empty-state-icon">📡</div><p>Koneksi gagal. Periksa URL script dan koneksi internet.</p></td></tr>`;
     } finally {
       loading.style.display = 'none';
     }
@@ -883,21 +733,12 @@
     tbody.innerHTML = '';
 
     if (!siswaList || siswaList.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="4" class="empty-state">
-            <div class="empty-state-icon"></div>
-            <p>Tidak ada data siswa untuk kelas ini</p>
-            <p style="font-size: 12px; margin-top: 8px;">Pastikan sheet DataSiswa sudah terisi data</p>
-          </td>
-        </tr>
-      `;
+      tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><div class="empty-state-icon">👥</div><p>Tidak ada data siswa untuk kelas ini</p><p style="font-size: 12px; margin-top: 8px;">Pastikan sheet DataSiswa sudah terisi data</p></td></tr>`;
       return;
     }
 
     siswaList.forEach((siswa, index) => {
       const st = siswa.status || "Hadir";
-
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="no-column">${index + 1}</td>
@@ -945,13 +786,7 @@
     const payload = siswaList.map((siswa, index) => {
       const radioChecked = document.querySelector(`input[name="status-${index}"]:checked`);
       const status = radioChecked ? radioChecked.value : "Hadir";
-      return { 
-        tanggal, 
-        kelas, 
-        nisn: siswa.nisn, 
-        nama: siswa.nama, 
-        status 
-      };
+      return { tanggal, kelas, nisn: siswa.nisn, nama: siswa.nama, status };
     });
 
     btnSimpan.disabled = true;
@@ -961,18 +796,11 @@
       await fetch(SCRIPT_URL, { 
         method: "POST", 
         mode: "no-cors",
-        headers: { 
-          "Content-Type": "application/json" 
-        }, 
+        headers: { "Content-Type": "application/json" }, 
         body: JSON.stringify(payload) 
       });
-      
       showAlert(`✅ Berhasil! Data ${payload.length} siswa tersimpan`, "success");
-      
-      setTimeout(() => {
-        ambilSiswaDariSheet();
-      }, 1000);
-      
+      setTimeout(() => { ambilSiswaDariSheet(); }, 1000);
     } catch (error) {
       showAlert("❌ Gagal menyimpan data. Periksa koneksi internet.", "error");
     } finally {
@@ -988,6 +816,11 @@
     const tbody = document.getElementById('laporan-list');
     const loading = document.getElementById('loading-laporan');
 
+    if (!kelas) {
+      showAlert("⚠️ Silakan pilih kelas terlebih dahulu", "error");
+      return;
+    }
+
     tbody.innerHTML = '';
     loading.style.display = 'block';
 
@@ -998,16 +831,8 @@
 
       if (result.status === "success") {
         const data = result.data;
-        
         if (!data || data.length === 0) {
-          tbody.innerHTML = `
-            <tr>
-              <td colspan="8" class="empty-state">
-                <div class="empty-state-icon"></div>
-                <p>Tidak ada data presensi untuk periode ini</p>
-              </td>
-            </tr>
-          `;
+          tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><div class="empty-state-icon">📭</div><p>Tidak ada data presensi untuk periode ini</p></td></tr>`;
           showAlert("ℹ️ Tidak ada data untuk periode yang dipilih", "info");
           return;
         }
@@ -1034,17 +859,13 @@
         showAlert("❌ " + result.message, "error");
       }
     } catch (error) {
-      showAlert(" Gagal mengambil laporan. Periksa koneksi internet.", "error");
+      showAlert("❌ Gagal mengambil laporan. Periksa koneksi internet.", "error");
     } finally {
       loading.style.display = 'none';
     }
   }
 
   initTheme();
-  
-  window.addEventListener('load', () => {
-    ambilSiswaDariSheet();
-  });
 </script>
 
 </body>
