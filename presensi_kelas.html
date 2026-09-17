@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Presensi & Laporan Kelas - SMPN 110 Jakarta</title>
+  <title>Presensi Kelas - SMPN 110 Jakarta</title>
   <style>
     :root {
       --primary: #3b82f6;
@@ -14,8 +14,6 @@
       --subtext: #94a3b8;
       --border: #334155;
       --input-border: #475569;
-      --th-bg: #1e293b;
-      --th-text: #f8fafc;
       --hover-bg: #334155;
       --success: #10b981;
       --warning: #f59e0b;
@@ -30,8 +28,6 @@
       --subtext: #64748b;
       --border: #e2e8f0;
       --input-border: #cbd5e1;
-      --th-bg: #f8fafc;
-      --th-text: #1e293b;
       --hover-bg: #f1f5f9;
     }
 
@@ -63,14 +59,18 @@
       transition: all 0.3s ease;
     }
 
-    .header-top { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      margin-bottom: 20px; 
+    .header { 
+      text-align: center; 
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+      position: relative;
     }
 
     .theme-toggle {
+      position: absolute;
+      top: 0;
+      right: 0;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       border: none;
       color: white;
@@ -87,13 +87,6 @@
 
     .theme-toggle:active {
       transform: scale(0.95);
-    }
-
-    .header { 
-      text-align: center; 
-      margin-bottom: 25px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid var(--border);
     }
 
     .header h1 {
@@ -126,7 +119,7 @@
 
     .tab-btn { 
       flex: 1;
-      padding: 10px 12px;
+      padding: 12px 16px;
       border: none;
       background: transparent;
       color: var(--subtext);
@@ -163,6 +156,9 @@
       color: var(--subtext);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     input, select {
@@ -185,7 +181,6 @@
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
-    /* Table Container - Scrollable */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -210,7 +205,7 @@
 
     table {
       width: 100%;
-      min-width: 600px; /* Minimum width untuk scroll */
+      min-width: 700px;
       border-collapse: separate;
       border-spacing: 0;
     }
@@ -248,7 +243,6 @@
       color: var(--text);
       font-size: 13px;
       transition: all 0.2s ease;
-      white-space: nowrap;
     }
 
     tbody tr {
@@ -279,22 +273,25 @@
       font-family: 'Courier New', monospace;
       color: var(--subtext);
       font-size: 12px;
+      white-space: nowrap;
     }
 
+    /* PERBAIKAN: Nama siswa tampil lengkap 1 baris */
     .nama-column {
       font-weight: 600;
       color: var(--text);
-      max-width: 200px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: unset;
+      max-width: none;
+      min-width: 200px;
     }
 
-    /* Mobile Radio Buttons - Lebih besar untuk touch */
     .radio-group {
       display: flex;
       gap: 10px;
       align-items: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     .radio-option {
@@ -359,7 +356,6 @@
       font-weight: 600;
     }
 
-    /* Status colors */
     .radio-option input[value="Hadir"]:checked ~ .radio-custom {
       border-color: var(--success);
       background: var(--success);
@@ -424,29 +420,22 @@
     .alert {
       padding: 14px 16px;
       border-radius: 10px;
-      margin-top: 15px;
+      margin-bottom: 15px;
       display: none;
       font-size: 13px;
       font-weight: 500;
       animation: slideIn 0.3s ease;
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      max-width: 90%;
-      width: auto;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: center;
     }
 
     @keyframes slideIn {
       from {
         opacity: 0;
-        transform: translate(-50%, -20px);
+        transform: translateY(-20px);
       }
       to {
         opacity: 1;
-        transform: translate(-50%, 0);
+        transform: translateY(0);
       }
     }
 
@@ -457,6 +446,11 @@
 
     .alert-error {
       background: rgba(239, 68, 68, 0.95);
+      color: white;
+    }
+
+    .alert-info {
+      background: rgba(59, 130, 246, 0.95);
       color: white;
     }
 
@@ -480,7 +474,6 @@
       display: block;
     }
 
-    /* Spinner */
     .spinner {
       display: inline-block;
       width: 18px;
@@ -499,7 +492,18 @@
       }
     }
 
-    /* Responsive untuk tablet */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--subtext);
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
     @media (min-width: 640px) {
       body {
         padding: 30px 20px;
@@ -527,7 +531,6 @@
       }
     }
 
-    /* Responsive untuk desktop */
     @media (min-width: 1024px) {
       .container {
         max-width: 1200px;
@@ -547,7 +550,6 @@
       }
     }
 
-    /* Landscape mode di HP */
     @media (max-height: 500px) and (orientation: landscape) {
       .header {
         margin-bottom: 15px;
@@ -571,7 +573,6 @@
       }
     }
 
-    /* Card view untuk mobile sangat kecil */
     @media (max-width: 480px) {
       .radio-group {
         gap: 8px;
@@ -587,7 +588,11 @@
       }
 
       .nama-column {
-        max-width: 150px;
+        min-width: 180px;
+      }
+
+      .header h1 {
+        font-size: 20px;
       }
     }
   </style>
@@ -595,18 +600,16 @@
 <body>
 
 <div class="container">
-  <div class="header-top">
-    <div></div>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
-      <span id="themeIcon">🌙</span>
-      <span id="themeText"></span>
-    </button>
-  </div>
-
   <div class="header">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span id="themeIcon"></span>
+      <span id="themeText">Dark</span>
+    </button>
     <h1>SMPN 110 JAKARTA</h1>
     <p>Aplikasi Presensi & Laporan Harian Siswa</p>
   </div>
+
+  <div id="alertBox" class="alert"></div>
 
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('presensi', this)">
@@ -617,6 +620,7 @@
     </button>
   </div>
 
+  <!-- TAB PRESENSI -->
   <div id="tab-presensi" class="tab-content active">
     <div class="controls">
       <div class="form-group">
@@ -626,12 +630,24 @@
       <div class="form-group">
         <label for="kelas">🏫 Pilih Kelas</label>
         <select id="kelas" onchange="ambilSiswaDariSheet()">
-          <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
-          <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
-          <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option>
-          <option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
-          <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
-          <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
+          <option value="7A">7A</option>
+          <option value="7B">7B</option>
+          <option value="7C">7C</option>
+          <option value="7D">7D</option>
+          <option value="7E">7E</option>
+          <option value="7F">7F</option>
+          <option value="8A">8A</option>
+          <option value="8B">8B</option>
+          <option value="8C">8C</option>
+          <option value="8D">8D</option>
+          <option value="8E">8E</option>
+          <option value="8F">8F</option>
+          <option value="9A">9A</option>
+          <option value="9B">9B</option>
+          <option value="9C">9C</option>
+          <option value="9D">9D</option>
+          <option value="9E">9E</option>
+          <option value="9F">9F</option>
         </select>
       </div>
     </div>
@@ -651,7 +667,14 @@
             <th>Status Kehadiran</th>
           </tr>
         </thead>
-        <tbody id="student-list"></tbody>
+        <tbody id="student-list">
+          <tr>
+            <td colspan="4" class="empty-state">
+              <div class="empty-state-icon">📚</div>
+              <p>Pilih tanggal dan kelas untuk memuat data siswa</p>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
 
@@ -660,6 +683,7 @@
     </button>
   </div>
 
+  <!-- TAB LAPORAN -->
   <div id="tab-laporan" class="tab-content">
     <div class="controls">
       <div class="form-group">
@@ -670,24 +694,36 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="lap-tanggal">📅 Tanggal</label>
+        <label for="lap-tanggal">📅 Tanggal Acuan</label>
         <input type="date" id="lap-tanggal">
       </div>
       <div class="form-group">
         <label for="lap-kelas">🏫 Kelas</label>
         <select id="lap-kelas">
-          <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
-          <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
-          <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option>
-          <option value="8D">8D</option><option value="8E">8E</option><option value="8F">8F</option>
-          <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
-          <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
+          <option value="7A">7A</option>
+          <option value="7B">7B</option>
+          <option value="7C">7C</option>
+          <option value="7D">7D</option>
+          <option value="7E">7E</option>
+          <option value="7F">7F</option>
+          <option value="8A">8A</option>
+          <option value="8B">8B</option>
+          <option value="8C">8C</option>
+          <option value="8D">8D</option>
+          <option value="8E">8E</option>
+          <option value="8F">8F</option>
+          <option value="9A">9A</option>
+          <option value="9B">9B</option>
+          <option value="9C">9C</option>
+          <option value="9D">9D</option>
+          <option value="9E">9E</option>
+          <option value="9F">9F</option>
         </select>
       </div>
       <div class="form-group">
         <label>&nbsp;</label>
         <button class="btn-submit" onclick="muatLaporan()" style="padding: 12px;">
-           Tampilkan
+          🔍 Tampilkan
         </button>
       </div>
     </div>
@@ -701,24 +737,27 @@
       <table>
         <thead>
           <tr>
-            <th class="no-column">No</th>
-            <th>NISN</th>
+            <th>No</th>
+            <th>NIS</th>
             <th>Nama</th>
-            <th>H</th>
-            <th>S</th>
-            <th>I</th>
-            <th>A</th>
+            <th style="color: #10b981;">H</th>
+            <th style="color: #f59e0b;">S</th>
+            <th style="color: #8b5cf6;">I</th>
+            <th style="color: #ef4444;">A</th>
             <th>Total</th>
           </tr>
         </thead>
         <tbody id="laporan-list">
-          <tr><td colspan="8" style="text-align:center; padding: 30px;">Pilih filter lalu klik 'Tampilkan'</td></tr>
+          <tr>
+            <td colspan="8" class="empty-state">
+              <div class="empty-state-icon">📊</div>
+              <p>Pilih filter dan klik 'Tampilkan' untuk melihat laporan</p>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
   </div>
-
-  <div id="alertBox" class="alert"></div>
 </div>
 
 <script>
@@ -741,7 +780,9 @@
 
     alertTimeout = setTimeout(() => {
       alertBox.style.display = "none";
-    }, 3000);
+    }, 5000);
+    
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function switchTab(tabName, btn) {
@@ -749,7 +790,10 @@
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(`tab-${tabName}`).classList.add('active');
     btn.classList.add('active');
-    if (tabName === 'presensi') ambilSiswaDariSheet();
+    
+    if (tabName === 'presensi') {
+      ambilSiswaDariSheet();
+    }
   }
 
   function initTheme() {
@@ -775,7 +819,7 @@
 
   function updateThemeUI(isDark) {
     document.getElementById('themeIcon').innerText = isDark ? '🌙' : '☀️';
-    document.getElementById('themeText').innerText = isDark ? 'Dark Mode' : 'Light Mode';
+    document.getElementById('themeText').innerText = isDark ? 'Dark' : 'Light';
   }
 
   async function ambilSiswaDariSheet() {
@@ -788,17 +832,39 @@
     loading.style.display = 'block';
     
     try {
-      const response = await fetch(`${SCRIPT_URL}?kelas=${kelas}&tanggal=${tanggal}`);
+      const url = `${SCRIPT_URL}?kelas=${encodeURIComponent(kelas)}&tanggal=${encodeURIComponent(tanggal)}`;
+      const response = await fetch(url);
       const result = await response.json();
 
       if (result.status === "success") {
         siswaList = result.data;
+        
+        if (result.message) {
+          showAlert(result.message, "info");
+        }
+        
         renderTabelSiswa();
       } else {
-        showAlert("Gagal mengambil data: " + result.message, "error");
+        showAlert("❌ " + result.message, "error");
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="empty-state">
+              <div class="empty-state-icon">⚠️</div>
+              <p>${result.message || 'Gagal memuat data'}</p>
+            </td>
+          </tr>
+        `;
       }
     } catch (error) {
-      showAlert("Gagal terhubung ke Google Sheets.", "error");
+      showAlert("❌ Gagal terhubung ke server. Periksa koneksi internet Anda.", "error");
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" class="empty-state">
+            <div class="empty-state-icon">📡</div>
+            <p>Koneksi gagal. Periksa URL script dan koneksi internet.</p>
+          </td>
+        </tr>
+      `;
     } finally {
       loading.style.display = 'none';
     }
@@ -808,8 +874,16 @@
     const tbody = document.getElementById('student-list');
     tbody.innerHTML = '';
 
-    if (siswaList.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 30px;">Tidak ada data siswa untuk kelas ini.</td></tr>';
+    if (!siswaList || siswaList.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" class="empty-state">
+            <div class="empty-state-icon"></div>
+            <p>Tidak ada data siswa untuk kelas ini</p>
+            <p style="font-size: 12px; margin-top: 8px;">Pastikan sheet DataSiswa sudah terisi data</p>
+          </td>
+        </tr>
+      `;
       return;
     }
 
@@ -820,7 +894,7 @@
       tr.innerHTML = `
         <td class="no-column">${index + 1}</td>
         <td class="nisn-column">${siswa.nisn}</td>
-        <td class="nama-column" title="${siswa.nama}">${siswa.nama}</td>
+        <td class="nama-column">${siswa.nama}</td>
         <td>
           <div class="radio-group">
             <label class="radio-option">
@@ -854,11 +928,22 @@
     const tanggal = document.getElementById('tanggal').value;
     const kelas = document.getElementById('kelas').value;
     const btnSimpan = document.getElementById('btnSimpan');
-    if (siswaList.length === 0) return showAlert("Tidak ada data siswa.", "error");
+    
+    if (!siswaList || siswaList.length === 0) {
+      showAlert("️ Tidak ada data siswa untuk disimpan", "error");
+      return;
+    }
 
     const payload = siswaList.map((siswa, index) => {
-      const status = document.querySelector(`input[name="status-${index}"]:checked`).value;
-      return { tanggal, kelas, nisn: siswa.nisn, nama: siswa.nama, status };
+      const radioChecked = document.querySelector(`input[name="status-${index}"]:checked`);
+      const status = radioChecked ? radioChecked.value : "Hadir";
+      return { 
+        tanggal, 
+        kelas, 
+        nisn: siswa.nisn, 
+        nama: siswa.nama, 
+        status 
+      };
     });
 
     btnSimpan.disabled = true;
@@ -867,14 +952,21 @@
     try {
       await fetch(SCRIPT_URL, { 
         method: "POST", 
-        mode: "no-cors", 
-        headers: { "Content-Type": "text/plain" }, 
+        mode: "no-cors",
+        headers: { 
+          "Content-Type": "application/json" 
+        }, 
         body: JSON.stringify(payload) 
       });
       
-      showAlert("✅ Presensi disimpan !", "success");
+      showAlert(`✅ Berhasil! Data ${payload.length} siswa tersimpan`, "success");
+      
+      setTimeout(() => {
+        ambilSiswaDariSheet();
+      }, 1000);
+      
     } catch (error) {
-      showAlert("❌ Gagal menyimpan data.", "error");
+      showAlert("❌ Gagal menyimpan data. Periksa koneksi internet.", "error");
     } finally {
       btnSimpan.disabled = false;
       btnSimpan.innerHTML = '💾 Simpan Data';
@@ -892,41 +984,59 @@
     loading.style.display = 'block';
 
     try {
-      const response = await fetch(`${SCRIPT_URL}?action=laporan&periode=${periode}&tanggal=${tanggal}&kelas=${kelas}`);
+      const url = `${SCRIPT_URL}?action=laporan&periode=${encodeURIComponent(periode)}&tanggal=${encodeURIComponent(tanggal)}&kelas=${encodeURIComponent(kelas)}`;
+      const response = await fetch(url);
       const result = await response.json();
 
       if (result.status === "success") {
         const data = result.data;
-        if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 30px;">Tidak ada data laporan.</td></tr>';
+        
+        if (!data || data.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="empty-state">
+                <div class="empty-state-icon"></div>
+                <p>Tidak ada data presensi untuk periode ini</p>
+              </td>
+            </tr>
+          `;
+          showAlert("ℹ️ Tidak ada data untuk periode yang dipilih", "info");
           return;
         }
+        
+        if (result.periode) {
+          showAlert(`📅 Periode: ${result.periode.mulai} s/d ${result.periode.akhir}`, "info");
+        }
+        
         data.forEach((item, index) => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td class="no-column">${index + 1}</td>
             <td class="nisn-column">${item.nisn}</td>
-            <td class="nama-column" title="${item.nama}">${item.nama}</td>
-            <td style="color: var(--success); font-weight: 600;">${item.Hadir}</td>
-            <td style="color: var(--warning); font-weight: 600;">${item.Sakit}</td>
-            <td style="color: var(--info); font-weight: 600;">${item.Izin}</td>
-            <td style="color: var(--danger); font-weight: 600;">${item.Alpa}</td>
-            <td style="font-weight: 700; color: var(--primary);">${item.Total}</td>
+            <td class="nama-column">${item.nama}</td>
+            <td style="color: var(--success); font-weight: 600; text-align: center;">${item.Hadir}</td>
+            <td style="color: var(--warning); font-weight: 600; text-align: center;">${item.Sakit}</td>
+            <td style="color: var(--info); font-weight: 600; text-align: center;">${item.Izin}</td>
+            <td style="color: var(--danger); font-weight: 600; text-align: center;">${item.Alpa}</td>
+            <td style="font-weight: 700; color: var(--primary); text-align: center;">${item.Total}</td>
           `;
           tbody.appendChild(tr);
         });
       } else {
-        showAlert("Gagal memuat laporan.", "error");
+        showAlert("❌ " + result.message, "error");
       }
     } catch (error) {
-      showAlert("Gagal terhubung untuk mengambil laporan.", "error");
+      showAlert(" Gagal mengambil laporan. Periksa koneksi internet.", "error");
     } finally {
       loading.style.display = 'none';
     }
   }
 
   initTheme();
-  ambilSiswaDariSheet();
+  
+  window.addEventListener('load', () => {
+    ambilSiswaDariSheet();
+  });
 </script>
 
 </body>
