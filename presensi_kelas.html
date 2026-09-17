@@ -142,6 +142,7 @@
       box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
     }
 
+    /* === CONTROLS: 3 KOLOM SERAGAM UNTUK LAPORAN === */
     .controls {
       display: grid;
       grid-template-columns: 1fr;
@@ -149,10 +150,16 @@
       margin-bottom: 20px;
     }
 
+    /* Untuk tab laporan: 3 kolom sama panjang */
+    .controls-laporan {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 6px;
+      min-width: 0; /* Mencegah overflow di grid */
     }
 
     label {
@@ -474,11 +481,13 @@
       opacity: 0.5;
     }
 
+    /* === RESPONSIVE === */
     @media (min-width: 640px) {
       body { padding: 30px 20px; }
       .container { padding: 30px; border-radius: 20px; }
       .header h1 { font-size: 28px; }
       .controls { grid-template-columns: repeat(2, 1fr); }
+      .controls-laporan { grid-template-columns: repeat(3, 1fr); }
       table { min-width: 700px; }
       th, td { padding: 14px 16px; }
     }
@@ -486,8 +495,16 @@
     @media (min-width: 1024px) {
       .container { max-width: 1200px; padding: 40px; }
       .header h1 { font-size: 32px; }
-      .controls { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+      .controls { grid-template-columns: repeat(2, 1fr); }
+      .controls-laporan { grid-template-columns: repeat(3, 1fr); }
       table { min-width: auto; }
+    }
+
+    /* Tablet: 3 kolom tetap seragam */
+    @media (min-width: 768px) {
+      .controls-laporan {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
     }
 
     @media (max-width: 480px) {
@@ -496,6 +513,31 @@
       .radio-custom { width: 20px; height: 20px; }
       .nama-column { min-width: 180px; }
       .header h1 { font-size: 20px; }
+      
+      /* Di HP: 3 kolom tetap seragam tapi lebih kecil */
+      .controls-laporan {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px;
+      }
+      
+      .controls-laporan label {
+        font-size: 10px;
+      }
+      
+      .controls-laporan input,
+      .controls-laporan select {
+        padding: 10px 8px;
+        font-size: 12px;
+      }
+    }
+
+    /* Landscape mode */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .header { margin-bottom: 15px; padding-bottom: 15px; }
+      .header h1 { font-size: 20px; }
+      .nav-tabs { margin-bottom: 15px; }
+      table { font-size: 12px; }
+      th, td { padding: 10px 8px; }
     }
   </style>
 </head>
@@ -504,7 +546,7 @@
 <div class="container">
   <div class="header">
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti Mode Tampilan">
-      <span id="themeIcon"></span>
+      <span id="themeIcon">🌙</span>
     </button>
     <h1>SMPN 110 JAKARTA</h1>
     <p>TAHUN PELAJARAN 2026 / 2027</p>
@@ -547,7 +589,7 @@
       <table>
         <thead>
           <tr>
-            <th class="no-column">No</th>
+            <th>No</th>
             <th>NIS</th>
             <th>Nama Siswa</th>
             <th>Status Kehadiran</th>
@@ -569,21 +611,22 @@
 
   <!-- TAB LAPORAN -->
   <div id="tab-laporan" class="tab-content">
-    <div class="controls">
+    <!-- PERUBAHAN: 3 kolom seragam, tombol Tampilkan dihapus -->
+    <div class="controls controls-laporan">
       <div class="form-group">
         <label for="lap-periode">📆 Periode</label>
-        <select id="lap-periode">
+        <select id="lap-periode" onchange="muatLaporanOtomatis()">
           <option value="minggu">Per Minggu</option>
           <option value="bulan">Per Bulan</option>
         </select>
       </div>
       <div class="form-group">
         <label for="lap-tanggal">📅 Tanggal Acuan</label>
-        <input type="date" id="lap-tanggal">
+        <input type="date" id="lap-tanggal" onchange="muatLaporanOtomatis()">
       </div>
       <div class="form-group">
         <label for="lap-kelas">🏫 Kelas</label>
-        <select id="lap-kelas">
+        <select id="lap-kelas" onchange="muatLaporanOtomatis()">
           <option value="" disabled selected>Pilih Kelas</option>
           <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
           <option value="7D">7D</option><option value="7E">7E</option><option value="7F">7F</option>
@@ -592,10 +635,6 @@
           <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option>
           <option value="9D">9D</option><option value="9E">9E</option><option value="9F">9F</option>
         </select>
-      </div>
-      <div class="form-group">
-        <label>&nbsp;</label>
-        <button class="btn-submit" onclick="muatLaporan()" style="padding: 12px;">🔍 Tampilkan</button>
       </div>
     </div>
 
@@ -608,7 +647,7 @@
       <table>
         <thead>
           <tr>
-            <th class="no-column">No</th>
+            <th>No</th>
             <th>NIS</th>
             <th>Nama</th>
             <th style="color: #4ade80;">Hadir</th>
@@ -622,7 +661,7 @@
           <tr>
             <td colspan="8" class="empty-state">
               <div class="empty-state-icon">📊</div>
-              <p>Pilih filter dan klik 'Tampilkan' untuk melihat laporan</p>
+              <p>Pilih kelas untuk melihat laporan</p>
             </td>
           </tr>
         </tbody>
@@ -632,10 +671,11 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwVxdbVSlj2jeSRRpIktPBKTQG1OIna-8gItaYiSv39GWGyVm5DalH-_LPczK6afGECTQ/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzx0DnSIbai3gC1QwBXsUW-yIaaFxEbGLrth0vyl7zvmibCfWWlfK2VCqryfhUJ1h5eHw/exec";
 
   let siswaList = [];
   let alertTimeout = null;
+  let laporanDebounce = null;
 
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('tanggal').value = today;
@@ -700,7 +740,7 @@
     }
 
     if (!tanggal) {
-      showAlert("⚠️ Silakan pilih tanggal terlebih dahulu", "info");
+      showAlert("️ Silakan pilih tanggal terlebih dahulu", "info");
       return;
     }
 
@@ -717,11 +757,11 @@
         if (result.message) showAlert(result.message, "info");
         renderTabelSiswa();
       } else {
-        showAlert("❌ " + result.message, "error");
-        tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><div class="empty-state-icon">⚠️</div><p>${result.message || 'Gagal memuat data'}</p></td></tr>`;
+        showAlert(" " + result.message, "error");
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><div class="empty-state-icon">️</div><p>${result.message || 'Gagal memuat data'}</p></td></tr>`;
       }
     } catch (error) {
-      showAlert(" Gagal terhubung ke server. Periksa koneksi internet Anda.", "error");
+      showAlert("❌ Gagal terhubung ke server. Periksa koneksi internet Anda.", "error");
       tbody.innerHTML = `<tr><td colspan="4" class="empty-state"><div class="empty-state-icon">📡</div><p>Koneksi gagal. Periksa URL script dan koneksi internet.</p></td></tr>`;
     } finally {
       loading.style.display = 'none';
@@ -809,15 +849,41 @@
     }
   }
 
+  // === FUNGSI BARU: Auto-load laporan saat user memilih kelas/periode/tanggal ===
+  function muatLaporanOtomatis() {
+    const kelas = document.getElementById('lap-kelas').value;
+    
+    // Hanya auto-load jika kelas sudah dipilih
+    if (!kelas) {
+      document.getElementById('laporan-list').innerHTML = `
+        <tr><td colspan="8" class="empty-state">
+          <div class="empty-state-icon">📊</div>
+          <p>Pilih kelas untuk melihat laporan</p>
+        </td></tr>
+      `;
+      return;
+    }
+
+    // Debounce: tunggu 500ms sebelum fetch (mencegah spam request saat user masih memilih)
+    if (laporanDebounce) clearTimeout(laporanDebounce);
+    laporanDebounce = setTimeout(() => {
+      muatLaporan();
+    }, 500);
+  }
+
   async function muatLaporan() {
-    const periode = document.getElementById('lap-periode').value;
+    const periode = document.getElementById('lap-periode').value || "minggu";
     const tanggal = document.getElementById('lap-tanggal').value;
     const kelas = document.getElementById('lap-kelas').value;
     const tbody = document.getElementById('laporan-list');
     const loading = document.getElementById('loading-laporan');
 
     if (!kelas) {
-      showAlert("⚠️ Silakan pilih kelas terlebih dahulu", "error");
+      return;
+    }
+
+    if (!tanggal) {
+      showAlert("️ Silakan pilih tanggal acuan terlebih dahulu", "info");
       return;
     }
 
@@ -838,7 +904,7 @@
         }
         
         if (result.periode) {
-          showAlert(`📅 Periode: ${result.periode.mulai} s/d ${result.periode.akhir}`, "info");
+          showAlert(` Periode: ${result.periode.mulai} s/d ${result.periode.akhir}`, "info");
         }
         
         data.forEach((item, index) => {
