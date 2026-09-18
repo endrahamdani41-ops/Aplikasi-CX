@@ -8,182 +8,132 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg-primary: #f8fafc;
+            --bg-primary: #f5f5f5;
             --bg-container: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --border-color: #e2e8f0;
-            --header-bg-start: #2563eb;
-            --header-bg-end: #1d4ed8;
-            --student-female: #dc2626;
-            --student-male: #1e293b;
-            --input-bg: #f1f5f9;
-            --hover-row: rgba(37, 99, 235, 0.04);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-            --wali-color: #0f172a;
+            --text-primary: #000000;
+            --border-color: #cccccc;
+            --header-bg: #2196F3;
+            --header-border: #1976D2;
+            --student-female: #d32f2f;
+            --student-male: #000000;
+            --input-bg: #e3f2fd;
+            --shadow: rgba(0,0,0,0.1);
+            --wali-color: #000000;
         }
 
         .dark-mode {
-            --bg-primary: #0f172a;
-            --bg-container: #1e293b;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
-            --header-bg-start: #1e40af;
-            --header-bg-end: #1e3a8a;
-            --student-female: #f87171;
-            --student-male: #e2e8f0;
-            --input-bg: #334155;
-            --hover-row: rgba(148, 163, 184, 0.1);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-            --wali-color: #f1f5f9;
+            --bg-primary: #1a1a2e;
+            --bg-container: #16213e;
+            --text-primary: #eaeaea;
+            --border-color: #444444;
+            --header-bg: #0f3460;
+            --header-border: #16213e;
+            --student-female: #ff6b6b;
+            --student-male: #ffffff;
+            --input-bg: #0f3460;
+            --shadow: rgba(0,0,0,0.5);
+            --wali-color: #ffffff;
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-primary);
-            color: var(--text-primary);
-            padding: 16px;
-            transition: background 0.3s ease, color 0.3s ease;
+            padding: 20px;
+            transition: background 0.3s ease;
         }
 
         .container {
-            max-width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
             background: var(--bg-container);
-            padding: 24px 32px;
-            border-radius: 16px;
-            box-shadow: var(--shadow-lg);
+            padding: 40px;
+            box-shadow: 0 0 20px var(--shadow);
             position: relative;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
+            transition: background 0.3s ease;
         }
 
-        .header { text-align: center; margin-bottom: 32px; }
-        .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); letter-spacing: -0.5px; }
-        .header h2 { font-size: 16px; font-weight: 500; color: var(--text-secondary); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 24px; margin-bottom: 5px; color: var(--text-primary); }
+        .header h2 { font-size: 20px; color: var(--text-primary); }
 
         .editable {
-            border: 1px dashed transparent;
-            padding: 6px 12px;
+            border: 1px dashed var(--border-color);
+            padding: 5px;
             min-height: 30px;
             display: inline-block;
             min-width: 200px;
             text-align: center;
             color: var(--text-primary);
-            border-radius: 6px;
-            transition: all 0.2s ease;
         }
 
-        .locked {
-            cursor: default !important;
-            border: none !important;
-            background: transparent !important;
-            box-shadow: none !important;
-        }
-        .locked:hover {
-            background: transparent !important;
-            border: none !important;
-        }
-
-        .editable:not(.locked):hover { border-color: var(--border-color); background: var(--input-bg); }
-        .editable:not(.locked):focus { outline: none; border-color: var(--header-bg-start); background: var(--bg-container); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-
-        .table-wrapper {
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            margin: 24px 0;
-        }
+        .editable:focus { outline: none; border-color: #2196F3; background: var(--input-bg); }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: var(--bg-container);
-            table-layout: fixed;
+            border-collapse: collapse;
+            margin: 20px 0;
+            overflow-x: auto;
+            display: block;
         }
 
         thead { display: table; width: 100%; table-layout: fixed; }
-        tbody { display: table; width: 100%; table-layout: fixed; }
+        tbody { display: block; overflow-x: auto; }
+        tbody tr { display: table; width: 100%; table-layout: fixed; }
 
         th {
-            background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
+            background: var(--header-bg);
             color: white;
-            padding: 14px 12px;
+            padding: 15px;
             text-align: center;
-            font-weight: 600;
-            font-size: 0.8rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            border: none;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            white-space: nowrap;
-            width: 20%;
+            font-weight: bold;
+            border: 2px solid var(--header-border);
         }
 
         td { 
-            padding: 10px 12px; 
+            border: 1px solid var(--border-color); 
+            padding: 10px; 
             vertical-align: middle;
-            border-bottom: 1px solid var(--border-color);
-            transition: background-color 0.2s ease;
-            width: 20%;
+            /* Hapus height tetap agar bisa memanjang sesuai isi */
+            height: auto; 
+            min-height: 45px;
         }
 
-        tbody tr:last-child td { border-bottom: none; }
-        tbody tr:hover td { background-color: var(--hover-row); }
-
+        /* PERUBAHAN UTAMA: Nama Siswa Lengkap & Wrap */
         .student-name {
             color: var(--student-female);
             font-weight: 500;
-            padding: 4px 6px;
-            border-radius: 6px;
+            padding: 5px;
             border: 1px dashed transparent;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            
+            /* Membiarkan teks turun ke bawah (wrap) */
+            white-space: normal; 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             width: 100%;
             display: block;
-            line-height: 1.4;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
+            line-height: 1.3; /* Jarak antar baris jika nama panjang */
         }
 
         .student-name.male { color: var(--student-male); }
         
-        .student-name:not(.locked):hover { 
+        .student-name:hover { 
             border-color: var(--border-color); 
             background: var(--input-bg); 
-            cursor: text; 
-            overflow: visible;
-            text-overflow: clip;
-            position: relative;
-            z-index: 5;
-            background: var(--bg-container);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            padding: 4px 8px;
+            cursor: pointer; 
         }
         
-        .student-name:not(.locked):focus { 
+        .student-name:focus { 
             outline: none; 
-            border-color: var(--header-bg-start); 
+            border-color: #2196F3; 
             background: var(--bg-container); 
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            overflow: visible;
-            text-overflow: clip;
-            white-space: normal;
             z-index: 10;
             position: relative;
         }
 
         .top-buttons {
             position: absolute;
-            top: 16px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
@@ -191,85 +141,46 @@
         }
 
         .icon-btn {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 5px var(--shadow);
         }
 
-        .icon-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        .icon-btn:active { transform: translateY(0); }
-        .icon-btn:disabled, .icon-btn.action-btn-locked { opacity: 0.4; cursor: not-allowed; transform: none; pointer-events: none; }
+        .icon-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px var(--shadow); }
+        .icon-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        .icon-btn.import { background: #f59e0b; }
-        .icon-btn.import:hover { background: #d97706; }
-        .icon-btn.import.active { background: #b45309; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3); }
+        .icon-btn.import { background: #ff9800; }
+        .icon-btn.import:hover { background: #f57c00; }
+        .icon-btn.import.active { background: #e65100; box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.4); }
 
-        .icon-btn.load { background: #6366f1; }
-        .icon-btn.load:hover { background: #4f46e5; }
-        .icon-btn.load.loading { background: #a5b4fc; cursor: wait; }
+        .icon-btn.sync { background: #009688; }
+        .icon-btn.sync:hover { background: #00796b; }
+        .icon-btn.sync.loading { background: #80cbc4; cursor: wait; }
 
-        .icon-btn.print { background: #0ea5e9; }
-        .icon-btn.print:hover { background: #0284c7; }
+        .icon-btn.load { background: #3f51b5; }
+        .icon-btn.load:hover { background: #303f9f; }
+        .icon-btn.load.loading { background: #9fa8da; cursor: wait; }
 
-        .icon-btn.delete { background: #ef4444; }
-        .icon-btn.delete:hover { background: #dc2626; }
+        .icon-btn.print { background: #4CAF50; }
+        .icon-btn.print:hover { background: #388E3C; }
 
-        .icon-btn.dark-mode { background: #8b5cf6; }
-        .icon-btn.dark-mode:hover { background: #7c3aed; }
+        .icon-btn.delete { background: #f44336; }
+        .icon-btn.delete:hover { background: #d32f2f; }
 
-        .icon-btn.unlock { background: #64748b; }
-        .icon-btn.unlock:hover { background: #475569; }
-        .icon-btn.unlock.active { background: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3); }
-
-        /* Indikator Auto-Save */
-        .autosave-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--bg-container);
-            padding: 10px 16px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-lg);
-            font-size: 13px;
-            font-weight: 500;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            z-index: 1000;
-            border: 1px solid var(--border-color);
-            animation: slideUp 0.3s ease;
-        }
-
-        .autosave-indicator.show { display: flex; }
-        .autosave-indicator.saving { color: #f59e0b; }
-        .autosave-indicator.saved { color: #10b981; }
-
-        .spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid var(--border-color);
-            border-top-color: #f59e0b;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        .icon-btn.dark-mode { background: #6c5ce7; }
+        .icon-btn.dark-mode:hover { background: #5b4cdb; }
 
         .footer {
-            margin-top: 40px;
+            margin-top: 50px;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
@@ -280,32 +191,27 @@
             display: block;
             text-align: center;
             color: var(--wali-color);
-            font-weight: 600;
-            letter-spacing: 0.05em;
             transition: color 0.3s ease;
         }
 
         .footer-input {
             border: 1px dashed var(--border-color);
-            padding: 8px;
+            padding: 5px;
             display: inline-block;
             width: 100%;
             text-align: center;
             color: var(--text-primary);
-            border-radius: 6px;
-            transition: all 0.2s ease;
         }
 
-        .footer-input:not(.locked):hover { border-color: var(--text-secondary); }
-        .footer-input:not(.locked):focus { outline: none; border-color: var(--header-bg-start); background: var(--bg-container); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .footer-input:focus { outline: none; border-color: #2196F3; }
 
         .import-area {
             display: none;
-            margin: 24px 0;
+            margin: 20px 0;
             padding: 20px;
             background: var(--input-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
             animation: slideDown 0.3s ease;
         }
 
@@ -320,86 +226,92 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
 
-        .area-header span { font-weight: 600; color: var(--text-primary); font-size: 14px; }
+        .area-header span { font-weight: bold; color: var(--text-primary); font-size: 14px; }
 
         .close-btn {
             background: none;
             border: none;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             width: 30px;
             height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: background 0.2s;
         }
 
-        .close-btn:hover { background: rgba(0,0,0,0.05); color: var(--text-primary); }
+        .close-btn:hover { background: rgba(0,0,0,0.1); }
         .dark-mode .close-btn:hover { background: rgba(255,255,255,0.1); }
 
         textarea {
             width: 100%;
-            height: 100px;
+            height: 120px;
             padding: 10px;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
+            border-radius: 5px;
+            font-family: monospace;
             font-size: 13px;
             background: var(--bg-container);
             color: var(--text-primary);
             resize: vertical;
-            transition: all 0.2s;
         }
 
-        textarea:focus { outline: none; border-color: var(--header-bg-start); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        textarea:disabled { opacity: 0.5; cursor: not-allowed; background: var(--input-bg); }
+        textarea:focus { outline: none; border-color: #2196F3; }
 
-        .btn-row { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-row { margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
 
         .btn {
             color: white;
             border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: bold;
         }
 
-        .btn-import { background: #f59e0b; }
-        .btn-import:hover { background: #d97706; transform: translateY(-1px); }
-        .btn-import:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-import { background: #ff9800; }
+        .btn-import:hover { background: #f57c00; }
 
         .status-msg {
-            margin-top: 14px;
-            padding: 10px 14px;
-            border-radius: 8px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
             font-size: 13px;
-            font-weight: 500;
             display: none;
-            animation: slideDown 0.3s ease;
         }
 
-        .status-msg.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; display: block; }
-        .status-msg.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; display: block; }
+        .status-msg.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
 
-        .dark-mode .status-msg.success { background: #14532d; color: #86efac; border-color: #166534; }
-        .dark-mode .status-msg.error { background: #450a0a; color: #fca5a5; border-color: #991b1b; }
+        .status-msg.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .dark-mode .status-msg.success { background: #1e4620; color: #a8e6b0; border-color: #2d6a30; }
+        .dark-mode .status-msg.error { background: #4a1a1d; color: #f5a0a5; border-color: #6a2528; }
+
+        .day-column { width: 20%; }
 
         .confirm-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.5);
             z-index: 9999;
             justify-content: center;
             align-items: center;
@@ -412,99 +324,89 @@
 
         .confirm-dialog {
             background: var(--bg-container);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 12px;
+            padding: 25px;
             max-width: 400px;
             width: 90%;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             animation: slideUp 0.3s ease;
-            border: 1px solid var(--border-color);
         }
 
         @keyframes slideUp {
-            from { transform: translateY(20px) scale(0.95); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .confirm-dialog h3 { color: var(--text-primary); margin-bottom: 10px; font-size: 17px; font-weight: 600; }
-        .confirm-dialog p { color: var(--text-secondary); margin-bottom: 20px; font-size: 13px; line-height: 1.5; }
+        .confirm-dialog h3 { color: var(--text-primary); margin-bottom: 10px; font-size: 18px; }
+        .confirm-dialog p { color: var(--text-primary); margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
 
-        .confirm-options { display: flex; flex-direction: column; gap: 8px; }
+        .confirm-options { display: flex; flex-direction: column; gap: 10px; }
 
         .confirm-btn {
-            padding: 11px 18px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: bold;
             color: white;
-            transition: all 0.2s;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            transition: transform 0.15s, opacity 0.15s;
         }
 
-        .confirm-btn:hover { transform: translateX(4px); opacity: 0.9; }
-        .confirm-btn.both { background: #ef4444; }
-        .confirm-btn.browser { background: #f59e0b; }
-        .confirm-btn.sheet { background: #f97316; }
-        .confirm-btn.cancel { background: var(--input-bg); color: var(--text-secondary); }
-        .confirm-btn.cancel:hover { background: var(--border-color); color: var(--text-primary); transform: none; }
+        .confirm-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+        .confirm-btn.both { background: #f44336; }
+        .confirm-btn.browser { background: #ff9800; }
+        .confirm-btn.sheet { background: #ff5722; }
+        .confirm-btn.cancel { background: #757575; }
 
         @media print {
-            .top-buttons, .import-area, .confirm-overlay, .autosave-indicator { display: none !important; }
-            .editable, .student-name, .footer-input { border: none !important; background: transparent !important; box-shadow: none !important; }
-            body { background: white; color: black; padding: 0; }
-            .container { box-shadow: none; border: none; padding: 20px; }
-            .table-wrapper { border: 1px solid #000; box-shadow: none; overflow: visible; }
-            th { background: #e2e8f0 !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .top-buttons, .import-area, .confirm-overlay { display: none !important; }
+            .editable, .student-name, .footer-input { border: none !important; background: transparent !important; }
+            body { background: white; }
+            .container { box-shadow: none; }
             .footer-line strong { color: #000 !important; }
             .student-name.male { color: #000 !important; }
-            .student-name { color: #dc2626 !important; overflow: visible !important; text-overflow: clip !important; }
         }
 
         @media screen and (max-width: 768px) {
-            body { padding: 8px; }
-            .container { padding: 16px; }
-            .header h1 { font-size: 20px; }
-            .header h2 { font-size: 14px; }
-            .top-buttons { position: static; margin-bottom: 16px; justify-content: center; gap: 6px; }
-            .icon-btn { width: 40px; height: 40px; font-size: 16px; }
-            .footer-line { width: 100%; max-width: 260px; }
-            th { padding: 10px 6px; font-size: 0.7rem; }
-            td { padding: 8px 6px; }
-            .student-name { font-size: 0.75rem; }
-            .autosave-indicator { bottom: 10px; right: 10px; font-size: 12px; }
+            body { padding: 10px; }
+            .container { padding: 20px 15px; }
+            .header h1 { font-size: 18px; }
+            .header h2 { font-size: 16px; }
+            .top-buttons { position: static; margin-bottom: 20px; justify-content: center; }
+            .icon-btn { width: 45px; height: 45px; font-size: 20px; }
+            th { padding: 10px 5px; font-size: 12px; }
+            td { padding: 8px 5px; font-size: 13px; }
+            .footer-line { width: 220px; }
         }
 
         @media screen and (max-width: 480px) {
-            .container { padding: 12px; }
-            .header h1 { font-size: 18px; }
+            .container { padding: 15px 10px; }
+            .header h1 { font-size: 16px; }
+            .header h2 { font-size: 14px; }
             .top-buttons { gap: 5px; }
-            .icon-btn { width: 36px; height: 36px; font-size: 14px; border-radius: 8px; }
-            .footer-line { max-width: 200px; }
-            th { padding: 8px 4px; font-size: 0.65rem; letter-spacing: 0.03em; }
-            td { padding: 6px 4px; }
-            .student-name { font-size: 0.7rem; padding: 2px 4px; }
+            .icon-btn { width: 40px; height: 40px; font-size: 18px; }
+            th { padding: 8px 3px; font-size: 11px; }
+            td { padding: 6px 3px; font-size: 12px; }
+            .student-name { font-size: 11px; }
+            .footer-line { width: 180px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="top-buttons">
-            <button onclick="toggleEditMode()" class="icon-btn unlock" id="unlockBtn" title="Mode Edit (Terkunci)">🔒</button>
-            <button onclick="toggleImport()" class="icon-btn import action-btn-locked" id="importBtn" title="Import Siswa" disabled>📥</button>
+            <button onclick="toggleImport()" class="icon-btn import" id="importBtn" title="Import Siswa">📥</button>
+            <button onclick="syncToSheet()" class="icon-btn sync" id="syncBtn" title="Simpan ke Google Sheet">️💾</button>
             <button onclick="loadFromSheet()" class="icon-btn load" id="loadBtn" title="Load dari Google Sheet">📂</button>
-            <button onclick="showDeleteConfirm()" class="icon-btn delete action-btn-locked" id="deleteBtn" title="Hapus Data" disabled>🗑️</button>
+            <button onclick="showDeleteConfirm()" class="icon-btn delete" title="Hapus Data">🗑️</button>
             <button onclick="window.print()" class="icon-btn print" title="Cetak">🖨️</button>
             <button onclick="toggleDarkMode()" class="icon-btn dark-mode" title="Mode Gelap/Terang">🌙</button>
         </div>
 
-        <div class="header"><br><br>
-            <h1 contenteditable="false" class="editable locked" id="title1">JADWAL PIKET KELAS</h1><br>
-            <h2 contenteditable="false" class="editable locked" id="title2">TAHUN PELAJARAN 2026-2027</h2>
+        <div class="header">
+            <h1 contenteditable="true" class="editable" id="title1">JADWAL PIKET KELAS</h1><br>
+            <h2 contenteditable="true" class="editable" id="title2">TAHUN PELAJARAN 2026-2027</h2>
         </div>
 
         <div class="import-area" id="importArea">
@@ -512,55 +414,47 @@
                 <span>📥 Import Daftar Nama Siswa</span>
                 <button class="close-btn" onclick="toggleImport()">✕</button>
             </div>
-            <textarea id="importData" placeholder="Paste daftar nama di sini (format: NAMA L atau NAMA P)" disabled></textarea>
+            <textarea id="importData" placeholder="Paste daftar nama di sini (format: NAMA L atau NAMA P)"></textarea>
             <div class="btn-row">
-                <button class="btn btn-import" onclick="importNames()" disabled>✔️ Proses Import</button>
+                <button class="btn btn-import" onclick="importNames()">✔️ Proses Import</button>
             </div>
         </div>
 
-        <div class="table-wrapper">
-            <table id="scheduleTable">
-                <thead>
-                    <tr>
-                        <th>SENIN</th>
-                        <th>SELASA</th>
-                        <th>RABU</th>
-                        <th>KAMIS</th>
-                        <th>JUMAT</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
+        <table id="scheduleTable">
+            <thead>
+                <tr>
+                    <th class="day-column">SENIN</th>
+                    <th class="day-column">SELASA</th>
+                    <th class="day-column">RABU</th>
+                    <th class="day-column">KAMIS</th>
+                    <th class="day-column">JUMAT</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
 
         <div id="statusMsg" class="status-msg"></div>
 
         <div class="footer">
             <div class="footer-line">
-                <span contenteditable="false" class="footer-input locked" id="footer1">JAKARTA, 15-09-2026</span>
+                <span contenteditable="true" class="footer-input" id="footer1">JAKARTA, 15-09-2026</span>
             </div>
             <div class="footer-line">
                 <strong>WALI KELAS</strong>
             </div>
             <div class="footer-line" style="margin-top: 60px;">
-                <span contenteditable="false" class="footer-input locked" id="footer2">_________________________</span>
+                <span contenteditable="true" class="footer-input" id="footer2">_________________________</span>
             </div>
         </div>
-    </div>
-
-    <!-- Indikator Auto-Save -->
-    <div class="autosave-indicator" id="autosaveIndicator">
-        <div class="spinner" id="autosaveSpinner"></div>
-        <span id="autosaveText">Menyimpan...</span>
     </div>
 
     <div class="confirm-overlay" id="confirmOverlay">
         <div class="confirm-dialog">
             <h3>⚠️ Hapus Data</h3>
-            <p>Pilih lokasi data yang ingin dihapus. Tindakan ini tidak dapat dibatalkan.</p>
+            <p>Pilih lokasi data yang ingin dihapus:</p>
             <div class="confirm-options">
                 <button class="confirm-btn both" onclick="deleteBoth()">🗑️ Hapus Browser & Sheet</button>
-                <button class="confirm-btn browser" onclick="deleteBrowserOnly()"> Hapus Browser Saja</button>
+                <button class="confirm-btn browser" onclick="deleteBrowserOnly()">📱 Hapus Browser Saja</button>
                 <button class="confirm-btn sheet" onclick="deleteSheetOnly()">📄 Hapus Sheet Saja</button>
                 <button class="confirm-btn cancel" onclick="closeConfirm()">Batal</button>
             </div>
@@ -568,11 +462,6 @@
     </div>
 
     <script>
-        const EDIT_PASSWORD = "admin";
-        let isEditMode = false;
-        let autoSaveTimer = null;
-        let isSaving = false;
-        
         const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyqNJ163zd2FhAplQdSmAhskFKR6oFq2io6likf1qsRhOGiTPww9-aWzOiH2uCpnwWY6A/exec';
 
         if (localStorage.getItem('darkMode') === 'true') {
@@ -580,173 +469,12 @@
         }
 
         window.onload = function() {
-            applyEditMode(false);
             if (!localStorage.getItem('scheduleData')) {
                 for (let i = 0; i < 5; i++) addRow();
             } else {
                 loadDataLocal();
             }
         };
-
-        function toggleEditMode() {
-            if (!isEditMode) {
-                const input = prompt("Masukkan password untuk mengedit data:");
-                if (input === EDIT_PASSWORD) {
-                    isEditMode = true;
-                    applyEditMode(true);
-                    showStatus("✅ Mode Edit Aktif. Perubahan akan otomatis tersimpan.", "success");
-                } else if (input !== null) {
-                    showStatus("❌ Password salah!", "error");
-                }
-            } else {
-                isEditMode = false;
-                applyEditMode(false);
-                showStatus("🔒 Mode Lihat Saja (Terkunci)", "success");
-            }
-        }
-
-        function applyEditMode(enabled) {
-            const unlockBtn = document.getElementById('unlockBtn');
-            unlockBtn.textContent = enabled ? "" : "🔒";
-            unlockBtn.title = enabled ? "Kunci Edit" : "Mode Edit";
-            
-            if (enabled) {
-                unlockBtn.classList.add('active');
-            } else {
-                unlockBtn.classList.remove('active');
-            }
-
-            const editables = document.querySelectorAll('.editable, .student-name, .footer-input');
-            editables.forEach(el => {
-                el.contentEditable = enabled;
-                if (enabled) {
-                    el.classList.remove('locked');
-                    // Tambahkan event listener untuk auto-save
-                    el.addEventListener('input', handleAutoSave);
-                } else {
-                    el.classList.add('locked');
-                    el.removeEventListener('input', handleAutoSave);
-                }
-            });
-
-            const actionButtons = [
-                document.getElementById('importBtn'),
-                document.getElementById('deleteBtn'),
-                document.querySelector('.btn-import')
-            ];
-
-            actionButtons.forEach(btn => {
-                if (btn) {
-                    btn.disabled = !enabled;
-                    if (enabled) {
-                        btn.classList.remove('action-btn-locked');
-                    } else {
-                        btn.classList.add('action-btn-locked');
-                    }
-                }
-            });
-
-            const textarea = document.getElementById('importData');
-            textarea.disabled = !enabled;
-        }
-
-        // --- AUTO-SAVE DENGAN DEBOUNCE ---
-        function handleAutoSave() {
-            if (!isEditMode || isSaving) return;
-            
-            // Clear timer sebelumnya
-            if (autoSaveTimer) {
-                clearTimeout(autoSaveTimer);
-            }
-            
-            // Tampilkan indikator "Menyimpan..."
-            showAutosaveIndicator('saving');
-            
-            // Debounce 2 detik - simpan setelah user berhenti mengetik
-            autoSaveTimer = setTimeout(() => {
-                performAutoSave();
-            }, 2000);
-        }
-
-        async function performAutoSave() {
-            if (!isEditMode || isSaving) return;
-            
-            isSaving = true;
-            showAutosaveIndicator('saving');
-
-            const data = {
-                action: 'save',
-                title1: document.getElementById('title1').innerText,
-                title2: document.getElementById('title2').innerText,
-                footer1: document.getElementById('footer1').innerText,
-                footer2: document.getElementById('footer2').innerText,
-                rows: []
-            };
-
-            const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach(row => {
-                const rowData = [];
-                const cells = row.querySelectorAll('.student-name');
-                cells.forEach(cell => {
-                    rowData.push({ text: cell.innerText, isMale: cell.classList.contains('male') });
-                });
-                data.rows.push(rowData);
-            });
-
-            try {
-                await fetch(SHEET_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(data)
-                });
-
-                localStorage.setItem('scheduleData', JSON.stringify(data));
-                showAutosaveIndicator('saved');
-                
-                // Sembunyikan indikator setelah 2 detik
-                setTimeout(() => {
-                    hideAutosaveIndicator();
-                }, 2000);
-            } catch (error) {
-                console.error('Auto-save error:', error);
-                showAutosaveIndicator('error');
-                setTimeout(() => {
-                    hideAutosaveIndicator();
-                }, 3000);
-            } finally {
-                isSaving = false;
-            }
-        }
-
-        function showAutosaveIndicator(status) {
-            const indicator = document.getElementById('autosaveIndicator');
-            const spinner = document.getElementById('autosaveSpinner');
-            const text = document.getElementById('autosaveText');
-            
-            indicator.classList.remove('saving', 'saved');
-            indicator.classList.add('show');
-            
-            if (status === 'saving') {
-                spinner.style.display = 'block';
-                text.textContent = 'Menyimpan...';
-                indicator.classList.add('saving');
-            } else if (status === 'saved') {
-                spinner.style.display = 'none';
-                text.textContent = '✓ Tersimpan';
-                indicator.classList.add('saved');
-            } else if (status === 'error') {
-                spinner.style.display = 'none';
-                text.textContent = '✗ Gagal menyimpan';
-                indicator.style.color = '#ef4444';
-            }
-        }
-
-        function hideAutosaveIndicator() {
-            const indicator = document.getElementById('autosaveIndicator');
-            indicator.classList.remove('show', 'saving', 'saved');
-            indicator.style.color = '';
-        }
 
         function showStatus(message, type = 'success') {
             const statusMsg = document.getElementById('statusMsg');
@@ -761,7 +489,6 @@
         }
 
         function toggleImport() {
-            if (!isEditMode) return;
             const area = document.getElementById('importArea');
             const btn = document.getElementById('importBtn');
             area.classList.toggle('show');
@@ -777,8 +504,9 @@
             for (let i = 0; i < 5; i++) {
                 const td = document.createElement('td');
                 const div = document.createElement('div');
-                div.className = 'student-name locked';
-                div.contentEditable = false;
+                div.className = 'student-name';
+                div.contentEditable = true;
+                // Set title attribute untuk tooltip saat hover
                 div.oninput = function() { this.title = this.innerText; };
                 td.appendChild(div);
                 row.appendChild(td);
@@ -787,7 +515,6 @@
         }
 
         function importNames() {
-            if (!isEditMode) return;
             const text = document.getElementById('importData').value.trim();
             if (!text) { showStatus('Silakan paste data nama terlebih dahulu!', 'error'); return; }
             importNamesFromText(text);
@@ -820,11 +547,11 @@
                 for (let colIndex = 0; colIndex < 5; colIndex++) {
                     const td = document.createElement('td');
                     const div = document.createElement('div');
-                    div.className = 'student-name locked';
-                    div.contentEditable = false;
+                    div.className = 'student-name';
+                    div.contentEditable = true;
                     if (rowIndex < columns[colIndex].length) {
                         div.textContent = columns[colIndex][rowIndex].name;
-                        div.title = columns[colIndex][rowIndex].name;
+                        div.title = columns[colIndex][rowIndex].name; // Tooltip nama lengkap
                         if (columns[colIndex][rowIndex].gender === 'L') div.classList.add('male');
                     }
                     td.appendChild(div);
@@ -836,15 +563,9 @@
             document.getElementById('importData').value = '';
             toggleImport();
             showStatus(`Berhasil: ${females.length} Perempuan, ${males.length} Laki-laki`);
-            
-            // Trigger auto-save setelah import
-            setTimeout(() => performAutoSave(), 500);
         }
 
-        function showDeleteConfirm() { 
-            if (!isEditMode) return;
-            document.getElementById('confirmOverlay').classList.add('show'); 
-        }
+        function showDeleteConfirm() { document.getElementById('confirmOverlay').classList.add('show'); }
         function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('show'); }
         document.getElementById('confirmOverlay').addEventListener('click', function(e) { if (e.target === this) closeConfirm(); });
 
@@ -860,7 +581,7 @@
         }
 
         async function deleteFromSheet() {
-            const deleteBtn = document.getElementById('deleteBtn');
+            const deleteBtn = document.querySelector('.icon-btn.delete');
             deleteBtn.classList.add('loading');
             deleteBtn.disabled = true;
 
@@ -880,6 +601,48 @@
             }
         }
 
+        async function syncToSheet() {
+            const syncBtn = document.getElementById('syncBtn');
+            syncBtn.classList.add('loading');
+            syncBtn.disabled = true;
+
+            const data = {
+                action: 'save',
+                title1: document.getElementById('title1').innerText,
+                title2: document.getElementById('title2').innerText,
+                footer1: document.getElementById('footer1').innerText,
+                footer2: document.getElementById('footer2').innerText,
+                rows: []
+            };
+
+            const rows = document.querySelectorAll('#tableBody tr');
+            rows.forEach(row => {
+                const rowData = [];
+                const cells = row.querySelectorAll('.student-name');
+                cells.forEach(cell => {
+                    rowData.push({ text: cell.innerText, isMale: cell.classList.contains('male') });
+                });
+                data.rows.push(rowData);
+            });
+
+            try {
+                await fetch(SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(data)
+                });
+
+                showStatus('✅ Data berhasil dikirim ke Google Sheet!');
+                localStorage.setItem('scheduleData', JSON.stringify(data));
+            } catch (error) {
+                showStatus('❌ Gagal menyimpan: ' + error.message, 'error');
+            } finally {
+                syncBtn.classList.remove('loading');
+                syncBtn.disabled = false;
+            }
+        }
+
         async function loadFromSheet() {
             const loadBtn = document.getElementById('loadBtn');
             loadBtn.classList.add('loading');
@@ -887,6 +650,8 @@
 
             try {
                 const response = await fetch(SHEET_URL + '?action=load');
+                
+                // Cek apakah response adalah JSON
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     throw new Error('URL Sheet tidak valid. Response bukan JSON.');
@@ -910,10 +675,10 @@
                             rowData.forEach(cellData => {
                                 const td = document.createElement('td');
                                 const div = document.createElement('div');
-                                div.className = 'student-name locked';
-                                div.contentEditable = false;
+                                div.className = 'student-name';
+                                div.contentEditable = true;
                                 div.innerText = cellData.text || '';
-                                div.title = cellData.text || '';
+                                div.title = cellData.text || ''; // Tooltip nama lengkap
                                 if (cellData.isMale) div.classList.add('male');
                                 td.appendChild(div);
                                 row.appendChild(td);
@@ -959,11 +724,11 @@
                         rowData.forEach(cellData => {
                             const td = document.createElement('td');
                             const div = document.createElement('div');
-                            div.className = 'student-name locked';
-                            div.contentEditable = false;
+                            div.className = 'student-name';
+                            div.contentEditable = true;
                             if (typeof cellData === 'object') {
                                 div.innerText = cellData.text || '';
-                                div.title = cellData.text || '';
+                                div.title = cellData.text || ''; // Tooltip nama lengkap
                                 if (cellData.isMale) div.classList.add('male');
                             } else {
                                 div.innerText = cellData || '';
