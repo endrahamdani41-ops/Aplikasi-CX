@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter Soal LMS - Fix BR Tag</title>
+    <title>Konverter Soal - Icon Header</title>
     
     <!-- Load Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Load Tailwind CSS -->
+    <!-- Load Tailwind CSS & Mammoth.js for DOCX reading -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -51,22 +52,65 @@
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        /* Header button hover effects */
+        .header-btn {
+            @apply flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 shadow-sm;
+        }
+        .header-btn:hover {
+            @apply transform scale-110 shadow-md;
+        }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200 antialiased min-h-screen flex justify-center p-4 sm:p-6">
 
     <div class="w-full max-w-5xl flex flex-col gap-5">
         
-        <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-slate-800 p-5 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <div class="flex items-center gap-3 mb-4 sm:mb-0">
-                <span class="text-2xl"></span>
-                <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Konverter Soal LMS</h1>
+        <!-- Header with ALL Action Buttons -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-slate-800 p-4 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">📝</span>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Konverter Soal</h1>
             </div>
-            <button id="themeToggleBtn" onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors shadow-inner" title="Ubah Tema">
-                <span id="themeIcon">☀️</span>
-                <span id="themeText" class="hidden sm:inline">Light Mode</span>
-            </button>
+            
+            <!-- Right Side: Theme Toggle + Action Buttons -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
+                
+                <!-- 1. Konversi Button -->
+                <button onclick="convertQuestions()" 
+                    class="header-btn bg-blue-600 hover:bg-blue-700 text-white border border-blue-500" 
+                    title="Konversi ke Format Template">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </button>
+                
+                <!-- 2. Upload Kunci Jawaban Button -->
+                <input type="file" id="answerKeyFile" accept=".txt,.docx" class="hidden" onchange="handleAnswerKeyUpload(this)">
+                <button onclick="document.getElementById('answerKeyFile').click()" 
+                    class="header-btn bg-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600" 
+                    title="Upload Kunci Jawaban">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </button>
+
+                <!-- 3. Bersihkan Button -->
+                <button onclick="clearInput()" 
+                    class="header-btn bg-transparent hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-600 hover:border-red-300 dark:hover:border-red-700" 
+                    title="Bersihkan Input">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+
+                <!-- Divider -->
+                <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+
+                <!-- 4. Theme Toggle Button (Icon Only) -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" 
+                    class="header-btn bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-yellow-400 border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500" 
+                    title="Ubah Tema">
+                    <!-- Sun Icon (Visible in Dark Mode) -->
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <!-- Moon Icon (Visible in Light Mode) -->
+                    <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
         </header>
 
         <main class="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-5">
@@ -74,14 +118,13 @@
             <!-- Input Area -->
             <div class="flex flex-col gap-2">
                 <div class="flex justify-between items-center">
-                    <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
+                    <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal:</label>
                     
                     <!-- IMAGE PLACEHOLDER TOOL -->
-                    <div class="flex gap-2">
-                        <button onclick="insertImagePlaceholder()" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 transition-colors" title="Sisipkan Penanda Gambar">
-                            ️ Sisip [GAMBAR DI SINI]
-                        </button>
-                    </div>
+                    <button onclick="insertImagePlaceholder()" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 transition-colors" title="Sisipkan Penanda Gambar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Sisip [GAMBAR]
+                    </button>
                 </div>
 
                 <textarea id="rawInput" class="w-full h-64 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal dan opsi di sini...
@@ -90,14 +133,10 @@
             </div>
 
             <!-- Configuration Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="flex flex-col gap-2">
                     <label for="kategoriInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Kategori Soal:</label>
                     <input type="text" id="kategoriInput" placeholder="ASTS INFORMATIKA-7" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="kunciInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Kunci Default:</label>
-                    <input type="text" id="kunciInput" value="a" placeholder="a / b / c / d" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="poinInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Poin per Soal:</label>
@@ -108,26 +147,13 @@
                     <input type="text" id="pembahasanInput" value="-" placeholder="Isi pembahasan" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
             </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                <button onclick="convertQuestions()" class="flex-1 sm:flex-[2] py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-px transition-all flex items-center justify-center gap-2">
-                    ✨ Konversi ke Format Template
-                </button>
-                <button onclick="loadSampleText()" class="flex-1 py-3 px-4 bg-transparent border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
-                    📄 Isi Contoh Soal
-                </button>
-                <button onclick="clearInput()" class="flex-1 py-3 px-4 bg-transparent border border-slate-300 dark:border-slate-600 hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-800 dark:text-slate-200 hover:text-red-600 dark:hover:text-red-400 hover:border-red-300 dark:hover:border-red-700 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
-                    🗑️ Bersihkan
-                </button>
-            </div>
         </main>
 
         <!-- Output / Preview Section -->
         <section id="outputCard" class="hidden bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm animate-[fadeIn_0.3s_ease-in-out]">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-4 mb-4 gap-4">
                 <div class="flex items-center gap-3">
-                    <span class="text-xl"></span>
+                    <span class="text-xl">📋</span>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">Hasil Konversi LMS</h2>
                     <span id="statsCount" class="text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-3 py-1 rounded-full">0 Soal</span>
                 </div>
@@ -168,68 +194,48 @@
 
         function applyTheme(theme) {
             const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            const text = document.getElementById('themeText');
             
             if (theme === 'dark') {
                 html.classList.add('dark');
-                icon.textContent = '☀️';
-                text.textContent = 'Light Mode';
             } else {
                 html.classList.remove('dark');
-                icon.textContent = '';
-                text.textContent = 'Dark Mode';
             }
         }
         initTheme();
 
         // --- 2. Image Placeholder Logic ---
-        
-        // Insert placeholder at cursor position in textarea
         function insertImagePlaceholder() {
             const textarea = document.getElementById('rawInput');
             const startPos = textarea.selectionStart;
             const endPos = textarea.selectionEnd;
             const text = textarea.value;
-            
             const placeholder = `\n[GAMBAR DI SINI]\n`; 
-            
             textarea.value = text.substring(0, startPos) + placeholder + text.substring(endPos, text.length);
-            
             textarea.focus();
             textarea.selectionStart = textarea.selectionEnd = startPos + placeholder.length;
-            
             showToast("Penanda [GAMBAR DI SINI] berhasil disisipkan!", "success");
         }
 
-        // --- 3. Parsing Logic (Fixed for PAI & Instructions) ---
-
+        // --- 3. Parsing Logic ---
         function cleanPrefix(text) {
             if (!text) return '';
-            // Remove option prefixes like "A. ", "a) ", "1. ", "B.  ", "(A) "
             return text.replace(/^\s*(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s*|\b[A-Ea-e]\b\s*[\.\-]\s*)/, '').trim();
         }
 
         function cleanQuestionPrefix(text) {
             if (!text) return '';
-            // Remove question numbers like "1. ", "1)", "Soal 1:", "45.Rangkaian"
             return text.replace(/^\s*(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i, '').trim();
         }
 
-        // Helper to detect short instructions like "1. Perhatikan gambar!"
         function isLikelyShortInstruction(text) {
             const cleanText = cleanQuestionPrefix(text).trim();
             const shortKeywords = ['perhatikan', 'cermati', 'simak', 'lihat', 'amati'];
-            
-            // If text is short (< 30 chars) AND contains instruction keyword
             return cleanText.length < 30 && shortKeywords.some(keyword => cleanText.toLowerCase().includes(keyword));
         }
 
         function parseRawText(raw) {
-            // Split by double newlines to separate question blocks
             const blocks = raw.split(/\r?\n\s*\r?\n/).map(b => b.trim()).filter(b => b.length > 0);
             const questions = [];
-            
             if (blocks.length > 1) {
                 blocks.forEach(block => {
                     const lines = block.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
@@ -245,18 +251,12 @@
         function parseLinesSmart(lines, questionsArray) {
             let currentQuestionLines = [];
             const reNumberStart = /^(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i;
-            
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
                 const isNewNumberedQuestion = reNumberStart.test(line);
-                
                 if (isNewNumberedQuestion && currentQuestionLines.length > 0) {
-                    // FIX: Check if previous line was a short instruction
                     const lastLine = currentQuestionLines[currentQuestionLines.length - 1];
-                    const isShortInstruction = isLikelyShortInstruction(lastLine);
-                    
-                    if (isShortInstruction) {
-                        // Merge instruction into current block instead of splitting
+                    if (isLikelyShortInstruction(lastLine)) {
                         currentQuestionLines.push(line);
                     } else {
                         extractQuestionFromLines(currentQuestionLines, questionsArray);
@@ -266,7 +266,6 @@
                     currentQuestionLines.push(line);
                 }
             }
-            
             if (currentQuestionLines.length > 0) {
                 extractQuestionFromLines(currentQuestionLines, questionsArray);
             }
@@ -274,11 +273,9 @@
         
         function extractQuestionFromLines(lines, questionsArray) {
             if (lines.length === 0) return;
-
             let questionLines = [];
             let options = [];
             const reOptionPrefix = /^(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s+|\b[A-Ea-e]\b\s*[\.\-]\s+)/;
-
             let firstOptionIdx = -1;
             for (let i = 0; i < lines.length; i++) {
                 if (reOptionPrefix.test(lines[i])) {
@@ -286,12 +283,10 @@
                     break;
                 }
             }
-
             if (firstOptionIdx !== -1 && firstOptionIdx > 0) {
                 questionLines = lines.slice(0, firstOptionIdx);
                 options = lines.slice(firstOptionIdx).map(cleanPrefix);
             } else {
-                // Fallback logic
                 if (lines.length >= 5) {
                     options = lines.slice(-4).map(cleanPrefix);
                     questionLines = lines.slice(0, -4);
@@ -303,52 +298,97 @@
                     options = [];
                 }
             }
-            
             if (questionLines.length > 0) {
                 questionLines[0] = cleanQuestionPrefix(questionLines[0]);
             }
-            
             while (options.length < 4) {
                 options.push("[Opsi tidak ditemukan]");
             }
-            
-            // PERBAIKAN: Simpan sebagai ARRAY, JANGAN join dengan <br> di sini
-            // Biarkan joining dilakukan saat rendering HTML agar aman dari escaping
-            questionsArray.push({
-                soalLines: questionLines, 
-                opsi: options
-            });
+            questionsArray.push({ soalLines: questionLines, opsi: options });
         }
 
         // --- 4. Conversion & Output Generation ---
-
         function escapeHtmlOnly(text) {
              if (!text) return '';
-             // Hanya escape karakter khusus HTML, biarkan tag placeholder utuh
-             return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // Global variable to store manually uploaded answer keys
+        let manualAnswerKeys = {};
+
+        // PERBAIKAN UTAMA: Fungsi upload kunci jawaban yang lebih fleksibel
+        async function handleAnswerKeyUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            let textContent = '';
+            const fileExt = file.name.split('.').pop().toLowerCase();
+
+            try {
+                if (fileExt === 'docx') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                    textContent = result.value;
+                } else if (fileExt === 'txt') {
+                    textContent = await file.text();
+                } else {
+                    showToast("Format file tidak didukung. Gunakan .txt atau .docx", "error");
+                    return;
+                }
+
+                // Parse the answer key text
+                manualAnswerKeys = {};
+                
+                // Bersihkan teks dari karakter aneh hasil copy-paste atau OCR
+                let cleanText = textContent.replace(/\r\n/g, '\n').replace(/\t/g, ' ');
+                const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                
+                // REGEX BARU: Mendukung 1) A, 1. A, 1 : A, atau 1 A
+                const keyRegex = /^(\d+)\s*[\.\):]?\s*([a-dA-D])\s*$/i;
+
+                lines.forEach(line => {
+                    const match = line.match(keyRegex);
+                    if (match) {
+                        const questionNum = parseInt(match[1], 10);
+                        const answer = match[2].toLowerCase(); 
+                        manualAnswerKeys[questionNum] = answer;
+                    }
+                });
+
+                if (Object.keys(manualAnswerKeys).length > 0) {
+                    showToast(`✅ Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban!`, "success");
+                    
+                    const outputCard = document.getElementById('outputCard');
+                    if (!outputCard.classList.contains('hidden')) {
+                        convertQuestions();
+                    }
+                } else {
+                    showToast("️ Format kunci tidak dikenali. Pastikan format: 1) A atau 1. A", "warning");
+                }
+
+            } catch (err) {
+                console.error(err);
+                showToast("Gagal membaca file kunci jawaban.", "error");
+            } finally {
+                input.value = ''; 
+            }
         }
 
         function convertQuestions() {
             const rawText = document.getElementById('rawInput').value.trim();
             if (!rawText) {
-                showToast("️ Mohon isi atau paste teks soal terlebih dahulu!", "warning");
+                showToast("⚠️ Mohon isi atau paste teks soal terlebih dahulu!", "warning");
                 return;
             }
 
             const kategori = document.getElementById('kategoriInput').value.trim() || 'Umum';
-            const kunci = document.getElementById('kunciInput').value.trim().toLowerCase() || 'a';
             const poin = document.getElementById('poinInput').value.trim() || '1';
             const pembahasan = document.getElementById('pembahasanInput').value.trim() || '-';
 
             const parsedList = parseRawText(rawText);
 
             if (parsedList.length === 0) {
-                showToast("❌ Tidak dapat mengenali format soal.", "error");
+                showToast(" Tidak dapat mengenali format soal.", "error");
                 return;
             }
 
@@ -357,21 +397,19 @@
             parsedList.forEach((q, index) => {
                 const noNum = index + 1;
                 
-                // PERBAIKAN UTAMA: Escape setiap baris secara terpisah, lalu gabung dengan <br>
-                // Ini mencegah <br> ikut ter-escape menjadi &lt;br&gt;
                 let escapedLines = q.soalLines.map(line => {
-                    // Handle image placeholder inside each line before escaping
                     let processedLine = line.replace(/\[GAMBAR DI SINI\]/g, '<span class="img-placeholder">[GAMBAR DI SINI]</span>');
-                    // Escape only the text parts, not our custom span tags
-                    // Simple approach: split by placeholder, escape parts, rejoin
                     let parts = processedLine.split('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
                     let escapedParts = parts.map(p => escapeHtmlOnly(p));
                     return escapedParts.join('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
                 });
-                
                 let processedSoal = escapedLines.join('<br>');
 
-                // Labels tetap bold
+                let finalKey = 'a'; 
+                if (manualAnswerKeys[noNum]) {
+                    finalKey = manualAnswerKeys[noNum];
+                }
+
                 htmlResult += `<div><b>No:</b> ${noNum}</div>\n`;
                 htmlResult += `<div><b>Kategori:</b> ${escapeHtmlOnly(kategori)}</div>\n`;
                 htmlResult += `<div><b>Soal :</b> ${processedSoal}</div>\n`; 
@@ -379,17 +417,15 @@
                 
                 htmlResult += `<ol type="a">\n`;
                 q.opsi.forEach(opt => {
-                    // Apply same safe processing for options
                     let processedOpt = opt.replace(/\[GAMBAR DI SINI\]/g, '<span class="img-placeholder">[GAMBAR DI SINI]</span>');
                     let parts = processedOpt.split('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
                     let escapedParts = parts.map(p => escapeHtmlOnly(p));
                     let finalOpt = escapedParts.join('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
-                    
                     htmlResult += `  <li>${finalOpt}</li>\n`;
                 });
                 htmlResult += `</ol>\n`;
 
-                htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(kunci)}</div>\n`;
+                htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(finalKey)}</div>\n`;
                 htmlResult += `<div><b>Poin:</b> ${escapeHtmlOnly(poin)}</div>\n`;
                 htmlResult += `<div><b>Pembahasan:</b> ${escapeHtmlOnly(pembahasan)}</div>\n`;
                 
@@ -411,50 +447,37 @@
         // --- 5. Copy to Word ---
         async function copyResultToWord() {
             const previewEl = document.getElementById('resultPreview');
-            
             if (!previewEl.innerHTML.trim()) {
-                showToast("️ Tidak ada hasil untuk disalin!", "warning");
+                showToast("⚠️ Tidak ada hasil untuk disalin!", "warning");
                 return;
             }
-
             try {
-                // Using modern Clipboard API to send pure HTML
                 const htmlContent = previewEl.innerHTML;
                 const blob = new Blob([htmlContent], { type: 'text/html' });
                 const data = [new ClipboardItem({ 'text/html': blob })];
-                
                 await navigator.clipboard.write(data);
-                
                 const copyBtn = document.getElementById('copyBtn');
                 const origText = copyBtn.innerHTML;
-                
                 copyBtn.innerHTML = '✅ Berhasil Disalin!';
                 copyBtn.classList.replace('bg-emerald-600', 'bg-emerald-500');
-                
                 setTimeout(() => {
                     copyBtn.innerHTML = origText;
                     copyBtn.classList.replace('bg-emerald-500', 'bg-emerald-600');
                 }, 2500);
-
                 showToast(" Hasil disalin! Paste di Word (Ctrl+V).", "success");
-                
             } catch (err) {
                 console.error("Modern clipboard failed, falling back...", err);
-                
-                // Fallback to manual selection
                 const range = document.createRange();
                 range.selectNodeContents(previewEl);
                 const selection = window.getSelection();
                 selection.removeAllRanges();
                 selection.addRange(range);
-
                 try {
                     document.execCommand('copy');
-                    showToast(" Disalin (Fallback)! Silakan paste ke Word.", "warning");
+                    showToast("📋 Disalin (Fallback)! Silakan paste ke Word.", "warning");
                 } catch (e) {
                     showToast("❌ Gagal menyalin. Silakan blok manual & Ctrl+C.", "error");
                 }
-                
                 selection.removeAllRanges();
             }
         }
@@ -463,43 +486,21 @@
         function clearInput() {
             document.getElementById('rawInput').value = '';
             document.getElementById('outputCard').classList.add('hidden');
-            showToast("🗑️ Input telah dibersihkan.", "info");
-        }
-
-        function loadSampleText() {
-            const sampleText = `1. Perhatikan gambar!
-[GAMBAR DI SINI]
-AC merupakan diameter lingkaran yang berpusat di titik O. Jika besar BOA=100°, maka ∠CDB=…
-a. 40°
-b. 50°
-c. 80°
-d. 100°
-
-2. Sebuah tabung memiliki jari-jari alas 7 cm dan tinggi 10 cm. Volume tabung tersebut adalah... (π = 22/7)
-a. 1.540 cm³
-b. 1.540 cm²
-c. 3.080 cm³
-d. 3.080 cm²`;
-
-            document.getElementById('rawInput').value = sampleText;
-            showToast(" Contoh soal geometri dimuat!", "info");
+            manualAnswerKeys = {}; 
+            showToast("️ Input telah dibersihkan.", "info");
         }
 
         function showToast(msg, type) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
             const toastIcon = document.getElementById('toastIcon');
-
             toastMsg.textContent = msg;
-
             if (type === 'success') toastIcon.textContent = '✅';
             else if (type === 'warning') toastIcon.textContent = '️';
-            else if (type === 'error') toastIcon.textContent = '';
+            else if (type === 'error') toastIcon.textContent = '❌';
             else toastIcon.textContent = '️';
-
             toast.classList.remove('translate-y-[150px]', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
-            
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-[150px]', 'opacity-0');
