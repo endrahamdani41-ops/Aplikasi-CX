@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter Soal Universal ke Format Template LMS</title>
+    <title>Konverter Soal LMS - Fix BR Tag</title>
     
     <!-- Load Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,19 +25,42 @@
     </script>
     
     <style>
-        /* Minimal custom styles for specific rich-text outputs */
+        /* Custom styles for rich-text outputs */
         .preview-box ol { margin-top: 4px; margin-bottom: 4px; padding-left: 28px; list-style-type: lower-alpha; }
         .preview-box li { margin-bottom: 2px; }
+        .preview-box div { margin-bottom: 2px; }
+        
+        /* Placeholder styling for images - BLOCK ELEMENT */
+        .img-placeholder {
+            display: block;
+            width: fit-content;
+            margin: 15px auto;
+            background-color: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            color: #475569;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.95em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Scrollbar styling for dark mode */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200 antialiased min-h-screen flex justify-center p-4 sm:p-6">
 
-    <div class="w-full max-w-4xl flex flex-col gap-5">
+    <div class="w-full max-w-5xl flex flex-col gap-5">
         
         <!-- Header -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-slate-800 p-5 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <div class="flex items-center gap-3 mb-4 sm:mb-0">
-                <span class="text-2xl">📝</span>
+                <span class="text-2xl"></span>
                 <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Konverter Soal LMS</h1>
             </div>
             <button id="themeToggleBtn" onclick="toggleTheme()" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors shadow-inner" title="Ubah Tema">
@@ -48,10 +71,22 @@
 
         <main class="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-5">
             
-            <!-- Raw Input Textarea -->
+            <!-- Input Area -->
             <div class="flex flex-col gap-2">
-                <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
-                <textarea id="rawInput" class="w-full h-56 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal dan opsi di sini..."></textarea>
+                <div class="flex justify-between items-center">
+                    <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
+                    
+                    <!-- IMAGE PLACEHOLDER TOOL -->
+                    <div class="flex gap-2">
+                        <button onclick="insertImagePlaceholder()" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 transition-colors" title="Sisipkan Penanda Gambar">
+                            ️ Sisip [GAMBAR DI SINI]
+                        </button>
+                    </div>
+                </div>
+
+                <textarea id="rawInput" class="w-full h-64 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal dan opsi di sini...
+
+"></textarea>
             </div>
 
             <!-- Configuration Grid -->
@@ -92,17 +127,21 @@
         <section id="outputCard" class="hidden bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm animate-[fadeIn_0.3s_ease-in-out]">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-4 mb-4 gap-4">
                 <div class="flex items-center gap-3">
-                    <span class="text-xl">📋</span>
+                    <span class="text-xl"></span>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">Hasil Konversi LMS</h2>
                     <span id="statsCount" class="text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-3 py-1 rounded-full">0 Soal</span>
                 </div>
-                <button id="copyBtn" onclick="copyResult()" class="w-full sm:w-auto py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-px transition-all flex items-center justify-center gap-2 text-sm">
-                    📋 Salin Hasil (Siap Paste)
+                <button id="copyBtn" onclick="copyResultToWord()" class="w-full sm:w-auto py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-px transition-all flex items-center justify-center gap-2 text-sm">
+                     Salin Ke Word
                 </button>
             </div>
-            <div id="resultPreview" class="preview-box w-full min-h-[250px] max-h-[550px] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-5 font-serif text-black dark:text-slate-200 text-base leading-relaxed shadow-inner focus:outline-none" contenteditable="true" spellcheck="false">
+            
+            <!-- Preview Box -->
+            <div id="resultPreview" class="preview-box w-full min-h-[250px] max-h-[600px] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-5 font-serif text-black dark:text-slate-200 text-base leading-relaxed shadow-inner focus:outline-none" contenteditable="true" spellcheck="false">
                 <!-- Converted content injected here -->
             </div>
+            
+            <p class="mt-3 text-xs text-slate-500 dark:text-slate-400 italic">*Tips: Setelah menyalin, paste ke Microsoft Word. Opsi A, B, C, D akan otomatis bernomor. Ganti [GAMBAR DI SINI] dengan gambar asli di Word.</p>
         </section>
     </div>
 
@@ -113,9 +152,8 @@
     </div>
 
     <script>
-        // --- 1. Theme Management (Dark/Light Mode) ---
+        // --- 1. Theme Management ---
         function initTheme() {
-            // Default to dark mode based on root class
             const isDark = document.documentElement.classList.contains('dark');
             const savedTheme = localStorage.getItem('konverter_theme') || (isDark ? 'dark' : 'light');
             applyTheme(savedTheme);
@@ -139,65 +177,91 @@
                 text.textContent = 'Light Mode';
             } else {
                 html.classList.remove('dark');
-                icon.textContent = '🌙';
+                icon.textContent = '';
                 text.textContent = 'Dark Mode';
             }
         }
-
-        // Initialize theme immediately
         initTheme();
+
+        // --- 2. Image Placeholder Logic ---
+        
+        // Insert placeholder at cursor position in textarea
+        function insertImagePlaceholder() {
+            const textarea = document.getElementById('rawInput');
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const text = textarea.value;
+            
+            const placeholder = `\n[GAMBAR DI SINI]\n`; 
+            
+            textarea.value = text.substring(0, startPos) + placeholder + text.substring(endPos, text.length);
+            
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = startPos + placeholder.length;
+            
+            showToast("Penanda [GAMBAR DI SINI] berhasil disisipkan!", "success");
+        }
+
+        // --- 3. Parsing Logic (Fixed for PAI & Instructions) ---
 
         function cleanPrefix(text) {
             if (!text) return '';
-            // Remove option prefixes like "A. ", "a) ", "1. ", "A.  ", "(A) "
-            return text
-                .replace(/^\s*(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s*|\b[A-Ea-e]\b\s*[\.\-]\s*)/, '')
-                .trim();
+            // Remove option prefixes like "A. ", "a) ", "1. ", "B.  ", "(A) "
+            return text.replace(/^\s*(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s*|\b[A-Ea-e]\b\s*[\.\-]\s*)/, '').trim();
         }
 
         function cleanQuestionPrefix(text) {
             if (!text) return '';
             // Remove question numbers like "1. ", "1)", "Soal 1:", "45.Rangkaian"
-            return text
-                .replace(/^\s*(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i, '')
-                .trim();
+            return text.replace(/^\s*(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i, '').trim();
+        }
+
+        // Helper to detect short instructions like "1. Perhatikan gambar!"
+        function isLikelyShortInstruction(text) {
+            const cleanText = cleanQuestionPrefix(text).trim();
+            const shortKeywords = ['perhatikan', 'cermati', 'simak', 'lihat', 'amati'];
+            
+            // If text is short (< 30 chars) AND contains instruction keyword
+            return cleanText.length < 30 && shortKeywords.some(keyword => cleanText.toLowerCase().includes(keyword));
         }
 
         function parseRawText(raw) {
-            // Split by double line breaks to separate question blocks
+            // Split by double newlines to separate question blocks
             const blocks = raw.split(/\r?\n\s*\r?\n/).map(b => b.trim()).filter(b => b.length > 0);
-            
             const questions = [];
             
-            // Trust blank lines if they exist, but verify internally
             if (blocks.length > 1) {
                 blocks.forEach(block => {
                     const lines = block.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
                     parseLinesSmart(lines, questions);
                 });
             } else {
-                // Fallback path: No clear blank line separation. Parse line by line.
                 const allLines = raw.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
                 parseLinesSmart(allLines, questions);
             }
-
             return questions;
         }
 
         function parseLinesSmart(lines, questionsArray) {
             let currentQuestionLines = [];
-            // Matches "1.", "1)", "01.", "Soal 1:", "45." (even without space after punctuation)
             const reNumberStart = /^(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i;
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
-                
-                // Strong indicator of a new question
                 const isNewNumberedQuestion = reNumberStart.test(line);
                 
                 if (isNewNumberedQuestion && currentQuestionLines.length > 0) {
-                    extractQuestionFromLines(currentQuestionLines, questionsArray);
-                    currentQuestionLines = [line]; // Start new block
+                    // FIX: Check if previous line was a short instruction
+                    const lastLine = currentQuestionLines[currentQuestionLines.length - 1];
+                    const isShortInstruction = isLikelyShortInstruction(lastLine);
+                    
+                    if (isShortInstruction) {
+                        // Merge instruction into current block instead of splitting
+                        currentQuestionLines.push(line);
+                    } else {
+                        extractQuestionFromLines(currentQuestionLines, questionsArray);
+                        currentQuestionLines = [line];
+                    }
                 } else {
                     currentQuestionLines.push(line);
                 }
@@ -213,8 +277,6 @@
 
             let questionLines = [];
             let options = [];
-
-            // Regex to detect explicit option prefixes (e.g., "A.", "B)", "a)", "C -")
             const reOptionPrefix = /^(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s+|\b[A-Ea-e]\b\s*[\.\-]\s+)/;
 
             let firstOptionIdx = -1;
@@ -226,11 +288,10 @@
             }
 
             if (firstOptionIdx !== -1 && firstOptionIdx > 0) {
-                // Found explicit options! Extract everything before as question.
                 questionLines = lines.slice(0, firstOptionIdx);
                 options = lines.slice(firstOptionIdx).map(cleanPrefix);
             } else {
-                // Fallback: No clear A/B/C/D labels found. Assume last N lines are options.
+                // Fallback logic
                 if (lines.length >= 5) {
                     options = lines.slice(-4).map(cleanPrefix);
                     questionLines = lines.slice(0, -4);
@@ -243,29 +304,39 @@
                 }
             }
             
-            // Clean the first line of the question to remove numbering
             if (questionLines.length > 0) {
                 questionLines[0] = cleanQuestionPrefix(questionLines[0]);
             }
             
-            // Fill missing options if less than 4 were found
             while (options.length < 4) {
                 options.push("[Opsi tidak ditemukan]");
             }
             
-            // Join multi-line questions with a break
-            const questionText = questionLines.join('<br>');
-
+            // PERBAIKAN: Simpan sebagai ARRAY, JANGAN join dengan <br> di sini
+            // Biarkan joining dilakukan saat rendering HTML agar aman dari escaping
             questionsArray.push({
-                soal: questionText,
+                soalLines: questionLines, 
                 opsi: options
             });
+        }
+
+        // --- 4. Conversion & Output Generation ---
+
+        function escapeHtmlOnly(text) {
+             if (!text) return '';
+             // Hanya escape karakter khusus HTML, biarkan tag placeholder utuh
+             return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
         function convertQuestions() {
             const rawText = document.getElementById('rawInput').value.trim();
             if (!rawText) {
-                showToast("⚠️ Mohon isi atau paste teks soal terlebih dahulu!", "warning");
+                showToast("️ Mohon isi atau paste teks soal terlebih dahulu!", "warning");
                 return;
             }
 
@@ -286,23 +357,42 @@
             parsedList.forEach((q, index) => {
                 const noNum = index + 1;
                 
-                htmlResult += `<div>No: ${noNum}</div>\n`;
-                htmlResult += `<div>Kategori: ${escapeHtml(kategori)}</div>\n`;
-                htmlResult += `<div>Soal : ${q.soal}</div>\n`; 
-                htmlResult += `<div>Opsi:</div>\n`;
+                // PERBAIKAN UTAMA: Escape setiap baris secara terpisah, lalu gabung dengan <br>
+                // Ini mencegah <br> ikut ter-escape menjadi &lt;br&gt;
+                let escapedLines = q.soalLines.map(line => {
+                    // Handle image placeholder inside each line before escaping
+                    let processedLine = line.replace(/\[GAMBAR DI SINI\]/g, '<span class="img-placeholder">[GAMBAR DI SINI]</span>');
+                    // Escape only the text parts, not our custom span tags
+                    // Simple approach: split by placeholder, escape parts, rejoin
+                    let parts = processedLine.split('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
+                    let escapedParts = parts.map(p => escapeHtmlOnly(p));
+                    return escapedParts.join('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
+                });
                 
-                // STRICT LMS REQUIREMENT: <ol type="a"> for lowercase options (a, b, c, d)
+                let processedSoal = escapedLines.join('<br>');
+
+                // Labels tetap bold
+                htmlResult += `<div><b>No:</b> ${noNum}</div>\n`;
+                htmlResult += `<div><b>Kategori:</b> ${escapeHtmlOnly(kategori)}</div>\n`;
+                htmlResult += `<div><b>Soal :</b> ${processedSoal}</div>\n`; 
+                htmlResult += `<div><b>Opsi:</b></div>\n`;
+                
                 htmlResult += `<ol type="a">\n`;
                 q.opsi.forEach(opt => {
-                    htmlResult += `  <li>${escapeHtml(opt)}</li>\n`;
+                    // Apply same safe processing for options
+                    let processedOpt = opt.replace(/\[GAMBAR DI SINI\]/g, '<span class="img-placeholder">[GAMBAR DI SINI]</span>');
+                    let parts = processedOpt.split('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
+                    let escapedParts = parts.map(p => escapeHtmlOnly(p));
+                    let finalOpt = escapedParts.join('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
+                    
+                    htmlResult += `  <li>${finalOpt}</li>\n`;
                 });
                 htmlResult += `</ol>\n`;
 
-                htmlResult += `<div>Kunci Jawaban: ${escapeHtml(kunci)}</div>\n`;
-                htmlResult += `<div>Poin: ${escapeHtml(poin)}</div>\n`;
-                htmlResult += `<div>Pembahasan: ${escapeHtml(pembahasan)}</div>\n`;
+                htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(kunci)}</div>\n`;
+                htmlResult += `<div><b>Poin:</b> ${escapeHtmlOnly(poin)}</div>\n`;
+                htmlResult += `<div><b>Pembahasan:</b> ${escapeHtmlOnly(pembahasan)}</div>\n`;
                 
-                // MANDATORY BLANK LINE / SPACE AFTER PEMBAHASAN
                 htmlResult += `<div><br></div>\n`;
             });
 
@@ -318,62 +408,58 @@
             showToast(`✨ Berhasil mengonversi ${parsedList.length} soal!`, "success");
         }
 
-        // --- 4. Copy to Clipboard ---
-        function copyResult() {
+        // --- 5. Copy to Word ---
+        async function copyResultToWord() {
             const previewEl = document.getElementById('resultPreview');
             
             if (!previewEl.innerHTML.trim()) {
-                showToast("⚠️ Tidak ada hasil untuk disalin!", "warning");
+                showToast("️ Tidak ada hasil untuk disalin!", "warning");
                 return;
             }
 
-            // Using Selection and Range to copy rich HTML to maintain format in MS Word
-            const range = document.createRange();
-            range.selectNodeContents(previewEl);
-
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-
             try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    const copyBtn = document.getElementById('copyBtn');
-                    const origText = copyBtn.innerHTML;
-                    
-                    // Button visual feedback
-                    copyBtn.innerHTML = '✅ Berhasil Disalin!';
-                    copyBtn.classList.replace('bg-emerald-600', 'bg-emerald-500');
-                    copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-emerald-600');
+                // Using modern Clipboard API to send pure HTML
+                const htmlContent = previewEl.innerHTML;
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const data = [new ClipboardItem({ 'text/html': blob })];
+                
+                await navigator.clipboard.write(data);
+                
+                const copyBtn = document.getElementById('copyBtn');
+                const origText = copyBtn.innerHTML;
+                
+                copyBtn.innerHTML = '✅ Berhasil Disalin!';
+                copyBtn.classList.replace('bg-emerald-600', 'bg-emerald-500');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = origText;
+                    copyBtn.classList.replace('bg-emerald-500', 'bg-emerald-600');
+                }, 2500);
 
-                    setTimeout(() => {
-                        copyBtn.innerHTML = origText;
-                        copyBtn.classList.replace('bg-emerald-500', 'bg-emerald-600');
-                        copyBtn.classList.replace('hover:bg-emerald-600', 'hover:bg-emerald-700');
-                    }, 2500);
-
-                    showToast("📋 Hasil disalin! Siap di-paste ke Word/LMS.", "success");
-                } else {
-                    showToast("❌ Gagal menyalin. Silakan gunakan Ctrl+C.", "error");
-                }
+                showToast(" Hasil disalin! Paste di Word (Ctrl+V).", "success");
+                
             } catch (err) {
-                showToast("❌ Browser tidak mendukung auto-copy.", "error");
+                console.error("Modern clipboard failed, falling back...", err);
+                
+                // Fallback to manual selection
+                const range = document.createRange();
+                range.selectNodeContents(previewEl);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+                try {
+                    document.execCommand('copy');
+                    showToast(" Disalin (Fallback)! Silakan paste ke Word.", "warning");
+                } catch (e) {
+                    showToast("❌ Gagal menyalin. Silakan blok manual & Ctrl+C.", "error");
+                }
+                
+                selection.removeAllRanges();
             }
-
-            selection.removeAllRanges();
         }
 
-        // --- 5. Helpers ---
-        function escapeHtml(text) {
-            if (!text) return '';
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
+        // --- 6. Helpers ---
         function clearInput() {
             document.getElementById('rawInput').value = '';
             document.getElementById('outputCard').classList.add('hidden');
@@ -381,20 +467,22 @@
         }
 
         function loadSampleText() {
-            const sampleText = `Apa ciri utama pembangunan Indonesia pada masa Orde Lama di bawah kepemimpinan Soekarno?
-Fokus pada pembangunan proyek mercusuar dan penguatan karakter bangsa.
-Menitikberatkan pada stabilitas ekonomi nasional dan investasi modal asing.
-Melakukan swasembada pangan secara besar-besaran di seluruh wilayah desa.
-Menekankan pada desentralisasi kekuasaan dan otonomi daerah yang sangat luas.
+            const sampleText = `1. Perhatikan gambar!
+[GAMBAR DI SINI]
+AC merupakan diameter lingkaran yang berpusat di titik O. Jika besar BOA=100°, maka ∠CDB=…
+a. 40°
+b. 50°
+c. 80°
+d. 100°
 
-2. Strategi pembangunan pada masa Orde Baru dikenal dengan sebutan Trilogi Pembangunan yang meliputi...
-A. Kebebasan berpolitik, keterbukaan informasi, dan penghapusan korupsi.
-B. Pembangunan infrastruktur digital, peningkatan ekspor, dan subsidi energi gas.
-C. Pertumbuhan ekonomi tinggi, stabilitas nasional, dan pemerataan hasil sosial.
-D. Penegakan hukum yang adil, perlindungan hak asasi, dan pemilihan umum bebas.`;
+2. Sebuah tabung memiliki jari-jari alas 7 cm dan tinggi 10 cm. Volume tabung tersebut adalah... (π = 22/7)
+a. 1.540 cm³
+b. 1.540 cm²
+c. 3.080 cm³
+d. 3.080 cm²`;
 
             document.getElementById('rawInput').value = sampleText;
-            showToast("📝 Contoh soal berhasil dimuat!", "info");
+            showToast(" Contoh soal geometri dimuat!", "info");
         }
 
         function showToast(msg, type) {
@@ -405,15 +493,13 @@ D. Penegakan hukum yang adil, perlindungan hak asasi, dan pemilihan umum bebas.`
             toastMsg.textContent = msg;
 
             if (type === 'success') toastIcon.textContent = '✅';
-            else if (type === 'warning') toastIcon.textContent = '⚠️';
-            else if (type === 'error') toastIcon.textContent = '❌';
-            else toastIcon.textContent = 'ℹ️';
+            else if (type === 'warning') toastIcon.textContent = '️';
+            else if (type === 'error') toastIcon.textContent = '';
+            else toastIcon.textContent = '️';
 
-            // Show animation
             toast.classList.remove('translate-y-[150px]', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
             
-            // Hide after 3 seconds
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-[150px]', 'opacity-0');
