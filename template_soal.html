@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter Soal - Icon Header</title>
+    <title>Konverter Soal - Final Clean</title>
     
-    <!-- Load Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Load Tailwind CSS & Mammoth.js for DOCX reading -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script>
@@ -26,88 +23,117 @@
     </script>
     
     <style>
-        /* Custom styles for rich-text outputs */
         .preview-box ol { margin-top: 4px; margin-bottom: 4px; padding-left: 28px; list-style-type: lower-alpha; }
-        .preview-box li { margin-bottom: 2px; }
-        .preview-box div { margin-bottom: 2px; }
+        .preview-box li { margin-bottom: 6px; }
         
-        /* Placeholder styling for images - BLOCK ELEMENT */
-        .img-placeholder {
+        /* PERBAIKAN: Gambar rata kiri */
+        .preview-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: block;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .preview-box .img-placeholder {
             display: block;
             width: fit-content;
-            margin: 15px auto;
+            margin: 10px 0;
             background-color: #f1f5f9;
             border: 2px dashed #94a3b8;
             color: #475569;
             padding: 8px 20px;
             border-radius: 8px;
             font-family: monospace;
-            font-size: 0.95em;
+            font-size: 0.9em;
             font-weight: bold;
             text-align: center;
         }
 
-        /* Scrollbar styling for dark mode */
+        /* PERBAIKAN: Hilangkan bar hitam */
+        .preview-box div {
+            background: transparent !important;
+            margin-bottom: 2px;
+        }
+        .preview-box div:empty {
+            height: 0 !important;
+            margin: 0 !important;
+            display: none;
+        }
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
         
-        /* Header button hover effects */
         .header-btn {
             @apply flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 shadow-sm;
         }
         .header-btn:hover {
             @apply transform scale-110 shadow-md;
         }
+        
+        .img-thumb {
+            @apply relative w-20 h-20 rounded-lg overflow-hidden border-2 border-slate-300 dark:border-slate-600 cursor-pointer transition-all hover:border-blue-500 hover:scale-105;
+        }
+        .img-thumb img { @apply w-full h-full object-cover; }
+        .img-thumb .remove-btn {
+            @apply absolute top-0 right-0 bg-red-500 text-white rounded-bl-lg px-1 text-xs opacity-0 hover:opacity-100 transition-opacity;
+        }
+        .img-thumb:hover .remove-btn { @apply opacity-100; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200 antialiased min-h-screen flex justify-center p-4 sm:p-6">
 
     <div class="w-full max-w-5xl flex flex-col gap-5">
         
-        <!-- Header with ALL Action Buttons -->
+        <!-- Header -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-slate-800 p-4 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm gap-4">
             <div class="flex items-center gap-3">
                 <span class="text-2xl">📝</span>
-                <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Konverter Soal</h1>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Konverter Soal Portal Sekolah</h1>
             </div>
             
-            <!-- Right Side: Theme Toggle + Action Buttons -->
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
+                <!-- Upload Gambar Button (Icon Only) -->
+                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
+                <button onclick="document.getElementById('imageInput').click()" 
+                    class="header-btn bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0" 
+                    title="Upload Gambar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </button>
                 
-                <!-- 1. Konversi Button -->
-                <button onclick="convertQuestions()" 
-                    class="header-btn bg-blue-600 hover:bg-blue-700 text-white border border-blue-500" 
-                    title="Konversi ke Format Template">
+                <!-- Sisip ke Soal Button (Icon Only) -->
+                <button onclick="insertImageAtCursor()" 
+                    class="header-btn bg-gradient-to-br from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0" 
+                    title="Sisipkan gambar ke soal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                </button>
+                
+                <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+                
+                <!-- Konversi Button -->
+                <button onclick="convertQuestions()" class="header-btn bg-blue-600 hover:bg-blue-700 text-white border border-blue-500" title="Konversi">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </button>
                 
-                <!-- 2. Upload Kunci Jawaban Button -->
+                <!-- Upload Kunci Jawaban Button -->
                 <input type="file" id="answerKeyFile" accept=".txt,.docx" class="hidden" onchange="handleAnswerKeyUpload(this)">
-                <button onclick="document.getElementById('answerKeyFile').click()" 
-                    class="header-btn bg-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600" 
-                    title="Upload Kunci Jawaban">
+                <button onclick="document.getElementById('answerKeyFile').click()" class="header-btn bg-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600" title="Upload Kunci Jawaban">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </button>
 
-                <!-- 3. Bersihkan Button -->
-                <button onclick="clearInput()" 
-                    class="header-btn bg-transparent hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-600 hover:border-red-300 dark:hover:border-red-700" 
-                    title="Bersihkan Input">
+                <!-- Bersihkan Button -->
+                <button onclick="clearInput()" class="header-btn bg-transparent hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-600 hover:border-red-300 dark:hover:border-red-700" title="Bersihkan">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
 
-                <!-- Divider -->
                 <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
 
-                <!-- 4. Theme Toggle Button (Icon Only) -->
-                <button id="themeToggleBtn" onclick="toggleTheme()" 
-                    class="header-btn bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-yellow-400 border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500" 
-                    title="Ubah Tema">
-                    <!-- Sun Icon (Visible in Dark Mode) -->
+                <!-- Theme Toggle Button -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="header-btn bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-yellow-400 border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500" title="Ubah Tema">
                     <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <!-- Moon Icon (Visible in Light Mode) -->
                     <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
             </div>
@@ -115,21 +141,27 @@
 
         <main class="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-5">
             
-            <!-- Input Area -->
+            <!-- Galeri Gambar -->
             <div class="flex flex-col gap-2">
-                <div class="flex justify-between items-center">
-                    <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal:</label>
-                    
-                    <!-- IMAGE PLACEHOLDER TOOL -->
-                    <button onclick="insertImagePlaceholder()" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 transition-colors" title="Sisipkan Penanda Gambar">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        Sisip [GAMBAR]
-                    </button>
+                <label class="font-semibold text-sm text-slate-700 dark:text-slate-300">🖼️ Galeri Gambar:</label>
+                <div id="imageGallery" class="flex flex-wrap gap-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 min-h-[60px]">
+                    <p id="emptyGallery" class="text-xs text-slate-500 dark:text-slate-400 italic w-full text-center py-2">Belum ada gambar. Upload gambar lalu klik tombol ➕ di header untuk menyisipkan.</p>
                 </div>
+           </div>
 
-                <textarea id="rawInput" class="w-full h-64 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal dan opsi di sini...
+            <!-- Textarea Soal -->
+            <div class="flex flex-col gap-2">
+                <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
+                <textarea id="rawInput" class="w-full h-72 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal di sini. Gunakan tombol ➕ di header untuk menyisipkan gambar di posisi kursor.
 
-"></textarea>
+Contoh:
+1. Perhatikan gambar berikut!
+[IMG:1]
+Tentukan nilai x!
+a. 10
+b. [IMG:2] 20
+c. 30
+d. 40"></textarea>
             </div>
 
             <!-- Configuration Grid -->
@@ -149,11 +181,11 @@
             </div>
         </main>
 
-        <!-- Output / Preview Section -->
+        <!-- Output Section -->
         <section id="outputCard" class="hidden bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm animate-[fadeIn_0.3s_ease-in-out]">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-4 mb-4 gap-4">
                 <div class="flex items-center gap-3">
-                    <span class="text-xl">📋</span>
+                    <span class="text-xl"></span>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">Hasil Konversi LMS</h2>
                     <span id="statsCount" class="text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-3 py-1 rounded-full">0 Soal</span>
                 </div>
@@ -162,77 +194,133 @@
                 </button>
             </div>
             
-            <!-- Preview Box -->
-            <div id="resultPreview" class="preview-box w-full min-h-[250px] max-h-[600px] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-5 font-serif text-black dark:text-slate-200 text-base leading-relaxed shadow-inner focus:outline-none" contenteditable="true" spellcheck="false">
-                <!-- Converted content injected here -->
-            </div>
+            <div id="resultPreview" class="preview-box w-full min-h-[250px] max-h-[600px] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-5 font-serif text-black dark:text-slate-200 text-base leading-relaxed shadow-inner focus:outline-none" contenteditable="true" spellcheck="false"></div>
             
-            <p class="mt-3 text-xs text-slate-500 dark:text-slate-400 italic">*Tips: Setelah menyalin, paste ke Microsoft Word. Opsi A, B, C, D akan otomatis bernomor. Ganti [GAMBAR DI SINI] dengan gambar asli di Word.</p>
-        </section>
+       </section>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div id="toast" class="fixed bottom-6 right-6 flex items-center gap-3 bg-slate-900 dark:bg-slate-800 text-white px-5 py-3 rounded-lg shadow-2xl border border-slate-700 font-semibold text-sm transition-all duration-300 translate-y-[150px] opacity-0 z-50">
         <span id="toastIcon">✅</span>
         <span id="toastMsg">Notifikasi</span>
     </div>
 
     <script>
-        // --- 1. Theme Management ---
+        let uploadedImages = [];
+        
+        // --- Theme Management ---
         function initTheme() {
             const isDark = document.documentElement.classList.contains('dark');
             const savedTheme = localStorage.getItem('konverter_theme') || (isDark ? 'dark' : 'light');
             applyTheme(savedTheme);
         }
-
         function toggleTheme() {
             const isDark = document.documentElement.classList.contains('dark');
-            const newTheme = isDark ? 'light' : 'dark';
-            applyTheme(newTheme);
-            localStorage.setItem('konverter_theme', newTheme);
+            applyTheme(isDark ? 'light' : 'dark');
+            localStorage.setItem('konverter_theme', isDark ? 'light' : 'dark');
         }
-
         function applyTheme(theme) {
             const html = document.documentElement;
-            
-            if (theme === 'dark') {
-                html.classList.add('dark');
-            } else {
-                html.classList.remove('dark');
-            }
+            if (theme === 'dark') html.classList.add('dark');
+            else html.classList.remove('dark');
         }
         initTheme();
 
-        // --- 2. Image Placeholder Logic ---
-        function insertImagePlaceholder() {
+        // --- Image Upload & Gallery ---
+        function handleImageUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showToast('File harus berupa gambar!', 'warning');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImages.push(e.target.result);
+                renderGallery();
+                showToast(`Gambar #${uploadedImages.length} berhasil diupload!`, 'success');
+            };
+            reader.readAsDataURL(file);
+            input.value = '';
+        }
+        
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            renumberImageTags();
+            renderGallery();
+            showToast('️ Gambar dihapus dan nomor disesuaikan.', 'info');
+        }
+        
+        function renumberImageTags() {
+            const textarea = document.getElementById('rawInput');
+            let text = textarea.value;
+            let counter = 0;
+            text = text.replace(/\[IMG:\d+\]/g, () => {
+                counter++;
+                return `[IMG:${counter}]`;
+            });
+            textarea.value = text;
+        }
+        
+        function renderGallery() {
+            const gallery = document.getElementById('imageGallery');
+            const emptyMsg = document.getElementById('emptyGallery');
+            gallery.querySelectorAll('.img-thumb').forEach(el => el.remove());
+            
+            if (uploadedImages.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                return;
+            }
+            emptyMsg.classList.add('hidden');
+            
+            uploadedImages.forEach((imgSrc, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'img-thumb';
+                thumb.title = `Klik untuk sisip [IMG:${index + 1}] di posisi kursor`;
+                thumb.onclick = () => insertSpecificImage(index + 1);
+                thumb.innerHTML = `
+                    <img src="${imgSrc}" alt="Img ${index + 1}">
+                    <button class="remove-btn" onclick="event.stopPropagation(); removeImage(${index})" title="Hapus gambar">✕</button>
+                    <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs text-center py-0.5">#${index + 1}</div>
+                `;
+                gallery.appendChild(thumb);
+            });
+        }
+        
+        function insertImageAtCursor() {
+            if (uploadedImages.length === 0) {
+                showToast('⚠️ Upload gambar terlebih dahulu!', 'warning');
+                return;
+            }
+            insertSpecificImage(uploadedImages.length);
+        }
+        
+        function insertSpecificImage(imageNumber) {
             const textarea = document.getElementById('rawInput');
             const startPos = textarea.selectionStart;
             const endPos = textarea.selectionEnd;
             const text = textarea.value;
-            const placeholder = `\n[GAMBAR DI SINI]\n`; 
-            textarea.value = text.substring(0, startPos) + placeholder + text.substring(endPos, text.length);
+            const tag = `[IMG:${imageNumber}]`;
+            textarea.value = text.substring(0, startPos) + tag + text.substring(endPos, text.length);
             textarea.focus();
-            textarea.selectionStart = textarea.selectionEnd = startPos + placeholder.length;
-            showToast("Penanda [GAMBAR DI SINI] berhasil disisipkan!", "success");
+            textarea.selectionStart = textarea.selectionEnd = startPos + tag.length;
+            showToast(`✅ [IMG:${imageNumber}] disisipkan di posisi kursor!`, 'success');
         }
 
-        // --- 3. Parsing Logic ---
+        // --- Parsing Logic ---
         function cleanPrefix(text) {
             if (!text) return '';
             return text.replace(/^\s*(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s*|\b[A-Ea-e]\b\s*[\.\-]\s*)/, '').trim();
         }
-
         function cleanQuestionPrefix(text) {
             if (!text) return '';
             return text.replace(/^\s*(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i, '').trim();
         }
-
         function isLikelyShortInstruction(text) {
             const cleanText = cleanQuestionPrefix(text).trim();
             const shortKeywords = ['perhatikan', 'cermati', 'simak', 'lihat', 'amati'];
             return cleanText.length < 30 && shortKeywords.some(keyword => cleanText.toLowerCase().includes(keyword));
         }
-
         function parseRawText(raw) {
             const blocks = raw.split(/\r?\n\s*\r?\n/).map(b => b.trim()).filter(b => b.length > 0);
             const questions = [];
@@ -247,7 +335,6 @@
             }
             return questions;
         }
-
         function parseLinesSmart(lines, questionsArray) {
             let currentQuestionLines = [];
             const reNumberStart = /^(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i;
@@ -270,7 +357,6 @@
                 extractQuestionFromLines(currentQuestionLines, questionsArray);
             }
         }
-        
         function extractQuestionFromLines(lines, questionsArray) {
             if (lines.length === 0) return;
             let questionLines = [];
@@ -307,23 +393,39 @@
             questionsArray.push({ soalLines: questionLines, opsi: options });
         }
 
-        // --- 4. Conversion & Output Generation ---
+        // --- Conversion ---
         function escapeHtmlOnly(text) {
-             if (!text) return '';
-             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            if (!text) return '';
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+        
+        function processTextWithImages(text) {
+            if (!text) return '';
+            const parts = text.split(/(\[IMG:\d+\])/g);
+            let result = '';
+            parts.forEach(part => {
+                const imgMatch = part.match(/^\[IMG:(\d+)\]$/);
+                if (imgMatch) {
+                    const imgIndex = parseInt(imgMatch[1]) - 1;
+                    if (uploadedImages[imgIndex]) {
+                        result += `<img src="${uploadedImages[imgIndex]}" alt="Gambar Soal">`;
+                    } else {
+                        result += `<span class="img-placeholder">[GAMBAR #${imgMatch[1]} TIDAK DITEMUKAN]</span>`;
+                    }
+                } else {
+                    result += escapeHtmlOnly(part);
+                }
+            });
+            return result;
         }
 
-        // Global variable to store manually uploaded answer keys
         let manualAnswerKeys = {};
 
-        // PERBAIKAN UTAMA: Fungsi upload kunci jawaban yang lebih fleksibel
         async function handleAnswerKeyUpload(input) {
             const file = input.files[0];
             if (!file) return;
-
             let textContent = '';
             const fileExt = file.name.split('.').pop().toLowerCase();
-
             try {
                 if (fileExt === 'docx') {
                     const arrayBuffer = await file.arrayBuffer();
@@ -332,45 +434,31 @@
                 } else if (fileExt === 'txt') {
                     textContent = await file.text();
                 } else {
-                    showToast("Format file tidak didukung. Gunakan .txt atau .docx", "error");
+                    showToast("Format tidak didukung. Gunakan .txt atau .docx", "error");
                     return;
                 }
-
-                // Parse the answer key text
                 manualAnswerKeys = {};
-                
-                // Bersihkan teks dari karakter aneh hasil copy-paste atau OCR
                 let cleanText = textContent.replace(/\r\n/g, '\n').replace(/\t/g, ' ');
                 const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                
-                // REGEX BARU: Mendukung 1) A, 1. A, 1 : A, atau 1 A
                 const keyRegex = /^(\d+)\s*[\.\):]?\s*([a-dA-D])\s*$/i;
-
                 lines.forEach(line => {
                     const match = line.match(keyRegex);
                     if (match) {
-                        const questionNum = parseInt(match[1], 10);
-                        const answer = match[2].toLowerCase(); 
-                        manualAnswerKeys[questionNum] = answer;
+                        manualAnswerKeys[parseInt(match[1], 10)] = match[2].toLowerCase();
                     }
                 });
-
                 if (Object.keys(manualAnswerKeys).length > 0) {
                     showToast(`✅ Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban!`, "success");
-                    
                     const outputCard = document.getElementById('outputCard');
-                    if (!outputCard.classList.contains('hidden')) {
-                        convertQuestions();
-                    }
+                    if (!outputCard.classList.contains('hidden')) convertQuestions();
                 } else {
-                    showToast("️ Format kunci tidak dikenali. Pastikan format: 1) A atau 1. A", "warning");
+                    showToast("⚠️ Format kunci tidak dikenali.", "warning");
                 }
-
             } catch (err) {
                 console.error(err);
                 showToast("Gagal membaca file kunci jawaban.", "error");
             } finally {
-                input.value = ''; 
+                input.value = '';
             }
         }
 
@@ -380,71 +468,51 @@
                 showToast("⚠️ Mohon isi atau paste teks soal terlebih dahulu!", "warning");
                 return;
             }
-
             const kategori = document.getElementById('kategoriInput').value.trim() || 'Umum';
             const poin = document.getElementById('poinInput').value.trim() || '1';
             const pembahasan = document.getElementById('pembahasanInput').value.trim() || '-';
-
             const parsedList = parseRawText(rawText);
-
             if (parsedList.length === 0) {
-                showToast(" Tidak dapat mengenali format soal.", "error");
+                showToast("❌ Tidak dapat mengenali format soal.", "error");
                 return;
             }
-
             let htmlResult = '';
-
             parsedList.forEach((q, index) => {
                 const noNum = index + 1;
+                let processedLines = q.soalLines.map(line => processTextWithImages(line));
+                let processedSoal = processedLines.join('<br>');
+                let finalKey = 'a';
+                if (manualAnswerKeys[noNum]) finalKey = manualAnswerKeys[noNum];
                 
-                let escapedLines = q.soalLines.map(line => {
-                    let processedLine = line.replace(/\[GAMBAR DI SINI\]/g, '<span class="img-placeholder">[GAMBAR DI SINI]</span>');
-                    let parts = processedLine.split('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
-                    let escapedParts = parts.map(p => escapeHtmlOnly(p));
-                    return escapedParts.join('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
-                });
-                let processedSoal = escapedLines.join('<br>');
-
-                let finalKey = 'a'; 
-                if (manualAnswerKeys[noNum]) {
-                    finalKey = manualAnswerKeys[noNum];
-                }
-
-                htmlResult += `<div><b>No:</b> ${noNum}</div>\n`;
+                // PERBAIKAN: Gunakan margin-top untuk pemisah, bukan <div><br></div>
+                const separatorStyle = index > 0 ? ' style="margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 15px;"' : '';
+                
+                htmlResult += `<div${separatorStyle}><b>No:</b> ${noNum}</div>\n`;
                 htmlResult += `<div><b>Kategori:</b> ${escapeHtmlOnly(kategori)}</div>\n`;
-                htmlResult += `<div><b>Soal :</b> ${processedSoal}</div>\n`; 
+                htmlResult += `<div><b>Soal :</b> ${processedSoal}</div>\n`;
                 htmlResult += `<div><b>Opsi:</b></div>\n`;
-                
                 htmlResult += `<ol type="a">\n`;
                 q.opsi.forEach(opt => {
-                    let processedOpt = opt.replace(/\[GAMBAR DI SINI\]/g, '<span class="img-placeholder">[GAMBAR DI SINI]</span>');
-                    let parts = processedOpt.split('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
-                    let escapedParts = parts.map(p => escapeHtmlOnly(p));
-                    let finalOpt = escapedParts.join('<span class="img-placeholder">[GAMBAR DI SINI]</span>');
-                    htmlResult += `  <li>${finalOpt}</li>\n`;
+                    let processedOpt = processTextWithImages(opt);
+                    htmlResult += `  <li>${processedOpt}</li>\n`;
                 });
                 htmlResult += `</ol>\n`;
-
                 htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(finalKey)}</div>\n`;
                 htmlResult += `<div><b>Poin:</b> ${escapeHtmlOnly(poin)}</div>\n`;
                 htmlResult += `<div><b>Pembahasan:</b> ${escapeHtmlOnly(pembahasan)}</div>\n`;
-                
-                htmlResult += `<div><br></div>\n`;
+                // PERBAIKAN: Hapus <div><br></div> yang menyebabkan bar hitam
             });
-
+            
             const previewEl = document.getElementById('resultPreview');
             previewEl.innerHTML = htmlResult;
-
             document.getElementById('statsCount').textContent = `${parsedList.length} Soal Terkonversi`;
-
             const outputCard = document.getElementById('outputCard');
             outputCard.classList.remove('hidden');
             outputCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
             showToast(`✨ Berhasil mengonversi ${parsedList.length} soal!`, "success");
         }
 
-        // --- 5. Copy to Word ---
+        // --- Copy to Word ---
         async function copyResultToWord() {
             const previewEl = document.getElementById('resultPreview');
             if (!previewEl.innerHTML.trim()) {
@@ -459,14 +527,10 @@
                 const copyBtn = document.getElementById('copyBtn');
                 const origText = copyBtn.innerHTML;
                 copyBtn.innerHTML = '✅ Berhasil Disalin!';
-                copyBtn.classList.replace('bg-emerald-600', 'bg-emerald-500');
-                setTimeout(() => {
-                    copyBtn.innerHTML = origText;
-                    copyBtn.classList.replace('bg-emerald-500', 'bg-emerald-600');
-                }, 2500);
-                showToast(" Hasil disalin! Paste di Word (Ctrl+V).", "success");
+                setTimeout(() => { copyBtn.innerHTML = origText; }, 2500);
+                showToast("📋 Hasil disalin! Paste di Word (Ctrl+V).", "success");
             } catch (err) {
-                console.error("Modern clipboard failed, falling back...", err);
+                console.error(err);
                 const range = document.createRange();
                 range.selectNodeContents(previewEl);
                 const selection = window.getSelection();
@@ -474,19 +538,21 @@
                 selection.addRange(range);
                 try {
                     document.execCommand('copy');
-                    showToast("📋 Disalin (Fallback)! Silakan paste ke Word.", "warning");
+                    showToast("📋 Disalin (Fallback)!", "warning");
                 } catch (e) {
-                    showToast("❌ Gagal menyalin. Silakan blok manual & Ctrl+C.", "error");
+                    showToast("❌ Gagal menyalin.", "error");
                 }
                 selection.removeAllRanges();
             }
         }
 
-        // --- 6. Helpers ---
+        // --- Helpers ---
         function clearInput() {
             document.getElementById('rawInput').value = '';
             document.getElementById('outputCard').classList.add('hidden');
-            manualAnswerKeys = {}; 
+            uploadedImages = [];
+            manualAnswerKeys = {};
+            renderGallery();
             showToast("️ Input telah dibersihkan.", "info");
         }
 
@@ -498,7 +564,7 @@
             if (type === 'success') toastIcon.textContent = '✅';
             else if (type === 'warning') toastIcon.textContent = '️';
             else if (type === 'error') toastIcon.textContent = '❌';
-            else toastIcon.textContent = '️';
+            else toastIcon.textContent = 'ℹ️';
             toast.classList.remove('translate-y-[150px]', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
             setTimeout(() => {
