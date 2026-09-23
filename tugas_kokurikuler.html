@@ -32,13 +32,57 @@
         .connection-status { position: absolute; top: 8px; left: 10px; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.15); color: white; font-weight: 600; backdrop-filter: blur(4px); }
         .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
         .connection-status.disconnected { background: rgba(239, 68, 68, 0.9); }
-        .header-controls { position: absolute; top: 6px; right: 8px; display: flex; gap: 5px; align-items: center; }
-        .icon-btn { width: 40px; height: 40px; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; color: white; box-shadow: var(--shadow-sm); }
+        .header-controls { position: absolute; top: 6px; right: 8px; display: flex; gap: 8px; align-items: center; }
+        
+        /* ✅ ICON BARU - Lebih Elegan */
+        .icon-btn { 
+            width: 44px; height: 44px; border: none; border-radius: 12px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative; overflow: hidden;
+        }
+        .icon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .icon-btn:hover::before { opacity: 1; }
         .icon-btn:active { transform: scale(0.92); }
         .icon-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-backup { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .btn-refresh { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .theme-toggle { background: rgba(255,255,255,0.15); }
+        .icon-btn svg { width: 22px; height: 22px; position: relative; z-index: 1; }
+        
+        /* ✅ Warna Icon yang Lebih Jelas */
+        .btn-backup { 
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+        .btn-backup:hover { 
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .btn-refresh { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        .btn-refresh:hover { 
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .theme-toggle { 
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+        .theme-toggle:hover { 
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+            transform: translateY(-2px);
+        }
+        
         .class-selector-bar { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: var(--bg-footer); border-bottom: 1px solid var(--border-color); }
         .class-select { padding: 6px 12px; border: 2px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main); font-size: 0.9rem; font-weight: 700; cursor: pointer; }
         .page-nav { display: none; justify-content: center; gap: 10px; padding: 12px 10px 0; }
@@ -87,12 +131,23 @@
         .zoom-link-btn { margin-top: 10px; padding: 10px 20px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: 2px solid #ffffff; border-radius: 25px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: none; }
         .zoom-link-btn.show { display: block; }
         .loading-text { text-align: center; padding: 20px; color: var(--text-muted); }
+        
+        /* ✅ Animasi Refresh */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .icon-btn.refreshing svg {
+            animation: spin 1s linear infinite;
+        }
+        
         @media (max-width: 600px) {
             :root { --seat-w: 76px; --seat-h: 96px; --gap-pair: 6px; --gap-group: 12px; }
             .header { padding-top: 45px; }
             .title-sub { font-size: 0.8rem; }
             .title-date { font-size: 0.75rem; }
-            .icon-btn { width: 36px; height: 36px; font-size: 16px; }
+            .icon-btn { width: 40px; height: 40px; }
+            .icon-btn svg { width: 20px; height: 20px; }
             .seat-num { width: 20px; height: 20px; font-size: 0.7rem; top: 3px; left: 3px; }
             .seat-name { font-size: 0.6rem; padding: 3px 2px; }
             .empty-icon { font-size: 1.3rem; }
@@ -107,13 +162,41 @@
     <div class="header">
         <div id="connectionStatus" class="connection-status">Memeriksa...</div>
         <div class="header-controls">
-            <button class="icon-btn btn-backup" onclick="backupAndReset()" title="Backup & Reset Hari Ini">📦</button>
-            <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Ulang Data">↻</button>
-            <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">☀️</button>
+            <!-- ✅ Icon Backup - SVG -->
+            <button class="icon-btn btn-backup" onclick="backupAndReset()" title="Backup & Reset Hari Ini">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+            </button>
+            
+            <!-- ✅ Icon Refresh - SVG -->
+            <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Ulang Data">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+            </button>
+            
+            <!-- ✅ Icon Theme - SVG -->
+            <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">
+                <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
         </div>
         <div><br><br>
             <h2 class="title-sub">SMPN 110 JAKARTA</h2>
-            <h2 class="title-sub">TUGAS KOKURIKULER</h2><br>
+            <h2 class="title-sub">TUGAS KOKURIKULER KOMIK DIGITAL</h2><br>
             <div class="title-date" id="tanggalPJJ">Memuat tanggal...</div><br>
         </div>
     </div>
@@ -133,7 +216,6 @@
     </div>
 </div>
 
-<!-- Modal Input Data Siswa -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
         <h3 id="modalTitle">Input Data Siswa</h3>
@@ -143,7 +225,7 @@
             <label>🔗 Link Komik (Opsional)</label>
             <div class="link-row">
                 <input type="url" id="inpComicLink" placeholder="https://contoh.com/komik-siswa" autocomplete="off">
-                <button type="button" class="link-btn open" onclick="openComicLinkFromModal()" title="Buka Link"></button>
+                <button type="button" class="link-btn open" onclick="openComicLinkFromModal()" title="Buka Link">↗</button>
                 <button type="button" class="link-btn" onclick="copyComicLinkFromModal()" title="Salin Link">📋</button>
             </div>
         </div>
@@ -151,7 +233,6 @@
     </div>
 </div>
 
-<!-- Modal Zoom Foto -->
 <div class="zoom-overlay" id="zoomModal" onclick="closeZoomModal()">
     <div class="zoom-content" onclick="event.stopPropagation()">
         <button class="zoom-close" onclick="closeZoomModal()">✕</button>
@@ -177,6 +258,8 @@
     let currentPage = 1;
     let pengaturanDimuat = false;
     let currentZoomLink = '';
+    let isSaving = false;
+    let lastSaveTime = 0;
 
     const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -193,9 +276,7 @@
         const sekarang = new Date();
         const tanggalFormatted = formatTanggalIndonesia(sekarang);
         const el = document.getElementById('tanggalPJJ');
-        if (el) {
-            el.innerHTML = `${tanggalFormatted}`;
-        }
+        if (el) el.innerHTML = `${tanggalFormatted}`;
         document.title = `Tugas Kokurikuler - ${tanggalFormatted} - SMPN 110 Jakarta`;
     }
 
@@ -221,8 +302,7 @@
                 if (res.ok) {
                     const result = JSON.parse(await res.text());
                     if (result.result === 'success' && result.data) {
-                        const data = result.data;
-                        if (data['KataSandiTambahKelas']) ADMIN_PASSWORD = data['KataSandiTambahKelas'];
+                        if (result.data['KataSandiTambahKelas']) ADMIN_PASSWORD = result.data['KataSandiTambahKelas'];
                     }
                 }
             } catch (e) { console.log('ℹ️ Pakai default password backup: cx'); }
@@ -236,18 +316,10 @@
         if (!confirm(`⚠️ PERINGATAN BACKUP & RESET!\n\nSistem akan:\n1. Membuat sheet baru: "${backupSheetName}"\n2. Menyalin semua data & foto ke sana.\n3. MENGHAPUS data di "${currentClass}" agar siap untuk hari baru.\n\nLanjutkan?`)) { return; }
         const pass = prompt("Masukkan Kata Sandi Admin untuk konfirmasi:");
         if (pass !== ADMIN_PASSWORD) { alert("❌ Kata sandi salah!"); return; }
-        showStatus('⏳ Sedang membackup & mereset data...', false);
+        showStatus(' Sedang membackup & mereset data...', false);
         try {
-            const sep = getUrlSeparator();
             await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'create', sheetName: backupSheetName }) });
-            
-            // ✅ Kirim data dalam format object (bukan string |||)
-            await fetch(SCRIPT_URL, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-                body: JSON.stringify({ action: 'save', sheet: backupSheetName, data: dataSiswa }) 
-            });
-            
+            await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'save', sheet: backupSheetName, data: dataSiswa }) });
             dataSiswa = {};
             allData[currentClass] = {};
             saveClassesLocally();
@@ -259,15 +331,18 @@
             }
             renderClassSelect();
             renderDenah();
-            showStatus(`✅ Backup ke ${backupSheetName} berhasil & Data direset!`, true);
+            showStatus(`✅ Backup ke ${backupSheetName} berhasil!`, true);
         } catch (error) {
             console.error(error);
-            showStatus('❌ Gagal melakukan backup & reset', false);
+            showStatus('❌ Gagal backup', false);
         }
     }
 
     async function autoRefreshData() {
+        if (isSaving) return;
+        if (Date.now() - lastSaveTime < 10000) return;
         if (!currentClass) return;
+        
         try {
             const sep = getUrlSeparator();
             const dataUrl = SCRIPT_URL + sep + 'action=read&sheet=' + encodeURIComponent(currentClass);
@@ -275,28 +350,43 @@
             if (dataRes.ok) {
                 const dataResult = JSON.parse(await dataRes.text());
                 if (dataResult.result === 'success' && dataResult.data) {
-                    const newDataStr = JSON.stringify(dataResult.data);
-                    const oldDataStr = JSON.stringify(allData[currentClass] || {});
+                    const serverData = dataResult.data;
+                    const localData = allData[currentClass] || {};
+                    
+                    if (Object.keys(serverData).length === 0 && Object.keys(localData).length > 0) {
+                        console.log('🛡️ Server kosong, data lokal dipertahankan');
+                        return;
+                    }
+                    
+                    const newDataStr = JSON.stringify(serverData);
+                    const oldDataStr = JSON.stringify(localData);
                     
                     if (newDataStr !== oldDataStr) {
-                        allData[currentClass] = dataResult.data;
+                        const mergedData = { ...serverData };
+                        for (let key in localData) {
+                            if (!mergedData[key]) {
+                                mergedData[key] = localData[key];
+                            }
+                        }
+                        
+                        allData[currentClass] = mergedData;
                         parseDataSiswa(currentClass);
                         saveClassesLocally();
                         renderDenah();
-                        showStatus('🔄 Data diperbaharui otomatis', true);
+                        showStatus('🔄 Data diperbaharui', true);
                     }
                 }
             }
         } catch (err) {
-            console.log('Auto-refresh dilewati atau gagal sementara');
+            console.log('Auto-refresh skipped:', err);
         }
     }
 
     async function refreshData() {
         const btnRefresh = document.getElementById('btnRefresh');
-        btnRefresh.innerHTML = '';
+        btnRefresh.classList.add('refreshing');
         btnRefresh.disabled = true;
-        showStatus('⏳ Memuat ulang data...', false);
+        showStatus(' Memuat ulang...', false);
         
         const savedClass = currentClass;
         const savedPage = currentPage;
@@ -319,12 +409,12 @@
             document.getElementById('btnPage2').classList.toggle('active', currentPage === 2);
             renderDenah();
             
-            showStatus('✅ Data berhasil diperbaharui!', true);
+            showStatus('✅ Data diperbaharui!', true);
         } catch (err) {
-            console.error('❌ Gagal refresh:', err);
-            showStatus('❌ Gagal memuat ulang data', false);
+            console.error(' Gagal refresh:', err);
+            showStatus('❌ Gagal memuat data', false);
         } finally {
-            btnRefresh.innerHTML = '↻';
+            btnRefresh.classList.remove('refreshing');
             btnRefresh.disabled = false;
         }
     }
@@ -336,27 +426,19 @@
             if (res.ok) {
                 const result = JSON.parse(await res.text());
                 if (result.result === 'success' && result.sheets) {
-                    allClasses = result.sheets
-                        .filter(sheet => !SHEET_DILARANG.includes(sheet))
-                        .sort();
+                    allClasses = result.sheets.filter(sheet => !SHEET_DILARANG.includes(sheet)).sort();
                     console.log('✅ Kelas terdeteksi:', allClasses);
                     
                     allData = {};
-                    for (let i = 0; i < allClasses.length; i++) {
-                        const cls = allClasses[i];
+                    for (let cls of allClasses) {
                         const dataUrl = SCRIPT_URL + sep + 'action=read&sheet=' + encodeURIComponent(cls);
                         try {
                             const dataRes = await fetch(dataUrl);
                             if (dataRes.ok) {
                                 const dataResult = JSON.parse(await dataRes.text());
-                                if (dataResult.result === 'success' && dataResult.data) {
-                                    allData[cls] = dataResult.data;
-                                } else {
-                                    allData[cls] = {};
-                                }
+                                allData[cls] = (dataResult.result === 'success' && dataResult.data) ? dataResult.data : {};
                             }
                         } catch (e) {
-                            console.warn('⚠️ Gagal memuat data untuk:', cls);
                             allData[cls] = {};
                         }
                     }
@@ -367,55 +449,68 @@
                 }
             }
         } catch (err) {
-            console.error('❌ Gagal memuat daftar kelas:', err);
-            showStatus('️ Gagal memuat data dari server', false);
+            console.error('❌ Gagal load kelas:', err);
         }
     }
 
     window.onload = async function() {
         updateTanggalPJJ();
         await muatPengaturanDariSheet();
+        
         const savedTheme = localStorage.getItem('denah_theme');
-        if (savedTheme === 'light') { document.body.classList.add('light-mode'); document.querySelector('.theme-toggle').textContent = '🌙'; }
+        if (savedTheme === 'light') { 
+            document.body.classList.add('light-mode'); 
+            updateThemeIcon(true);
+        }
         
         await loadAllClasses();
-        
         document.getElementById('classSelect').value = "";
         renderDenah();
         checkConnection();
-        setInterval(autoRefreshData, 30000);
+        
+        setInterval(autoRefreshData, 60000);
     };
+
+    function updateThemeIcon(isDark) {
+        const themeIcon = document.getElementById('themeIcon');
+        if (isDark) {
+            // Icon Bulan
+            themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+        } else {
+            // Icon Matahari
+            themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+    }
 
     function saveClassesLocally() {
         localStorage.setItem('denah_classes_list', JSON.stringify(allClasses));
         localStorage.setItem('denah_all_classes_data', JSON.stringify(allData));
         localStorage.setItem('denah_current_class', currentClass);
+        localStorage.setItem('denah_data_siswa_' + currentClass, JSON.stringify(dataSiswa));
     }
     
     function renderClassSelect() {
         const select = document.getElementById('classSelect');
         select.innerHTML = '<option value="" selected>-- Pilih Kelas --</option>';
         if (allClasses.length === 0) {
-            const emptyOption = document.createElement('option');
-            emptyOption.value = ''; emptyOption.textContent = '(Belum ada kelas)'; emptyOption.disabled = true;
-            select.appendChild(emptyOption);
+            const opt = document.createElement('option');
+            opt.value = ''; opt.textContent = '(Belum ada kelas)'; opt.disabled = true;
+            select.appendChild(opt);
         } else {
-            for (let i = 0; i < allClasses.length; i++) {
-                const option = document.createElement('option');
-                option.value = allClasses[i]; option.textContent = allClasses[i];
-                select.appendChild(option);
-            }
+            allClasses.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls; opt.textContent = cls;
+                select.appendChild(opt);
+            });
         }
     }
     
-    // ✅ Fungsi baru untuk parse data dari format GAS (sudah dipisah)
     function parseDataSiswa(className) {
         const rawData = allData[className] || {};
         dataSiswa = {};
         for (let key in rawData) {
             const value = rawData[key];
             if (typeof value === 'object' && value !== null) {
-                // Format baru dari GAS: {name, photo, comicLink}
                 dataSiswa[key] = {
                     name: value.name || '',
                     photo: value.photo || '',
@@ -423,7 +518,6 @@
                     comicLink: value.comicLink || ''
                 };
             } else if (typeof value === 'string' && value.includes('|||')) {
-                // Format lama (backward compatibility)
                 const parts = value.split('|||');
                 dataSiswa[key] = {
                     name: parts[0] || '',
@@ -438,7 +532,19 @@
     function loadClassData(className) {
         if (!className) { currentClass = ''; dataSiswa = {}; renderDenah(); return; }
         currentClass = className;
-        parseDataSiswa(className);
+        
+        const savedDataSiswa = localStorage.getItem('denah_data_siswa_' + className);
+        if (savedDataSiswa && (!allData[className] || Object.keys(allData[className]).length === 0)) {
+            try {
+                dataSiswa = JSON.parse(savedDataSiswa);
+                allData[className] = dataSiswa;
+            } catch (e) {
+                parseDataSiswa(className);
+            }
+        } else {
+            parseDataSiswa(className);
+        }
+        
         saveClassesLocally();
         renderDenah();
         showStatus('📂 ' + className, true);
@@ -458,17 +564,25 @@
         fetch(SCRIPT_URL + sep + 'action=test')
             .then(res => res.json())
             .then(result => {
-                if (result.result === 'success') { statusEl.textContent = '✅ Terhubung'; statusEl.className = 'connection-status connected'; } 
-                else { statusEl.textContent = '❌ ' + (result.message || 'Error'); statusEl.className = 'connection-status disconnected'; }
+                if (result.result === 'success') { 
+                    statusEl.textContent = '✅ Terhubung'; 
+                    statusEl.className = 'connection-status connected'; 
+                } else { 
+                    statusEl.textContent = ' Error'; 
+                    statusEl.className = 'connection-status disconnected'; 
+                }
             })
-            .catch(() => { statusEl.textContent = '❌ Offline'; statusEl.className = 'connection-status disconnected'; });
+            .catch(() => { 
+                statusEl.textContent = '❌ Offline'; 
+                statusEl.className = 'connection-status disconnected'; 
+            });
     }
     
     function toggleTheme() {
         const body = document.body;
-        const btn = document.querySelector('.theme-toggle');
         body.classList.toggle('light-mode');
-        btn.textContent = body.classList.contains('light-mode') ? '🌙' : '☀️';
+        const isDark = !body.classList.contains('light-mode');
+        updateThemeIcon(isDark);
         localStorage.setItem('denah_theme', body.classList.contains('light-mode') ? 'light' : 'dark');
     }
     
@@ -495,37 +609,21 @@
         for (let r = 0; r < rows; r++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'row-wrapper';
-            
             const isFirstRow = (r === 0);
             
             for (let c = 0; c < cols; c += 2) {
                 const pairDiv = document.createElement('div');
                 pairDiv.className = 'pair-wrapper';
-                
                 let idxLeft, idxRight;
                 
                 if (mobile) {
-                    if (isFirstRow && c === 0) {
-                        idxLeft = startIndex + (r * cols + 0);
-                        idxRight = startIndex + (r * cols + 2);
-                    } else if (isFirstRow && c === 2) {
-                        idxLeft = startIndex + (r * cols + 1);
-                        idxRight = startIndex + (r * cols + 3);
-                    } else {
-                        idxLeft = startIndex + (r * cols + c);
-                        idxRight = startIndex + (r * cols + c + 1);
-                    }
+                    if (isFirstRow && c === 0) { idxLeft = startIndex + (r * cols + 0); idxRight = startIndex + (r * cols + 2); }
+                    else if (isFirstRow && c === 2) { idxLeft = startIndex + (r * cols + 1); idxRight = startIndex + (r * cols + 3); }
+                    else { idxLeft = startIndex + (r * cols + c); idxRight = startIndex + (r * cols + c + 1); }
                 } else {
-                    if (isFirstRow && c === 2) {
-                        idxLeft = startIndex + (r * cols + 2);
-                        idxRight = startIndex + (r * cols + 4);
-                    } else if (isFirstRow && c === 4) {
-                        idxLeft = startIndex + (r * cols + 3);
-                        idxRight = startIndex + (r * cols + 5);
-                    } else {
-                        idxLeft = startIndex + (r * cols + c);
-                        idxRight = startIndex + (r * cols + c + 1);
-                    }
+                    if (isFirstRow && c === 2) { idxLeft = startIndex + (r * cols + 2); idxRight = startIndex + (r * cols + 4); }
+                    else if (isFirstRow && c === 4) { idxLeft = startIndex + (r * cols + 3); idxRight = startIndex + (r * cols + 5); }
+                    else { idxLeft = startIndex + (r * cols + c); idxRight = startIndex + (r * cols + c + 1); }
                 }
                 
                 pairDiv.appendChild(createSeat(idxLeft));
@@ -542,16 +640,7 @@
         
         const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
         const hasComicLink = dataSiswa[index] && dataSiswa[index].comicLink;
-        let seatClass = 'seat';
-        
-        if (dataSiswa[index]) {
-            seatClass += ' filled';
-            if (hasPhoto) {
-                seatClass += ' locked';
-            } else {
-                seatClass += ' incomplete';
-            }
-        }
+        let seatClass = 'seat' + (dataSiswa[index] ? ' filled' : '') + (hasPhoto ? ' locked' : ' incomplete');
         seat.className = seatClass;
         
         const num = document.createElement('div');
@@ -572,11 +661,8 @@
                 img.src = dataSiswa[index].photo;
                 img.onclick = (e) => { 
                     e.stopPropagation(); 
-                    if (hasComicLink) {
-                        openComicLink(dataSiswa[index].comicLink);
-                    } else {
-                        openZoomModal(dataSiswa[index].photo, dataSiswa[index].name, '');
-                    }
+                    if (hasComicLink) openComicLink(dataSiswa[index].comicLink);
+                    else openZoomModal(dataSiswa[index].photo, dataSiswa[index].name, '');
                 };
                 seat.appendChild(img);
             }
@@ -584,17 +670,13 @@
                 const linkBadge = document.createElement('div');
                 linkBadge.className = 'comic-link-badge';
                 linkBadge.innerText = '🔗';
-                linkBadge.title = 'Klik untuk buka link komik';
-                linkBadge.onclick = (e) => {
-                    e.stopPropagation();
-                    openComicLink(dataSiswa[index].comicLink);
-                };
+                linkBadge.title = 'Klik untuk buka link';
+                linkBadge.onclick = (e) => { e.stopPropagation(); openComicLink(dataSiswa[index].comicLink); };
                 seat.appendChild(linkBadge);
             }
             const name = document.createElement('div');
             name.className = 'seat-name';
             name.innerText = dataSiswa[index].name;
-            name.title = dataSiswa[index].name;
             seat.appendChild(name);
         } else {
             const icon = document.createElement('div');
@@ -607,7 +689,7 @@
     }
 
     function openComicLink(link) {
-        if (!link) { alert('⚠️ Link komik tidak tersedia!'); return; }
+        if (!link) { alert('⚠️ Link tidak tersedia!'); return; }
         let url = link;
         if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
         window.open(url, '_blank');
@@ -617,26 +699,26 @@
         navigator.clipboard.writeText(text).then(() => {
             showStatus(message || '📋 Disalin!', true);
         }).catch(() => {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try { document.execCommand('copy'); showStatus(message || '📋 Disalin!', true); }
-            catch (err) { alert('Gagal menyalin link. Salin manual: ' + text); }
-            document.body.removeChild(textarea);
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); showStatus(message || ' Disalin!', true); }
+            catch (err) { alert('Gagal: ' + text); }
+            document.body.removeChild(ta);
         });
     }
 
     function openComicLinkFromModal() {
         const link = document.getElementById('inpComicLink').value.trim();
-        if (!link) { alert('⚠️ Link masih kosong!'); return; }
+        if (!link) { alert('⚠️ Link kosong!'); return; }
         openComicLink(link);
     }
 
     function copyComicLinkFromModal() {
         const link = document.getElementById('inpComicLink').value.trim();
-        if (!link) { alert('⚠️ Link masih kosong!'); return; }
-        copyToClipboard(link, ' Link komik tersalin!');
+        if (!link) { alert('⚠️ Link kosong!'); return; }
+        copyToClipboard(link, '📋 Link tersalin!');
     }
 
     function openZoomModal(photoSrc, name, comicLink) {
@@ -663,11 +745,8 @@
     }
 
     function openCurrentComicLink() {
-        if (currentZoomLink) {
-            openComicLink(currentZoomLink);
-        } else {
-            alert('⚠️ Link komik tidak tersedia untuk siswa ini!');
-        }
+        if (currentZoomLink) openComicLink(currentZoomLink);
+        else alert('⚠️ Link tidak tersedia!');
     }
 
     function closeZoomModal() { 
@@ -676,10 +755,10 @@
     }
 
     function openModal(index) {
-        if (!currentClass) { alert('⚠️ Pilih kelas terlebih dahulu!'); return; }
+        if (!currentClass) { alert('⚠️ Pilih kelas!'); return; }
         activeIndex = index;
         originalPhotoBase64 = null;
-        document.getElementById('modalTitle').innerText = currentClass + ' - Kursi No. ' + (index + 1);
+        document.getElementById('modalTitle').innerText = currentClass + ' - Kursi ' + (index + 1);
         document.getElementById('inpName').value = dataSiswa[index]?.name || '';
         document.getElementById('inpComicLink').value = dataSiswa[index]?.comicLink || '';
         document.getElementById('imgPreview').classList.remove('show');
@@ -713,7 +792,7 @@
         if (input.files && input.files[0]) {
             const file = input.files[0];
             if (file.size > 1.5 * 1024 * 1024) { 
-                alert('⚠️ Ukuran foto maksimal 1.5MB agar muat di Google Sheets'); 
+                alert('️ Maksimal 1.5MB!'); 
                 input.value = ''; 
                 return; 
             }
@@ -721,56 +800,58 @@
             const small = await compressImage(file, 150, 180, 0.5);
             
             if (originalPhotoBase64.length > 45000) {
-                alert('⚠️ Foto terlalu besar setelah kompresi. Silakan gunakan foto dengan resolusi lebih rendah.');
+                alert('⚠️ Foto terlalu besar!');
                 input.value = '';
                 originalPhotoBase64 = null;
                 return;
             }
             
-            const img = document.getElementById('imgPreview');
-            img.src = small;
-            img.classList.add('show');
+            document.getElementById('imgPreview').src = small;
+            document.getElementById('imgPreview').classList.add('show');
         }
     }
 
     async function saveData() {
         const name = document.getElementById('inpName').value.trim();
-        const smallPhoto = document.getElementById('imgPreview').classList.contains('show') ? document.getElementById('imgPreview').src : (dataSiswa[activeIndex]?.photo || '');
+        const smallPhoto = document.getElementById('imgPreview').classList.contains('show') ? 
+            document.getElementById('imgPreview').src : (dataSiswa[activeIndex]?.photo || '');
         const origPhoto = originalPhotoBase64 || smallPhoto;
         const comicLink = document.getElementById('inpComicLink').value.trim();
+        
         if (!name) { alert('Nama wajib diisi!'); return; }
-        dataSiswa[activeIndex] = {
-            name: name,
-            photo: smallPhoto,
-            photoOriginal: origPhoto,
-            comicLink: comicLink
-        };
+        
+        dataSiswa[activeIndex] = { name, photo: smallPhoto, photoOriginal: origPhoto, comicLink };
         allData[currentClass] = { ...dataSiswa };
         saveClassesLocally();
         closeModal();
         renderDenah();
-        saveToGoogleSheet();
+        await saveToGoogleSheet();
     }
 
     async function saveToGoogleSheet() {
-        if (!currentClass) return;
+        if (!currentClass || isSaving) return;
+        
+        isSaving = true;
+        showStatus(' Menyimpan...', false);
+        
         try {
-            // ✅ Kirim data dalam format object (sudah dipisah)
-            const payload = {
-                action: 'save',
-                sheet: currentClass,
-                data: dataSiswa
-            };
-            
-            await fetch(SCRIPT_URL, {
+            const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ action: 'save', sheet: currentClass, data: dataSiswa })
             });
-            showStatus('✅ Tersimpan otomatis ke Sheet!', true);
+            
+            if (response.ok) {
+                lastSaveTime = Date.now();
+                showStatus('✅ Tersimpan!', true);
+            } else {
+                throw new Error('HTTP ' + response.status);
+            }
         } catch (error) {
-            console.error('Error saving:', error);
-            showStatus('⚠️ Gagal sync ke Sheet (disimpan lokal)', false);
+            console.error('Error:', error);
+            showStatus('⚠️ Gagal simpan (data aman di lokal)', false);
+        } finally {
+            isSaving = false;
         }
     }
 
