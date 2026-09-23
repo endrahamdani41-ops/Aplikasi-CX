@@ -33,56 +33,18 @@
         .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
         .connection-status.disconnected { background: rgba(239, 68, 68, 0.9); }
         .header-controls { position: absolute; top: 6px; right: 8px; display: flex; gap: 8px; align-items: center; }
-        
-        /* ✅ ICON BARU - Lebih Elegan */
-        .icon-btn { 
-            width: 44px; height: 44px; border: none; border-radius: 12px; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            position: relative; overflow: hidden;
-        }
-        .icon-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
+        .icon-btn { width: 44px; height: 44px; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+        .icon-btn::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%); opacity: 0; transition: opacity 0.3s; }
         .icon-btn:hover::before { opacity: 1; }
         .icon-btn:active { transform: scale(0.92); }
         .icon-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .icon-btn svg { width: 22px; height: 22px; position: relative; z-index: 1; }
-        
-        /* ✅ Warna Icon yang Lebih Jelas */
-        .btn-backup { 
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-        }
-        .btn-backup:hover { 
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
-            transform: translateY(-2px);
-        }
-        
-        .btn-refresh { 
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-        }
-        .btn-refresh:hover { 
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
-            transform: translateY(-2px);
-        }
-        
-        .theme-toggle { 
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-        }
-        .theme-toggle:hover { 
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
-            transform: translateY(-2px);
-        }
-        
+        .btn-backup { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
+        .btn-backup:hover { box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6); transform: translateY(-2px); }
+        .btn-refresh { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        .btn-refresh:hover { box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); transform: translateY(-2px); }
+        .theme-toggle { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
+        .theme-toggle:hover { box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6); transform: translateY(-2px); }
         .class-selector-bar { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: var(--bg-footer); border-bottom: 1px solid var(--border-color); }
         .class-select { padding: 6px 12px; border: 2px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main); font-size: 0.9rem; font-weight: 700; cursor: pointer; }
         .page-nav { display: none; justify-content: center; gap: 10px; padding: 12px 10px 0; }
@@ -101,6 +63,10 @@
         .seat-num { position: absolute; top: 6px; left: 6px; background: var(--primary); color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
         .incomplete-badge { position: absolute; top: 6px; right: 6px; background: var(--warning); color: #000; font-size: 0.65rem; font-weight: 800; padding: 3px 6px; border-radius: 4px; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         .comic-link-badge { position: absolute; bottom: 30px; right: 6px; background: #3b82f6; color: #fff; width: 22px; height: 22px; border-radius: 50%; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 11; box-shadow: 0 2px 4px rgba(0,0,0,0.3); cursor: pointer; }
+        .edit-btn { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; background: linear-gradient(135deg, #f59e0b, #d97706); border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 12; box-shadow: 0 2px 6px rgba(0,0,0,0.4); transition: all 0.2s ease; }
+        .edit-btn:hover { transform: scale(1.15); background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.6); }
+        .edit-btn:active { transform: scale(0.95); }
+        .edit-btn svg { width: 14px; height: 14px; color: white; }
         .seat-photo { width: 100%; height: 100%; object-fit: cover; pointer-events: auto; cursor: zoom-in; }
         .seat-name { position: absolute; bottom: 0; left: 0; right: 0; background: var(--seat-name-bg); color: var(--seat-name-color); font-size: 0.75rem; line-height: 1.2; text-align: center; padding: 6px 3px; font-weight: 700; z-index: 5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .empty-icon { font-size: 2rem; color: var(--text-muted); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
@@ -132,14 +98,185 @@
         .zoom-link-btn.show { display: block; }
         .loading-text { text-align: center; padding: 20px; color: var(--text-muted); }
         
-        /* ✅ Animasi Refresh */
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        /* ✅ MODAL PASSWORD EDIT - Desain Baru yang Lebih Elegan */
+        .password-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
         }
-        .icon-btn.refreshing svg {
-            animation: spin 1s linear infinite;
+        .password-modal-overlay.active { display: flex; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .password-modal-box {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 24px 20px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 320px;
+            color: var(--text-main);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        body.light-mode .password-modal-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .password-modal-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+        .password-modal-icon svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+        
+        .password-modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+        
+        .password-modal-subtitle {
+            font-size: 0.8rem;
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        
+        .password-input-wrapper {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        
+        .password-input-wrapper input {
+            width: 100%;
+            padding: 14px 44px 14px 16px;
+            border: 2px solid var(--input-border);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+        
+        .password-input-wrapper input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+        
+        .password-input-wrapper input.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+            animation: shake 0.4s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+        .password-toggle-btn:hover { color: var(--text-main); }
+        .password-toggle-btn svg { width: 20px; height: 20px; }
+        
+        .password-modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .password-modal-buttons .btn {
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .password-modal-buttons .btn-cancel {
+            background: var(--bg-footer);
+            color: var(--text-muted);
+            flex: 1;
+        }
+        .password-modal-buttons .btn-cancel:hover {
+            background: var(--border-color);
+            color: var(--text-main);
+        }
+        
+        .password-modal-buttons .btn-confirm {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            flex: 1.5;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+        .password-modal-buttons .btn-confirm:hover {
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.6);
+            transform: translateY(-1px);
+        }
+        .password-modal-buttons .btn-confirm:active {
+            transform: translateY(0);
+        }
+        
+        .password-error-msg {
+            color: var(--danger);
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: -8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: none;
+        }
+        .password-error-msg.show { display: block; }
+        
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .icon-btn.refreshing svg { animation: spin 1s linear infinite; }
         
         @media (max-width: 600px) {
             :root { --seat-w: 76px; --seat-h: 96px; --gap-pair: 6px; --gap-group: 12px; }
@@ -154,6 +291,11 @@
             .denah-scroll-area { padding: 10px 4px; }
             .zoom-img { width: calc(var(--seat-w) * 4); height: calc(var(--seat-h) * 4); }
             .comic-link-badge { width: 18px; height: 18px; font-size: 0.65rem; bottom: 22px; right: 3px; }
+            .edit-btn { width: 22px; height: 22px; top: 3px; right: 3px; }
+            .edit-btn svg { width: 12px; height: 12px; }
+            .password-modal-box { max-width: 280px; padding: 20px 16px; }
+            .password-modal-icon { width: 48px; height: 48px; }
+            .password-modal-icon svg { width: 24px; height: 24px; }
         }
     </style>
 </head>
@@ -162,7 +304,6 @@
     <div class="header">
         <div id="connectionStatus" class="connection-status">Memeriksa...</div>
         <div class="header-controls">
-            <!-- ✅ Icon Backup - SVG -->
             <button class="icon-btn btn-backup" onclick="backupAndReset()" title="Backup & Reset Hari Ini">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -170,16 +311,12 @@
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                 </svg>
             </button>
-            
-            <!-- ✅ Icon Refresh - SVG -->
             <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Ulang Data">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="23 4 23 10 17 10"></polyline>
                     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                 </svg>
             </button>
-            
-            <!-- ✅ Icon Theme - SVG -->
             <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">
                 <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="5"></circle>
@@ -196,7 +333,7 @@
         </div>
         <div><br><br>
             <h2 class="title-sub">SMPN 110 JAKARTA</h2>
-            <h2 class="title-sub">TUGAS KOKURIKULER KOMIK DIGITAL</h2><br>
+            <h2 class="title-sub">TUGAS KOKURIKULER</h2><br>
             <div class="title-date" id="tanggalPJJ">Memuat tanggal...</div><br>
         </div>
     </div>
@@ -233,6 +370,37 @@
     </div>
 </div>
 
+<!-- ✅ MODAL PASSWORD EDIT - Desain Baru yang Lebih Elegan -->
+<div class="password-modal-overlay" id="passwordEditModal">
+    <div class="password-modal-box">
+        <div class="password-modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+        </div>
+        <div class="password-modal-title">Verifikasi Admin</div>
+        <div class="password-modal-subtitle">Masukkan kata sandi untuk mengedit data</div>
+        
+        <div class="password-input-wrapper">
+            <input type="password" id="inpEditPassword" placeholder="••••••••" autocomplete="off">
+            <button type="button" class="password-toggle-btn" onclick="toggleEditPasswordVisibility()" title="Tampilkan/Sembunyikan">
+                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="password-error-msg" id="editPasswordError">❌ Kata sandi salah!</div>
+        
+        <div class="password-modal-buttons">
+            <button class="btn btn-cancel" onclick="closePasswordEditModal()">Batal</button>
+            <button class="btn btn-confirm" onclick="confirmEditPassword()">Buka</button>
+        </div>
+    </div>
+</div>
+
 <div class="zoom-overlay" id="zoomModal" onclick="closeZoomModal()">
     <div class="zoom-content" onclick="event.stopPropagation()">
         <button class="zoom-close" onclick="closeZoomModal()">✕</button>
@@ -243,7 +411,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjcR7cHGSauqRXJ6pUCUF6hdHJUsu1YtHKGG91gYtgcK7g6AEefpikTG-RbchQRBfi/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzS6kRh6jR9ZkUKou2J38JIi2aLH3PRT0Z3Phh_vvEG20MdvJ0qiWUpl7wFcjEiO8C0/exec';
     const MAX_ACTIVE_SEATS = 36;
     const SHEET_DILARANG = ['Pengaturan', 'pengaturan', 'PENGATURAN'];
     
@@ -260,6 +428,8 @@
     let currentZoomLink = '';
     let isSaving = false;
     let lastSaveTime = 0;
+    let isEditMode = false;
+    let pendingEditIndex = null; // ✅ Simpan index yang akan diedit
 
     const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -305,7 +475,7 @@
                         if (result.data['KataSandiTambahKelas']) ADMIN_PASSWORD = result.data['KataSandiTambahKelas'];
                     }
                 }
-            } catch (e) { console.log('ℹ️ Pakai default password backup: cx'); }
+            } catch (e) { console.log('ℹ️ Pakai default password: cx'); }
         }, 100);
     }
 
@@ -411,7 +581,7 @@
             
             showStatus('✅ Data diperbaharui!', true);
         } catch (err) {
-            console.error(' Gagal refresh:', err);
+            console.error('❌ Gagal refresh:', err);
             showStatus('❌ Gagal memuat data', false);
         } finally {
             btnRefresh.classList.remove('refreshing');
@@ -474,10 +644,8 @@
     function updateThemeIcon(isDark) {
         const themeIcon = document.getElementById('themeIcon');
         if (isDark) {
-            // Icon Bulan
             themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
         } else {
-            // Icon Matahari
             themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
         }
     }
@@ -568,7 +736,7 @@
                     statusEl.textContent = '✅ Terhubung'; 
                     statusEl.className = 'connection-status connected'; 
                 } else { 
-                    statusEl.textContent = ' Error'; 
+                    statusEl.textContent = '❌ Error'; 
                     statusEl.className = 'connection-status disconnected'; 
                 }
             })
@@ -594,55 +762,44 @@
         _notifTimer = setTimeout(() => checkConnection(), 4000);
     }
     
- function renderDenah() {
-    const container = document.getElementById('denahArea');
-    const pageNav = document.getElementById('pageNav');
-    container.innerHTML = '';
-    if (!currentClass) { if (pageNav) pageNav.style.display = 'none'; return; }
-    const mobile = isMobile();
-    if (pageNav) pageNav.style.display = mobile ? 'flex' : 'none';
-    
-    const cols = mobile ? 4 : 8;
-    const rows = 5;
-    const startIndex = mobile ? (currentPage - 1) * 20 : 0;
-    
-    for (let r = 0; r < rows; r++) {
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'row-wrapper';
+    function renderDenah() {
+        const container = document.getElementById('denahArea');
+        const pageNav = document.getElementById('pageNav');
+        container.innerHTML = '';
+        if (!currentClass) { if (pageNav) pageNav.style.display = 'none'; return; }
+        const mobile = isMobile();
+        if (pageNav) pageNav.style.display = mobile ? 'flex' : 'none';
         
-        // ✅ PERBAIKAN: Pemisahan kursi 3-4 HANYA untuk desktop baris pertama
-        const isFirstRowDesktop = (r === 0 && !mobile);
+        const cols = mobile ? 4 : 8;
+        const rows = 5;
+        const startIndex = mobile ? (currentPage - 1) * 20 : 0;
         
-        for (let c = 0; c < cols; c += 2) {
-            const pairDiv = document.createElement('div');
-            pairDiv.className = 'pair-wrapper';
-            let idxLeft, idxRight;
+        for (let r = 0; r < rows; r++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row-wrapper';
+            const isFirstRowDesktop = (r === 0 && !mobile);
             
-            if (mobile) {
-                // ✅ Mobile: urutan normal 1,2,3,4
-                idxLeft = startIndex + (r * cols + c);
-                idxRight = startIndex + (r * cols + c + 1);
-            } else {
-                // Desktop: pemisahan kursi 3-4 hanya di baris pertama
-                if (isFirstRowDesktop && c === 2) {
-                    idxLeft = startIndex + (r * cols + 2);  // Kursi 3
-                    idxRight = startIndex + (r * cols + 4); // Kursi 5
-                } else if (isFirstRowDesktop && c === 4) {
-                    idxLeft = startIndex + (r * cols + 3);  // Kursi 4
-                    idxRight = startIndex + (r * cols + 5); // Kursi 6
-                } else {
+            for (let c = 0; c < cols; c += 2) {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'pair-wrapper';
+                let idxLeft, idxRight;
+                
+                if (mobile) {
                     idxLeft = startIndex + (r * cols + c);
                     idxRight = startIndex + (r * cols + c + 1);
+                } else {
+                    if (isFirstRowDesktop && c === 2) { idxLeft = startIndex + (r * cols + 2); idxRight = startIndex + (r * cols + 4); }
+                    else if (isFirstRowDesktop && c === 4) { idxLeft = startIndex + (r * cols + 3); idxRight = startIndex + (r * cols + 5); }
+                    else { idxLeft = startIndex + (r * cols + c); idxRight = startIndex + (r * cols + c + 1); }
                 }
+                
+                pairDiv.appendChild(createSeat(idxLeft));
+                pairDiv.appendChild(createSeat(idxRight));
+                rowDiv.appendChild(pairDiv);
             }
-            
-            pairDiv.appendChild(createSeat(idxLeft));
-            pairDiv.appendChild(createSeat(idxRight));
-            rowDiv.appendChild(pairDiv);
+            container.appendChild(rowDiv);
         }
-        container.appendChild(rowDiv);
     }
-}
 
     function createSeat(index) {
         const seat = document.createElement('div');
@@ -650,7 +807,8 @@
         
         const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
         const hasComicLink = dataSiswa[index] && dataSiswa[index].comicLink;
-        let seatClass = 'seat' + (dataSiswa[index] ? ' filled' : '') + (hasPhoto ? ' locked' : ' incomplete');
+        const hasData = dataSiswa[index] && dataSiswa[index].name;
+        let seatClass = 'seat' + (hasData ? ' filled' : '') + (hasPhoto ? ' locked' : ' incomplete');
         seat.className = seatClass;
         
         const num = document.createElement('div');
@@ -658,7 +816,17 @@
         num.innerText = index + 1;
         seat.appendChild(num);
 
-        if (dataSiswa[index]) {
+        if (hasData) {
+            const editBtn = document.createElement('div');
+            editBtn.className = 'edit-btn';
+            editBtn.title = 'Edit data (butuh password)';
+            editBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
+            editBtn.onclick = (e) => { 
+                e.stopPropagation(); 
+                requestEditWithPassword(index); 
+            };
+            seat.appendChild(editBtn);
+            
             if (!hasPhoto) {
                 const badge = document.createElement('div');
                 badge.className = 'incomplete-badge';
@@ -679,7 +847,7 @@
             if (hasComicLink) {
                 const linkBadge = document.createElement('div');
                 linkBadge.className = 'comic-link-badge';
-                linkBadge.innerText = '🔗';
+                linkBadge.innerText = '';
                 linkBadge.title = 'Klik untuk buka link';
                 linkBadge.onclick = (e) => { e.stopPropagation(); openComicLink(dataSiswa[index].comicLink); };
                 seat.appendChild(linkBadge);
@@ -698,6 +866,56 @@
         return seat;
     }
 
+    // ✅ MODAL PASSWORD CUSTOM - Lebih Elegan
+    function requestEditWithPassword(index) {
+        pendingEditIndex = index;
+        document.getElementById('inpEditPassword').value = '';
+        document.getElementById('editPasswordError').classList.remove('show');
+        document.getElementById('inpEditPassword').classList.remove('error');
+        document.getElementById('passwordEditModal').classList.add('active');
+        setTimeout(() => document.getElementById('inpEditPassword').focus(), 100);
+    }
+    
+    function closePasswordEditModal() {
+        document.getElementById('passwordEditModal').classList.remove('active');
+        pendingEditIndex = null;
+    }
+    
+    function toggleEditPasswordVisibility() {
+        const inp = document.getElementById('inpEditPassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        if (inp.type === 'password') {
+            inp.type = 'text';
+            eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+        } else {
+            inp.type = 'password';
+            eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+        }
+    }
+    
+    function confirmEditPassword() {
+        const pass = document.getElementById('inpEditPassword').value.trim();
+        if (pass === ADMIN_PASSWORD) {
+            closePasswordEditModal();
+            openModal(pendingEditIndex, true);
+        } else {
+            document.getElementById('editPasswordError').classList.add('show');
+            document.getElementById('inpEditPassword').classList.add('error');
+            document.getElementById('inpEditPassword').value = '';
+            document.getElementById('inpEditPassword').focus();
+            setTimeout(() => {
+                document.getElementById('inpEditPassword').classList.remove('error');
+            }, 500);
+        }
+    }
+    
+    // Enter key untuk submit password
+    document.getElementById('inpEditPassword').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            confirmEditPassword();
+        }
+    });
+
     function openComicLink(link) {
         if (!link) { alert('⚠️ Link tidak tersedia!'); return; }
         let url = link;
@@ -713,7 +931,7 @@
             ta.value = text;
             document.body.appendChild(ta);
             ta.select();
-            try { document.execCommand('copy'); showStatus(message || ' Disalin!', true); }
+            try { document.execCommand('copy'); showStatus(message || '📋 Disalin!', true); }
             catch (err) { alert('Gagal: ' + text); }
             document.body.removeChild(ta);
         });
@@ -728,7 +946,7 @@
     function copyComicLinkFromModal() {
         const link = document.getElementById('inpComicLink').value.trim();
         if (!link) { alert('⚠️ Link kosong!'); return; }
-        copyToClipboard(link, '📋 Link tersalin!');
+        copyToClipboard(link, ' Link tersalin!');
     }
 
     function openZoomModal(photoSrc, name, comicLink) {
@@ -764,19 +982,35 @@
         currentZoomLink = '';
     }
 
-    function openModal(index) {
+    function openModal(index, isEdit = false) {
         if (!currentClass) { alert('⚠️ Pilih kelas!'); return; }
         activeIndex = index;
+        isEditMode = isEdit;
         originalPhotoBase64 = null;
-        document.getElementById('modalTitle').innerText = currentClass + ' - Kursi ' + (index + 1);
+        
+        const modeText = isEdit ? '✏️ Edit Data' : '➕ Input Data';
+        document.getElementById('modalTitle').innerText = `${modeText} - ${currentClass} - Kursi ${index + 1}`;
+        
         document.getElementById('inpName').value = dataSiswa[index]?.name || '';
         document.getElementById('inpComicLink').value = dataSiswa[index]?.comicLink || '';
-        document.getElementById('imgPreview').classList.remove('show');
+        
+        const imgPreview = document.getElementById('imgPreview');
+        if (dataSiswa[index]?.photo) {
+            imgPreview.src = dataSiswa[index].photo;
+            imgPreview.classList.add('show');
+        } else {
+            imgPreview.classList.remove('show');
+        }
+        
         document.getElementById('inpPhoto').value = '';
         document.getElementById('modal').classList.add('active');
         setTimeout(() => document.getElementById('inpName').focus(), 100);
     }
-    function closeModal() { document.getElementById('modal').classList.remove('active'); }
+    
+    function closeModal() { 
+        document.getElementById('modal').classList.remove('active'); 
+        isEditMode = false;
+    }
     
     function compressImage(file, maxW, maxH, quality) {
         return new Promise((resolve) => {
@@ -802,7 +1036,7 @@
         if (input.files && input.files[0]) {
             const file = input.files[0];
             if (file.size > 1.5 * 1024 * 1024) { 
-                alert('️ Maksimal 1.5MB!'); 
+                alert('⚠️ Maksimal 1.5MB!'); 
                 input.value = ''; 
                 return; 
             }
@@ -842,7 +1076,7 @@
         if (!currentClass || isSaving) return;
         
         isSaving = true;
-        showStatus(' Menyimpan...', false);
+        showStatus('💾 Menyimpan...', false);
         
         try {
             const response = await fetch(SCRIPT_URL, {
@@ -867,6 +1101,7 @@
 
     window.addEventListener('resize', renderDenah);
     document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
+    document.getElementById('passwordEditModal').onclick = e => { if (e.target.id === 'passwordEditModal') closePasswordEditModal(); };
 </script>
 </body>
 </html>
