@@ -281,7 +281,7 @@ d. 40"></textarea>
                 thumb.innerHTML = `
                     <img src="${imgSrc}" alt="Img ${index + 1}">
                     <button class="remove-btn" onclick="event.stopPropagation(); removeImage(${index})" title="Hapus gambar">✕</button>
-                    <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs text-center py-0.5">#${index + 1}</div>
+ 
                 `;
                 gallery.appendChild(thumb);
             });
@@ -289,7 +289,7 @@ d. 40"></textarea>
         
         function insertImageAtCursor() {
             if (uploadedImages.length === 0) {
-                showToast('⚠️ Upload gambar terlebih dahulu !', 'warning');
+                showToast('Upload gambar terlebih dahulu !', 'warning');
                 return;
             }
             insertSpecificImage(uploadedImages.length);
@@ -448,7 +448,7 @@ d. 40"></textarea>
                     }
                 });
                 if (Object.keys(manualAnswerKeys).length > 0) {
-                    showToast(`✅ Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban !`, "success");
+                    showToast(`Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban !`, "success");
                     const outputCard = document.getElementById('outputCard');
                     if (!outputCard.classList.contains('hidden')) convertQuestions();
                 } else {
@@ -465,7 +465,7 @@ d. 40"></textarea>
         function convertQuestions() {
             const rawText = document.getElementById('rawInput').value.trim();
             if (!rawText) {
-                showToast("⚠️ Mohon isi atau paste teks soal terlebih dahulu!", "warning");
+                showToast("Mohon isi atau paste teks soal terlebih dahulu!", "warning");
                 return;
             }
             const kategori = document.getElementById('kategoriInput').value.trim() || 'Umum';
@@ -509,14 +509,14 @@ d. 40"></textarea>
             const outputCard = document.getElementById('outputCard');
             outputCard.classList.remove('hidden');
             outputCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            showToast(`✨ Berhasil mengonversi ${parsedList.length} soal !`, "success");
+            showToast(`Berhasil mengonversi ${parsedList.length} soal !`, "success");
         }
 
         // --- Copy to Word ---
         async function copyResultToWord() {
             const previewEl = document.getElementById('resultPreview');
             if (!previewEl.innerHTML.trim()) {
-                showToast("⚠️ Tidak ada hasil untuk disalin!", "warning");
+                showToast("Tidak ada hasil untuk disalin!", "warning");
                 return;
             }
             try {
@@ -526,9 +526,9 @@ d. 40"></textarea>
                 await navigator.clipboard.write(data);
                 const copyBtn = document.getElementById('copyBtn');
                 const origText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '✅ Berhasil Disalin !';
+                copyBtn.innerHTML = 'Berhasil Disalin !';
                 setTimeout(() => { copyBtn.innerHTML = origText; }, 2500);
-                showToast("📋 Hasil disalin! Paste di Word (Ctrl+V).", "success");
+                showToast("Hasil disalin! Paste di Word (Ctrl+V).", "success");
             } catch (err) {
                 console.error(err);
                 const range = document.createRange();
@@ -538,7 +538,7 @@ d. 40"></textarea>
                 selection.addRange(range);
                 try {
                     document.execCommand('copy');
-                    showToast("📋 Disalin (Fallback)!", "warning");
+                    showToast("Disalin (Fallback)!", "warning");
                 } catch (e) {
                     showToast("❌ Gagal menyalin.", "error");
                 }
