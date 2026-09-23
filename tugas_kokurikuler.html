@@ -403,12 +403,12 @@
     }
 
     async function backupAndReset() {
-        if (!currentClass) { alert('⚠️ Pilih kelas terlebih dahulu!'); return; }
+        if (!currentClass) { alert('⚠️ Pilih kelas terlebih dahulu !'); return; }
         const today = getTodayDate();
         const backupSheetName = `Backup_${currentClass}_${today}`;
         if (!confirm(`⚠️ PERINGATAN BACKUP & RESET!\n\nSistem akan:\n1. Membuat sheet baru: "${backupSheetName}"\n2. Menyalin semua data & foto ke sana.\n3. MENGHAPUS data di "${currentClass}" agar siap untuk hari baru.\n\nLanjutkan?`)) { return; }
         const pass = prompt("Masukkan Kata Sandi Admin untuk konfirmasi:");
-        if (pass !== ADMIN_PASSWORD) { alert("❌ Kata sandi salah!"); return; }
+        if (pass !== ADMIN_PASSWORD) { alert("❌ Kata sandi salah !"); return; }
         showStatus('⏳ Sedang membackup & mereset data...', false);
         try {
             await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'create', sheetName: backupSheetName }) });
@@ -424,7 +424,7 @@
             }
             renderClassSelect();
             renderDenah();
-            showStatus(`✅ Backup ke ${backupSheetName} berhasil!`, true);
+            showStatus(`✅ Backup ke ${backupSheetName} berhasil !`, true);
         } catch (error) {
             console.error(error);
             showStatus('❌ Gagal backup', false);
@@ -482,7 +482,7 @@
             document.getElementById('btnPage1').classList.toggle('active', currentPage === 1);
             document.getElementById('btnPage2').classList.toggle('active', currentPage === 2);
             renderDenah();
-            showStatus('✅ Data diperbaharui!', true);
+            showStatus('✅ Data diperbaharui !', true);
         } catch (err) {
             console.error('❌ Gagal refresh:', err);
             showStatus('❌ Gagal memuat data', false);
@@ -779,18 +779,18 @@
     });
 
     function openComicLink(link) {
-        if (!link) { alert('⚠️ Link tidak tersedia!'); return; }
+        if (!link) { alert('⚠️ Link tidak tersedia !'); return; }
         let url = link;
         if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
         window.open(url, '_blank');
     }
 
     function copyToClipboard(text, message) {
-        navigator.clipboard.writeText(text).then(() => showStatus(message || '📋 Disalin!', true))
+        navigator.clipboard.writeText(text).then(() => showStatus(message || '📋 Disalin !', true))
         .catch(() => {
             const ta = document.createElement('textarea');
             ta.value = text; document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showStatus(message || '📋 Disalin!', true); }
+            try { document.execCommand('copy'); showStatus(message || '📋 Disalin !', true); }
             catch (err) { alert('Gagal: ' + text); }
             document.body.removeChild(ta);
         });
@@ -798,14 +798,14 @@
 
     function openComicLinkFromModal() {
         const link = document.getElementById('inpComicLink').value.trim();
-        if (!link) { alert('⚠️ Link kosong!'); return; }
+        if (!link) { alert('⚠️ Link kosong !'); return; }
         openComicLink(link);
     }
 
     function copyComicLinkFromModal() {
         const link = document.getElementById('inpComicLink').value.trim();
         if (!link) { alert('⚠️ Link kosong!'); return; }
-        copyToClipboard(link, '📋 Link tersalin!');
+        copyToClipboard(link, '📋 Link tersalin !');
     }
 
     function openZoomModal(photoSrc, name, comicLink) {
@@ -830,7 +830,7 @@
 
     function openCurrentComicLink() {
         if (currentZoomLink) openComicLink(currentZoomLink);
-        else alert('⚠️ Link tidak tersedia!');
+        else alert('⚠️ Link tidak tersedia !');
     }
 
     function closeZoomModal() { 
@@ -839,7 +839,7 @@
     }
 
     function openModal(index, isEdit = false) {
-        if (!currentClass) { alert('⚠️ Pilih kelas!'); return; }
+        if (!currentClass) { alert('⚠️ Pilih kelas !'); return; }
         activeIndex = index;
         isEditMode = isEdit;
         originalPhotoBase64 = null;
@@ -887,11 +887,11 @@
     async function handlePreview(input) {
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            if (file.size > 1.5 * 1024 * 1024) { alert('⚠️ Maksimal 1.5MB!'); input.value = ''; return; }
+            if (file.size > 1.5 * 1024 * 1024) { alert('⚠️ Maksimal 1.5MB !'); input.value = ''; return; }
             originalPhotoBase64 = await compressImage(file, 300, 300, 0.6);
             const small = await compressImage(file, 150, 180, 0.5);
             if (originalPhotoBase64.length > 45000) {
-                alert('⚠️ Foto terlalu besar!'); input.value = ''; originalPhotoBase64 = null; return;
+                alert('⚠️ Foto terlalu besar !'); input.value = ''; originalPhotoBase64 = null; return;
             }
             document.getElementById('imgPreview').src = small;
             document.getElementById('imgPreview').classList.add('show');
@@ -903,7 +903,7 @@
         const smallPhoto = document.getElementById('imgPreview').classList.contains('show') ? document.getElementById('imgPreview').src : (dataSiswa[activeIndex]?.photo || '');
         const origPhoto = originalPhotoBase64 || smallPhoto;
         const comicLink = document.getElementById('inpComicLink').value.trim();
-        if (!name) { alert('Nama wajib diisi!'); return; }
+        if (!name) { alert('Nama wajib diisi !'); return; }
         
         dataSiswa[activeIndex] = { name, photo: smallPhoto, photoOriginal: origPhoto, comicLink };
         allData[currentClass] = { ...dataSiswa };
@@ -925,11 +925,11 @@
             });
             if (response.ok) {
                 lastSaveTime = Date.now();
-                showStatus('✅ Tersimpan!', true);
+                showStatus('✅ Tersimpan !', true);
             } else { throw new Error('HTTP ' + response.status); }
         } catch (error) {
             console.error('Error:', error);
-            showStatus('⚠️ Gagal simpan (data aman di lokal)', false);
+            showStatus('⚠️ Gagal simpan (data aman di lokal) !', false);
         } finally { isSaving = false; }
     }
 
