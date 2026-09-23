@@ -594,45 +594,55 @@
         _notifTimer = setTimeout(() => checkConnection(), 4000);
     }
     
-    function renderDenah() {
-        const container = document.getElementById('denahArea');
-        const pageNav = document.getElementById('pageNav');
-        container.innerHTML = '';
-        if (!currentClass) { if (pageNav) pageNav.style.display = 'none'; return; }
-        const mobile = isMobile();
-        if (pageNav) pageNav.style.display = mobile ? 'flex' : 'none';
+ function renderDenah() {
+    const container = document.getElementById('denahArea');
+    const pageNav = document.getElementById('pageNav');
+    container.innerHTML = '';
+    if (!currentClass) { if (pageNav) pageNav.style.display = 'none'; return; }
+    const mobile = isMobile();
+    if (pageNav) pageNav.style.display = mobile ? 'flex' : 'none';
+    
+    const cols = mobile ? 4 : 8;
+    const rows = 5;
+    const startIndex = mobile ? (currentPage - 1) * 20 : 0;
+    
+    for (let r = 0; r < rows; r++) {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'row-wrapper';
         
-        const cols = mobile ? 4 : 8;
-        const rows = 5;
-        const startIndex = mobile ? (currentPage - 1) * 20 : 0;
+        // ✅ PERBAIKAN: Pemisahan kursi 3-4 HANYA untuk desktop baris pertama
+        const isFirstRowDesktop = (r === 0 && !mobile);
         
-        for (let r = 0; r < rows; r++) {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'row-wrapper';
-            const isFirstRow = (r === 0);
+        for (let c = 0; c < cols; c += 2) {
+            const pairDiv = document.createElement('div');
+            pairDiv.className = 'pair-wrapper';
+            let idxLeft, idxRight;
             
-            for (let c = 0; c < cols; c += 2) {
-                const pairDiv = document.createElement('div');
-                pairDiv.className = 'pair-wrapper';
-                let idxLeft, idxRight;
-                
-                if (mobile) {
-                    if (isFirstRow && c === 0) { idxLeft = startIndex + (r * cols + 0); idxRight = startIndex + (r * cols + 2); }
-                    else if (isFirstRow && c === 2) { idxLeft = startIndex + (r * cols + 1); idxRight = startIndex + (r * cols + 3); }
-                    else { idxLeft = startIndex + (r * cols + c); idxRight = startIndex + (r * cols + c + 1); }
+            if (mobile) {
+                // ✅ Mobile: urutan normal 1,2,3,4
+                idxLeft = startIndex + (r * cols + c);
+                idxRight = startIndex + (r * cols + c + 1);
+            } else {
+                // Desktop: pemisahan kursi 3-4 hanya di baris pertama
+                if (isFirstRowDesktop && c === 2) {
+                    idxLeft = startIndex + (r * cols + 2);  // Kursi 3
+                    idxRight = startIndex + (r * cols + 4); // Kursi 5
+                } else if (isFirstRowDesktop && c === 4) {
+                    idxLeft = startIndex + (r * cols + 3);  // Kursi 4
+                    idxRight = startIndex + (r * cols + 5); // Kursi 6
                 } else {
-                    if (isFirstRow && c === 2) { idxLeft = startIndex + (r * cols + 2); idxRight = startIndex + (r * cols + 4); }
-                    else if (isFirstRow && c === 4) { idxLeft = startIndex + (r * cols + 3); idxRight = startIndex + (r * cols + 5); }
-                    else { idxLeft = startIndex + (r * cols + c); idxRight = startIndex + (r * cols + c + 1); }
+                    idxLeft = startIndex + (r * cols + c);
+                    idxRight = startIndex + (r * cols + c + 1);
                 }
-                
-                pairDiv.appendChild(createSeat(idxLeft));
-                pairDiv.appendChild(createSeat(idxRight));
-                rowDiv.appendChild(pairDiv);
             }
-            container.appendChild(rowDiv);
+            
+            pairDiv.appendChild(createSeat(idxLeft));
+            pairDiv.appendChild(createSeat(idxRight));
+            rowDiv.appendChild(pairDiv);
         }
+        container.appendChild(rowDiv);
     }
+}
 
     function createSeat(index) {
         const seat = document.createElement('div');
