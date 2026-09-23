@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter Soal - Final Clean</title>
+    <title>Konverter Soal Portal Sekolah</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -238,7 +238,7 @@ d. 40"></textarea>
             reader.onload = function(e) {
                 uploadedImages.push(e.target.result);
                 renderGallery();
-                showToast(`Gambar #${uploadedImages.length} berhasil diupload!`, 'success');
+                showToast(`Gambar #${uploadedImages.length} berhasil diupload !`, 'success');
             };
             reader.readAsDataURL(file);
             input.value = '';
@@ -289,7 +289,7 @@ d. 40"></textarea>
         
         function insertImageAtCursor() {
             if (uploadedImages.length === 0) {
-                showToast('⚠️ Upload gambar terlebih dahulu!', 'warning');
+                showToast('⚠️ Upload gambar terlebih dahulu !', 'warning');
                 return;
             }
             insertSpecificImage(uploadedImages.length);
@@ -304,7 +304,7 @@ d. 40"></textarea>
             textarea.value = text.substring(0, startPos) + tag + text.substring(endPos, text.length);
             textarea.focus();
             textarea.selectionStart = textarea.selectionEnd = startPos + tag.length;
-            showToast(`✅ [IMG:${imageNumber}] disisipkan di posisi kursor!`, 'success');
+            showToast(`[IMG:${imageNumber}] disisipkan di posisi kursor !`, 'success');
         }
 
         // --- Parsing Logic ---
@@ -448,7 +448,7 @@ d. 40"></textarea>
                     }
                 });
                 if (Object.keys(manualAnswerKeys).length > 0) {
-                    showToast(`✅ Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban!`, "success");
+                    showToast(`✅ Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban !`, "success");
                     const outputCard = document.getElementById('outputCard');
                     if (!outputCard.classList.contains('hidden')) convertQuestions();
                 } else {
@@ -509,7 +509,7 @@ d. 40"></textarea>
             const outputCard = document.getElementById('outputCard');
             outputCard.classList.remove('hidden');
             outputCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            showToast(`✨ Berhasil mengonversi ${parsedList.length} soal!`, "success");
+            showToast(`✨ Berhasil mengonversi ${parsedList.length} soal !`, "success");
         }
 
         // --- Copy to Word ---
@@ -526,7 +526,7 @@ d. 40"></textarea>
                 await navigator.clipboard.write(data);
                 const copyBtn = document.getElementById('copyBtn');
                 const origText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '✅ Berhasil Disalin!';
+                copyBtn.innerHTML = '✅ Berhasil Disalin !';
                 setTimeout(() => { copyBtn.innerHTML = origText; }, 2500);
                 showToast("📋 Hasil disalin! Paste di Word (Ctrl+V).", "success");
             } catch (err) {
