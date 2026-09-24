@@ -1,909 +1,493 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tugas Kokurikuler - SMPN 110 Jakarta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konverter Soal Portal Sekolah</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Consolas', 'Courier New', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
-        :root {
-            --primary: #4f46e5; --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
-            --bg-page: #0f172a; --bg-container: #1e293b; --text-header: #ffffff;
-            --text-main: #f1f5f9; --text-muted: #94a3b8; --bg-footer: #334155;
-            --border-color: #475569; --seat-empty: #334155; --seat-filled-bg: #1e293b;
-            --seat-filled-border: #10b981; --seat-name-bg: rgba(0, 0, 0, 0.85);
-            --seat-name-color: #ffffff; --modal-bg: #1e293b; --input-bg: #0f172a;
-            --input-border: #475569; --shadow: 0 20px 50px rgba(0,0,0,0.4);
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.3); --gap-pair: 12px; --gap-group: 24px;
-            --seat-w: 130px; --seat-h: 160px;
+        .preview-box ol { margin-top: 4px; margin-bottom: 4px; padding-left: 28px; list-style-type: lower-alpha; }
+        .preview-box li { margin-bottom: 6px; }
+        
+        /* Gambar rata kiri */
+        .preview-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: block;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
-        body.light-mode {
-            --bg-page: #f3f4f6; --bg-container: #ffffff; --text-main: #1f2937;
-            --text-muted: #6b7280; --bg-footer: #f9fafb; --border-color: #e5e7eb;
-            --seat-empty: #e5e7eb; --seat-filled-bg: #ffffff; --modal-bg: #ffffff;
-            --input-bg: #ffffff; --input-border: #d1d5db;
-            --shadow: 0 20px 50px rgba(0,0,0,0.08); --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+        
+        .preview-box .img-placeholder {
+            display: block;
+            width: fit-content;
+            margin: 10px 0;
+            background-color: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            color: #475569;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-align: center;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-page); min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 0; transition: background 0.3s ease; }
-        .app-container { background: var(--bg-container); box-shadow: var(--shadow); width: 100vw; min-height: 100vh; overflow-x: hidden; }
-        .header { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); color: var(--text-header); padding: 50px 12px 16px; text-align: center; position: relative; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .title-sub { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; color: #f59e0b; text-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); text-transform: uppercase; }
-        .title-date { font-size: 0.95rem; font-weight: 600; color: #fbbf24; margin-top: 6px; letter-spacing: 1px; }
-        .connection-status { position: absolute; top: 8px; left: 10px; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.15); color: white; font-weight: 600; backdrop-filter: blur(4px); }
-        .connection-status.connected { background: rgba(16, 185, 129, 0.9); }
-        .connection-status.disconnected { background: rgba(239, 68, 68, 0.9); }
-        .header-controls { position: absolute; top: 6px; right: 8px; display: flex; gap: 8px; align-items: center; }
-        .icon-btn { width: 44px; height: 44px; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
-        .icon-btn::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%); opacity: 0; transition: opacity 0.3s; }
-        .icon-btn:hover::before { opacity: 1; }
-        .icon-btn:active { transform: scale(0.92); }
-        .icon-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .icon-btn svg { width: 22px; height: 22px; position: relative; z-index: 1; }
-        .btn-refresh { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
-        .btn-refresh:hover { box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); transform: translateY(-2px); }
-        .btn-force { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
-        .btn-force:hover { box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6); transform: translateY(-2px); }
-        .theme-toggle { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
-        .theme-toggle:hover { box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6); transform: translateY(-2px); }
-        .class-selector-bar { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: var(--bg-footer); border-bottom: 1px solid var(--border-color); }
-        .class-select { padding: 6px 12px; border: 2px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main); font-size: 0.9rem; font-weight: 700; cursor: pointer; }
-        .page-nav { display: none; justify-content: center; gap: 10px; padding: 12px 10px 0; }
-        .page-btn { flex: 1; max-width: 180px; padding: 10px 12px; font-size: 0.85rem; font-weight: 700; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-footer); color: var(--text-main); cursor: pointer; transition: all 0.2s; }
-        .page-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }
-        .denah-scroll-area { width: 100%; padding: 15px 8px; display: flex; justify-content: center; overflow-x: auto; }
-        .denah-area { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-        .row-wrapper { display: flex; gap: var(--gap-group); justify-content: center; width: 100%; }
-        .pair-wrapper { display: flex; gap: var(--gap-pair); }
-        .seat { width: var(--seat-w); height: var(--seat-h); background: var(--seat-empty); border-radius: 14px; position: relative; cursor: pointer; transition: all 0.2s ease; border: 3px solid transparent; flex-shrink: 0; overflow: hidden; box-shadow: var(--shadow-sm); }
-        .seat.hidden { visibility: hidden; pointer-events: none; }
-        .seat:active:not(.hidden):not(.locked) { transform: scale(0.95); }
-        .seat.filled { border-color: var(--seat-filled-border); background: var(--seat-filled-bg); }
-        .seat.incomplete { border-color: var(--warning); }
-        .seat.locked { cursor: default; }
-        .seat-num { position: absolute; top: 6px; left: 6px; background: var(--primary); color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
-        .incomplete-badge { position: absolute; top: 6px; right: 6px; background: var(--warning); color: #000; font-size: 0.65rem; font-weight: 800; padding: 3px 6px; border-radius: 4px; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .comic-link-badge { position: absolute; bottom: 32px; right: 6px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; width: 24px; height: 24px; border-radius: 50%; font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 11; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5); cursor: pointer; transition: all 0.2s ease; border: 2px solid #ffffff; }
-        .comic-link-badge:hover { transform: scale(1.2); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.7); }
-        .edit-btn { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; background: linear-gradient(135deg, #f59e0b, #d97706); border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 12; box-shadow: 0 2px 6px rgba(0,0,0,0.4); transition: all 0.2s ease; }
-        .edit-btn:hover { transform: scale(1.15); background: linear-gradient(135deg, #fbbf24, #f59e0b); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.6); }
-        .edit-btn svg { width: 14px; height: 14px; color: white; }
-        .seat-photo { width: 100%; height: 100%; object-fit: cover; pointer-events: auto; cursor: zoom-in; }
-        .seat-name { position: absolute; bottom: 0; left: 0; right: 0; background: var(--seat-name-bg); color: var(--seat-name-color); font-size: 0.75rem; line-height: 1.2; text-align: center; padding: 6px 3px; font-weight: 700; z-index: 5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .empty-icon { font-size: 2rem; color: var(--text-muted); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 12px; }
-        .modal-overlay.active { display: flex; }
-        .modal-box { background: var(--modal-bg); padding: 20px 16px; border-radius: 16px; width: 100%; max-width: 360px; color: var(--text-main); max-height: 90vh; overflow-y: auto; }
-        .modal-box h3 { margin-bottom: 16px; font-size: 1.05rem; text-align: center; }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-        .form-group input[type="text"], .form-group input[type="password"], .form-group input[type="url"], .form-group input[type="file"] { width: 100%; padding: 11px 10px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main); font-size: 0.95rem; }
-        .link-row { display: flex; gap: 6px; }
-        .link-row input { flex: 1; }
-        .link-btn { padding: 10px 12px; border: none; border-radius: 8px; background: #3b82f6; color: white; cursor: pointer; font-weight: 700; font-size: 0.85rem; }
-        .link-btn.open { background: #10b981; }
-        .preview-img { width: 100px; height: 120px; border-radius: 8px; object-fit: cover; margin-top: 10px; display: none; border: 2px solid var(--primary); }
-        .preview-img.show { display: block; }
-        .btn-row { display: flex; gap: 8px; margin-top: 18px; }
-        .btn { flex: 1; min-width: 100px; padding: 11px 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: var(--input-border); color: var(--text-main); }
-        .zoom-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 16px; }
-        .zoom-overlay.active { display: flex; }
-        .zoom-content { position: relative; display: flex; flex-direction: column; align-items: center; max-width: 90vw; max-height: 90vh; }
-        .zoom-img { width: calc(var(--seat-w) * 4); height: calc(var(--seat-h) * 4); max-width: 85vw; max-height: 75vh; object-fit: cover; border-radius: 16px; border: 4px solid #ffffff; box-shadow: 0 25px 50px rgba(0,0,0,0.7); cursor: pointer; }
-        .zoom-img.has-link { border-color: #3b82f6; }
-        .zoom-caption { margin-top: 12px; color: #ffffff; font-size: 1.1rem; font-weight: 700; text-align: center; background: rgba(0, 0, 0, 0.7); padding: 6px 16px; border-radius: 20px; }
-        .zoom-close { position: absolute; top: -18px; right: -18px; background: #ef4444; color: white; border: 2px solid #ffffff; border-radius: 50%; width: 36px; height: 36px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; }
-        .zoom-link-btn { margin-top: 10px; padding: 10px 20px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: 2px solid #ffffff; border-radius: 25px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: none; }
-        .zoom-link-btn.show { display: block; }
-        .loading-text { text-align: center; padding: 20px; color: var(--text-muted); }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .icon-btn.refreshing svg { animation: spin 1s linear infinite; }
-        .password-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); z-index: 300; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease; }
-        .password-modal-overlay.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-        .password-modal-box { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 24px 20px; border-radius: 20px; width: 100%; max-width: 320px; color: var(--text-main); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1); animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
-        body.light-mode .password-modal-box { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05); }
-        .password-modal-icon { width: 56px; height: 56px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4); }
-        .password-modal-icon svg { width: 28px; height: 28px; color: white; }
-        .password-modal-title { font-size: 1.1rem; font-weight: 700; text-align: center; margin-bottom: 6px; }
-        .password-modal-subtitle { font-size: 0.8rem; text-align: center; color: var(--text-muted); margin-bottom: 20px; }
-        .password-input-wrapper { position: relative; margin-bottom: 16px; }
-        .password-input-wrapper input { width: 100%; padding: 14px 44px 14px 16px; border: 2px solid var(--input-border); border-radius: 12px; background: var(--input-bg); color: var(--text-main); font-size: 1rem; font-weight: 600; letter-spacing: 2px; transition: all 0.2s ease; outline: none; }
-        .password-input-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15); }
-        .password-input-wrapper input.error { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15); animation: shake 0.4s ease; }
-        .password-toggle-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; }
-        .password-toggle-btn:hover { color: var(--text-main); }
-        .password-toggle-btn svg { width: 20px; height: 20px; }
-        .password-modal-buttons { display: flex; gap: 10px; }
-        .password-modal-buttons .btn { padding: 12px 16px; font-size: 0.9rem; font-weight: 700; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s ease; }
-        .password-modal-buttons .btn-cancel { background: var(--bg-footer); color: var(--text-muted); flex: 1; }
-        .password-modal-buttons .btn-cancel:hover { background: var(--border-color); color: var(--text-main); }
-        .password-modal-buttons .btn-confirm { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; flex: 1.5; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
-        .password-modal-buttons .btn-confirm:hover { box-shadow: 0 6px 16px rgba(245, 158, 11, 0.6); transform: translateY(-1px); }
-        .password-error-msg { color: var(--danger); font-size: 0.8rem; text-align: center; margin-top: -8px; margin-bottom: 12px; font-weight: 600; display: none; }
-        .password-error-msg.show { display: block; }
-        @media (max-width: 600px) {
-            :root { --seat-w: 76px; --seat-h: 96px; --gap-pair: 6px; --gap-group: 12px; }
-            .header { padding-top: 45px; }
-            .title-sub { font-size: 0.8rem; }
-            .title-date { font-size: 0.75rem; }
-            .icon-btn { width: 40px; height: 40px; }
-            .icon-btn svg { width: 20px; height: 20px; }
-            .seat-num { width: 20px; height: 20px; font-size: 0.7rem; top: 3px; left: 3px; }
-            .seat-name { font-size: 0.6rem; padding: 3px 2px; }
-            .empty-icon { font-size: 1.3rem; }
-            .denah-scroll-area { padding: 10px 4px; }
-            .zoom-img { width: calc(var(--seat-w) * 4); height: calc(var(--seat-h) * 4); }
-            .comic-link-badge { width: 20px; height: 20px; font-size: 0.6rem; bottom: 24px; right: 3px; }
-            .edit-btn { width: 22px; height: 22px; top: 3px; right: 3px; }
-            .edit-btn svg { width: 12px; height: 12px; }
-            .password-modal-box { max-width: 280px; padding: 20px 16px; }
-            .password-modal-icon { width: 48px; height: 48px; }
-            .password-modal-icon svg { width: 24px; height: 24px; }
+
+        /* Hilangkan bar hitam */
+        .preview-box div {
+            background: transparent !important;
+            margin-bottom: 2px;
+        }
+        .preview-box div:empty {
+            height: 0 !important;
+            margin: 0 !important;
+            display: none;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        .header-btn {
+            @apply flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 shadow-sm;
+        }
+        .header-btn:hover {
+            @apply transform scale-110 shadow-md;
         }
     </style>
 </head>
-<body>
-<div class="app-container">
-    <div class="header">
-        <div id="connectionStatus" class="connection-status">Memeriksa...</div>
-        <div class="header-controls">
-            <button class="icon-btn btn-refresh" id="btnRefresh" onclick="refreshData()" title="Muat Ulang Data">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                </svg>
-            </button>
-            <button class="icon-btn btn-force" onclick="forceReload()" title="Hapus Cache & Muat Ulang dari Server">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                </svg>
-            </button>
-            <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Ganti Tema">
-                <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-            </button>
-        </div>
-        <div><br><br>
-            <h2 class="title-sub">SMPN 110 JAKARTA</h2>
-            <h2 class="title-sub">TUGAS KOKURIKULER</h2><br>
-            <div class="title-date" id="tanggalPJJ">Memuat tanggal...</div><br>
-        </div>
-    </div>
-    <div class="class-selector-bar">
-        <select id="classSelect" class="class-select" onchange="switchClass()">
-            <option value="" selected>-- Pilih Kelas --</option>
-        </select>
-    </div>
-    <div id="pageNav" class="page-nav">
-        <button id="btnPage1" onclick="switchPage(1)" class="page-btn active">Hal 1 (Kursi 1-20)</button>
-        <button id="btnPage2" onclick="switchPage(2)" class="page-btn">Hal 2 (Kursi 21-36)</button>
-    </div>
-    <div class="denah-scroll-area">
-        <div class="denah-area" id="denahArea">
-            <div class="loading-text">Memuat pengaturan...</div>
-        </div>
-    </div>
-</div>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200 antialiased min-h-screen flex justify-center p-4 sm:p-6">
 
-<div class="modal-overlay" id="modal">
-    <div class="modal-box">
-        <h3 id="modalTitle">Input Data Siswa</h3>
-        <div class="form-group"><label>Nama Lengkap Siswa</label><input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off"></div>
-        <div class="form-group"><label>Upload Cover Komik</label><input type="file" id="inpPhoto" accept="image/*" onchange="handlePreview(this)"><img id="imgPreview" class="preview-img"></div>
-        <div class="form-group">
-            <label>🔗 Link Komik (Opsional)</label>
-            <div class="link-row">
-                <input type="url" id="inpComicLink" placeholder="https://contoh.com/komik-siswa" autocomplete="off">
-                <button type="button" class="link-btn open" onclick="openComicLinkFromModal()" title="Buka Link">↗</button>
-                <button type="button" class="link-btn" onclick="copyComicLinkFromModal()" title="Salin Link"></button>
+    <div class="w-full max-w-5xl flex flex-col gap-5">
+        
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-slate-800 p-4 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">📝</span>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Konverter Soal Portal Sekolah</h1>
             </div>
-        </div>
-        <div class="btn-row"><button class="btn btn-primary" onclick="saveData()">Simpan</button><button class="btn btn-secondary" onclick="closeModal()">Batal</button></div>
+            
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
+                <!-- Upload Gambar (Direct Insert) -->
+                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleDirectImageUpload(this)">
+                <button onclick="document.getElementById('imageInput').click()" 
+                    class="header-btn bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0" 
+                    title="Upload & Sisipkan Gambar di Posisi Kursor">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </button>
+                
+                <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+                
+                <!-- Konversi Button -->
+                <button onclick="convertQuestions()" class="header-btn bg-blue-600 hover:bg-blue-700 text-white border border-blue-500" title="Konversi">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </button>
+                
+                <!-- Upload Kunci Jawaban Button -->
+                <input type="file" id="answerKeyFile" accept=".txt,.docx" class="hidden" onchange="handleAnswerKeyUpload(this)">
+                <button onclick="document.getElementById('answerKeyFile').click()" class="header-btn bg-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600" title="Upload Kunci Jawaban">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </button>
+
+                <!-- Bersihkan Button -->
+                <button onclick="clearInput()" class="header-btn bg-transparent hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-600 hover:border-red-300 dark:hover:border-red-700" title="Bersihkan">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+
+                <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+
+                <!-- Theme Toggle Button -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="header-btn bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-yellow-400 border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500" title="Ubah Tema">
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-5">
+            
+            <!-- Textarea Soal -->
+            <div class="flex flex-col gap-2">
+                <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
+                <textarea id="rawInput" class="w-full h-72 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal di sini !
+
+"></textarea>
+             </div>
+
+            <!-- Configuration Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="flex flex-col gap-2">
+                    <label for="kategoriInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Kategori Soal:</label>
+                    <input type="text" id="kategoriInput" placeholder="ASTS INFORMATIKA-7" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="poinInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Poin per Soal:</label>
+                    <input type="number" id="poinInput" value="1" min="1" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="pembahasanInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Pembahasan Default:</label>
+                    <input type="text" id="pembahasanInput" value="-" placeholder="Isi pembahasan" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+        </main>
+
+        <!-- Output Section -->
+        <section id="outputCard" class="hidden bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm animate-[fadeIn_0.3s_ease-in-out]">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-4 mb-4 gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">📋</span>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">Hasil Konversi LMS</h2>
+                    <span id="statsCount" class="text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-3 py-1 rounded-full">0 Soal</span>
+                </div>
+                <button id="copyBtn" onclick="copyResultToWord()" class="w-full sm:w-auto py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-px transition-all flex items-center justify-center gap-2 text-sm">
+                     Salin Ke Word
+                </button>
+            </div>
+            
+            <div id="resultPreview" class="preview-box w-full min-h-[250px] max-h-[600px] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-5 font-serif text-black dark:text-slate-200 text-base leading-relaxed shadow-inner focus:outline-none" contenteditable="true" spellcheck="false"></div>
+            
+       </section>
     </div>
-</div>
 
-<!-- ✅ MODAL EDIT PASSWORD - Dengan Debug Info -->
-<div class="password-modal-overlay" id="passwordEditModal">
-    <div class="password-modal-box">
-        <div class="password-modal-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-        </div>
-        <div class="password-modal-title">Verifikasi Admin</div>
-        <div class="password-modal-subtitle" id="editModalSubtitle">Masukkan kata sandi untuk mengedit data</div>
-        <div class="password-input-wrapper">
-            <input type="password" id="inpEditPassword" placeholder="••••••••" autocomplete="off">
-            <button type="button" class="password-toggle-btn" onclick="toggleEditPasswordVisibility()" title="Tampilkan/Sembunyikan">
-                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </div>
-        <div class="password-error-msg" id="editPasswordError">❌ Kata sandi salah!</div>
-        <div class="password-modal-buttons">
-            <button class="btn btn-cancel" onclick="closePasswordEditModal()">Batal</button>
-            <button class="btn btn-confirm" onclick="confirmEditPassword()">Buka</button>
-        </div>
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 flex items-center gap-3 bg-slate-900 dark:bg-slate-800 text-white px-5 py-3 rounded-lg shadow-2xl border border-slate-700 font-semibold text-sm transition-all duration-300 translate-y-[150px] opacity-0 z-50">
+        <span id="toastIcon">✅</span>
+        <span id="toastMsg">Notifikasi</span>
     </div>
-</div>
 
-<div class="zoom-overlay" id="zoomModal" onclick="closeZoomModal()">
-    <div class="zoom-content" onclick="event.stopPropagation()">
-        <button class="zoom-close" onclick="closeZoomModal()">✕</button>
-        <img id="zoomImg" class="zoom-img" src="" alt="Zoom Foto">
-        <div id="zoomCaption" class="zoom-caption"></div>
-        <button id="zoomLinkBtn" class="zoom-link-btn" onclick="openCurrentComicLink()">🔗 Buka Komik</button>
-    </div>
-</div>
-
-<script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjcR7cHGSauqRXJ6pUCUF6hdHJUsu1YtHKGG91gYtgcK7g6AEefpikTG-RbchQRBfi/exec';
-    const MAX_ACTIVE_SEATS = 36;
-    const SHEET_DILARANG = ['Pengaturan', 'pengaturan', 'PENGATURAN'];
-    
-    let ADMIN_PASSWORD = 'cx';
-    let dataSiswa = {};
-    let activeIndex = null;  // ✅ Index yang sedang aktif di modal
-    let currentClass = '';
-    let allClasses = [];
-    let allData = {};
-    let originalPhotoBase64 = null;
-    let _notifTimer = null;
-    let currentPage = 1;
-    let pengaturanDimuat = false;
-    let currentZoomLink = '';
-    let isSaving = false;
-    let lastSaveTime = 0;
-    let isEditMode = false;
-    let pendingEditIndex = null;  // ✅ Index yang menunggu verifikasi password
-
-    const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    
-    function formatTanggalIndonesia(tanggal) {
-        const hari = NAMA_HARI[tanggal.getDay()];
-        const tgl = tanggal.getDate();
-        const bulan = NAMA_BULAN[tanggal.getMonth()];
-        const tahun = tanggal.getFullYear();
-        return `${hari}, ${tgl} ${bulan} ${tahun}`;
-    }
-    
-    function updateTanggalPJJ() {
-        const sekarang = new Date();
-        const tanggalFormatted = formatTanggalIndonesia(sekarang);
-        const el = document.getElementById('tanggalPJJ');
-        if (el) el.innerHTML = `${tanggalFormatted}`;
-        document.title = `Tugas Kokurikuler - ${tanggalFormatted} - SMPN 110 Jakarta`;
-    }
-
-    function getUrlSeparator() { return SCRIPT_URL.indexOf('?') === -1 ? '?' : '&'; }
-    function isMobile() { return window.innerWidth <= 600; }
-    function getTodayDate() {
-        const d = new Date();
-        return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
-    }
-    function switchPage(page) {
-        currentPage = page;
-        document.getElementById('btnPage1').classList.toggle('active', page === 1);
-        document.getElementById('btnPage2').classList.toggle('active', page === 2);
-        renderDenah();
-    }
-
-    async function muatPengaturanDariSheet() {
-        pengaturanDimuat = true;
-        setTimeout(async () => {
-            try {
-                const sep = getUrlSeparator();
-                const res = await fetch(SCRIPT_URL + sep + 'action=read&sheet=Pengaturan');
-                if (res.ok) {
-                    const result = JSON.parse(await res.text());
-                    if (result.result === 'success' && result.data) {
-                        if (result.data['KataSandiTambahKelas']) ADMIN_PASSWORD = result.data['KataSandiTambahKelas'];
-                    }
-                }
-            } catch (e) { console.log('ℹ️ Pakai default password: cx'); }
-        }, 100);
-    }
-
-    async function forceReload() {
-        if (!confirm('⚠️ PERINGATAN HAPUS CACHE!\n\nTindakan ini akan:\n1. MENGHAPUS semua data cache di browser\n2. Memuat ulang SEMUA data dari Google Sheet\n\nData yang belum tersimpan ke Sheet akan HILANG!\n\nLanjutkan?')) {
-            return;
+    <script>
+        let uploadedImages = [];
+        
+        // --- Theme Management ---
+        function initTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const savedTheme = localStorage.getItem('konverter_theme') || (isDark ? 'dark' : 'light');
+            applyTheme(savedTheme);
         }
-        const btnForce = document.querySelector('.btn-force');
-        btnForce.disabled = true;
-        showStatus('🗑️ Menghapus cache...', false);
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith('denah_')) keysToRemove.push(key);
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(isDark ? 'light' : 'dark');
+            localStorage.setItem('konverter_theme', isDark ? 'light' : 'dark');
         }
-        keysToRemove.forEach(key => localStorage.removeItem(key));
-        showStatus('⏳ Memuat ulang dari server...', false);
-        allClasses = []; allData = {}; dataSiswa = {}; currentClass = '';
-        try {
-            await loadAllClasses();
-            if (allClasses.length > 0) {
-                document.getElementById('classSelect').value = allClasses[0];
-                loadClassData(allClasses[0]);
-            } else {
-                document.getElementById('classSelect').value = "";
-                renderDenah();
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            if (theme === 'dark') html.classList.add('dark');
+            else html.classList.remove('dark');
+        }
+        initTheme();
+
+        // --- DIRECT IMAGE UPLOAD (Tanpa Galeri, Tanpa Counter) ---
+        function handleDirectImageUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showToast('⚠️ File harus berupa gambar!', 'warning');
+                return;
             }
-            showStatus('✅ Cache dihapus & data dimuat dari server!', true);
-        } catch (err) {
-            console.error('❌ Gagal force reload:', err);
-            showStatus(' Gagal memuat dari server', false);
-        } finally { btnForce.disabled = false; }
-    }
-
-    async function autoRefreshData() {
-        if (isSaving) return;
-        if (Date.now() - lastSaveTime < 10000) return;
-        if (!currentClass) return;
-        try {
-            const sep = getUrlSeparator();
-            const dataUrl = SCRIPT_URL + sep + 'action=read&sheet=' + encodeURIComponent(currentClass);
-            const dataRes = await fetch(dataUrl);
-            if (dataRes.ok) {
-                const dataResult = JSON.parse(await dataRes.text());
-                if (dataResult.result === 'success' && dataResult.data) {
-                    const serverData = dataResult.data;
-                    const localData = allData[currentClass] || {};
-                    if (Object.keys(serverData).length === 0 && Object.keys(localData).length > 0) return;
-                    const newDataStr = JSON.stringify(serverData);
-                    const oldDataStr = JSON.stringify(localData);
-                    if (newDataStr !== oldDataStr) {
-                        const mergedData = { ...serverData };
-                        for (let key in localData) { if (!mergedData[key]) mergedData[key] = localData[key]; }
-                        allData[currentClass] = mergedData;
-                        parseDataSiswa(currentClass);
-                        saveClassesLocally();
-                        renderDenah();
-                        showStatus(' Data diperbaharui', true);
-                    }
-                }
-            }
-        } catch (err) { console.log('Auto-refresh skipped:', err); }
-    }
-
-    async function refreshData() {
-        const btnRefresh = document.getElementById('btnRefresh');
-        btnRefresh.classList.add('refreshing');
-        btnRefresh.disabled = true;
-        showStatus(' Memuat ulang...', false);
-        const savedClass = currentClass;
-        const savedPage = currentPage;
-        try {
-            await loadAllClasses();
-            if (savedClass && allClasses.includes(savedClass)) {
-                document.getElementById('classSelect').value = savedClass;
-                loadClassData(savedClass);
-            } else {
-                document.getElementById('classSelect').value = "";
-                currentClass = ''; dataSiswa = {}; renderDenah();
-            }
-            currentPage = savedPage;
-            document.getElementById('btnPage1').classList.toggle('active', currentPage === 1);
-            document.getElementById('btnPage2').classList.toggle('active', currentPage === 2);
-            renderDenah();
-            showStatus('✅ Data diperbaharui!', true);
-        } catch (err) {
-            console.error('❌ Gagal refresh:', err);
-            showStatus('❌ Gagal memuat data', false);
-        } finally {
-            btnRefresh.classList.remove('refreshing');
-            btnRefresh.disabled = false;
-        }
-    }
-
-    async function loadAllClasses() {
-        try {
-            const sep = getUrlSeparator();
-            const res = await fetch(SCRIPT_URL + sep + 'action=list');
-            if (res.ok) {
-                const result = JSON.parse(await res.text());
-                if (result.result === 'success' && result.sheets) {
-                    allClasses = result.sheets.filter(sheet => !SHEET_DILARANG.includes(sheet)).sort();
-                    allData = {};
-                    for (let cls of allClasses) {
-                        const dataUrl = SCRIPT_URL + sep + 'action=read&sheet=' + encodeURIComponent(cls);
-                        try {
-                            const dataRes = await fetch(dataUrl);
-                            if (dataRes.ok) {
-                                const dataResult = JSON.parse(await dataRes.text());
-                                allData[cls] = (dataResult.result === 'success' && dataResult.data) ? dataResult.data : {};
-                            }
-                        } catch (e) { allData[cls] = {}; }
-                    }
-                    localStorage.setItem('denah_classes_list', JSON.stringify(allClasses));
-                    localStorage.setItem('denah_all_classes_data', JSON.stringify(allData));
-                    renderClassSelect();
-                }
-            }
-        } catch (err) { console.error('❌ Gagal load kelas:', err); }
-    }
-
-    window.onload = async function() {
-        updateTanggalPJJ();
-        await muatPengaturanDariSheet();
-        const savedTheme = localStorage.getItem('denah_theme');
-        if (savedTheme === 'light') { document.body.classList.add('light-mode'); updateThemeIcon(true); }
-        await loadAllClasses();
-        document.getElementById('classSelect').value = "";
-        renderDenah();
-        checkConnection();
-        setInterval(autoRefreshData, 60000);
-    };
-
-    function updateThemeIcon(isDark) {
-        const themeIcon = document.getElementById('themeIcon');
-        if (isDark) {
-            themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
-        } else {
-            themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
-        }
-    }
-
-    function saveClassesLocally() {
-        localStorage.setItem('denah_classes_list', JSON.stringify(allClasses));
-        localStorage.setItem('denah_all_classes_data', JSON.stringify(allData));
-        localStorage.setItem('denah_current_class', currentClass);
-        localStorage.setItem('denah_data_siswa_' + currentClass, JSON.stringify(dataSiswa));
-    }
-    
-    function renderClassSelect() {
-        const select = document.getElementById('classSelect');
-        select.innerHTML = '<option value="" selected>-- Pilih Kelas --</option>';
-        if (allClasses.length === 0) {
-            const opt = document.createElement('option');
-            opt.value = ''; opt.textContent = '(Belum ada kelas)'; opt.disabled = true;
-            select.appendChild(opt);
-        } else {
-            allClasses.forEach(cls => {
-                const opt = document.createElement('option');
-                opt.value = cls; opt.textContent = cls;
-                select.appendChild(opt);
-            });
-        }
-    }
-    
-    function parseDataSiswa(className) {
-        const rawData = allData[className] || {};
-        dataSiswa = {};
-        for (let key in rawData) {
-            const value = rawData[key];
-            if (typeof value === 'object' && value !== null) {
-                dataSiswa[key] = { name: value.name || '', photo: value.photo || '', photoOriginal: value.photo || '', comicLink: value.comicLink || '' };
-            } else if (typeof value === 'string' && value.includes('|||')) {
-                const parts = value.split('|||');
-                dataSiswa[key] = { name: parts[0] || '', photo: parts[1] || '', photoOriginal: parts[1] || '', comicLink: parts[2] || '' };
-            }
-        }
-    }
-    
-    function loadClassData(className) {
-        if (!className) { currentClass = ''; dataSiswa = {}; renderDenah(); return; }
-        currentClass = className;
-        const savedDataSiswa = localStorage.getItem('denah_data_siswa_' + className);
-        if (savedDataSiswa && (!allData[className] || Object.keys(allData[className]).length === 0)) {
-            try { dataSiswa = JSON.parse(savedDataSiswa); allData[className] = dataSiswa; } catch (e) { parseDataSiswa(className); }
-        } else { parseDataSiswa(className); }
-        saveClassesLocally();
-        renderDenah();
-        showStatus('📂 ' + className, true);
-    }
-    
-    function switchClass() {
-        const newClass = document.getElementById('classSelect').value;
-        if (newClass !== currentClass) {
-            if (currentClass) allData[currentClass] = { ...dataSiswa };
-            loadClassData(newClass);
-        }
-    }
-    
-    function checkConnection() {
-        const statusEl = document.getElementById('connectionStatus');
-        const sep = getUrlSeparator();
-        fetch(SCRIPT_URL + sep + 'action=test')
-            .then(res => res.json())
-            .then(result => {
-                if (result.result === 'success') { statusEl.textContent = '✅ Terhubung'; statusEl.className = 'connection-status connected'; } 
-                else { statusEl.textContent = '❌ Error'; statusEl.className = 'connection-status disconnected'; }
-            })
-            .catch(() => { statusEl.textContent = ' Offline'; statusEl.className = 'connection-status disconnected'; });
-    }
-    
-    function toggleTheme() {
-        const body = document.body;
-        body.classList.toggle('light-mode');
-        updateThemeIcon(!body.classList.contains('light-mode'));
-        localStorage.setItem('denah_theme', body.classList.contains('light-mode') ? 'light' : 'dark');
-    }
-    
-    function showStatus(message, isSuccess) {
-        const connStatus = document.getElementById('connectionStatus');
-        connStatus.textContent = message;
-        connStatus.style.background = isSuccess ? 'rgba(16, 185, 129, 0.9)' : 'rgba(245, 158, 11, 0.9)';
-        clearTimeout(_notifTimer);
-        _notifTimer = setTimeout(() => checkConnection(), 4000);
-    }
-    
-    function renderDenah() {
-        const container = document.getElementById('denahArea');
-        const pageNav = document.getElementById('pageNav');
-        container.innerHTML = '';
-        if (!currentClass) { if (pageNav) pageNav.style.display = 'none'; return; }
-        const mobile = isMobile();
-        if (pageNav) pageNav.style.display = mobile ? 'flex' : 'none';
-        const cols = mobile ? 4 : 8;
-        const rows = 5;
-        const startIndex = mobile ? (currentPage - 1) * 20 : 0;
-        
-        for (let r = 0; r < rows; r++) {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'row-wrapper';
-            for (let c = 0; c < cols; c += 2) {
-                const pairDiv = document.createElement('div');
-                pairDiv.className = 'pair-wrapper';
-                const idxLeft = startIndex + (r * cols + c);
-                const idxRight = startIndex + (r * cols + c + 1);
-                pairDiv.appendChild(createSeat(idxLeft));
-                pairDiv.appendChild(createSeat(idxRight));
-                rowDiv.appendChild(pairDiv);
-            }
-            container.appendChild(rowDiv);
-        }
-    }
-
-    function createSeat(index) {
-        const seat = document.createElement('div');
-        if (index >= MAX_ACTIVE_SEATS) { seat.className = 'seat hidden'; return seat; }
-        const hasPhoto = dataSiswa[index] && dataSiswa[index].photo;
-        const comicLinkVal = dataSiswa[index]?.comicLink;
-        const hasComicLink = typeof comicLinkVal === 'string' && comicLinkVal.trim().length > 0;
-        const hasData = dataSiswa[index] && dataSiswa[index].name;
-        let seatClass = 'seat' + (hasData ? ' filled' : '') + (hasPhoto ? ' locked' : ' incomplete');
-        seat.className = seatClass;
-        const num = document.createElement('div');
-        num.className = 'seat-num';
-        num.innerText = index + 1;
-        seat.appendChild(num);
-
-        if (hasData) {
-            const editBtn = document.createElement('div');
-            editBtn.className = 'edit-btn';
-            editBtn.title = 'Edit data (butuh password)';
-            editBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
-            // ✅ PERBAIKAN: Gunakan closure untuk menangkap nilai index yang benar
-            editBtn.onclick = (function(capturedIndex) {
-                return function(e) { 
-                    e.stopPropagation(); 
-                    console.log('🔧 Edit button clicked for index:', capturedIndex, '(Kursi ' + (capturedIndex + 1) + ')');
-                    requestEditWithPassword(capturedIndex); 
-                };
-            })(index);
-            seat.appendChild(editBtn);
-            if (!hasPhoto) {
-                const badge = document.createElement('div');
-                badge.className = 'incomplete-badge';
-                badge.innerText = 'Foto Kosong';
-                seat.appendChild(badge);
-            }
-            if (hasPhoto) {
-                const img = document.createElement('img');
-                img.className = 'seat-photo';
-                img.src = dataSiswa[index].photo;
-                img.onclick = (e) => { e.stopPropagation(); if (hasComicLink) openComicLink(dataSiswa[index].comicLink); else openZoomModal(dataSiswa[index].photo, dataSiswa[index].name, ''); };
-                seat.appendChild(img);
-            }
-            if (hasComicLink) {
-                const linkBadge = document.createElement('div');
-                linkBadge.className = 'comic-link-badge';
-                linkBadge.innerHTML = '🔗';
-                linkBadge.title = 'Klik untuk buka link komik';
-                linkBadge.onclick = (e) => { e.stopPropagation(); openComicLink(dataSiswa[index].comicLink); };
-                seat.appendChild(linkBadge);
-            }
-            const name = document.createElement('div');
-            name.className = 'seat-name';
-            name.innerText = dataSiswa[index].name;
-            seat.appendChild(name);
-        } else {
-            const icon = document.createElement('div');
-            icon.className = 'empty-icon';
-            icon.innerText = '+';
-            seat.appendChild(icon);
-            seat.onclick = () => openModal(index);
-        }
-        return seat;
-    }
-
-    // ✅ PERBAIKAN: Fungsi requestEditWithPassword yang lebih aman
-    function requestEditWithPassword(index) {
-        // ✅ Pastikan index valid
-        if (index === null || index === undefined || index < 0 || index >= MAX_ACTIVE_SEATS) {
-            console.error(' Invalid index:', index);
-            alert('️ Error: Index kursi tidak valid!');
-            return;
-        }
-        
-        // ✅ Simpan index yang akan diedit
-        pendingEditIndex = index;
-        
-        // ✅ Update subtitle untuk debug
-        const subtitle = document.getElementById('editModalSubtitle');
-        if (subtitle) {
-            subtitle.innerText = `Mengedit Kursi No. ${index + 1} - ${currentClass}`;
-        }
-        
-        console.log('🔐 Request edit for index:', index, '(Kursi ' + (index + 1) + ')');
-        console.log(' pendingEditIndex set to:', pendingEditIndex);
-        
-        // Reset form
-        document.getElementById('inpEditPassword').value = '';
-        document.getElementById('editPasswordError').classList.remove('show');
-        document.getElementById('inpEditPassword').classList.remove('error');
-        
-        // Tampilkan modal
-        document.getElementById('passwordEditModal').classList.add('active');
-        setTimeout(() => document.getElementById('inpEditPassword').focus(), 100);
-    }
-    
-    function closePasswordEditModal() {
-        document.getElementById('passwordEditModal').classList.remove('active');
-        // ✅ JANGAN reset pendingEditIndex di sini, biarkan sampai confirmEditPassword selesai
-    }
-    
-    function toggleEditPasswordVisibility() {
-        const inp = document.getElementById('inpEditPassword');
-        const eyeIcon = document.getElementById('eyeIcon');
-        if (inp.type === 'password') {
-            inp.type = 'text';
-            eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-        } else {
-            inp.type = 'password';
-            eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-        }
-    }
-    
-    // ✅ PERBAIKAN: confirmEditPassword yang memastikan index benar
-    function confirmEditPassword() {
-        const pass = document.getElementById('inpEditPassword').value.trim();
-        
-        console.log('🔐 Confirming edit for pendingEditIndex:', pendingEditIndex);
-        
-        if (pass !== ADMIN_PASSWORD) {
-            document.getElementById('editPasswordError').classList.add('show');
-            document.getElementById('inpEditPassword').classList.add('error');
-            document.getElementById('inpEditPassword').value = '';
-            document.getElementById('inpEditPassword').focus();
-            setTimeout(() => document.getElementById('inpEditPassword').classList.remove('error'), 500);
-            return;
-        }
-        
-        // ✅ Password benar - simpan index ke variabel lokal sebelum buka modal
-        const indexToEdit = pendingEditIndex;
-        
-        console.log('✅ Password correct! Opening modal for index:', indexToEdit, '(Kursi ' + (indexToEdit + 1) + ')');
-        
-        // Tutup modal password
-        closePasswordEditModal();
-        
-        // ✅ Buka modal edit dengan index yang sudah disimpan
-        if (indexToEdit !== null && indexToEdit !== undefined) {
-            openModal(indexToEdit, true);
-        } else {
-            console.error('❌ indexToEdit is null/undefined!');
-            alert('⚠️ Error: Tidak dapat menentukan kursi yang akan diedit!');
-        }
-        
-        // Reset pendingEditIndex setelah digunakan
-        pendingEditIndex = null;
-    }
-    
-    document.getElementById('inpEditPassword').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') confirmEditPassword();
-    });
-
-    function openComicLink(link) {
-        if (!link) { alert('⚠️ Link tidak tersedia!'); return; }
-        let url = link;
-        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-        window.open(url, '_blank');
-    }
-
-    function copyToClipboard(text, message) {
-        navigator.clipboard.writeText(text).then(() => showStatus(message || '📋 Disalin!', true))
-        .catch(() => {
-            const ta = document.createElement('textarea');
-            ta.value = text; document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showStatus(message || '📋 Disalin!', true); }
-            catch (err) { alert('Gagal: ' + text); }
-            document.body.removeChild(ta);
-        });
-    }
-
-    function openComicLinkFromModal() {
-        const link = document.getElementById('inpComicLink').value.trim();
-        if (!link) { alert('⚠️ Link kosong!'); return; }
-        openComicLink(link);
-    }
-
-    function copyComicLinkFromModal() {
-        const link = document.getElementById('inpComicLink').value.trim();
-        if (!link) { alert('⚠️ Link kosong!'); return; }
-        copyToClipboard(link, '📋 Link tersalin!');
-    }
-
-    function openZoomModal(photoSrc, name, comicLink) {
-        const zoomModal = document.getElementById('zoomModal');
-        const zoomImg = document.getElementById('zoomImg');
-        const zoomCaption = document.getElementById('zoomCaption');
-        const zoomLinkBtn = document.getElementById('zoomLinkBtn');
-        zoomImg.src = photoSrc;
-        zoomCaption.innerText = name || '';
-        currentZoomLink = comicLink || '';
-        if (currentZoomLink) {
-            zoomLinkBtn.classList.add('show');
-            zoomImg.classList.add('has-link');
-            zoomImg.onclick = () => openCurrentComicLink();
-        } else {
-            zoomLinkBtn.classList.remove('show');
-            zoomImg.classList.remove('has-link');
-            zoomImg.onclick = null;
-        }
-        zoomModal.classList.add('active');
-    }
-
-    function openCurrentComicLink() {
-        if (currentZoomLink) openComicLink(currentZoomLink);
-        else alert('⚠️ Link tidak tersedia!');
-    }
-
-    function closeZoomModal() { 
-        document.getElementById('zoomModal').classList.remove('active'); 
-        currentZoomLink = '';
-    }
-
-    // ✅ PERBAIKAN: openModal dengan validasi index yang ketat
-    function openModal(index, isEdit = false) {
-        // ✅ Validasi index
-        if (index === null || index === undefined) {
-            console.error('❌ openModal called with null/undefined index!');
-            alert('⚠️ Error: Index tidak valid!');
-            return;
-        }
-        
-        if (!currentClass) { alert('⚠️ Pilih kelas!'); return; }
-        
-        // ✅ SET activeIndex dengan nilai yang benar
-        activeIndex = index;
-        isEditMode = isEdit;
-        originalPhotoBase64 = null;
-        
-        console.log('📝 openModal called with index:', index, '(Kursi ' + (index + 1) + '), isEdit:', isEdit);
-        console.log('📝 activeIndex set to:', activeIndex);
-        
-        const modeText = isEdit ? '✏️ Edit Data' : '➕ Input Data';
-        document.getElementById('modalTitle').innerText = `${modeText} - ${currentClass} - Kursi ${index + 1}`;
-        document.getElementById('inpName').value = dataSiswa[index]?.name || '';
-        document.getElementById('inpComicLink').value = dataSiswa[index]?.comicLink || '';
-        const imgPreview = document.getElementById('imgPreview');
-        if (dataSiswa[index]?.photo) {
-            imgPreview.src = dataSiswa[index].photo;
-            imgPreview.classList.add('show');
-        } else {
-            imgPreview.classList.remove('show');
-        }
-        document.getElementById('inpPhoto').value = '';
-        document.getElementById('modal').classList.add('active');
-        setTimeout(() => document.getElementById('inpName').focus(), 100);
-    }
-    
-    function closeModal() { 
-        document.getElementById('modal').classList.remove('active'); 
-        isEditMode = false;
-    }
-    
-    function compressImage(file, maxW, maxH, quality) {
-        return new Promise((resolve) => {
+            
             const reader = new FileReader();
-            reader.onload = e => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let w = img.width, h = img.height;
-                    if (w > h) { if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; } }
-                    else { if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; } }
-                    canvas.width = w; canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    resolve(canvas.toDataURL('image/jpeg', quality));
-                };
-                img.src = e.target.result;
+            reader.onload = function(e) {
+                uploadedImages.push(e.target.result);
+                const imageNumber = uploadedImages.length;
+                
+                // LANGSUNG sisipkan tag di posisi kursor
+                const textarea = document.getElementById('rawInput');
+                const startPos = textarea.selectionStart;
+                const endPos = textarea.selectionEnd;
+                const text = textarea.value;
+                const tag = `[IMG:${imageNumber}]`;
+                
+                textarea.value = text.substring(0, startPos) + tag + text.substring(endPos, text.length);
+                textarea.focus();
+                textarea.selectionStart = textarea.selectionEnd = startPos + tag.length;
+                
+                showToast(`Gambar #${imageNumber} diupload & disisipkan!`, 'success');
             };
             reader.readAsDataURL(file);
-        });
-    }
+            input.value = '';
+        }
 
-    async function handlePreview(input) {
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
-            if (file.size > 1.5 * 1024 * 1024) { alert('⚠️ Maksimal 1.5MB!'); input.value = ''; return; }
-            originalPhotoBase64 = await compressImage(file, 300, 300, 0.6);
-            const small = await compressImage(file, 150, 180, 0.5);
-            if (originalPhotoBase64.length > 45000) {
-                alert('⚠️ Foto terlalu besar!'); input.value = ''; originalPhotoBase64 = null; return;
+        // --- Parsing Logic ---
+        function cleanPrefix(text) {
+            if (!text) return '';
+            return text.replace(/^\s*(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s*|\b[A-Ea-e]\b\s*[\.\-]\s*)/, '').trim();
+        }
+        function cleanQuestionPrefix(text) {
+            if (!text) return '';
+            return text.replace(/^\s*(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i, '').trim();
+        }
+        function isLikelyShortInstruction(text) {
+            const cleanText = cleanQuestionPrefix(text).trim();
+            const shortKeywords = ['perhatikan', 'cermati', 'simak', 'lihat', 'amati'];
+            return cleanText.length < 30 && shortKeywords.some(keyword => cleanText.toLowerCase().includes(keyword));
+        }
+        function parseRawText(raw) {
+            const blocks = raw.split(/\r?\n\s*\r?\n/).map(b => b.trim()).filter(b => b.length > 0);
+            const questions = [];
+            if (blocks.length > 1) {
+                blocks.forEach(block => {
+                    const lines = block.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+                    parseLinesSmart(lines, questions);
+                });
+            } else {
+                const allLines = raw.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+                parseLinesSmart(allLines, questions);
             }
-            document.getElementById('imgPreview').src = small;
-            document.getElementById('imgPreview').classList.add('show');
+            return questions;
         }
-    }
+        function parseLinesSmart(lines, questionsArray) {
+            let currentQuestionLines = [];
+            const reNumberStart = /^(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i;
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const isNewNumberedQuestion = reNumberStart.test(line);
+                if (isNewNumberedQuestion && currentQuestionLines.length > 0) {
+                    const lastLine = currentQuestionLines[currentQuestionLines.length - 1];
+                    if (isLikelyShortInstruction(lastLine)) {
+                        currentQuestionLines.push(line);
+                    } else {
+                        extractQuestionFromLines(currentQuestionLines, questionsArray);
+                        currentQuestionLines = [line];
+                    }
+                } else {
+                    currentQuestionLines.push(line);
+                }
+            }
+            if (currentQuestionLines.length > 0) {
+                extractQuestionFromLines(currentQuestionLines, questionsArray);
+            }
+        }
+        function extractQuestionFromLines(lines, questionsArray) {
+            if (lines.length === 0) return;
+            let questionLines = [];
+            let options = [];
+            const reOptionPrefix = /^(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s+|\b[A-Ea-e]\b\s*[\.\-]\s+)/;
+            let firstOptionIdx = -1;
+            for (let i = 0; i < lines.length; i++) {
+                if (reOptionPrefix.test(lines[i])) {
+                    firstOptionIdx = i;
+                    break;
+                }
+            }
+            if (firstOptionIdx !== -1 && firstOptionIdx > 0) {
+                questionLines = lines.slice(0, firstOptionIdx);
+                options = lines.slice(firstOptionIdx).map(cleanPrefix);
+            } else {
+                if (lines.length >= 5) {
+                    options = lines.slice(-4).map(cleanPrefix);
+                    questionLines = lines.slice(0, -4);
+                } else if (lines.length > 1) {
+                    questionLines = [lines[0]];
+                    options = lines.slice(1).map(cleanPrefix);
+                } else {
+                    questionLines = [lines[0]];
+                    options = [];
+                }
+            }
+            if (questionLines.length > 0) {
+                questionLines[0] = cleanQuestionPrefix(questionLines[0]);
+            }
+            while (options.length < 4) {
+                options.push("[Opsi tidak ditemukan]");
+            }
+            questionsArray.push({ soalLines: questionLines, opsi: options });
+        }
 
-    async function saveData() {
-        // ✅ Validasi activeIndex
-        if (activeIndex === null || activeIndex === undefined) {
-            alert('⚠️ Error: Tidak ada kursi yang dipilih!');
-            return;
+        // --- Conversion ---
+        function escapeHtmlOnly(text) {
+            if (!text) return '';
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
         
-        const name = document.getElementById('inpName').value.trim();
-        const smallPhoto = document.getElementById('imgPreview').classList.contains('show') ? document.getElementById('imgPreview').src : (dataSiswa[activeIndex]?.photo || '');
-        const origPhoto = originalPhotoBase64 || smallPhoto;
-        const comicLink = document.getElementById('inpComicLink').value.trim();
-        if (!name) { alert('Nama wajib diisi!'); return; }
-        
-        console.log('💾 Saving data for index:', activeIndex, '(Kursi ' + (activeIndex + 1) + ')');
-        
-        dataSiswa[activeIndex] = { name, photo: smallPhoto, photoOriginal: origPhoto, comicLink };
-        allData[currentClass] = { ...dataSiswa };
-        saveClassesLocally();
-        closeModal();
-        renderDenah();
-        await saveToGoogleSheet();
-    }
-
-    async function saveToGoogleSheet() {
-        if (!currentClass || isSaving) return;
-        isSaving = true;
-        showStatus('💾 Menyimpan...', false);
-        try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'save', sheet: currentClass, data: dataSiswa })
+        function processTextWithImages(text) {
+            if (!text) return '';
+            const parts = text.split(/(\[IMG:\d+\])/g);
+            let result = '';
+            parts.forEach(part => {
+                const imgMatch = part.match(/^\[IMG:(\d+)\]$/);
+                if (imgMatch) {
+                    const imgIndex = parseInt(imgMatch[1]) - 1;
+                    if (uploadedImages[imgIndex]) {
+                        result += `<img src="${uploadedImages[imgIndex]}" alt="Gambar Soal">`;
+                    } else {
+                        result += `<span class="img-placeholder">[GAMBAR #${imgMatch[1]} TIDAK DITEMUKAN]</span>`;
+                    }
+                } else {
+                    result += escapeHtmlOnly(part);
+                }
             });
-            if (response.ok) {
-                lastSaveTime = Date.now();
-                showStatus('✅ Tersimpan!', true);
-            } else { throw new Error('HTTP ' + response.status); }
-        } catch (error) {
-            console.error('Error:', error);
-            showStatus('⚠️ Gagal simpan (data aman di lokal)', false);
-        } finally { isSaving = false; }
-    }
+            return result;
+        }
 
-    window.addEventListener('resize', renderDenah);
-    document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
-    document.getElementById('passwordEditModal').onclick = e => { if (e.target.id === 'passwordEditModal') closePasswordEditModal(); };
-</script>
+        let manualAnswerKeys = {};
+
+        async function handleAnswerKeyUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            let textContent = '';
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            try {
+                if (fileExt === 'docx') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                    textContent = result.value;
+                } else if (fileExt === 'txt') {
+                    textContent = await file.text();
+                } else {
+                    showToast("Format tidak didukung. Gunakan .txt atau .docx", "error");
+                    return;
+                }
+                manualAnswerKeys = {};
+                let cleanText = textContent.replace(/\r\n/g, '\n').replace(/\t/g, ' ');
+                const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                const keyRegex = /^(\d+)\s*[\.\):]?\s*([a-dA-D])\s*$/i;
+                lines.forEach(line => {
+                    const match = line.match(keyRegex);
+                    if (match) {
+                        manualAnswerKeys[parseInt(match[1], 10)] = match[2].toLowerCase();
+                    }
+                });
+                if (Object.keys(manualAnswerKeys).length > 0) {
+                    showToast(`Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban!`, "success");
+                    const outputCard = document.getElementById('outputCard');
+                    if (!outputCard.classList.contains('hidden')) convertQuestions();
+                } else {
+                    showToast("Format kunci tidak dikenali.", "warning");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Gagal membaca file kunci jawaban.", "error");
+            } finally {
+                input.value = '';
+            }
+        }
+
+        function convertQuestions() {
+            const rawText = document.getElementById('rawInput').value.trim();
+            if (!rawText) {
+                showToast("Mohon isi atau paste teks soal terlebih dahulu!", "warning");
+                return;
+            }
+            const kategori = document.getElementById('kategoriInput').value.trim() || 'Umum';
+            const poin = document.getElementById('poinInput').value.trim() || '1';
+            const pembahasan = document.getElementById('pembahasanInput').value.trim() || '-';
+            const parsedList = parseRawText(rawText);
+            if (parsedList.length === 0) {
+                showToast("Tidak dapat mengenali format soal.", "error");
+                return;
+            }
+            let htmlResult = '';
+            parsedList.forEach((q, index) => {
+                const noNum = index + 1;
+                let processedLines = q.soalLines.map(line => processTextWithImages(line));
+                let processedSoal = processedLines.join('<br>');
+                let finalKey = 'a';
+                if (manualAnswerKeys[noNum]) finalKey = manualAnswerKeys[noNum];
+                
+                const separatorStyle = index > 0 ? ' style="margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 15px;"' : '';
+                
+                htmlResult += `<div${separatorStyle}><b>No:</b> ${noNum}</div>\n`;
+                htmlResult += `<div><b>Kategori:</b> ${escapeHtmlOnly(kategori)}</div>\n`;
+                htmlResult += `<div><b>Soal :</b> ${processedSoal}</div>\n`;
+                htmlResult += `<div><b>Opsi:</b></div>\n`;
+                htmlResult += `<ol type="a">\n`;
+                q.opsi.forEach(opt => {
+                    let processedOpt = processTextWithImages(opt);
+                    htmlResult += `  <li>${processedOpt}</li>\n`;
+                });
+                htmlResult += `</ol>\n`;
+                htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(finalKey)}</div>\n`;
+                htmlResult += `<div><b>Poin:</b> ${escapeHtmlOnly(poin)}</div>\n`;
+                htmlResult += `<div><b>Pembahasan:</b> ${escapeHtmlOnly(pembahasan)}</div>\n`;
+            });
+            
+            const previewEl = document.getElementById('resultPreview');
+            previewEl.innerHTML = htmlResult;
+            document.getElementById('statsCount').textContent = `${parsedList.length} Soal Terkonversi`;
+            const outputCard = document.getElementById('outputCard');
+            outputCard.classList.remove('hidden');
+            outputCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            showToast(`Berhasil mengonversi ${parsedList.length} soal!`, "success");
+        }
+
+        // --- Copy to Word ---
+        async function copyResultToWord() {
+            const previewEl = document.getElementById('resultPreview');
+            if (!previewEl.innerHTML.trim()) {
+                showToast("Tidak ada hasil untuk disalin!", "warning");
+                return;
+            }
+            try {
+                const htmlContent = previewEl.innerHTML;
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const data = [new ClipboardItem({ 'text/html': blob })];
+                await navigator.clipboard.write(data);
+                const copyBtn = document.getElementById('copyBtn');
+                const origText = copyBtn.innerHTML;
+                copyBtn.innerHTML = 'Berhasil Disalin!';
+                setTimeout(() => { copyBtn.innerHTML = origText; }, 2500);
+                showToast("Hasil disalin! Paste di Word (Ctrl+V).", "success");
+            } catch (err) {
+                console.error(err);
+                const range = document.createRange();
+                range.selectNodeContents(previewEl);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                try {
+                    document.execCommand('copy');
+                    showToast("Disalin (Fallback)!", "warning");
+                } catch (e) {
+                    showToast("Gagal menyalin.", "error");
+                }
+                selection.removeAllRanges();
+            }
+        }
+
+        // --- Helpers ---
+        function clearInput() {
+            document.getElementById('rawInput').value = '';
+            document.getElementById('outputCard').classList.add('hidden');
+            uploadedImages = [];
+            manualAnswerKeys = {};
+            showToast("Input telah dibersihkan.", "info");
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+            toastMsg.textContent = msg;
+            if (type === 'success') toastIcon.textContent = '✅';
+            else if (type === 'warning') toastIcon.textContent = '⚠️';
+            else if (type === 'error') toastIcon.textContent = '❌';
+            else toastIcon.textContent = 'ℹ️';
+            toast.classList.remove('translate-y-[150px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[150px]', 'opacity-0');
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
