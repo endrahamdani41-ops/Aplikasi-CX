@@ -79,44 +79,59 @@
 
     <div class="w-full max-w-5xl flex flex-col gap-5">
         
-        <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-slate-800 p-4 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm gap-4">
+         <!-- Header -->
+        <header class="sticky top-0 z-50 flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-slate-800 p-4 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm gap-4">
             <div class="flex items-center gap-3">
                 <span class="text-2xl">📝</span>
                 <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Konverter Soal Portal Sekolah</h1>
             </div>
             
-            <div class="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
-                <!-- Upload Gambar (Direct Insert) -->
+            <div class="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                <!-- 1. Upload Gambar (Primary Action - Gradient) -->
                 <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleDirectImageUpload(this)">
                 <button onclick="document.getElementById('imageInput').click()" 
-                    class="header-btn bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0" 
-                    title="Upload & Sisipkan Gambar di Posisi Kursor">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    class="flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 hover:scale-105 shadow-md text-white border-0"
+                    style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);"
+                    title="Upload & Sisipkan Gambar">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"></circle>
+                        <path d="M3 17l5-5 4 4 3-3 6 6"></path>
+                    </svg>
                 </button>
                 
-                <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+                <!-- Separator -->
+                <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
                 
-                <!-- Konversi Button -->
-                <button onclick="convertQuestions()" class="header-btn bg-blue-600 hover:bg-blue-700 text-white border border-blue-500" title="Konversi">
+                <!-- 2. Konversi (Secondary Action - Blue Outline) -->
+                <button onclick="convertQuestions()" 
+                    class="flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 hover:scale-105 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 bg-transparent" 
+                    title="Konversi ke Format Template">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </button>
                 
-                <!-- Upload Kunci Jawaban Button -->
+                <!-- 3. Upload Kunci (Secondary Action - Gray Outline) -->
                 <input type="file" id="answerKeyFile" accept=".txt,.docx" class="hidden" onchange="handleAnswerKeyUpload(this)">
-                <button onclick="document.getElementById('answerKeyFile').click()" class="header-btn bg-transparent hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-600" title="Upload Kunci Jawaban">
+                <button onclick="document.getElementById('answerKeyFile').click()" 
+                    class="flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 hover:scale-105 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 bg-transparent" 
+                    title="Upload Kunci Jawaban">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </button>
 
-                <!-- Bersihkan Button -->
-                <button onclick="clearInput()" class="header-btn bg-transparent hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-600 hover:border-red-300 dark:hover:border-red-700" title="Bersihkan">
+                <!-- 4. Bersihkan (Secondary Action - Red Outline) -->
+                <button onclick="clearInput()" 
+                    class="flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 hover:scale-105 hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 border border-slate-200 dark:border-slate-700 hover:border-red-200 dark:hover:border-red-800 bg-transparent" 
+                    title="Bersihkan Input">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
 
-                <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+                <!-- Separator -->
+                <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
 
-                <!-- Theme Toggle Button -->
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="header-btn bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-yellow-400 border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500" title="Ubah Tema">
+                <!-- 5. Theme Toggle (Neutral Action) -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" 
+                    class="flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 hover:scale-105 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-yellow-400 border border-slate-200 dark:border-slate-700 bg-transparent" 
+                    title="Ubah Tema">
                     <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
@@ -128,7 +143,7 @@
             <!-- Textarea Soal -->
             <div class="flex flex-col gap-2">
                 <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
-                <textarea id="rawInput" class="w-full h-72 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal di sini !
+                <textarea id="rawInput" class="w-full h-48 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal di sini ! 
 
 "></textarea>
              </div>
