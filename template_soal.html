@@ -26,7 +26,7 @@
         .preview-box ol { margin-top: 4px; margin-bottom: 4px; padding-left: 28px; list-style-type: lower-alpha; }
         .preview-box li { margin-bottom: 6px; }
         
-        /* PERBAIKAN: Gambar rata kiri */
+        /* Gambar rata kiri */
         .preview-box img {
             max-width: 100%;
             height: auto;
@@ -51,7 +51,7 @@
             text-align: center;
         }
 
-        /* PERBAIKAN: Hilangkan bar hitam */
+        /* Hilangkan bar hitam */
         .preview-box div {
             background: transparent !important;
             margin-bottom: 2px;
@@ -73,15 +73,6 @@
         .header-btn:hover {
             @apply transform scale-110 shadow-md;
         }
-        
-        .img-thumb {
-            @apply relative w-20 h-20 rounded-lg overflow-hidden border-2 border-slate-300 dark:border-slate-600 cursor-pointer transition-all hover:border-blue-500 hover:scale-105;
-        }
-        .img-thumb img { @apply w-full h-full object-cover; }
-        .img-thumb .remove-btn {
-            @apply absolute top-0 right-0 bg-red-500 text-white rounded-bl-lg px-1 text-xs opacity-0 hover:opacity-100 transition-opacity;
-        }
-        .img-thumb:hover .remove-btn { @apply opacity-100; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200 antialiased min-h-screen flex justify-center p-4 sm:p-6">
@@ -96,19 +87,12 @@
             </div>
             
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
-                <!-- Upload Gambar Button (Icon Only) -->
-                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
+                <!-- Upload Gambar (Direct Insert) -->
+                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleDirectImageUpload(this)">
                 <button onclick="document.getElementById('imageInput').click()" 
                     class="header-btn bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0" 
-                    title="Upload Gambar">
+                    title="Upload & Sisipkan Gambar di Posisi Kursor">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                </button>
-                
-                <!-- Sisip ke Soal Button (Icon Only) -->
-                <button onclick="insertImageAtCursor()" 
-                    class="header-btn bg-gradient-to-br from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0" 
-                    title="Sisipkan gambar ke soal">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 </button>
                 
                 <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
@@ -141,28 +125,13 @@
 
         <main class="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-5">
             
-            <!-- Galeri Gambar -->
-            <div class="flex flex-col gap-2">
-                <label class="font-semibold text-sm text-slate-700 dark:text-slate-300">🖼️ Galeri Gambar:</label>
-                <div id="imageGallery" class="flex flex-wrap gap-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 min-h-[60px]">
-                    <p id="emptyGallery" class="text-xs text-slate-500 dark:text-slate-400 italic w-full text-center py-2">Belum ada gambar. Upload gambar lalu klik tombol ➕ di header untuk menyisipkan.</p>
-                </div>
-           </div>
-
             <!-- Textarea Soal -->
             <div class="flex flex-col gap-2">
                 <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
-                <textarea id="rawInput" class="w-full h-72 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal di sini. Gunakan tombol ➕ di header untuk menyisipkan gambar di posisi kursor.
+                <textarea id="rawInput" class="w-full h-72 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste seluruh soal di sini !
 
-Contoh:
-1. Perhatikan gambar berikut!
-[IMG:1]
-Tentukan nilai x!
-a. 10
-b. [IMG:2] 20
-c. 30
-d. 40"></textarea>
-            </div>
+"></textarea>
+             </div>
 
             <!-- Configuration Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -185,7 +154,7 @@ d. 40"></textarea>
         <section id="outputCard" class="hidden bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm animate-[fadeIn_0.3s_ease-in-out]">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-4 mb-4 gap-4">
                 <div class="flex items-center gap-3">
-                    <span class="text-xl"></span>
+                    <span class="text-xl">📋</span>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">Hasil Konversi LMS</h2>
                     <span id="statsCount" class="text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-3 py-1 rounded-full">0 Soal</span>
                 </div>
@@ -226,85 +195,35 @@ d. 40"></textarea>
         }
         initTheme();
 
-        // --- Image Upload & Gallery ---
-        function handleImageUpload(input) {
+        // --- DIRECT IMAGE UPLOAD (Tanpa Galeri, Tanpa Counter) ---
+        function handleDirectImageUpload(input) {
             const file = input.files[0];
             if (!file) return;
             if (!file.type.startsWith('image/')) {
-                showToast('File harus berupa gambar!', 'warning');
+                showToast('⚠️ File harus berupa gambar!', 'warning');
                 return;
             }
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 uploadedImages.push(e.target.result);
-                renderGallery();
-                showToast(`Gambar #${uploadedImages.length} berhasil diupload !`, 'success');
+                const imageNumber = uploadedImages.length;
+                
+                // LANGSUNG sisipkan tag di posisi kursor
+                const textarea = document.getElementById('rawInput');
+                const startPos = textarea.selectionStart;
+                const endPos = textarea.selectionEnd;
+                const text = textarea.value;
+                const tag = `[IMG:${imageNumber}]`;
+                
+                textarea.value = text.substring(0, startPos) + tag + text.substring(endPos, text.length);
+                textarea.focus();
+                textarea.selectionStart = textarea.selectionEnd = startPos + tag.length;
+                
+                showToast(`Gambar #${imageNumber} diupload & disisipkan!`, 'success');
             };
             reader.readAsDataURL(file);
             input.value = '';
-        }
-        
-        function removeImage(index) {
-            uploadedImages.splice(index, 1);
-            renumberImageTags();
-            renderGallery();
-            showToast('️ Gambar dihapus dan nomor disesuaikan.', 'info');
-        }
-        
-        function renumberImageTags() {
-            const textarea = document.getElementById('rawInput');
-            let text = textarea.value;
-            let counter = 0;
-            text = text.replace(/\[IMG:\d+\]/g, () => {
-                counter++;
-                return `[IMG:${counter}]`;
-            });
-            textarea.value = text;
-        }
-        
-        function renderGallery() {
-            const gallery = document.getElementById('imageGallery');
-            const emptyMsg = document.getElementById('emptyGallery');
-            gallery.querySelectorAll('.img-thumb').forEach(el => el.remove());
-            
-            if (uploadedImages.length === 0) {
-                emptyMsg.classList.remove('hidden');
-                return;
-            }
-            emptyMsg.classList.add('hidden');
-            
-            uploadedImages.forEach((imgSrc, index) => {
-                const thumb = document.createElement('div');
-                thumb.className = 'img-thumb';
-                thumb.title = `Klik untuk sisip [IMG:${index + 1}] di posisi kursor`;
-                thumb.onclick = () => insertSpecificImage(index + 1);
-                thumb.innerHTML = `
-                    <img src="${imgSrc}" alt="Img ${index + 1}">
-                    <button class="remove-btn" onclick="event.stopPropagation(); removeImage(${index})" title="Hapus gambar">✕</button>
- 
-                `;
-                gallery.appendChild(thumb);
-            });
-        }
-        
-        function insertImageAtCursor() {
-            if (uploadedImages.length === 0) {
-                showToast('Upload gambar terlebih dahulu !', 'warning');
-                return;
-            }
-            insertSpecificImage(uploadedImages.length);
-        }
-        
-        function insertSpecificImage(imageNumber) {
-            const textarea = document.getElementById('rawInput');
-            const startPos = textarea.selectionStart;
-            const endPos = textarea.selectionEnd;
-            const text = textarea.value;
-            const tag = `[IMG:${imageNumber}]`;
-            textarea.value = text.substring(0, startPos) + tag + text.substring(endPos, text.length);
-            textarea.focus();
-            textarea.selectionStart = textarea.selectionEnd = startPos + tag.length;
-            showToast(`[IMG:${imageNumber}] disisipkan di posisi kursor !`, 'success');
         }
 
         // --- Parsing Logic ---
@@ -448,11 +367,11 @@ d. 40"></textarea>
                     }
                 });
                 if (Object.keys(manualAnswerKeys).length > 0) {
-                    showToast(`Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban !`, "success");
+                    showToast(`Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban!`, "success");
                     const outputCard = document.getElementById('outputCard');
                     if (!outputCard.classList.contains('hidden')) convertQuestions();
                 } else {
-                    showToast("⚠️ Format kunci tidak dikenali.", "warning");
+                    showToast("Format kunci tidak dikenali.", "warning");
                 }
             } catch (err) {
                 console.error(err);
@@ -473,7 +392,7 @@ d. 40"></textarea>
             const pembahasan = document.getElementById('pembahasanInput').value.trim() || '-';
             const parsedList = parseRawText(rawText);
             if (parsedList.length === 0) {
-                showToast("❌ Tidak dapat mengenali format soal.", "error");
+                showToast("Tidak dapat mengenali format soal.", "error");
                 return;
             }
             let htmlResult = '';
@@ -484,7 +403,6 @@ d. 40"></textarea>
                 let finalKey = 'a';
                 if (manualAnswerKeys[noNum]) finalKey = manualAnswerKeys[noNum];
                 
-                // PERBAIKAN: Gunakan margin-top untuk pemisah, bukan <div><br></div>
                 const separatorStyle = index > 0 ? ' style="margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 15px;"' : '';
                 
                 htmlResult += `<div${separatorStyle}><b>No:</b> ${noNum}</div>\n`;
@@ -500,7 +418,6 @@ d. 40"></textarea>
                 htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(finalKey)}</div>\n`;
                 htmlResult += `<div><b>Poin:</b> ${escapeHtmlOnly(poin)}</div>\n`;
                 htmlResult += `<div><b>Pembahasan:</b> ${escapeHtmlOnly(pembahasan)}</div>\n`;
-                // PERBAIKAN: Hapus <div><br></div> yang menyebabkan bar hitam
             });
             
             const previewEl = document.getElementById('resultPreview');
@@ -509,7 +426,7 @@ d. 40"></textarea>
             const outputCard = document.getElementById('outputCard');
             outputCard.classList.remove('hidden');
             outputCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            showToast(`Berhasil mengonversi ${parsedList.length} soal !`, "success");
+            showToast(`Berhasil mengonversi ${parsedList.length} soal!`, "success");
         }
 
         // --- Copy to Word ---
@@ -526,7 +443,7 @@ d. 40"></textarea>
                 await navigator.clipboard.write(data);
                 const copyBtn = document.getElementById('copyBtn');
                 const origText = copyBtn.innerHTML;
-                copyBtn.innerHTML = 'Berhasil Disalin !';
+                copyBtn.innerHTML = 'Berhasil Disalin!';
                 setTimeout(() => { copyBtn.innerHTML = origText; }, 2500);
                 showToast("Hasil disalin! Paste di Word (Ctrl+V).", "success");
             } catch (err) {
@@ -540,7 +457,7 @@ d. 40"></textarea>
                     document.execCommand('copy');
                     showToast("Disalin (Fallback)!", "warning");
                 } catch (e) {
-                    showToast("❌ Gagal menyalin.", "error");
+                    showToast("Gagal menyalin.", "error");
                 }
                 selection.removeAllRanges();
             }
@@ -552,8 +469,7 @@ d. 40"></textarea>
             document.getElementById('outputCard').classList.add('hidden');
             uploadedImages = [];
             manualAnswerKeys = {};
-            renderGallery();
-            showToast("️ Input telah dibersihkan.", "info");
+            showToast("Input telah dibersihkan.", "info");
         }
 
         function showToast(msg, type) {
@@ -562,7 +478,7 @@ d. 40"></textarea>
             const toastIcon = document.getElementById('toastIcon');
             toastMsg.textContent = msg;
             if (type === 'success') toastIcon.textContent = '✅';
-            else if (type === 'warning') toastIcon.textContent = '️';
+            else if (type === 'warning') toastIcon.textContent = '⚠️';
             else if (type === 'error') toastIcon.textContent = '❌';
             else toastIcon.textContent = 'ℹ️';
             toast.classList.remove('translate-y-[150px]', 'opacity-0');
