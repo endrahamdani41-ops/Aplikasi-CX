@@ -77,6 +77,22 @@
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
         .form-group input[type="text"], .form-group input[type="url"], .form-group input[type="file"] { width: 100%; padding: 11px 10px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main); font-size: 0.95rem; }
+        /* ✅ CSS untuk input yang disabled */
+        .form-group input[type="text"]:disabled {
+            background: rgba(148, 163, 184, 0.15);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            border-color: var(--border-color);
+            opacity: 0.7;
+        }
+        .form-group label.disabled-label {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+        .form-group label.disabled-label::after {
+            content: ' 🔒';
+            font-size: 0.75rem;
+        }
         .preview-img { width: 100px; height: 120px; border-radius: 8px; object-fit: cover; margin-top: 10px; display: none; border: 2px solid var(--primary); }
         .preview-img.show { display: block; }
         .btn-row { display: flex; gap: 8px; margin-top: 18px; }
@@ -148,7 +164,7 @@
         </div>
         <div><br><br>
             <h2 class="title-sub">SMPN 110 JAKARTA</h2>
-            <h2 class="title-sub">TUGAS KOKURIKULER  KOMIK DIGITAL</h2><br>
+            <h2 class="title-sub">TUGAS KOKURIKULER KOMIK DIGITAL</h2><br>
             <div class="title-date" id="tanggalPJJ">Memuat tanggal...</div><br>
         </div>
     </div>
@@ -168,11 +184,14 @@
     </div>
 </div>
 
-<!-- ✅ MODAL INPUT/EDIT DATA SISWA (TANPA PASSWORD) -->
+<!-- ✅ MODAL INPUT/EDIT DATA SISWA -->
 <div class="modal-overlay" id="modal">
     <div class="modal-box">
         <h3 id="modalTitle">Input Data Siswa</h3>
-        <div class="form-group"><label>Nama Lengkap Siswa</label><input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off"></div>
+        <div class="form-group">
+            <label id="labelNama" for="inpName">Nama Lengkap Siswa</label>
+            <input type="text" id="inpName" placeholder="Masukkan nama lengkap..." autocomplete="off">
+        </div>
         <div class="form-group"><label>Upload Cover Komik</label><input type="file" id="inpPhoto" accept="image/*" onchange="handlePreview(this)"><img id="imgPreview" class="preview-img"></div>
         <div class="form-group">
             <label>🔗 Link Komik (Opsional)</label>
@@ -247,7 +266,7 @@
         }
         const btnForce = document.querySelector('.btn-force');
         btnForce.disabled = true;
-        showStatus('️ Menghapus cache...', false);
+        showStatus('🗑️ Menghapus cache...', false);
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -268,7 +287,7 @@
             showStatus('✅ Cache dihapus & data dimuat dari server!', true);
         } catch (err) {
             console.error('❌ Gagal force reload:', err);
-            showStatus(' Gagal memuat dari server', false);
+            showStatus('❌ Gagal memuat dari server', false);
         } finally { btnForce.disabled = false; }
     }
 
@@ -295,7 +314,7 @@
                         parseDataSiswa(currentClass);
                         saveClassesLocally();
                         renderDenah();
-                        showStatus(' Data diperbaharui', true);
+                        showStatus('🔄 Data diperbaharui', true);
                     }
                 }
             }
@@ -306,7 +325,7 @@
         const btnRefresh = document.getElementById('btnRefresh');
         btnRefresh.classList.add('refreshing');
         btnRefresh.disabled = true;
-        showStatus(' Memuat ulang...', false);
+        showStatus('⏳ Memuat ulang...', false);
         const savedClass = currentClass;
         const savedPage = currentPage;
         try {
@@ -425,7 +444,7 @@
         } else { parseDataSiswa(className); }
         saveClassesLocally();
         renderDenah();
-        showStatus('📂 ' + className, true);
+        showStatus(' ' + className, true);
     }
     
     function switchClass() {
@@ -505,7 +524,6 @@
         seat.appendChild(num);
 
         if (hasData) {
-            // ✅ EDIT BUTTON - LANGSUNG BUKA MODAL TANPA PASSWORD
             const editBtn = document.createElement('div');
             editBtn.className = 'edit-btn';
             editBtn.title = 'Edit data';
@@ -534,7 +552,7 @@
             if (hasComicLink) {
                 const linkBadge = document.createElement('div');
                 linkBadge.className = 'comic-link-badge';
-                linkBadge.innerHTML = '🔗';
+                linkBadge.innerHTML = '';
                 linkBadge.title = 'Klik untuk buka link komik';
                 linkBadge.onclick = (e) => { e.stopPropagation(); openComicLink(dataSiswa[index].comicLink); };
                 seat.appendChild(linkBadge);
@@ -554,7 +572,7 @@
     }
 
     function openComicLink(link) {
-        if (!link) { alert('️ Link tidak tersedia!'); return; }
+        if (!link) { alert('⚠️ Link tidak tersedia!'); return; }
         let url = link;
         if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
         window.open(url, '_blank');
@@ -590,7 +608,7 @@
         currentZoomLink = '';
     }
 
-    // ✅ MODAL EDIT TANPA PASSWORD - LANGSUNG BUKA
+    // ✅ PERBAIKAN: Nama di-disable jika sudah ada isinya
     function openModal(index, isEdit = false) {
         if (!currentClass) { alert('⚠️ Pilih kelas!'); return; }
         activeIndex = index;
@@ -598,7 +616,24 @@
         originalPhotoBase64 = null;
         const modeText = isEdit ? '✏️ Edit Data' : '➕ Input Data';
         document.getElementById('modalTitle').innerText = `${modeText} - ${currentClass} - Kursi ${index + 1}`;
-        document.getElementById('inpName').value = dataSiswa[index]?.name || '';
+        
+        const inpName = document.getElementById('inpName');
+        const labelNama = document.getElementById('labelNama');
+        const existingName = dataSiswa[index]?.name || '';
+        
+        inpName.value = existingName;
+        
+        // ✅ Jika mode edit dan nama sudah ada, disable input nama
+        if (isEdit && existingName.trim() !== '') {
+            inpName.disabled = true;
+            labelNama.classList.add('disabled-label');
+            labelNama.innerText = 'Nama Lengkap Siswa (Tidak bisa diubah)';
+        } else {
+            inpName.disabled = false;
+            labelNama.classList.remove('disabled-label');
+            labelNama.innerText = 'Nama Lengkap Siswa';
+        }
+        
         document.getElementById('inpComicLink').value = dataSiswa[index]?.comicLink || '';
         const imgPreview = document.getElementById('imgPreview');
         if (dataSiswa[index]?.photo) {
@@ -609,12 +644,24 @@
         }
         document.getElementById('inpPhoto').value = '';
         document.getElementById('modal').classList.add('active');
-        setTimeout(() => document.getElementById('inpName').focus(), 100);
+        
+        // ✅ Focus ke input yang aktif (nama jika tidak disabled, atau link jika nama disabled)
+        setTimeout(() => {
+            if (inpName.disabled) {
+                document.getElementById('inpComicLink').focus();
+            } else {
+                inpName.focus();
+            }
+        }, 100);
     }
     
     function closeModal() { 
         document.getElementById('modal').classList.remove('active'); 
         isEditMode = false;
+        // Reset state disabled saat modal ditutup
+        document.getElementById('inpName').disabled = false;
+        document.getElementById('labelNama').classList.remove('disabled-label');
+        document.getElementById('labelNama').innerText = 'Nama Lengkap Siswa';
     }
     
     function compressImage(file, maxW, maxH, quality) {
@@ -656,7 +703,8 @@
             alert('⚠️ Error: Tidak ada kursi yang dipilih!');
             return;
         }
-        const name = document.getElementById('inpName').value.trim();
+        const inpName = document.getElementById('inpName');
+        const name = inpName.value.trim();
         const smallPhoto = document.getElementById('imgPreview').classList.contains('show') ? document.getElementById('imgPreview').src : (dataSiswa[activeIndex]?.photo || '');
         const origPhoto = originalPhotoBase64 || smallPhoto;
         const comicLink = document.getElementById('inpComicLink').value.trim();
@@ -686,7 +734,7 @@
             } else { throw new Error('HTTP ' + response.status); }
         } catch (error) {
             console.error('Error:', error);
-            showStatus('️ Gagal simpan (data aman di lokal)', false);
+            showStatus('⚠️ Gagal simpan (data aman di lokal)', false);
         } finally { isSaving = false; }
     }
 
