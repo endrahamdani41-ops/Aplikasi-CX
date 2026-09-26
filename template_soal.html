@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter Soal Portal Sekolah</title>
+    <title>Konverter Soal Portal Sekolah - Final</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -26,13 +27,21 @@
         .preview-box ol { margin-top: 4px; margin-bottom: 4px; padding-left: 28px; list-style-type: lower-alpha; }
         .preview-box li { margin-bottom: 6px; }
         
-        /* Gambar rata kiri */
         .preview-box img {
             max-width: 100%;
+            max-height: 3.2em;
             height: auto;
-            border-radius: 8px;
-            margin: 10px 0;
+            border-radius: 4px;
+            margin: 0 4px;
+            display: inline-block;
+            vertical-align: middle;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .preview-box img.img-block {
             display: block;
+            max-height: none;
+            margin: 10px 0;
+            border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         
@@ -51,7 +60,25 @@
             text-align: center;
         }
 
-        /* Hilangkan bar hitam */
+        /* Format Pecahan Vertikal */
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.3em;
+            font-size: 0.95em;
+        }
+        .fraction .numerator {
+            border-bottom: 1.5px solid currentColor;
+            padding: 0 0.3em 2px 0.3em;
+            line-height: 1.2;
+        }
+        .fraction .denominator {
+            padding: 2px 0.3em 0 0.3em;
+            line-height: 1.2;
+        }
+
         .preview-box div {
             background: transparent !important;
             margin-bottom: 2px;
@@ -66,18 +93,23 @@
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        
-        .header-btn {
-            @apply flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 shadow-sm;
-        }
-        .header-btn:hover {
-            @apply transform scale-110 shadow-md;
+
+        #pasteCatcher {
+            position: fixed;
+            top: -1000px;
+            left: -1000px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            overflow: hidden;
         }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200 antialiased min-h-screen flex justify-center p-4 sm:p-6">
 
-    <div class="w-full max-w-5xl flex flex-col gap-5">
+    <div id="pasteCatcher" contenteditable="true"></div>
+
+    <div class="w-full max-w-[98%] flex flex-col gap-5 mx-auto">
         
         <!-- Header -->
         <header class="sticky top-0 z-50 flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-slate-800 p-4 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm gap-4">
@@ -88,7 +120,6 @@
             
             <div class="flex items-center gap-3 flex-wrap sm:flex-nowrap">
                 
-                <!-- 1. Upload Gambar (Gradient Ungu-Pink) -->
                 <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleDirectImageUpload(this)">
                 <button onclick="document.getElementById('imageInput').click()" 
                     class="flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:scale-105 shadow-md text-white border-0"
@@ -101,10 +132,8 @@
                     </svg>
                 </button>
                 
-                <!-- Separator -->
                 <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
                 
-                <!-- 2. Konversi (Gradient Biru-Cyan) -->
                 <button onclick="convertQuestions()" 
                     class="flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:scale-105 shadow-md text-white border-0"
                     style="background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);"
@@ -112,7 +141,6 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </button>
                 
-                <!-- 3. Upload Kunci (Gradient Hijau-Emerald) -->
                 <input type="file" id="answerKeyFile" accept=".txt,.docx" class="hidden" onchange="handleAnswerKeyUpload(this)">
                 <button onclick="document.getElementById('answerKeyFile').click()" 
                     class="flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:scale-105 shadow-md text-white border-0"
@@ -121,7 +149,6 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </button>
 
-                <!-- 4. Bersihkan (Gradient Merah-Rose) -->
                 <button onclick="clearInput()" 
                     class="flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:scale-105 shadow-md text-white border-0"
                     style="background: linear-gradient(135deg, #ef4444 0%, #e11d48 100%); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);"
@@ -129,17 +156,13 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
 
-                <!-- Separator -->
                 <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
 
-                <!-- 5. Theme Toggle (Gradient Kuning-Amber) -->
                 <button id="themeToggleBtn" onclick="toggleTheme()" 
                     class="flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:scale-105 shadow-md text-white border-0"
                     style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);"
                     title="Ubah Tema">
-                    <!-- Sun Icon (Visible in Dark Mode) -->
                     <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <!-- Moon Icon (Visible in Light Mode) -->
                     <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                 </button>
             </div>
@@ -147,10 +170,12 @@
 
         <main class="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-5">
             
+ 
+
             <!-- Textarea Soal -->
             <div class="flex flex-col gap-2">
                 <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
-                <textarea spellcheck="false" id="rawInput" class="w-full h-48 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y " placeholder="Paste seluruh soal di sini ! 
+                <textarea spellcheck="false" id="rawInput" class="w-full h-48 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste soal dari Word di sini !
 
 "></textarea>
              </div>
@@ -180,9 +205,12 @@
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">Hasil Konversi LMS</h2>
                     <span id="statsCount" class="text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-3 py-1 rounded-full">0 Soal</span>
                 </div>
-                <button id="copyBtn" onclick="copyResultToWord()" class="w-full sm:w-auto py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-px transition-all flex items-center justify-center gap-2 text-sm">
-                     Salin Ke Word
-                </button>
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+
+                    <button id="downloadDocxBtn" onclick="downloadAsWord()" class="w-full sm:w-auto py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-px transition-all flex items-center justify-center gap-2 text-sm">
+                         Unduh sebagai Word (.docx)
+                    </button>
+                </div>
             </div>
             
             <div id="resultPreview" class="preview-box w-full min-h-[250px] max-h-[600px] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-5 font-serif text-black dark:text-slate-200 text-base leading-relaxed shadow-inner focus:outline-none" contenteditable="true" spellcheck="false"></div>
@@ -198,8 +226,256 @@
 
     <script>
         let uploadedImages = [];
+        let manualAnswerKeys = {};
         
-        // --- Theme Management ---
+        // ============================================
+        // FUNGSI: Gabungkan baris soal + beri jarak antar soal
+        // ============================================
+        function mergeQuestionLines(text) {
+            const lines = text.split('\n').filter(line => line.trim().length > 0);
+            const merged = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Cek apakah baris ini adalah awal soal baru (dimulai dengan angka + titik)
+                const isNewQuestion = /^\d+[\.\)]\s/.test(line);
+                
+                // Cek apakah baris ini adalah opsi (a., b., c., d., e.)
+                const isOption = /^[a-eA-E][\.\)]\s/.test(line);
+                
+                if (isNewQuestion) {
+                    // BARIS SOAL BARU: tambahkan baris kosong sebagai pemisah (kecuali soal pertama)
+                    if (merged.length > 0) {
+                        merged.push(''); // Baris kosong sebagai pemisah antar soal
+                    }
+                    merged.push(line);
+                } else if (isOption) {
+                    // BARIS OPSI: langsung tambahkan tanpa baris kosong
+                    merged.push(line);
+                } else {
+                    // Baris lanjutan (teks soal terpecah): gabungkan dengan baris sebelumnya
+                    if (merged.length > 0) {
+                        merged[merged.length - 1] += ' ' + line;
+                    } else {
+                        merged.push(line);
+                    }
+                }
+            }
+            
+            return merged.join('\n');
+        }
+
+        // ============================================
+        // FUNGSI: Format Pecahan
+        // ============================================
+        function formatFractions(text) {
+            if (!text) return text;
+            
+            const fractionMap = {
+                '1/2': '½', '1/3': '⅓', '2/3': '⅔', '1/4': '¼', '3/4': '¾',
+                '1/5': '⅕', '2/5': '⅖', '3/5': '⅗', '4/5': '⅘',
+                '1/6': '⅙', '5/6': '⅚', '1/8': '', '3/8': '⅜', '5/8': '⅝', '7/8': '⅞'
+            };
+            
+            let result = text;
+            for (let [key, value] of Object.entries(fractionMap)) {
+                result = result.replace(new RegExp(key, 'g'), value);
+            }
+            
+            return result;
+        }
+
+        // ============================================
+        // FUNGSI: Intercept Paste dari Word
+        // ============================================
+        function setupRobustPasteHandler() {
+            const textarea = document.getElementById('rawInput');
+            const pasteCatcher = document.getElementById('pasteCatcher');
+            
+            textarea.addEventListener('blur', function() {
+                const current = textarea.value;
+                if (!current.trim()) return;
+                const formatted = mergeQuestionLines(splitInlineOptions(splitInlineQuestions(cleanText(current))));
+                if (formatted !== current) {
+                    const scrollPos = textarea.scrollTop;
+                    textarea.value = formatted;
+                    textarea.scrollTop = scrollPos;
+                }
+            });
+            
+            textarea.addEventListener('paste', function(e) {
+                const startPos = textarea.selectionStart;
+                const endPos = textarea.selectionEnd;
+                
+                const html = e.clipboardData.getData('text/html');
+                
+                if (html && (html.includes('<sup') || html.includes('<sub') || html.includes('<style'))) {
+                    e.preventDefault();
+                    const converted = convertHtmlToUnicode(html);
+                    insertAtCursor(textarea, converted, startPos, endPos);
+                    showToast('Paste dari Word berhasil!', 'success');
+                } else {
+                    e.preventDefault();
+                    pasteCatcher.innerHTML = '';
+                    pasteCatcher.focus();
+                    
+                    setTimeout(() => {
+                        const pastedHtml = pasteCatcher.innerHTML;
+                        const pastedText = pasteCatcher.innerText;
+                        
+                        if (pastedHtml && (pastedHtml.includes('<sup') || pastedHtml.includes('<sub') || pastedHtml.includes('<style'))) {
+                            const converted = convertHtmlToUnicode(pastedHtml);
+                            insertAtCursor(textarea, converted, startPos, endPos);
+                            showToast('Paste dari Word berhasil!', 'success');
+                        } else {
+                            const formatted = mergeQuestionLines(splitInlineOptions(splitInlineQuestions(pastedText)));
+                            insertAtCursor(textarea, formatted, startPos, endPos);
+                        }
+                        
+                        pasteCatcher.innerHTML = '';
+                        textarea.focus();
+                    }, 100);
+                }
+            });
+        }
+
+        function insertAtCursor(textarea, text, startPos, endPos) {
+            const currentText = textarea.value;
+            textarea.value = currentText.substring(0, startPos) + text + currentText.substring(endPos, currentText.length);
+            textarea.selectionStart = textarea.selectionEnd = startPos + text.length;
+        }
+
+        // ============================================
+        // FUNGSI: Konversi HTML Word ke Text Bersih
+        // ============================================
+        function convertHtmlToUnicode(html) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            
+            temp.querySelectorAll('style, link, meta, script').forEach(el => el.remove());
+            temp.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
+            
+            const removeComments = (node) => {
+                const children = Array.from(node.childNodes);
+                children.forEach(child => {
+                    if (child.nodeType === Node.COMMENT_NODE) {
+                        node.removeChild(child);
+                    } else if (child.nodeType === Node.ELEMENT_NODE) {
+                        removeComments(child);
+                    }
+                });
+            };
+            removeComments(temp);
+            
+            temp.querySelectorAll('*').forEach(el => {
+                el.removeAttribute('class');
+                el.removeAttribute('lang');
+                el.removeAttribute('xml:lang');
+            });
+            
+            const superscriptMap = {
+                '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                '5': '⁵', '6': '', '7': '⁷', '8': '⁸', '9': '⁹',
+                '-': '⁻', '+': '⁺', '=': '⁼', '(': '⁽', ')': '⁾'
+            };
+            
+            const subscriptMap = {
+                '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
+                '5': '₅', '6': '₆', '7': '⁷', '8': '₈', '9': '⁹'
+            };
+            
+            temp.querySelectorAll('sup').forEach(sup => {
+                const text = sup.textContent.trim();
+                let result = '';
+                for (let char of text) {
+                    result += superscriptMap[char] || char;
+                }
+                sup.replaceWith(result);
+            });
+            
+            temp.querySelectorAll('sub').forEach(sub => {
+                const text = sub.textContent.trim();
+                let result = '';
+                for (let char of text) {
+                    result += subscriptMap[char] || char;
+                }
+                sub.replaceWith(result);
+            });
+            
+            temp.querySelectorAll('img').forEach(img => {
+                const src = img.src || img.getAttribute('src');
+                if (src && src.startsWith('data:image')) {
+                    uploadedImages.push(src);
+                    img.replaceWith(`[IMG:${uploadedImages.length}]`);
+                } else {
+                    img.replaceWith('[GAMBAR]');
+                }
+            });
+            
+            temp.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+            temp.querySelectorAll('p, div, tr, li, h1, h2, h3, h4, h5, h6').forEach(el => {
+                el.insertAdjacentText('afterend', '\n');
+            });
+            
+            let result = temp.textContent || temp.innerText;
+            
+            result = result
+                .replace(/\u00A0/g, ' ')
+                .replace(/\u200B/g, '')
+                .replace(/\u200C/g, '')
+                .replace(/\u200D/g, '')
+                .replace(/\uFEFF/g, '')
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n')
+                .replace(/\t/g, ' ')
+                .replace(/[ \t]+/g, ' ')
+                .replace(/[ \t]+$/gm, '')
+                .replace(/^\s+|\s+$/g, '')
+                .replace(/\n{3,}/g, '\n\n')
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0)
+                .join('\n');
+            
+            result = mergeQuestionLines(result);
+            result = splitInlineQuestions(result);
+            result = splitInlineOptions(result);
+            
+            return result;
+        }
+
+        // ============================================
+        // FUNGSI: Konversi ^ menjadi superscript
+        // ============================================
+        function convertToSuperscript(text) {
+            if (!text) return text;
+            const superscriptMap = {
+                '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+                '-': '⁻', '+': '⁺', '=': '⁼', '(': '⁽', ')': '⁾'
+            };
+            return text.replace(/(\d+)\^(\d+)/g, (match, base, exp) => {
+                const superscript = exp.split('').map(c => superscriptMap[c] || c).join('');
+                return base + superscript;
+            });
+        }
+        
+        function cleanText(text) {
+            if (!text) return text;
+            return text
+                .replace(/\u00A0/g, ' ')
+                .replace(/\u200B/g, '')
+                .replace(/\u200C/g, '')
+                .replace(/\u200D/g, '')
+                .replace(/\uFEFF/g, '')
+                .replace(/\r\n/g, '\n')
+                .replace(/\t/g, ' ');
+        }
+
+        // ============================================
+        // Theme Management
+        // ============================================
         function initTheme() {
             const isDark = document.documentElement.classList.contains('dark');
             const savedTheme = localStorage.getItem('konverter_theme') || (isDark ? 'dark' : 'light');
@@ -217,38 +493,114 @@
         }
         initTheme();
 
-        // --- DIRECT IMAGE UPLOAD (Tanpa Galeri, Tanpa Counter) ---
+        document.addEventListener('DOMContentLoaded', function() {
+            setupRobustPasteHandler();
+        });
+
+        // ============================================
+        // DIRECT IMAGE UPLOAD
+        // ============================================
         function handleDirectImageUpload(input) {
             const file = input.files[0];
             if (!file) return;
             if (!file.type.startsWith('image/')) {
-                showToast('⚠️ File harus berupa gambar!', 'warning');
+                showToast('️ File harus berupa gambar!', 'warning');
                 return;
             }
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 uploadedImages.push(e.target.result);
                 const imageNumber = uploadedImages.length;
-                
-                // LANGSUNG sisipkan tag di posisi kursor
                 const textarea = document.getElementById('rawInput');
-                const startPos = textarea.selectionStart;
-                const endPos = textarea.selectionEnd;
                 const text = textarea.value;
                 const tag = `[IMG:${imageNumber}]`;
-                
-                textarea.value = text.substring(0, startPos) + tag + text.substring(endPos, text.length);
+                const placeholder = '[GAMBAR]';
+                const selStart = textarea.selectionStart;
+                const selEnd = textarea.selectionEnd;
+                const selectedText = text.substring(selStart, selEnd);
+
+                let newText, newCursorPos;
+
+                if (selectedText === placeholder) {
+                    // Pengguna sudah select placeholder-nya sendiri: ganti langsung
+                    newText = text.substring(0, selStart) + tag + text.substring(selEnd);
+                    newCursorPos = selStart + tag.length;
+                } else {
+                    // Auto-detect: cari [GAMBAR] berikutnya setelah kursor, kalau tidak ada cari dari awal
+                    let idx = text.indexOf(placeholder, selEnd);
+                    if (idx === -1) idx = text.indexOf(placeholder);
+                    if (idx !== -1) {
+                        newText = text.substring(0, idx) + tag + text.substring(idx + placeholder.length);
+                        newCursorPos = idx + tag.length;
+                    } else {
+                        // Tidak ada placeholder sama sekali: sisipkan di posisi kursor seperti biasa
+                        newText = text.substring(0, selStart) + tag + text.substring(selEnd);
+                        newCursorPos = selStart + tag.length;
+                    }
+                }
+
+                textarea.value = newText;
                 textarea.focus();
-                textarea.selectionStart = textarea.selectionEnd = startPos + tag.length;
-                
-                showToast(`Gambar #${imageNumber} diupload & disisipkan!`, 'success');
+                textarea.selectionStart = textarea.selectionEnd = newCursorPos;
+
+                const remaining = (newText.match(/\[GAMBAR\]/g) || []).length;
+                let msg = `Gambar #${imageNumber} disisipkan!`;
+                if (remaining > 0) msg += ` (${remaining} [GAMBAR] lagi belum diisi)`;
+                showToast(msg, 'success');
             };
             reader.readAsDataURL(file);
             input.value = '';
         }
 
-        // --- Parsing Logic ---
+        // ============================================
+        // FUNGSI: Pecah nomor soal baru yang nyangkut di tengah baris
+        // Contoh: "d. CPU 2. Perangkat lunak..." -> baris soal baru terpisah
+        // ============================================
+        function splitInlineQuestions(text) {
+            if (!text) return text;
+            return text.split('\n').map(line => {
+                const qPattern = /(?:(?<=\s)|^)(\d{1,3})[\.\)]\s+(?!\d)/g;
+                const matches = [...line.matchAll(qPattern)];
+                const midMatches = matches.filter(m => m.index > 0);
+                if (midMatches.length === 0) return line;
+                const pieces = [];
+                let prevIdx = 0;
+                midMatches.forEach(m => {
+                    pieces.push(line.substring(prevIdx, m.index).trim());
+                    prevIdx = m.index;
+                });
+                pieces.push(line.substring(prevIdx).trim());
+                return pieces.filter(p => p.length > 0).join('\n');
+            }).join('\n');
+        }
+
+        // ============================================
+        // FUNGSI: Pecah opsi yang menempel dalam satu baris
+        // Contoh: "...adalah.... A. 3^12 B. 3^9 C. 36 D. 3^5"
+        // menjadi baris terpisah untuk masing-masing opsi
+        // ============================================
+        function splitInlineOptions(text) {
+            if (!text) return text;
+            return text.split('\n').map(line => {
+                const optionPattern = /(?:(?<=\s)|^)([A-Ea-e])[\.\)]\s+/g;
+                const matches = [...line.matchAll(optionPattern)];
+                if (matches.length >= 2) {
+                    const pieces = [];
+                    let prevIdx = 0;
+                    matches.forEach(m => {
+                        pieces.push(line.substring(prevIdx, m.index).trim());
+                        prevIdx = m.index;
+                    });
+                    pieces.push(line.substring(prevIdx).trim());
+                    return pieces.filter(p => p.length > 0).join('\n');
+                }
+                return line;
+            }).join('\n');
+        }
+
+        // ============================================
+        // Parsing Logic
+        // ============================================
         function cleanPrefix(text) {
             if (!text) return '';
             return text.replace(/^\s*(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s*|\b[A-Ea-e]\b\s*[\.\-]\s*)/, '').trim();
@@ -258,9 +610,9 @@
             return text.replace(/^\s*(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i, '').trim();
         }
         function isLikelyShortInstruction(text) {
-            const cleanText = cleanQuestionPrefix(text).trim();
+            const cleanTextStr = cleanQuestionPrefix(text).trim();
             const shortKeywords = ['perhatikan', 'cermati', 'simak', 'lihat', 'amati'];
-            return cleanText.length < 30 && shortKeywords.some(keyword => cleanText.toLowerCase().includes(keyword));
+            return cleanTextStr.length < 30 && shortKeywords.some(keyword => cleanTextStr.toLowerCase().includes(keyword));
         }
         function parseRawText(raw) {
             const blocks = raw.split(/\r?\n\s*\r?\n/).map(b => b.trim()).filter(b => b.length > 0);
@@ -334,10 +686,29 @@
             questionsArray.push({ soalLines: questionLines, opsi: options });
         }
 
-        // --- Conversion ---
+        // ============================================
+        // Conversion
+        // ============================================
         function escapeHtmlOnly(text) {
             if (!text) return '';
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+        
+        // Format pecahan untuk output HTML (tampilan vertikal)
+        function formatFractionHtml(text) {
+            if (!text) return text;
+            
+            // Pola: 1/2^3 atau 1/2³ → pecahan vertikal
+            text = text.replace(/(\d+)\/(\d+)([⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g, (match, num, den, exp) => {
+                return `<span class="fraction"><span class="numerator">${num}</span><span class="denominator">${den}${exp}</span></span>`;
+            });
+            
+            // Pola: 1/2 (tanpa pangkat) - tapi hindari yang sudah jadi Unicode fraction
+            text = text.replace(/(\d+)\/(\d+)/g, (match, num, den) => {
+                return `<span class="fraction"><span class="numerator">${num}</span><span class="denominator">${den}</span></span>`;
+            });
+            
+            return text;
         }
         
         function processTextWithImages(text) {
@@ -354,13 +725,11 @@
                         result += `<span class="img-placeholder">[GAMBAR #${imgMatch[1]} TIDAK DITEMUKAN]</span>`;
                     }
                 } else {
-                    result += escapeHtmlOnly(part);
+                    result += formatFractionHtml(escapeHtmlOnly(part));
                 }
             });
             return result;
         }
-
-        let manualAnswerKeys = {};
 
         async function handleAnswerKeyUpload(input) {
             const file = input.files[0];
@@ -375,55 +744,93 @@
                 } else if (fileExt === 'txt') {
                     textContent = await file.text();
                 } else {
-                    showToast("Format tidak didukung. Gunakan .txt atau .docx", "error");
+                    showToast("Format tidak didukung.", "error");
                     return;
                 }
                 manualAnswerKeys = {};
-                let cleanText = textContent.replace(/\r\n/g, '\n').replace(/\t/g, ' ');
-                const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                const keyRegex = /^(\d+)\s*[\.\):]?\s*([a-dA-D])\s*$/i;
+                let cleanTextStr = cleanText(textContent);
+                const lines = cleanTextStr.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                const keyRegex = /^(\d+)\s*[\.\):]?\s*([a-eA-E](?:\s*[,;]\s*[a-eA-E])*)\s*$/i;
                 lines.forEach(line => {
                     const match = line.match(keyRegex);
                     if (match) {
-                        manualAnswerKeys[parseInt(match[1], 10)] = match[2].toLowerCase();
+                        const questionNum = parseInt(match[1], 10);
+                        const rawAnswer = match[2].toLowerCase();
+                        if (rawAnswer.includes(',') || rawAnswer.includes(';')) {
+                            const answers = rawAnswer.split(/[,;]\s*/).map(a => a.trim()).filter(a => a);
+                            manualAnswerKeys[questionNum] = { type: 'complex', answers: answers };
+                        } else {
+                            manualAnswerKeys[questionNum] = { type: 'simple', answer: rawAnswer };
+                        }
                     }
                 });
+                
+                const complexCount = Object.values(manualAnswerKeys).filter(k => k.type === 'complex').length;
                 if (Object.keys(manualAnswerKeys).length > 0) {
-                    showToast(`Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban!`, "success");
+                    let msg = `✅ Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban!`;
+                    if (complexCount > 0) msg += ` (${complexCount} soal kompleks)`;
+                    showToast(msg, "success");
                     const outputCard = document.getElementById('outputCard');
                     if (!outputCard.classList.contains('hidden')) convertQuestions();
                 } else {
-                    showToast("Format kunci tidak dikenali.", "warning");
+                    showToast("⚠️ Format kunci tidak dikenali.", "warning");
                 }
             } catch (err) {
                 console.error(err);
-                showToast("Gagal membaca file kunci jawaban.", "error");
+                showToast("Gagal membaca file.", "error");
             } finally {
                 input.value = '';
             }
         }
 
         function convertQuestions() {
-            const rawText = document.getElementById('rawInput').value.trim();
+            let rawText = document.getElementById('rawInput').value.trim();
             if (!rawText) {
-                showToast("Mohon isi atau paste teks soal terlebih dahulu!", "warning");
+                showToast("Mohon isi soal!", "warning");
                 return;
             }
+            
+            rawText = cleanText(rawText);
+            rawText = splitInlineQuestions(rawText);
+            rawText = splitInlineOptions(rawText);
+            rawText = mergeQuestionLines(rawText);
+            document.getElementById('rawInput').value = rawText;
+
+            rawText = convertToSuperscript(rawText);
+            rawText = formatFractions(rawText);
+            
             const kategori = document.getElementById('kategoriInput').value.trim() || 'Umum';
             const poin = document.getElementById('poinInput').value.trim() || '1';
             const pembahasan = document.getElementById('pembahasanInput').value.trim() || '-';
             const parsedList = parseRawText(rawText);
             if (parsedList.length === 0) {
-                showToast("Tidak dapat mengenali format soal.", "error");
+                showToast("Format tidak dikenali.", "error");
                 return;
             }
             let htmlResult = '';
+            let complexCount = 0;
+            
             parsedList.forEach((q, index) => {
                 const noNum = index + 1;
                 let processedLines = q.soalLines.map(line => processTextWithImages(line));
                 let processedSoal = processedLines.join('<br>');
-                let finalKey = 'a';
-                if (manualAnswerKeys[noNum]) finalKey = manualAnswerKeys[noNum];
+                
+                const keyData = manualAnswerKeys[noNum];
+                let isComplex = false;
+                let finalKeyDisplay = 'a';
+                let correctAnswers = [];
+                
+                if (keyData) {
+                    if (keyData.type === 'complex') {
+                        isComplex = true;
+                        complexCount++;
+                        correctAnswers = keyData.answers;
+                        finalKeyDisplay = keyData.answers.join(', ');
+                    } else {
+                        finalKeyDisplay = keyData.answer;
+                        correctAnswers = [keyData.answer];
+                    }
+                }
                 
                 const separatorStyle = index > 0 ? ' style="margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 15px;"' : '';
                 
@@ -437,7 +844,7 @@
                     htmlResult += `  <li>${processedOpt}</li>\n`;
                 });
                 htmlResult += `</ol>\n`;
-                htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(finalKey)}</div>\n`;
+                htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(finalKeyDisplay)}</div>\n`;
                 htmlResult += `<div><b>Poin:</b> ${escapeHtmlOnly(poin)}</div>\n`;
                 htmlResult += `<div><b>Pembahasan:</b> ${escapeHtmlOnly(pembahasan)}</div>\n`;
             });
@@ -451,11 +858,67 @@
             showToast(`Berhasil mengonversi ${parsedList.length} soal!`, "success");
         }
 
-        // --- Copy to Word ---
+        // ============================================
+        // Unduh sebagai file Word (.docx) - gambar tertanam asli
+        // ============================================
+        async function downloadAsWord() {
+            const previewEl = document.getElementById('resultPreview');
+            if (!previewEl.innerHTML.trim()) {
+                showToast("Tidak ada hasil!", "warning");
+                return;
+            }
+            if (typeof htmlDocx === 'undefined') {
+                showToast("Modul Word belum siap, coba lagi sebentar.", "warning");
+                return;
+            }
+            let downloads;
+            try {
+                downloads = window.claude ? await window.claude.use("downloads") : null;
+            } catch (e) {
+                downloads = null;
+            }
+            const fullHtml = `<!DOCTYPE html><html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Soal</title></head><body>${previewEl.innerHTML}</body></html>`;
+            const blob = htmlDocx.asBlob(fullHtml);
+            if (!downloads) {
+                // Fallback: dibuka sebagai file lokal (bukan lewat link claude.ai), pakai unduhan browser biasa
+                try {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'soal-konversi.docx';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    showToast("File Word berhasil diunduh!", "success");
+                } catch (err) {
+                    console.error(err);
+                    showToast("Gagal mengunduh file Word.", "error");
+                }
+                return;
+            }
+            try {
+                const result = await downloads.save({ filename: 'soal-konversi.docx', data: blob });
+                if (result && result.status === 'saved') {
+                    showToast("File Word berhasil diunduh!", "success");
+                }
+            } catch (err) {
+                console.error(err);
+                if (err && err.code === 'declined') {
+                    // Pengguna membatalkan, tidak perlu pesan error
+                } else {
+                    showToast("Gagal membuat file Word.", "error");
+                }
+            }
+        }
+
+        // ============================================
+        // Copy to Word
+        // ============================================
         async function copyResultToWord() {
             const previewEl = document.getElementById('resultPreview');
             if (!previewEl.innerHTML.trim()) {
-                showToast("Tidak ada hasil untuk disalin!", "warning");
+                showToast("Tidak ada hasil!", "warning");
                 return;
             }
             try {
@@ -465,9 +928,9 @@
                 await navigator.clipboard.write(data);
                 const copyBtn = document.getElementById('copyBtn');
                 const origText = copyBtn.innerHTML;
-                copyBtn.innerHTML = 'Berhasil Disalin!';
+                copyBtn.innerHTML = '✅ Berhasil Disalin!';
                 setTimeout(() => { copyBtn.innerHTML = origText; }, 2500);
-                showToast("Hasil disalin! Paste di Word (Ctrl+V).", "success");
+                showToast("Disalin! Paste di Word.", "success");
             } catch (err) {
                 console.error(err);
                 const range = document.createRange();
@@ -485,13 +948,15 @@
             }
         }
 
-        // --- Helpers ---
+        // ============================================
+        // Helpers
+        // ============================================
         function clearInput() {
             document.getElementById('rawInput').value = '';
             document.getElementById('outputCard').classList.add('hidden');
             uploadedImages = [];
             manualAnswerKeys = {};
-            showToast("Input telah dibersihkan.", "info");
+            showToast("Input dibersihkan.", "info");
         }
 
         function showToast(msg, type) {
@@ -501,7 +966,7 @@
             toastMsg.textContent = msg;
             if (type === 'success') toastIcon.textContent = '✅';
             else if (type === 'warning') toastIcon.textContent = '⚠️';
-            else if (type === 'error') toastIcon.textContent = '❌';
+            else if (type === 'error') toastIcon.textContent = '';
             else toastIcon.textContent = 'ℹ️';
             toast.classList.remove('translate-y-[150px]', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
