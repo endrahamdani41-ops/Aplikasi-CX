@@ -60,25 +60,6 @@
             text-align: center;
         }
 
-        /* Format Pecahan Vertikal */
-        .fraction {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            vertical-align: middle;
-            margin: 0 0.3em;
-            font-size: 0.95em;
-        }
-        .fraction .numerator {
-            border-bottom: 1.5px solid currentColor;
-            padding: 0 0.3em 2px 0.3em;
-            line-height: 1.2;
-        }
-        .fraction .denominator {
-            padding: 2px 0.3em 0 0.3em;
-            line-height: 1.2;
-        }
-
         .preview-box div {
             background: transparent !important;
             margin-bottom: 2px;
@@ -290,23 +271,25 @@
         }
 
         // ============================================
-        // FUNGSI: Format Pecahan
+        // FUNGSI: Sambung baris yang berakhir dengan penanda menggantung.
+        // Paste dari PDF/dokumen wrap-manual sering menghasilkan "...adalah.... a."
+        // lalu baris berikutnya "Monitor b." -> disambung dulu, baru dipecah oleh
+        // splitInlineQuestions/splitInlineOptions menjadi susunan yang benar.
         // ============================================
-        function formatFractions(text) {
+        function reattachDanglingMarkers(text) {
             if (!text) return text;
-            
-            const fractionMap = {
-                '1/2': '½', '1/3': '⅓', '2/3': '⅔', '1/4': '¼', '3/4': '¾',
-                '1/5': '⅕', '2/5': '⅖', '3/5': '⅗', '4/5': '⅘',
-                '1/6': '⅙', '5/6': '⅚', '1/8': '', '3/8': '⅜', '5/8': '⅝', '7/8': '⅞'
-            };
-            
-            let result = text;
-            for (let [key, value] of Object.entries(fractionMap)) {
-                result = result.replace(new RegExp(key, 'g'), value);
+            const lines = text.split('\n');
+            const out = [];
+            const dangling = /(?:^|\s)(?:\d{1,3}|[A-Ea-e])[\.\)]$/;
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                while (i + 1 < lines.length && dangling.test(line)) {
+                    i++;
+                    line += ' ' + lines[i].trim();
+                }
+                if (line.length > 0) out.push(line);
             }
-            
-            return result;
+            return out.join('\n');
         }
 
         // ============================================
@@ -319,7 +302,7 @@
             textarea.addEventListener('blur', function() {
                 const current = textarea.value;
                 if (!current.trim()) return;
-                const formatted = mergeQuestionLines(splitInlineOptions(splitInlineQuestions(cleanText(current))));
+                const formatted = mergeQuestionLines(splitInlineOptions(splitInlineQuestions(reattachDanglingMarkers(cleanText(current)))));
                 if (formatted !== current) {
                     const scrollPos = textarea.scrollTop;
                     textarea.value = formatted;
@@ -352,7 +335,7 @@
                             insertAtCursor(textarea, converted, startPos, endPos);
                             showToast('Paste dari Word berhasil!', 'success');
                         } else {
-                            const formatted = mergeQuestionLines(splitInlineOptions(splitInlineQuestions(pastedText)));
+                            const formatted = mergeQuestionLines(splitInlineOptions(splitInlineQuestions(reattachDanglingMarkers(pastedText))));
                             insertAtCursor(textarea, formatted, startPos, endPos);
                         }
                         
@@ -399,13 +382,13 @@
             
             const superscriptMap = {
                 '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-                '5': '⁵', '6': '', '7': '⁷', '8': '⁸', '9': '⁹',
+                '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
                 '-': '⁻', '+': '⁺', '=': '⁼', '(': '⁽', ')': '⁾'
             };
             
             const subscriptMap = {
                 '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
-                '5': '₅', '6': '₆', '7': '⁷', '8': '₈', '9': '⁹'
+                '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉'
             };
             
             temp.querySelectorAll('sup').forEach(sup => {
@@ -461,6 +444,7 @@
                 .filter(line => line.length > 0)
                 .join('\n');
             
+            result = reattachDanglingMarkers(result);
             result = mergeQuestionLines(result);
             result = splitInlineQuestions(result);
             result = splitInlineOptions(result);
@@ -719,18 +703,25 @@
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
         
-        // Format pecahan untuk output HTML (tampilan vertikal)
+        // Style inline dipakai (bukan class) supaya ikut terbawa saat ekspor ke .docx,
+        // karena <style> eksternal tidak disertakan dalam file Word yang dihasilkan.
+        const FRACTION_OPEN = '<span style="display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 0.3em; font-size:0.95em;">';
+        function fractionHtml(num, den) {
+            return `${FRACTION_OPEN}<span style="border-bottom:1.5px solid currentColor; padding:0 0.3em 2px 0.3em; line-height:1.2;">${num}</span><span style="padding:2px 0.3em 0 0.3em; line-height:1.2;">${den}</span></span>`;
+        }
+
+        // Format pecahan untuk output HTML (tampilan vertikal, konsisten untuk semua a/b)
         function formatFractionHtml(text) {
             if (!text) return text;
             
-            // Pola: 1/2^3 atau 1/2³ → pecahan vertikal
+            // Pola: 1/2^3 atau 1/2³ → pecahan vertikal dengan pangkat di penyebut
             text = text.replace(/(\d+)\/(\d+)([⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g, (match, num, den, exp) => {
-                return `<span class="fraction"><span class="numerator">${num}</span><span class="denominator">${den}${exp}</span></span>`;
+                return fractionHtml(num, den + exp);
             });
             
-            // Pola: 1/2 (tanpa pangkat) - tapi hindari yang sudah jadi Unicode fraction
+            // Pola: a/b tanpa pangkat → pecahan vertikal juga
             text = text.replace(/(\d+)\/(\d+)/g, (match, num, den) => {
-                return `<span class="fraction"><span class="numerator">${num}</span><span class="denominator">${den}</span></span>`;
+                return fractionHtml(num, den);
             });
             
             return text;
@@ -816,13 +807,13 @@
             }
             
             rawText = cleanText(rawText);
+            rawText = reattachDanglingMarkers(rawText);
             rawText = splitInlineQuestions(rawText);
             rawText = splitInlineOptions(rawText);
             rawText = mergeQuestionLines(rawText);
             document.getElementById('rawInput').value = rawText;
 
             rawText = convertToSuperscript(rawText);
-            rawText = formatFractions(rawText);
             
             const kategori = document.getElementById('kategoriInput').value.trim() || 'Umum';
             const poin = document.getElementById('poinInput').value.trim() || '1';
@@ -965,80 +956,21 @@
                 showToast("Modul Word belum siap, coba lagi sebentar.", "warning");
                 return;
             }
-            let downloads;
-            try {
-                downloads = window.claude ? await window.claude.use("downloads") : null;
-            } catch (e) {
-                downloads = null;
-            }
             const fullHtml = `<!DOCTYPE html><html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Soal</title></head><body>${previewEl.innerHTML}</body></html>`;
             const blob = htmlDocx.asBlob(fullHtml);
-            if (!downloads) {
-                // Fallback: dibuka sebagai file lokal (bukan lewat link claude.ai), pakai unduhan browser biasa
-                try {
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'soal-konversi.docx';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    setTimeout(() => URL.revokeObjectURL(url), 1000);
-                    showToast("File Word berhasil diunduh!", "success");
-                } catch (err) {
-                    console.error(err);
-                    showToast("Gagal mengunduh file Word.", "error");
-                }
-                return;
-            }
             try {
-                const result = await downloads.save({ filename: 'soal-konversi.docx', data: blob });
-                if (result && result.status === 'saved') {
-                    showToast("File Word berhasil diunduh!", "success");
-                }
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'soal-konversi.docx';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showToast("File Word berhasil diunduh!", "success");
             } catch (err) {
                 console.error(err);
-                if (err && err.code === 'declined') {
-                    // Pengguna membatalkan, tidak perlu pesan error
-                } else {
-                    showToast("Gagal membuat file Word.", "error");
-                }
-            }
-        }
-
-        // ============================================
-        // Copy to Word
-        // ============================================
-        async function copyResultToWord() {
-            const previewEl = document.getElementById('resultPreview');
-            if (!previewEl.innerHTML.trim()) {
-                showToast("Tidak ada hasil!", "warning");
-                return;
-            }
-            try {
-                const htmlContent = previewEl.innerHTML;
-                const blob = new Blob([htmlContent], { type: 'text/html' });
-                const data = [new ClipboardItem({ 'text/html': blob })];
-                await navigator.clipboard.write(data);
-                const copyBtn = document.getElementById('copyBtn');
-                const origText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '✅ Berhasil Disalin!';
-                setTimeout(() => { copyBtn.innerHTML = origText; }, 2500);
-                showToast("Disalin! Paste di Word.", "success");
-            } catch (err) {
-                console.error(err);
-                const range = document.createRange();
-                range.selectNodeContents(previewEl);
-                const selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
-                try {
-                    document.execCommand('copy');
-                    showToast("Disalin (Fallback)!", "warning");
-                } catch (e) {
-                    showToast("Gagal menyalin.", "error");
-                }
-                selection.removeAllRanges();
+                showToast("Gagal mengunduh file Word.", "error");
             }
         }
 
@@ -1060,7 +992,7 @@
             toastMsg.textContent = msg;
             if (type === 'success') toastIcon.textContent = '✅';
             else if (type === 'warning') toastIcon.textContent = '⚠️';
-            else if (type === 'error') toastIcon.textContent = '';
+            else if (type === 'error') toastIcon.textContent = '❌';
             else toastIcon.textContent = 'ℹ️';
             toast.classList.remove('translate-y-[150px]', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
