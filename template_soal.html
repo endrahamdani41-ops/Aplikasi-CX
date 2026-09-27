@@ -244,6 +244,14 @@
                 // Cek apakah baris ini adalah opsi (a., b., c., d., e.)
                 const isOption = /^[a-eA-E][\.\)]\s/.test(line);
                 
+                // Cek apakah baris ini adalah sub-poin bernomor kurung, contoh: (1), (2), (3)
+                // Dipakai pada soal jenis "Perhatikan iklan/paragraf/pernyataan berikut!"
+                const isSubItem = /^\(\d{1,2}\)\s/.test(line);
+                
+                // Cek apakah baris ini HANYA berisi placeholder gambar (gambar berdiri sendiri
+                // sebagai paragraf sendiri di Word, seperti pada soal bergambar)
+                const isImagePlaceholder = /^(?:\[GAMBAR\]|\[IMG:\d+\])$/.test(line);
+                
                 if (isNewQuestion) {
                     // BARIS SOAL BARU: tambahkan baris kosong sebagai pemisah (kecuali soal pertama)
                     if (merged.length > 0) {
@@ -253,9 +261,24 @@
                 } else if (isOption) {
                     // BARIS OPSI: langsung tambahkan tanpa baris kosong
                     merged.push(line);
+                } else if (isSubItem) {
+                    // SUB-POIN (1)/(2)/(3): pertahankan sebagai baris sendiri seperti di Word asli
+                    merged.push(line);
+                } else if (isImagePlaceholder) {
+                    // GAMBAR BERDIRI SENDIRI: selalu baris sendiri, jangan digabung ke kalimat manapun
+                    merged.push(line);
                 } else {
-                    // Baris lanjutan (teks soal terpecah): gabungkan dengan baris sebelumnya
-                    if (merged.length > 0) {
+                    // Baris lanjutan (teks soal terpecah) ATAU kalimat baru yang berdiri sendiri.
+                    // Cek: kalau baris sebelumnya sudah diakhiri tanda baca kalimat (. ! ? ....)
+                    // dan baris ini diawali huruf kapital, ini kalimat baru (misal kalimat penutup
+                    // setelah daftar bernomor "(1) (2) (3)..."), JANGAN digabung ke baris sebelumnya.
+                    // Begitu juga kalau baris sebelumnya adalah gambar berdiri sendiri: teks setelah
+                    // gambar selalu dianggap kalimat baru, tidak ditempel ke baris gambar.
+                    const prevLine = merged.length > 0 ? merged[merged.length - 1] : '';
+                    const prevIsImagePlaceholder = /^(?:\[GAMBAR\]|\[IMG:\d+\])$/.test(prevLine.trim());
+                    const prevEndsSentence = /[\.\!\?…]["'\)\]]?\s*$/.test(prevLine.trim());
+                    const startsUpper = /^[A-Z"'“(]/.test(line);
+                    if (merged.length > 0 && !prevIsImagePlaceholder && !(prevEndsSentence && startsUpper)) {
                         merged[merged.length - 1] += ' ' + line;
                     } else {
                         merged.push(line);
@@ -654,7 +677,9 @@
             if (lines.length === 0) return;
             let questionLines = [];
             let options = [];
-            const reOptionPrefix = /^(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s+|\b[A-Ea-e]\b\s*[\.\-]\s+)/;
+            // Catatan: digit murni (1-5) HANYA dianggap opsi jika tidak diapit tanda kurung penuh "(..)",
+            // supaya sub-poin gaya "(1) (2) (3) (4)" pada soal wacana/iklan tidak dianggap sebagai opsi jawaban.
+            const reOptionPrefix = /^(?:\(?\s*[A-Ea-e]\s*[\.\)]\s+|[1-5]\s*[\.\)]\s+|\b[A-Ea-e]\b\s*[\.\-]\s+)/;
             let firstOptionIdx = -1;
             for (let i = 0; i < lines.length; i++) {
                 if (reOptionPrefix.test(lines[i])) {
@@ -812,8 +837,74 @@
             
             parsedList.forEach((q, index) => {
                 const noNum = index + 1;
-                let processedLines = q.soalLines.map(line => processTextWithImages(line));
-                let processedSoal = processedLines.join('<br>');
+                
+                // Deteksi sub-poin bernomor kurung (1)/(2)/(3) agar dirender dengan hanging indent,
+                // supaya perataannya sama seperti dokumen Word asli saat teks wrap ke baris baru.
+                // CATATAN: setiap sub-poin & gambar HARUS jadi <div> (paragraf) sendiri-sendiri,
+                // bukan digabung/ditumpuk di dalam satu <div> yang sama — karena saat diekspor ke
+                // Word, style CSS eksternal (class) tidak ikut terbawa dan Word tidak selalu
+                // menghormati "display:flex/block" di dalam satu paragraf gabungan. Memisahkan jadi
+                // <div> (paragraf) terpisah + style inline langsung di tag memastikan hasilnya sama
+                // persis baik di preview maupun saat dibuka di Word.
+                const subItemPieces = q.soalLines.map(line => {
+                    const trimmed = line.trim();
+                    const subMatch = trimmed.match(/^(\(\d{1,2}\))\s+([\s\S]*)$/);
+                    if (subMatch) {
+                        const numPart = escapeHtmlOnly(subMatch[1]);
+                        const restPart = processTextWithImages(subMatch[2]);
+                        // Pakai TABEL 2 kolom (bukan CSS flex) untuk hanging indent, karena Word
+                        // tidak mendukung display:flex sama sekali (akan rata kiri semua saat
+                        // dibuka di Word). Tabel didukung penuh oleh Word dan hasilnya konsisten
+                        // baik di preview maupun file .docx. Border dibuat transparan/0 supaya
+                        // terlihat seperti teks biasa, bukan tabel bergaris.
+                        return { type: 'block', style: null, html: `<table style="border-collapse:collapse; width:100%;" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:top; width:28px; white-space:nowrap; border:none; padding:0 6px 0 0;">${numPart}</td><td style="vertical-align:top; border:none; padding:0;">${restPart}</td></tr></table>` };
+                    }
+                    // Baris yang HANYA berisi gambar (gambar berdiri sendiri seperti pada soal
+                    // bergambar): tampilkan besar di paragraf sendiri seperti di dokumen Word asli,
+                    // bukan ikon kecil inline yang menempel ke teks.
+                    const imgIndexMatch = trimmed.match(/^\[IMG:(\d+)\]$/);
+                    if (imgIndexMatch) {
+                        const imgIndex = parseInt(imgIndexMatch[1]) - 1;
+                        if (uploadedImages[imgIndex]) {
+                            return { type: 'block', style: 'margin:10px 0;', html: `<img src="${uploadedImages[imgIndex]}" alt="Gambar Soal" style="display:block; max-width:420px; width:100%; height:auto; border-radius:8px;">` };
+                        }
+                        return { type: 'block', style: 'margin:10px 0;', html: `<span class="img-placeholder">[GAMBAR #${imgIndexMatch[1]} TIDAK DITEMUKAN]</span>` };
+                    }
+                    if (trimmed === '[GAMBAR]') {
+                        return { type: 'block', style: 'margin:10px 0;', html: `<span class="img-placeholder">[GAMBAR]</span>` };
+                    }
+                    return { type: 'inline', html: processTextWithImages(line) };
+                });
+                
+                // Kelompokkan menjadi daftar <div> terpisah di level atas: baris inline yang
+                // berurutan digabung jadi satu <div> (dipisah <br>) seperti perilaku semula untuk
+                // soal biasa; setiap potongan block (sub-poin/gambar) selalu jadi <div> sendiri.
+                const soalDivs = [];
+                let currentInlineBuffer = [];
+                const flushInline = () => {
+                    if (currentInlineBuffer.length > 0) {
+                        soalDivs.push({ style: null, html: currentInlineBuffer.join('<br>') });
+                        currentInlineBuffer = [];
+                    }
+                };
+                subItemPieces.forEach(piece => {
+                    if (piece.type === 'block') {
+                        flushInline();
+                        soalDivs.push({ style: piece.style, html: piece.html });
+                    } else {
+                        currentInlineBuffer.push(piece.html);
+                    }
+                });
+                flushInline();
+                if (soalDivs.length === 0) soalDivs.push({ style: null, html: '' });
+                
+                // Label "Soal :" ditempel ke div pertama kalau div pertama teks biasa;
+                // kalau div pertama justru berupa block (kasus jarang), buat div label terpisah.
+                if (soalDivs[0].style === null) {
+                    soalDivs[0].html = `<b>Soal :</b> ${soalDivs[0].html}`;
+                } else {
+                    soalDivs.unshift({ style: null, html: '<b>Soal :</b>' });
+                }
                 
                 const keyData = manualAnswerKeys[noNum];
                 let isComplex = false;
@@ -836,7 +927,10 @@
                 
                 htmlResult += `<div${separatorStyle}><b>No:</b> ${noNum}</div>\n`;
                 htmlResult += `<div><b>Kategori:</b> ${escapeHtmlOnly(kategori)}</div>\n`;
-                htmlResult += `<div><b>Soal :</b> ${processedSoal}</div>\n`;
+                soalDivs.forEach(d => {
+                    const styleAttr = d.style ? ` style="${d.style}"` : '';
+                    htmlResult += `<div${styleAttr}>${d.html}</div>\n`;
+                });
                 htmlResult += `<div><b>Opsi:</b></div>\n`;
                 htmlResult += `<ol type="a">\n`;
                 q.opsi.forEach(opt => {
