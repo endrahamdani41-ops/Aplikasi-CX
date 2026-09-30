@@ -95,7 +95,7 @@
         <!-- Header -->
         <header class="sticky top-0 z-50 flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-slate-800 p-4 sm:px-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm gap-4">
             <div class="flex items-center gap-3">
-                <span class="text-2xl"></span>
+                <span class="text-2xl">📝</span>
                 <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Konverter Soal Portal Sekolah</h1>
             </div>
             
@@ -151,15 +151,11 @@
 
         <main class="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col gap-5">
             
- 
-
             <!-- Textarea Soal -->
             <div class="flex flex-col gap-2">
                 <label for="rawInput" class="font-semibold text-sm text-slate-700 dark:text-slate-300">Paste Soal & Opsi:</label>
-                <textarea spellcheck="false" id="rawInput" class="w-full h-48 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste soal dari Word di sini !
-
-"></textarea>
-             </div>
+                <textarea spellcheck="false" id="rawInput" class="w-full h-48 p-4 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-y" placeholder="Paste soal dari Word di sini !"></textarea>
+            </div>
 
             <!-- Configuration Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -179,27 +175,25 @@
         </main>
 
         <!-- Output Section -->
-        <section id="outputCard" class="hidden bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm animate-[fadeIn_0.3s_ease-in-out]">
+        <section id="outputCard" class="hidden bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-300">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-700 pb-4 mb-4 gap-4">
                 <div class="flex items-center gap-3">
-                    <span class="text-xl"></span>
+                    <span class="text-xl">✨</span>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">Hasil Konversi</h2>
                     <span id="statsCount" class="text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 px-3 py-1 rounded-full">0 Soal</span>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-
                     <button id="downloadDocxBtn" onclick="downloadAsWord()" class="w-full sm:w-auto py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm hover:-translate-y-px transition-all flex items-center justify-center gap-2 text-sm">
-                         Unduh sebagai Word (.docx)
+                        📥 Unduh sebagai Word (.docx)
                     </button>
                 </div>
             </div>
             
-            <div id="resultPreview" class="preview-box w-full min-h-[250px] max-h-[600px] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-5 font-serif text-black dark:text-slate-200 text-base leading-relaxed shadow-inner focus:outline-none" contenteditable="true" spellcheck="false"></div>
-            
-       </section>
+            <div id="resultPreview" class="preview-box w-full min-h-[250px] max-h-[600px] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-5 font-sans text-slate-800 dark:text-slate-200 text-base leading-relaxed shadow-inner focus:outline-none" contenteditable="true" spellcheck="false"></div>
+        </section>
     </div>
 
-    <!-- Toast -->
+    <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-6 right-6 flex items-center gap-3 bg-slate-900 dark:bg-slate-800 text-white px-5 py-3 rounded-lg shadow-2xl border border-slate-700 font-semibold text-sm transition-all duration-300 translate-y-[150px] opacity-0 z-50">
         <span id="toastIcon">✅</span>
         <span id="toastMsg">Notifikasi</span>
@@ -210,55 +204,87 @@
         let manualAnswerKeys = {};
         
         // ============================================
+        // FUNGSI: Helper Toast
+        // ============================================
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+            
+            toastMsg.textContent = msg;
+            if (type === 'success') toastIcon.textContent = '✅';
+            else if (type === 'warning') toastIcon.textContent = '⚠️';
+            else if (type === 'error') toastIcon.textContent = '❌';
+            else toastIcon.textContent = 'ℹ️';
+
+            toast.classList.remove('translate-y-[150px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[150px]', 'opacity-0');
+            }, 3000);
+        }
+
+        // ============================================
+        // FUNGSI: Escape HTML
+        // ============================================
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        // ============================================
+        // FUNGSI: Pembersihan Prefix
+        // ============================================
+        function cleanPrefix(text) {
+            if (!text) return '';
+            return text.replace(/^\s*(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s*|\b[A-Ea-e]\b\s*[\.\-]\s*)/, '').trim();
+        }
+
+        function cleanQuestionPrefix(text) {
+            if (!text) return '';
+            return text.replace(/^\s*(?:Soal\s*\d*[:\.\s]*|\d+[\.\)]\s*)/i, '').trim();
+        }
+
+        // ============================================
         // FUNGSI: Gabungkan baris soal + beri jarak antar soal
         // ============================================
         function mergeQuestionLines(text) {
+            if (!text) return '';
             const lines = text.split('\n').filter(line => line.trim().length > 0);
             const merged = [];
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
                 
-                // Cek apakah baris ini adalah awal soal baru (dimulai dengan angka + titik)
                 const isNewQuestion = /^\d+[\.\)]\s/.test(line);
-                
-                // Cek apakah baris ini adalah opsi (a., b., c., d., e.)
                 const isOption = /^[a-eA-E][\.\)]\s/.test(line);
-                
-                // Cek apakah baris ini adalah sub-poin bernomor kurung, contoh: (1), (2), (3)
-                // Dipakai pada soal jenis "Perhatikan iklan/paragraf/pernyataan berikut!"
                 const isSubItem = /^\(\d{1,2}\)\s/.test(line);
-                
-                // Cek apakah baris ini HANYA berisi placeholder gambar (gambar berdiri sendiri
-                // sebagai paragraf sendiri di Word, seperti pada soal bergambar)
                 const isImagePlaceholder = /^(?:\[GAMBAR\]|\[IMG:\d+\])$/.test(line);
                 
                 if (isNewQuestion) {
-                    // BARIS SOAL BARU: tambahkan baris kosong sebagai pemisah (kecuali soal pertama)
                     if (merged.length > 0) {
-                        merged.push(''); // Baris kosong sebagai pemisah antar soal
+                        merged.push('');
                     }
                     merged.push(line);
-                } else if (isOption) {
-                    // BARIS OPSI: langsung tambahkan tanpa baris kosong
-                    merged.push(line);
-                } else if (isSubItem) {
-                    // SUB-POIN (1)/(2)/(3): pertahankan sebagai baris sendiri seperti di Word asli
-                    merged.push(line);
-                } else if (isImagePlaceholder) {
-                    // GAMBAR BERDIRI SENDIRI: selalu baris sendiri, jangan digabung ke kalimat manapun
+                } else if (isOption || isSubItem || isImagePlaceholder) {
                     merged.push(line);
                 } else {
-                    // Baris lanjutan (teks soal terpecah) ATAU kalimat baru yang berdiri sendiri.
-                    // Cek: kalau baris sebelumnya sudah diakhiri tanda baca kalimat (. ! ? ....)
-                    // dan baris ini diawali huruf kapital, ini kalimat baru (misal kalimat penutup
-                    // setelah daftar bernomor "(1) (2) (3)..."), JANGAN digabung ke baris sebelumnya.
-                    // Begitu juga kalau baris sebelumnya adalah gambar berdiri sendiri: teks setelah
-                    // gambar selalu dianggap kalimat baru, tidak ditempel ke baris gambar.
                     const prevLine = merged.length > 0 ? merged[merged.length - 1] : '';
                     const prevIsImagePlaceholder = /^(?:\[GAMBAR\]|\[IMG:\d+\])$/.test(prevLine.trim());
                     const prevEndsSentence = /[\.\!\?…]["'\)\]]?\s*$/.test(prevLine.trim());
                     const startsUpper = /^[A-Z"'“(]/.test(line);
+
                     if (merged.length > 0 && !prevIsImagePlaceholder && !(prevEndsSentence && startsUpper)) {
                         merged[merged.length - 1] += ' ' + line;
                     } else {
@@ -271,10 +297,7 @@
         }
 
         // ============================================
-        // FUNGSI: Sambung baris yang berakhir dengan penanda menggantung.
-        // Paste dari PDF/dokumen wrap-manual sering menghasilkan "...adalah.... a."
-        // lalu baris berikutnya "Monitor b." -> disambung dulu, baru dipecah oleh
-        // splitInlineQuestions/splitInlineOptions menjadi susunan yang benar.
+        // FUNGSI: Sambung baris yang berakhir dengan penanda menggantung
         // ============================================
         function reattachDanglingMarkers(text) {
             if (!text) return text;
@@ -313,14 +336,13 @@
             textarea.addEventListener('paste', function(e) {
                 const startPos = textarea.selectionStart;
                 const endPos = textarea.selectionEnd;
-                
                 const html = e.clipboardData.getData('text/html');
                 
-                if (html && (html.includes('<sup') || html.includes('<sub') || html.includes('<style'))) {
+                if (html) {
                     e.preventDefault();
                     const converted = convertHtmlToUnicode(html);
                     insertAtCursor(textarea, converted, startPos, endPos);
-                    showToast('Paste dari Word berhasil!', 'success');
+                    showToast('Paste dari Word berhasil! (Kunci opsi merah terdeteksi)', 'success');
                 } else {
                     e.preventDefault();
                     pasteCatcher.innerHTML = '';
@@ -330,10 +352,10 @@
                         const pastedHtml = pasteCatcher.innerHTML;
                         const pastedText = pasteCatcher.innerText;
                         
-                        if (pastedHtml && (pastedHtml.includes('<sup') || pastedHtml.includes('<sub') || pastedHtml.includes('<style'))) {
+                        if (pastedHtml) {
                             const converted = convertHtmlToUnicode(pastedHtml);
                             insertAtCursor(textarea, converted, startPos, endPos);
-                            showToast('Paste dari Word berhasil!', 'success');
+                            showToast('Paste dari Word berhasil! (Kunci opsi merah terdeteksi)', 'success');
                         } else {
                             const formatted = mergeQuestionLines(splitInlineOptions(splitInlineQuestions(reattachDanglingMarkers(pastedText))));
                             insertAtCursor(textarea, formatted, startPos, endPos);
@@ -353,12 +375,78 @@
         }
 
         // ============================================
+        // FUNGSI: Deteksi Warna Merah untuk Kunci Jawaban
+        // ============================================
+        function isRedColor(styleOrColor) {
+            if (!styleOrColor) return false;
+            const s = styleOrColor.toLowerCase();
+            
+            if (/\b(red|darkred|crimson|firebrick|maroon|lightcoral|indianred)\b/.test(s)) {
+                return true;
+            }
+            
+            const hexMatches = s.match(/#([0-9a-f]{3,6})/gi);
+            if (hexMatches) {
+                for (let hexStr of hexMatches) {
+                    let hex = hexStr.replace('#', '');
+                    if (hex.length === 3) {
+                        hex = hex.split('').map(c => c + c).join('');
+                    }
+                    if (hex.length === 6) {
+                        const r = parseInt(hex.substring(0, 2), 16);
+                        const g = parseInt(hex.substring(2, 4), 16);
+                        const b = parseInt(hex.substring(4, 6), 16);
+                        if (r > 130 && r > g + 30 && r > b + 30) return true;
+                    }
+                }
+            }
+            
+            const rgbMatches = s.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/gi);
+            if (rgbMatches) {
+                for (let rgbStr of rgbMatches) {
+                    const m = rgbStr.match(/\d+/g);
+                    if (m && m.length >= 3) {
+                        const r = parseInt(m[0]);
+                        const g = parseInt(m[1]);
+                        const b = parseInt(m[2]);
+                        if (r > 130 && r > g + 30 && r > b + 30) return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+        // ============================================
         // FUNGSI: Konversi HTML Word ke Text Bersih
         // ============================================
         function convertHtmlToUnicode(html) {
             const temp = document.createElement('div');
             temp.innerHTML = html;
             
+            // Deteksi teks berwarna merah dan tandai dengan * sebagai penanda kunci jawaban
+            temp.querySelectorAll('*').forEach(el => {
+                const style = el.getAttribute('style') || '';
+                const color = el.getAttribute('color') || '';
+                if (isRedColor(style) || isRedColor(color)) {
+                    if (!el.hasAttribute('data-red-marked')) {
+                        el.setAttribute('data-red-marked', 'true');
+                        let parent = el.parentElement;
+                        let ancestorMarked = false;
+                        while (parent && parent !== temp) {
+                            if (parent.hasAttribute('data-red-marked')) {
+                                ancestorMarked = true;
+                                break;
+                            }
+                            parent = parent.parentElement;
+                        }
+                        if (!ancestorMarked) {
+                            el.insertAdjacentText('beforeend', '*');
+                        }
+                    }
+                }
+            });
+
             temp.querySelectorAll('style, link, meta, script').forEach(el => el.remove());
             temp.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
             
@@ -452,9 +540,6 @@
             return result;
         }
 
-        // ============================================
-        // FUNGSI: Konversi ^ menjadi superscript
-        // ============================================
         function convertToSuperscript(text) {
             if (!text) return text;
             const superscriptMap = {
@@ -511,7 +596,7 @@
             const file = input.files[0];
             if (!file) return;
             if (!file.type.startsWith('image/')) {
-                showToast('️ File harus berupa gambar!', 'warning');
+                showToast('File harus berupa gambar!', 'warning');
                 return;
             }
             const reader = new FileReader();
@@ -529,18 +614,15 @@
                 let newText, newCursorPos;
 
                 if (selectedText === placeholder) {
-                    // Pengguna sudah select placeholder-nya sendiri: ganti langsung
                     newText = text.substring(0, selStart) + tag + text.substring(selEnd);
                     newCursorPos = selStart + tag.length;
                 } else {
-                    // Auto-detect: cari [GAMBAR] berikutnya setelah kursor, kalau tidak ada cari dari awal
                     let idx = text.indexOf(placeholder, selEnd);
                     if (idx === -1) idx = text.indexOf(placeholder);
                     if (idx !== -1) {
                         newText = text.substring(0, idx) + tag + text.substring(idx + placeholder.length);
                         newCursorPos = idx + tag.length;
                     } else {
-                        // Tidak ada placeholder sama sekali: sisipkan di posisi kursor seperti biasa
                         newText = text.substring(0, selStart) + tag + text.substring(selEnd);
                         newCursorPos = selStart + tag.length;
                     }
@@ -560,8 +642,57 @@
         }
 
         // ============================================
-        // FUNGSI: Pecah nomor soal baru yang nyangkut di tengah baris
-        // Contoh: "d. CPU 2. Perangkat lunak..." -> baris soal baru terpisah
+        // UPLOAD KUNCI JAWABAN
+        // ============================================
+        function handleAnswerKeyUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const fileName = file.name.toLowerCase();
+
+            if (fileName.endsWith('.docx')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    mammoth.extractRawText({ arrayBuffer: e.target.result })
+                        .then(result => {
+                            parseAnswerKeys(result.value);
+                        })
+                        .catch(() => {
+                            showToast('Gagal membaca file Word kunci jawaban.', 'error');
+                        });
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    parseAnswerKeys(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+            input.value = '';
+        }
+
+        function parseAnswerKeys(text) {
+            manualAnswerKeys = {};
+            let count = 0;
+            const regex = /(\d+)[\.\)\s:-]+\s*([A-Ea-e])/g;
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+                const qNum = parseInt(match[1]);
+                const key = match[2].toUpperCase();
+                manualAnswerKeys[qNum] = key;
+                count++;
+            }
+
+            if (count > 0) {
+                showToast(`Berhasil memuat ${count} kunci jawaban!`, 'success');
+            } else {
+                showToast('Tidak ada kunci jawaban yang terdeteksi dalam file.', 'warning');
+            }
+        }
+
+        // ============================================
+        // FUNGSI: Pecah nomor soal & opsi inline
         // ============================================
         function splitInlineQuestions(text) {
             if (!text) return text;
@@ -581,11 +712,6 @@
             }).join('\n');
         }
 
-        // ============================================
-        // FUNGSI: Pecah opsi yang menempel dalam satu baris
-        // Contoh: "...adalah.... A. 3^12 B. 3^9 C. 36 D. 3^5"
-        // menjadi baris terpisah untuk masing-masing opsi
-        // ============================================
         function splitInlineOptions(text) {
             if (!text) return text;
             return text.split('\n').map(line => {
@@ -606,400 +732,188 @@
         }
 
         // ============================================
-        // Parsing Logic
+        // FUNGSI: Render Gambar Placeholder
         // ============================================
-        function cleanPrefix(text) {
-            if (!text) return '';
-            return text.replace(/^\s*(?:\(?\s*[A-Ea-e1-5]\s*[\.\)]\s*|\b[A-Ea-e]\b\s*[\.\-]\s*)/, '').trim();
-        }
-        function cleanQuestionPrefix(text) {
-            if (!text) return '';
-            return text.replace(/^\s*(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i, '').trim();
-        }
-        function isLikelyShortInstruction(text) {
-            const cleanTextStr = cleanQuestionPrefix(text).trim();
-            const shortKeywords = ['perhatikan', 'cermati', 'simak', 'lihat', 'amati'];
-            return cleanTextStr.length < 30 && shortKeywords.some(keyword => cleanTextStr.toLowerCase().includes(keyword));
-        }
-        function parseRawText(raw) {
-            const blocks = raw.split(/\r?\n\s*\r?\n/).map(b => b.trim()).filter(b => b.length > 0);
-            const questions = [];
-            if (blocks.length > 1) {
-                blocks.forEach(block => {
-                    const lines = block.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-                    parseLinesSmart(lines, questions);
-                });
-            } else {
-                const allLines = raw.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-                parseLinesSmart(allLines, questions);
-            }
-            return questions;
-        }
-        function parseLinesSmart(lines, questionsArray) {
-            let currentQuestionLines = [];
-            const reNumberStart = /^(?:Soal\s*\d+|\d+)\s*[\.\):]\s*/i;
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-                const isNewNumberedQuestion = reNumberStart.test(line);
-                if (isNewNumberedQuestion && currentQuestionLines.length > 0) {
-                    const lastLine = currentQuestionLines[currentQuestionLines.length - 1];
-                    if (isLikelyShortInstruction(lastLine)) {
-                        currentQuestionLines.push(line);
-                    } else {
-                        extractQuestionFromLines(currentQuestionLines, questionsArray);
-                        currentQuestionLines = [line];
+        function renderImagePlaceholders(str) {
+            if (!str) return '';
+            return str
+                .replace(/\[IMG:(\d+)\]/g, (match, p1) => {
+                    const idx = parseInt(p1) - 1;
+                    if (uploadedImages[idx]) {
+                        return `<img src="${uploadedImages[idx]}" class="img-block" alt="Gambar Soal ${p1}">`;
                     }
-                } else {
-                    currentQuestionLines.push(line);
-                }
-            }
-            if (currentQuestionLines.length > 0) {
-                extractQuestionFromLines(currentQuestionLines, questionsArray);
-            }
-        }
-        function extractQuestionFromLines(lines, questionsArray) {
-            if (lines.length === 0) return;
-            let questionLines = [];
-            let options = [];
-            // Catatan: digit murni (1-5) HANYA dianggap opsi jika tidak diapit tanda kurung penuh "(..)",
-            // supaya sub-poin gaya "(1) (2) (3) (4)" pada soal wacana/iklan tidak dianggap sebagai opsi jawaban.
-            const reOptionPrefix = /^(?:\(?\s*[A-Ea-e]\s*[\.\)]\s+|[1-5]\s*[\.\)]\s+|\b[A-Ea-e]\b\s*[\.\-]\s+)/;
-            let firstOptionIdx = -1;
-            for (let i = 0; i < lines.length; i++) {
-                if (reOptionPrefix.test(lines[i])) {
-                    firstOptionIdx = i;
-                    break;
-                }
-            }
-            if (firstOptionIdx !== -1 && firstOptionIdx > 0) {
-                questionLines = lines.slice(0, firstOptionIdx);
-                options = lines.slice(firstOptionIdx).map(cleanPrefix);
-            } else {
-                if (lines.length >= 5) {
-                    options = lines.slice(-4).map(cleanPrefix);
-                    questionLines = lines.slice(0, -4);
-                } else if (lines.length > 1) {
-                    questionLines = [lines[0]];
-                    options = lines.slice(1).map(cleanPrefix);
-                } else {
-                    questionLines = [lines[0]];
-                    options = [];
-                }
-            }
-            if (questionLines.length > 0) {
-                questionLines[0] = cleanQuestionPrefix(questionLines[0]);
-            }
-            while (options.length < 4) {
-                options.push("[Opsi tidak ditemukan]");
-            }
-            questionsArray.push({ soalLines: questionLines, opsi: options });
+                    return `<span class="img-placeholder">[GAMBAR ${p1}]</span>`;
+                })
+                .replace(/\[GAMBAR\]/g, '<span class="img-placeholder">[GAMBAR]</span>');
         }
 
         // ============================================
-        // Conversion
+        // Parsing Logic & Conversion
         // ============================================
-        function escapeHtmlOnly(text) {
-            if (!text) return '';
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-        
-        // Style inline dipakai (bukan class) supaya ikut terbawa saat ekspor ke .docx,
-        // karena <style> eksternal tidak disertakan dalam file Word yang dihasilkan.
-        const FRACTION_OPEN = '<span style="display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 0.3em; font-size:0.95em;">';
-        function fractionHtml(num, den) {
-            return `${FRACTION_OPEN}<span style="border-bottom:1.5px solid currentColor; padding:0 0.3em 2px 0.3em; line-height:1.2;">${num}</span><span style="padding:2px 0.3em 0 0.3em; line-height:1.2;">${den}</span></span>`;
-        }
-
-        // Format pecahan untuk output HTML (tampilan vertikal, konsisten untuk semua a/b)
-        function formatFractionHtml(text) {
-            if (!text) return text;
-            
-            // Pola: 1/2^3 atau 1/2³ → pecahan vertikal dengan pangkat di penyebut
-            text = text.replace(/(\d+)\/(\d+)([⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)/g, (match, num, den, exp) => {
-                return fractionHtml(num, den + exp);
-            });
-            
-            // Pola: a/b tanpa pangkat → pecahan vertikal juga
-            text = text.replace(/(\d+)\/(\d+)/g, (match, num, den) => {
-                return fractionHtml(num, den);
-            });
-            
-            return text;
-        }
-        
-        function processTextWithImages(text) {
-            if (!text) return '';
-            const parts = text.split(/(\[IMG:\d+\])/g);
-            let result = '';
-            parts.forEach(part => {
-                const imgMatch = part.match(/^\[IMG:(\d+)\]$/);
-                if (imgMatch) {
-                    const imgIndex = parseInt(imgMatch[1]) - 1;
-                    if (uploadedImages[imgIndex]) {
-                        result += `<img src="${uploadedImages[imgIndex]}" alt="Gambar Soal">`;
-                    } else {
-                        result += `<span class="img-placeholder">[GAMBAR #${imgMatch[1]} TIDAK DITEMUKAN]</span>`;
-                    }
-                } else {
-                    result += formatFractionHtml(escapeHtmlOnly(part));
-                }
-            });
-            return result;
-        }
-
-        async function handleAnswerKeyUpload(input) {
-            const file = input.files[0];
-            if (!file) return;
-            let textContent = '';
-            const fileExt = file.name.split('.').pop().toLowerCase();
-            try {
-                if (fileExt === 'docx') {
-                    const arrayBuffer = await file.arrayBuffer();
-                    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-                    textContent = result.value;
-                } else if (fileExt === 'txt') {
-                    textContent = await file.text();
-                } else {
-                    showToast("Format tidak didukung.", "error");
-                    return;
-                }
-                manualAnswerKeys = {};
-                let cleanTextStr = cleanText(textContent);
-                const lines = cleanTextStr.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                const keyRegex = /^(\d+)\s*[\.\):]?\s*([a-eA-E](?:\s*[,;]\s*[a-eA-E])*)\s*$/i;
-                lines.forEach(line => {
-                    const match = line.match(keyRegex);
-                    if (match) {
-                        const questionNum = parseInt(match[1], 10);
-                        const rawAnswer = match[2].toLowerCase();
-                        if (rawAnswer.includes(',') || rawAnswer.includes(';')) {
-                            const answers = rawAnswer.split(/[,;]\s*/).map(a => a.trim()).filter(a => a);
-                            manualAnswerKeys[questionNum] = { type: 'complex', answers: answers };
-                        } else {
-                            manualAnswerKeys[questionNum] = { type: 'simple', answer: rawAnswer };
-                        }
-                    }
-                });
-                
-                const complexCount = Object.values(manualAnswerKeys).filter(k => k.type === 'complex').length;
-                if (Object.keys(manualAnswerKeys).length > 0) {
-                    let msg = `✅ Berhasil memuat ${Object.keys(manualAnswerKeys).length} kunci jawaban!`;
-                    if (complexCount > 0) msg += ` (${complexCount} soal kompleks)`;
-                    showToast(msg, "success");
-                    const outputCard = document.getElementById('outputCard');
-                    if (!outputCard.classList.contains('hidden')) convertQuestions();
-                } else {
-                    showToast("⚠️ Format kunci tidak dikenali.", "warning");
-                }
-            } catch (err) {
-                console.error(err);
-                showToast("Gagal membaca file.", "error");
-            } finally {
-                input.value = '';
-            }
-        }
-
         function convertQuestions() {
-            let rawText = document.getElementById('rawInput').value.trim();
-            if (!rawText) {
-                showToast("Mohon isi soal!", "warning");
+            const raw = document.getElementById('rawInput').value.trim();
+            if (!raw) {
+                showToast('Teks soal masih kosong!', 'warning');
                 return;
             }
-            
-            rawText = cleanText(rawText);
-            rawText = reattachDanglingMarkers(rawText);
-            rawText = splitInlineQuestions(rawText);
-            rawText = splitInlineOptions(rawText);
-            rawText = mergeQuestionLines(rawText);
-            document.getElementById('rawInput').value = rawText;
 
-            rawText = convertToSuperscript(rawText);
-            
-            const kategori = document.getElementById('kategoriInput').value.trim() || 'Umum';
+            const kategori = document.getElementById('kategoriInput').value.trim() || 'UMUM';
             const poin = document.getElementById('poinInput').value.trim() || '1';
-            const pembahasan = document.getElementById('pembahasanInput').value.trim() || '-';
-            const parsedList = parseRawText(rawText);
-            if (parsedList.length === 0) {
-                showToast("Format tidak dikenali.", "error");
+            const defaultPembahasan = document.getElementById('pembahasanInput').value.trim() || '-';
+
+            const processedText = mergeQuestionLines(splitInlineOptions(splitInlineQuestions(reattachDanglingMarkers(cleanText(raw)))));
+            const lines = processedText.split('\n');
+            
+            const questions = [];
+            let currentQ = null;
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+
+                const qMatch = trimmed.match(/^(\d+)[\.\)]\s*(.*)/);
+                const optMatch = trimmed.match(/^([a-eA-E])[\.\)]\s*(.*)/);
+
+                if (qMatch && !optMatch) {
+                    if (currentQ) questions.push(currentQ);
+                    currentQ = {
+                        number: qMatch[1],
+                        text: qMatch[2],
+                        options: [],
+                        answerKey: null
+                    };
+                } else if (optMatch && currentQ) {
+                    let optText = optMatch[2];
+                    let isKey = false;
+                    if (optText.includes('*') || trimmed.includes('*')) {
+                        isKey = true;
+                        optText = optText.replace(/\*/g, '').trim();
+                    }
+                    const label = optMatch[1].toUpperCase();
+                    if (isKey) currentQ.answerKey = label;
+
+                    currentQ.options.push({
+                        label: label,
+                        text: optText
+                    });
+                } else if (currentQ) {
+                    const keyMatch = trimmed.match(/^(?:Kunci|Jawaban|Kunci Jawaban)\s*:\s*([A-Ea-e])/i);
+                    if (keyMatch) {
+                        currentQ.answerKey = keyMatch[1].toUpperCase();
+                    } else {
+                        if (currentQ.options.length === 0) {
+                            currentQ.text += '<br>' + trimmed;
+                        } else {
+                            currentQ.options[currentQ.options.length - 1].text += ' ' + trimmed;
+                        }
+                    }
+                }
+            });
+
+            if (currentQ) questions.push(currentQ);
+
+            if (questions.length === 0) {
+                showToast('Format soal tidak terdeteksi! Pastikan ada penomoran (contoh: 1., 2.).', 'error');
                 return;
             }
-            let htmlResult = '';
-            let complexCount = 0;
-            
-            parsedList.forEach((q, index) => {
-                const noNum = index + 1;
-                
-                // Deteksi sub-poin bernomor kurung (1)/(2)/(3) agar dirender dengan hanging indent,
-                // supaya perataannya sama seperti dokumen Word asli saat teks wrap ke baris baru.
-                // CATATAN: setiap sub-poin & gambar HARUS jadi <div> (paragraf) sendiri-sendiri,
-                // bukan digabung/ditumpuk di dalam satu <div> yang sama — karena saat diekspor ke
-                // Word, style CSS eksternal (class) tidak ikut terbawa dan Word tidak selalu
-                // menghormati "display:flex/block" di dalam satu paragraf gabungan. Memisahkan jadi
-                // <div> (paragraf) terpisah + style inline langsung di tag memastikan hasilnya sama
-                // persis baik di preview maupun saat dibuka di Word.
-                const subItemPieces = q.soalLines.map(line => {
-                    const trimmed = line.trim();
-                    const subMatch = trimmed.match(/^(\(\d{1,2}\))\s+([\s\S]*)$/);
-                    if (subMatch) {
-                        const numPart = escapeHtmlOnly(subMatch[1]);
-                        const restPart = processTextWithImages(subMatch[2]);
-                        // Pakai TABEL 2 kolom (bukan CSS flex) untuk hanging indent, karena Word
-                        // tidak mendukung display:flex sama sekali (akan rata kiri semua saat
-                        // dibuka di Word). Tabel didukung penuh oleh Word dan hasilnya konsisten
-                        // baik di preview maupun file .docx. Border dibuat transparan/0 supaya
-                        // terlihat seperti teks biasa, bukan tabel bergaris.
-                        return { type: 'block', style: null, html: `<table style="border-collapse:collapse; width:100%;" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:top; width:28px; white-space:nowrap; border:none; padding:0 6px 0 0;">${numPart}</td><td style="vertical-align:top; border:none; padding:0;">${restPart}</td></tr></table>` };
-                    }
-                    // Baris yang HANYA berisi gambar (gambar berdiri sendiri seperti pada soal
-                    // bergambar): tampilkan besar di paragraf sendiri seperti di dokumen Word asli,
-                    // bukan ikon kecil inline yang menempel ke teks.
-                    const imgIndexMatch = trimmed.match(/^\[IMG:(\d+)\]$/);
-                    if (imgIndexMatch) {
-                        const imgIndex = parseInt(imgIndexMatch[1]) - 1;
-                        if (uploadedImages[imgIndex]) {
-                            return { type: 'block', style: 'margin:10px 0;', html: `<img src="${uploadedImages[imgIndex]}" alt="Gambar Soal" style="display:block; max-width:420px; width:100%; height:auto; border-radius:8px;">` };
-                        }
-                        return { type: 'block', style: 'margin:10px 0;', html: `<span class="img-placeholder">[GAMBAR #${imgIndexMatch[1]} TIDAK DITEMUKAN]</span>` };
-                    }
-                    if (trimmed === '[GAMBAR]') {
-                        return { type: 'block', style: 'margin:10px 0;', html: `<span class="img-placeholder">[GAMBAR]</span>` };
-                    }
-                    return { type: 'inline', html: processTextWithImages(line) };
-                });
-                
-                // Kelompokkan menjadi daftar <div> terpisah di level atas: baris inline yang
-                // berurutan digabung jadi satu <div> (dipisah <br>) seperti perilaku semula untuk
-                // soal biasa; setiap potongan block (sub-poin/gambar) selalu jadi <div> sendiri.
-                const soalDivs = [];
-                let currentInlineBuffer = [];
-                const flushInline = () => {
-                    if (currentInlineBuffer.length > 0) {
-                        soalDivs.push({ style: null, html: currentInlineBuffer.join('<br>') });
-                        currentInlineBuffer = [];
-                    }
-                };
-                subItemPieces.forEach(piece => {
-                    if (piece.type === 'block') {
-                        flushInline();
-                        soalDivs.push({ style: piece.style, html: piece.html });
-                    } else {
-                        currentInlineBuffer.push(piece.html);
-                    }
-                });
-                flushInline();
-                if (soalDivs.length === 0) soalDivs.push({ style: null, html: '' });
-                
-                // Label "Soal :" ditempel ke div pertama kalau div pertama teks biasa;
-                // kalau div pertama justru berupa block (kasus jarang), buat div label terpisah.
-                if (soalDivs[0].style === null) {
-                    soalDivs[0].html = `<b>Soal :</b> ${soalDivs[0].html}`;
-                } else {
-                    soalDivs.unshift({ style: null, html: '<b>Soal :</b>' });
+
+            let outputHtml = `<div class="portal-template">`;
+            outputHtml += `<div style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px;">`;
+            outputHtml += `<strong>KATEGORI SOAL:</strong> ${escapeHtml(kategori)}<br>`;
+            outputHtml += `<strong>POIN PER SOAL:</strong> ${escapeHtml(poin)}`;
+            outputHtml += `</div>`;
+
+            questions.forEach((q, idx) => {
+                const qNum = idx + 1;
+                let finalKey = manualAnswerKeys[qNum] || q.answerKey || 'A';
+                let formattedText = renderImagePlaceholders(q.text);
+
+                outputHtml += `<div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">`;
+                outputHtml += `<p style="font-weight: bold; margin-bottom: 8px;">${qNum}. ${formattedText}</p>`;
+
+                if (q.options.length > 0) {
+                    outputHtml += `<ol type="a" style="margin-top: 4px; margin-bottom: 8px; padding-left: 24px;">`;
+                    q.options.forEach(opt => {
+                        let optText = renderImagePlaceholders(opt.text);
+                        outputHtml += `<li style="margin-bottom: 4px;">${optText}</li>`;
+                    });
+                    outputHtml += `</ol>`;
                 }
-                
-                const keyData = manualAnswerKeys[noNum];
-                let isComplex = false;
-                let finalKeyDisplay = 'a';
-                let correctAnswers = [];
-                
-                if (keyData) {
-                    if (keyData.type === 'complex') {
-                        isComplex = true;
-                        complexCount++;
-                        correctAnswers = keyData.answers;
-                        finalKeyDisplay = keyData.answers.join(', ');
-                    } else {
-                        finalKeyDisplay = keyData.answer;
-                        correctAnswers = [keyData.answer];
-                    }
-                }
-                
-                const separatorStyle = index > 0 ? ' style="margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 15px;"' : '';
-                
-                htmlResult += `<div${separatorStyle}><b>No:</b> ${noNum}</div>\n`;
-                htmlResult += `<div><b>Kategori:</b> ${escapeHtmlOnly(kategori)}</div>\n`;
-                soalDivs.forEach(d => {
-                    const styleAttr = d.style ? ` style="${d.style}"` : '';
-                    htmlResult += `<div${styleAttr}>${d.html}</div>\n`;
-                });
-                htmlResult += `<div><b>Opsi:</b></div>\n`;
-                htmlResult += `<ol type="a">\n`;
-                q.opsi.forEach(opt => {
-                    let processedOpt = processTextWithImages(opt);
-                    htmlResult += `  <li>${processedOpt}</li>\n`;
-                });
-                htmlResult += `</ol>\n`;
-                htmlResult += `<div><b>Kunci Jawaban:</b> ${escapeHtmlOnly(finalKeyDisplay)}</div>\n`;
-                htmlResult += `<div><b>Poin:</b> ${escapeHtmlOnly(poin)}</div>\n`;
-                htmlResult += `<div><b>Pembahasan:</b> ${escapeHtmlOnly(pembahasan)}</div>\n`;
+
+                outputHtml += `<p style="margin-top: 6px; font-size: 0.9em; color: #047857;"><strong>KUNCI JAWABAN:</strong> ${finalKey}</p>`;
+                outputHtml += `<p style="margin-top: 2px; font-size: 0.9em; color: #475569;"><strong>PEMBAHASAN:</strong> ${escapeHtml(defaultPembahasan)}</p>`;
+                outputHtml += `</div>`;
             });
-            
-            const previewEl = document.getElementById('resultPreview');
-            previewEl.innerHTML = htmlResult;
-            document.getElementById('statsCount').textContent = `${parsedList.length} Soal Terkonversi`;
-            const outputCard = document.getElementById('outputCard');
-            outputCard.classList.remove('hidden');
-            outputCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            showToast(`Berhasil mengonversi ${parsedList.length} soal!`, "success");
+
+            outputHtml += `</div>`;
+
+            const preview = document.getElementById('resultPreview');
+            preview.innerHTML = outputHtml;
+
+            document.getElementById('statsCount').textContent = `${questions.length} Soal`;
+            document.getElementById('outputCard').classList.remove('hidden');
+            showToast(`Berhasil mengonversi ${questions.length} soal!`, 'success');
         }
 
         // ============================================
-        // Unduh sebagai file Word (.docx) - gambar tertanam asli
+        // DOWNLOAD DOCX
         // ============================================
-        async function downloadAsWord() {
-            const previewEl = document.getElementById('resultPreview');
-            if (!previewEl.innerHTML.trim()) {
-                showToast("Tidak ada hasil!", "warning");
+        function downloadAsWord() {
+            const content = document.getElementById('resultPreview').innerHTML;
+            if (!content.trim()) {
+                showToast('Belum ada hasil konversi untuk diunduh.', 'warning');
                 return;
             }
-            if (typeof htmlDocx === 'undefined') {
-                showToast("Modul Word belum siap, coba lagi sebentar.", "warning");
-                return;
-            }
-            const fullHtml = `<!DOCTYPE html><html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Soal</title></head><body>${previewEl.innerHTML}</body></html>`;
-            const blob = htmlDocx.asBlob(fullHtml);
+
+            const htmlDocument = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Soal Portal Sekolah</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.4; color: #000; }
+        p { margin: 4pt 0; }
+        ol { margin-top: 4pt; margin-bottom: 4pt; padding-left: 20pt; }
+        li { margin-bottom: 3pt; }
+        img { max-width: 100%; height: auto; }
+        .img-placeholder { font-family: monospace; border: 1px dashed #666; padding: 4px 8px; background: #eee; }
+    </style>
+</head>
+<body>
+    ${content}
+</body>
+</html>`;
+
             try {
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'soal-konversi.docx';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-                showToast("File Word berhasil diunduh!", "success");
+                const converted = htmlDocx.asBlob(htmlDocument);
+                const url = URL.createObjectURL(converted);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Soal_Portal_Sekolah_${new Date().toISOString().slice(0,10)}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('File Word berhasil diunduh!', 'success');
             } catch (err) {
                 console.error(err);
-                showToast("Gagal mengunduh file Word.", "error");
+                showToast('Gagal mengunduh file Word.', 'error');
             }
         }
 
         // ============================================
-        // Helpers
+        // CLEAR INPUT
         // ============================================
         function clearInput() {
             document.getElementById('rawInput').value = '';
+            document.getElementById('kategoriInput').value = '';
+            document.getElementById('poinInput').value = '1';
+            document.getElementById('pembahasanInput').value = '-';
+            document.getElementById('resultPreview').innerHTML = '';
             document.getElementById('outputCard').classList.add('hidden');
             uploadedImages = [];
             manualAnswerKeys = {};
-            showToast("Input dibersihkan.", "info");
-        }
-
-        function showToast(msg, type) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            const toastIcon = document.getElementById('toastIcon');
-            toastMsg.textContent = msg;
-            if (type === 'success') toastIcon.textContent = '✅';
-            else if (type === 'warning') toastIcon.textContent = '⚠️';
-            else if (type === 'error') toastIcon.textContent = '❌';
-            else toastIcon.textContent = 'ℹ️';
-            toast.classList.remove('translate-y-[150px]', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-[150px]', 'opacity-0');
-            }, 3000);
+            showToast('Input dan data berhasil dibersihkan.', 'info');
         }
     </script>
 </body>
