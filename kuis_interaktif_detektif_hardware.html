@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Informatika - Detektif Hardware</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        detective: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                            accent: '#f59e0b',
+                            neon: '#38bdf8',
+                            danger: '#ef4444',
+                            success: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'bounce-short': 'bounceShort 0.5s ease',
+                        'scanline': 'scanline 8s linear infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(245, 158, 11, 0.4)' },
+                            '50%': { boxShadow: '0 0 30px rgba(245, 158, 11, 0.8)' }
+                        },
+                        bounceShort: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        },
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(1000%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            user-select: none;
+        }
+        .case-file-bg {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .scan-overlay {
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.25) 51%);
+            background-size: 100% 4px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased flex flex-col justify-between min-h-screen relative overflow-x-hidden custom-scrollbar">
+
+    <!-- Canvas for Particle / Confetti FX -->
+    <canvas id="fxCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <!-- Header Navigation -->
+    <header class="w-full max-w-5xl mx-auto p-4 flex justify-between items-center z-10">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 font-bold shadow-lg">
+                <i class="fa-solid fa-user-secret text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wide text-amber-400 font-mono">DETEKTIF HARDWARE</h1>
+                <p class="text-xs text-slate-400">Divisi Kejahatan Siber - SMP Kelas 7</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <!-- Audio Toggle Button -->
+            <button id="audioBtn" onclick="toggleAudio()" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-amber-500 text-slate-300 hover:text-amber-400 transition flex items-center space-x-2 text-xs">
+                <i id="audioIcon" class="fa-solid fa-volume-high"></i>
+                <span id="audioStatus" class="hidden sm:inline">Suara: ON</span>
+            </button>
+            <!-- Badge / Info -->
+            <div class="px-3 py-2 rounded-lg bg-slate-800/80 border border-slate-700 text-xs font-mono text-amber-400">
+                <i class="fa-solid fa-shield-halved mr-1"></i> Mode Misi
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl mx-auto px-4 py-4 flex-grow flex flex-col justify-center z-10">
+
+        <!-- SCREEN 1: START / BRIEFING SCREEN -->
+        <div id="startScreen" class="case-file-bg rounded-2xl p-6 md:p-10 shadow-2xl relative overflow-hidden transition-all duration-500">
+            <!-- Top Stamp -->
+            <div class="absolute -top-4 -right-4 bg-red-600/20 border border-red-500/40 text-red-400 px-8 py-3 rotate-12 text-xs font-mono font-bold tracking-widest uppercase pointer-events-none">
+                RAHASIA NEGARA
+            </div>
+
+            <div class="text-center max-w-2xl mx-auto">
+                <div class="inline-block p-4 rounded-full bg-amber-500/10 border border-amber-500/30 mb-4 animate-bounce-short">
+                    <i class="fa-solid fa-magnifying-glass text-4xl text-amber-400"></i>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2 tracking-tight">
+                    BRIEFING MISI: DETEKTIF SIBER
+                </h2>
+                <div class="h-1 w-20 bg-amber-500 mx-auto rounded-full mb-6"></div>
+
+                <!-- Story Narrative -->
+                <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-5 mb-6 text-left text-slate-300 leading-relaxed text-sm md:text-base space-y-3">
+                    <p class="flex items-start">
+                        <i class="fa-solid fa-quote-left text-amber-500 text-xl mr-3 mt-1 flex-shrink-0"></i>
+                        <span>
+                            <strong>Peringatan Darurat Agen!</strong> Pelaku kejahatan siber bernama <em>"Bug-X"</em> telah merusak dan menyabotase berkas data perangkat keras di Server Komando Sekolah. Sebagai Detektif Hardware, kamu ditugaskan memecahkan 5 kasus investigasi untuk mengidentifikasi perangkat keras yang tepat dan menyelamatkan sistem sebelum data hancur total!
+                        </span>
+                    </p>
+                </div>
+
+                <!-- Detective Name Input -->
+                <div class="mb-6 text-left max-w-md mx-auto">
+                    <label for="detectiveName" class="block text-xs font-mono text-amber-400 uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-id-card mr-1"></i> Nama Agen / Detektif:
+                    </label>
+                    <input type="text" id="detectiveName" placeholder="Masukkan nama detektifmu..." value="Agen Muda" 
+                        class="w-full bg-slate-900 border border-slate-700 focus:border-amber-500 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition text-sm font-medium">
+                </div>
+
+                <!-- Mission Rules Overview -->
+                <div class="grid grid-cols-3 gap-3 mb-8 text-center text-xs">
+                    <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
+                        <i class="fa-solid fa-list-check text-amber-400 text-lg mb-1 block"></i>
+                        <span class="text-slate-300 font-medium">5 Misi Kasus</span>
+                    </div>
+                    <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
+                        <i class="fa-solid fa-trophy text-amber-400 text-lg mb-1 block"></i>
+                        <span class="text-slate-300 font-medium">Maks 1000 XP</span>
+                    </div>
+                    <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
+                        <i class="fa-solid fa-award text-amber-400 text-lg mb-1 block"></i>
+                        <span class="text-slate-300 font-medium">Lencana Kelulusan</span>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button onclick="startGame()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold rounded-xl shadow-lg shadow-amber-500/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-base tracking-wide flex items-center justify-center space-x-3 mx-auto">
+                    <span>MULAI INVESTIGASI KASUS</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: GAMEPLAY SCREEN -->
+        <div id="gameScreen" class="hidden flex-col space-y-4">
+            
+            <!-- Game Header Stats Bar -->
+            <div class="case-file-bg rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-md">
+                <!-- Agent Info -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-bold text-sm">
+                        <i class="fa-solid fa-user-detective"></i>
+                    </div>
+                    <div>
+                        <div id="playerDisplayName" class="text-sm font-bold text-white">Agen Muda</div>
+                        <div id="levelTag" class="text-xs font-mono text-amber-400">Level 1 - Pemula</div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="flex-1 max-w-xs mx-2">
+                    <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                        <span>KASUS: <span id="currentQuestionNum">1</span>/5</span>
+                        <span id="progressPercent">20%</span>
+                    </div>
+                    <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                        <div id="progressBar" class="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500 w-1/5"></div>
+                    </div>
+                </div>
+
+                <!-- Score Counter -->
+                <div class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 flex items-center space-x-2">
+                    <i class="fa-solid fa-star text-amber-400 text-sm"></i>
+                    <span class="text-xs text-slate-400 font-mono">SKOR XP:</span>
+                    <span id="scoreDisplay" class="text-base font-bold font-mono text-amber-400">0</span>
+                </div>
+            </div>
+
+            <!-- Case File Card -->
+            <div class="case-file-bg rounded-2xl p-6 md:p-8 shadow-2xl relative">
+                
+                <!-- Level Badge Stamp -->
+                <div class="flex items-center justify-between border-b border-slate-700/80 pb-4 mb-5">
+                    <span id="caseHeaderBadge" class="px-3 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider">
+                        📁 BERKAS KASUS #01
+                    </span>
+                    <span id="rewardXP" class="text-xs font-mono bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-md font-semibold">
+                        +100 XP
+                    </span>
+                </div>
+
+                <!-- Question Text -->
+                <h3 id="questionText" class="text-base md:text-lg font-semibold text-slate-100 leading-relaxed mb-6">
+                    Memuat pertanyaan kasus...
+                </h3>
+
+                <!-- Options Grid -->
+                <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <!-- Dynamic option buttons injected via JS -->
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SCREEN 3: FEEDBACK MODAL OVERLAY -->
+        <div id="feedbackModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-40 hidden transition-opacity duration-300">
+            <div class="case-file-bg rounded-2xl max-w-lg w-full p-6 md:p-8 border-2 shadow-2xl transform transition-transform duration-300 scale-95" id="feedbackCard">
+                
+                <div class="text-center mb-4">
+                    <div id="feedbackIconContainer" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 text-2xl border-2">
+                        <i id="feedbackIcon" class="fa-solid"></i>
+                    </div>
+                    <h3 id="feedbackTitle" class="text-xl font-bold mb-1">
+                        Akses Diterima!
+                    </h3>
+                    <div id="feedbackSub" class="text-xs font-mono font-semibold uppercase tracking-wider text-slate-400">
+                        +100 XP Berhasil Ditambahkan
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 mb-6 text-sm text-slate-300 leading-relaxed">
+                    <div class="font-bold text-amber-400 mb-1 text-xs font-mono flex items-center">
+                        <i class="fa-solid fa-lightbulb mr-1.5"></i> ANALISIS LAB FORENSIK:
+                    </div>
+                    <p id="explanationText">
+                        Penjelasan lengkap mengenai perangkat keras...
+                    </p>
+                </div>
+
+                <button onclick="nextQuestion()" class="w-full py-3 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition shadow-lg flex items-center justify-center space-x-2 text-sm">
+                    <span>LANJUTKAN MISI BERIKUTNYA</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: END SCREEN / RESULT & RANK CERTIFICATE -->
+        <div id="endScreen" class="hidden case-file-bg rounded-2xl p-6 md:p-10 shadow-2xl relative text-center">
+            
+            <div class="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold uppercase mb-4">
+                🏆 LAPORAN AKHIR INVESTIGASI
+            </div>
+
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-1">
+                MISI SELESAI!
+            </h2>
+            <p id="finalAgentName" class="text-sm text-slate-400 mb-6">Detektif: Agen Muda</p>
+
+            <!-- Rank Badge Card -->
+            <div class="bg-slate-900/90 border-2 border-amber-500/40 rounded-2xl p-6 mb-6 max-w-md mx-auto relative overflow-hidden shadow-xl">
+                <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl text-amber-400 pointer-events-none">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div id="rankIcon" class="text-5xl text-amber-400 mb-3 animate-bounce-short">
+                    🕵️‍♂️
+                </div>
+                <div class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">GELAR RESMI DETEKTIF:</div>
+                <h3 id="rankTitle" class="text-xl md:text-2xl font-black text-amber-400 mb-2">
+                    Detektif Master Hardware
+                </h3>
+
+                <!-- Score Banner -->
+                <div class="inline-flex items-center space-x-2 bg-slate-800 px-4 py-2 rounded-xl border border-slate-700 mb-3">
+                    <span class="text-xs text-slate-400 font-mono">TOTAL XP:</span>
+                    <span id="finalScore" class="text-2xl font-black font-mono text-emerald-400">1000</span>
+                    <span class="text-xs text-slate-400 font-mono">/ 1000 XP</span>
+                </div>
+
+                <p id="rankMessage" class="text-xs md:text-sm text-slate-300 leading-relaxed italic">
+                    Luar biasa! Server sekolah selamat total dan kamu dianugerahi penghargaan tertinggi IT Sekolah!
+                </p>
+            </div>
+
+            <!-- Accuracy Breakdown -->
+            <div class="grid grid-cols-2 gap-3 max-w-md mx-auto mb-6 text-xs font-mono">
+                <div class="bg-slate-800/70 p-3 rounded-xl border border-slate-700">
+                    <span class="text-slate-400 block mb-0.5">JAWABAN BENAR</span>
+                    <span id="correctAnswersCount" class="text-emerald-400 text-lg font-bold">5 / 5</span>
+                </div>
+                <div class="bg-slate-800/70 p-3 rounded-xl border border-slate-700">
+                    <span class="text-slate-400 block mb-0.5">TINGKAT AKURASI</span>
+                    <span id="accuracyPercent" class="text-amber-400 text-lg font-bold">100%</span>
+                </div>
+            </div>
+
+            <!-- Review Accordion Container -->
+            <div class="text-left mb-6 max-w-2xl mx-auto">
+                <button onclick="toggleReviewSection()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-mono text-slate-300 flex justify-between items-center transition">
+                    <span><i class="fa-solid fa-magnifying-glass-chart mr-2 text-amber-400"></i> EVINUASI & EVALUASI BUKTI KASUS ( REVIEW )</span>
+                    <i id="reviewChevron" class="fa-solid fa-chevron-down text-slate-400"></i>
+                </button>
+
+                <div id="reviewContainer" class="hidden mt-3 space-y-3 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                    <!-- Dynamic review items generated here -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-3 max-w-md mx-auto">
+                <button onclick="restartGame()" class="flex-1 py-3 px-6 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl transition shadow-lg text-sm flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>MAIN LAGI</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-5xl mx-auto p-4 text-center text-xs text-slate-500 font-mono z-10">
+        Informatika SMP Kelas 7 • Kurikulum Merdeka • Media Pembelajaran Gamifikasi
+    </footer>
+
+    <script>
+        // Audio Synthesizer using Web Audio API (No external file URLs)
+        let audioEnabled = true;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const statusText = document.getElementById('audioStatus');
+            const icon = document.getElementById('audioIcon');
+            if (audioEnabled) {
+                statusText.innerText = 'Suara: ON';
+                icon.className = 'fa-solid fa-volume-high';
+            } else {
+                statusText.innerText = 'Suara: OFF';
+                icon.className = 'fa-solid fa-volume-xmark';
+            }
+        }
+
+        function playSound(type) {
+            if (!audioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.setValueAtTime(164.81, now + 0.15); // E3
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'win') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const noteOsc = ctx.createOscillator();
+                        const noteGain = ctx.createGain();
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(ctx.destination);
+                        
+                        noteOsc.type = 'triangle';
+                        noteOsc.frequency.setValueAtTime(freq, now + (idx * 0.12));
+                        noteGain.gain.setValueAtTime(0.2, now + (idx * 0.12));
+                        noteGain.gain.linearRampToValueAtTime(0.01, now + (idx * 0.12) + 0.25);
+                        
+                        noteOsc.start(now + (idx * 0.12));
+                        noteOsc.stop(now + (idx * 0.12) + 0.25);
+                    });
+                }
+            } catch (e) {
+                console.log('Audio playback error:', e);
+            }
+        }
+
+        // QUESTION DATASET (Hardware Detective Theme)
+        const quizData = [
+            {
+                level: "Level 1 - Pemula",
+                caseNum: "01",
+                title: "Kasus Bukti Fisik Digital",
+                question: "Pelaku kejahatan meninggalkan sebuah dokumen fisik berisi denah rahasia di TKP. Untuk memasukkan denah cetak tersebut menjadi berkas gambar digital di komputer markas detektif tanpa mengetik ulang, perangkat keras masukan (input device) mana yang wajib digunakan?",
+                xp: 100,
+                options: [
+                    { key: "A", text: "Plotter", correct: false },
+                    { key: "B", text: "Scanner", correct: true },
+                    { key: "C", text: "Projector", correct: false },
+                    { key: "D", text: "Speaker", correct: false }
+                ],
+                explanation: "Scanner adalah perangkat keras masukan (input device) yang berfungsi menggandakan atau mengonversi dokumen/gambar fisik menjadi berkas digital agar dapat disimpan dan diproses di komputer.",
+                correctFeedback: "⚡ BZZZZT! Akses Diterima! Pemindaian denah rahasia berhasil sempurna. Pemahaman perangkat masukanmu sangat tajam!",
+                wrongFeedback: "⚠️ Akses Ditolak! Perangkat tersebut bukan untuk memindai dokumen cetak menjadi berkas digital. Ingat kembali fungsi Scanner!"
+            },
+            {
+                level: "Level 2 - Sedang",
+                caseNum: "02",
+                title: "Kasus Tampilan Visual Monitor",
+                question: "Layar monitor di ruang komando mendadak mati saat mendeteksi pindaian wajah tersangka. Agar sinyal data visual dari komputer dapat diolah dan ditampilkan dengan jernih di layar monitor besar, komponen pemroses grafis apa yang bertugas mengolah sinyal visual tersebut?",
+                xp: 150,
+                options: [
+                    { key: "A", text: "Sound Card", correct: false },
+                    { key: "B", text: "Optical Disc Drive", correct: false },
+                    { key: "C", text: "VGA Card (Video Graphics Array)", correct: true },
+                    { key: "D", text: "Power Supply Unit", correct: false }
+                ],
+                explanation: "VGA Card (Kartu Grafis / GPU) adalah komponen pemroses yang bertugas menerjemahkan sinyal digital dari komputer menjadi tampilan visual gambar/video pada layar monitor.",
+                correctFeedback: "🖼️ KLIK! Layar Komando Menyala Terang! Tampilan visual berhasil dipulihkan berkat pengolah grafis yang tepat!",
+                wrongFeedback: "⚠️ Sinyal No Display! Perangkat yang kamu pilih bukan pengolah tampilan visual. Periksa kembali komponen pemroses grafis!"
+            },
+            {
+                level: "Level 3 - Sedang",
+                caseNum: "03",
+                title: "Kasus Memori Kerja Sementara",
+                question: "Saat kamu menganalisis 10 berkas rekaman CCTV bersamaan, komputer detektif bekerja sangat cepat. Namun begitu listrik padam secara mendadak, seluruh data analisis sementara yang belum disimpan langsung hilang total. Memori penyimpanan sementara yang bersifat volatile siapakah ini?",
+                xp: 200,
+                options: [
+                    { key: "A", text: "Harddisk Drive (HDD)", correct: false },
+                    { key: "B", text: "Flashdisk", correct: false },
+                    { key: "C", text: "Read Only Memory (ROM)", correct: false },
+                    { key: "D", text: "Random Access Memory (RAM)", correct: true }
+                ],
+                explanation: "RAM adalah memori penyimpanan sementara yang bersifat volatile (data hilang saat listrik mati). RAM berfungsi menyimpan data dan instruksi aplikasi yang sedang aktif dijalankan.",
+                correctFeedback: "🚀 WUUUSH! Kecepatan Komputer Pulih! Kamu berhasil mengidentifikasi memori sementara acak ini secara akurat!",
+                wrongFeedback: "⚠️ Sistem Bottleneck! Pilihanmu adalah media penyimpanan permanen (non-volatile), bukan memori kerja sementara saat aplikasi aktif!"
+            },
+            {
+                level: "Level 4 - Tantangan",
+                caseNum: "04",
+                title: "Kasus Kecepatan Transfer data",
+                question: "Detektif perlu menyalin berkas bukti kasus sebesar 50 GB dalam hitungan detik. Tim IT menyarankan mengganti media penyimpanan mekanis lama (HDD) dengan media penyimpanan berbasis chip memori kilat tanpa piringan berputar agar kecepatan pemrosesan naik 5 kali lipat. Perangkat apakah itu?",
+                xp: 250,
+                options: [
+                    { key: "A", text: "Solid State Drive (SSD)", correct: true },
+                    { key: "B", text: "Power Supply", correct: false },
+                    { key: "C", text: "Processor (CPU)", correct: false },
+                    { key: "D", text: "Heat Sink Fan", correct: false }
+                ],
+                explanation: "SSD (Solid State Drive) adalah media penyimpanan data permanen sekunder berbasis chip flash memori tanpa bagian mekanis bergerak, sehingga jauh lebih cepat dan efisien dibanding HDD konvensional.",
+                correctFeedback: "⚡ SISTEM BOOTING & TRANSFER HANYA 3 DETIK! Pilihan cemerlang! Media penyimpanan chip memori membuat server super cepat!",
+                wrongFeedback: "⚠️ Proses Membaca File Masih Lambat! Komponen tersebut bukan media penyimpanan sekunder berbasis chip kilat. Coba tebak lagi!"
+            },
+            {
+                level: "Level 5 - Boss Final",
+                caseNum: "05",
+                title: "Kasus Otak Komputer & Pusat Logika",
+                question: "Program jahat Bug-X menyerang langsung ke 'otak utama' komputer yang mengeksekusi semua perintah logika dan perhitungan aritmatika seluruh sistem. Komponen utama yang terpasang di motherboard dan dilindungi kipas pendingin (Heatsink) ini wajib diselamatkan! Siapakah dia?",
+                xp: 300,
+                options: [
+                    { key: "A", text: "Central Processing Unit (CPU / Processor)", correct: true },
+                    { key: "B", text: "Network Interface Card (NIC)", correct: false },
+                    { key: "C", text: "Read-Only Memory (ROM)", correct: false },
+                    { key: "D", text: "Uninterruptible Power Supply (UPS)", correct: false }
+                ],
+                explanation: "CPU (Central Processing Unit / Processor) adalah otak utama komputer yang mengontrol seluruh operasi, mengeksekusi perintah perangkat lunak, dan melakukan perhitungan aritmatika serta logika.",
+                correctFeedback: "🏆 BOOM! VIRUS BUG-X HANCUR TOTAL! Kamu berhasil mengamankan Otak Komputer! Server komando sekolah selamat!",
+                wrongFeedback: "⚠️ BOSS BUG-X MENYERANG BALIK! Komponen tersebut mendukung sirkuit/daya, tetapi bukan pusat eksekusi logika dan perhitungan utama!"
+            }
+        ];
+
+        // State Variables
+        let currentQuestionIndex = 0;
+        let totalXP = 0;
+        let playerAnswers = [];
+        let playerName = "Agen Muda";
+
+        function startGame() {
+            playSound('click');
+            const nameInput = document.getElementById('detectiveName').value.trim();
+            if (nameInput) {
+                playerName = nameInput;
+            }
+            
+            document.getElementById('playerDisplayName').innerText = playerName;
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('gameScreen').classList.add('flex');
+
+            currentQuestionIndex = 0;
+            totalXP = 0;
+            playerAnswers = [];
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizData[currentQuestionIndex];
+
+            // Update Header Stats
+            document.getElementById('currentQuestionNum').innerText = currentQuestionIndex + 1;
+            document.getElementById('levelTag').innerText = q.level;
+            document.getElementById('scoreDisplay').innerText = totalXP;
+
+            // Progress Bar
+            const progressPct = Math.round(((currentQuestionIndex + 1) / quizData.length) * 100);
+            document.getElementById('progressPercent').innerText = `${progressPct}%`;
+            document.getElementById('progressBar').style.width = `${progressPct}%`;
+
+            // Card Header
+            document.getElementById('caseHeaderBadge').innerText = `📁 BERKAS KASUS #${q.caseNum} - ${q.title.toUpperCase()}`;
+            document.getElementById('rewardXP').innerText = `+${q.xp} XP`;
+            document.getElementById('questionText').innerText = q.question;
+
+            // Options Container
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.onclick = () => selectAnswer(opt);
+                btn.className = `p-4 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 hover:border-amber-500 text-left transition-all duration-200 flex items-start space-x-3 group transform hover:-translate-y-0.5 active:translate-y-0`;
+                
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-amber-500 group-hover:bg-amber-500 group-hover:text-slate-950 font-bold font-mono text-slate-300 text-sm flex items-center justify-center flex-shrink-0 transition">
+                        ${opt.key}
+                    </span>
+                    <span class="text-sm text-slate-200 group-hover:text-white pt-1 font-medium leading-snug">
+                        ${opt.text}
+                    </span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedOption) {
+            playSound('click');
+            const q = quizData[currentQuestionIndex];
+            const isCorrect = selectedOption.correct;
+
+            playerAnswers.push({
+                questionIndex: currentQuestionIndex,
+                selectedKey: selectedOption.key,
+                selectedText: selectedOption.text,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                totalXP += q.xp;
+                playSound('correct');
+                showFeedbackModal(true, q.correctFeedback, q.explanation, q.xp);
+            } else {
+                playSound('wrong');
+                showFeedbackModal(false, q.wrongFeedback, q.explanation, 0);
+            }
+
+            document.getElementById('scoreDisplay').innerText = totalXP;
+        }
+
+        function showFeedbackModal(isCorrect, feedbackText, explanation, xpGained) {
+            const modal = document.getElementById('feedbackModal');
+            const card = document.getElementById('feedbackCard');
+            const iconContainer = document.getElementById('feedbackIconContainer');
+            const icon = document.getElementById('feedbackIcon');
+            const title = document.getElementById('feedbackTitle');
+            const sub = document.getElementById('feedbackSub');
+            const exp = document.getElementById('explanationText');
+
+            if (isCorrect) {
+                card.className = "case-file-bg rounded-2xl max-w-lg w-full p-6 md:p-8 border-2 border-emerald-500 shadow-2xl shadow-emerald-500/20";
+                iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 text-2xl border-2 bg-emerald-500/20 border-emerald-500 text-emerald-400";
+                icon.className = "fa-solid fa-check";
+                title.innerText = "Akses Diterima! ( Jawaban Benar )";
+                title.className = "text-xl font-bold text-emerald-400 mb-1";
+                sub.innerText = `+${xpGained} XP Berhasil Ditambahkan`;
+                sub.className = "text-xs font-mono font-semibold uppercase tracking-wider text-emerald-400";
+                
+                // Trigger localized particle burst
+                createParticles(window.innerWidth / 2, window.innerHeight / 2, '#10b981', 25);
+            } else {
+                card.className = "case-file-bg rounded-2xl max-w-lg w-full p-6 md:p-8 border-2 border-red-500 shadow-2xl shadow-red-500/20";
+                iconContainer.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 text-2xl border-2 bg-red-500/20 border-red-500 text-red-400";
+                icon.className = "fa-solid fa-xmark";
+                title.innerText = "Akses Ditolak! ( Jawaban Salah )";
+                title.className = "text-xl font-bold text-red-400 mb-1";
+                sub.innerText = "Sistem Mendeteksi Kesalahan Komponen";
+                sub.className = "text-xs font-mono font-semibold uppercase tracking-wider text-red-400";
+            }
+
+            exp.innerText = explanation;
+            modal.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            document.getElementById('feedbackModal').classList.add('hidden');
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        function finishGame() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('endScreen').classList.remove('hidden');
+
+            document.getElementById('finalAgentName').innerText = `Detektif: ${playerName}`;
+            document.getElementById('finalScore').innerText = totalXP;
+
+            const correctCount = playerAnswers.filter(a => a.isCorrect).length;
+            const accuracyPct = Math.round((correctCount / quizData.length) * 100);
+
+            document.getElementById('correctAnswersCount').innerText = `${correctCount} / ${quizData.length}`;
+            document.getElementById('accuracyPercent').innerText = `${accuracyPct}%`;
+
+            // Determine Rank Title based on XP Score
+            let rank = {};
+            if (totalXP >= 900) {
+                rank = {
+                    title: "Detektif Master Hardware 🌟",
+                    icon: "🕵️‍♂️",
+                    message: "Luar biasa, Detektif! Semua kasus sabotase hardware berhasil kamu pecahkan tanpa cela. Server komando sekolah selamat total dan kamu dianugerahi Lencana Tertinggi IT Sekolah!"
+                };
+                playSound('win');
+                triggerConfetti();
+            } else if (totalXP >= 650) {
+                rank = {
+                    title: "Senior IT Guardian 🛡️",
+                    icon: "🛡️",
+                    message: "Kerja bagus! Kamu berhasil memulihkan sebagian besar fungsi hardware server sekolah. Dengan sedikit pengasahan materi, kamu akan menjadi Master Detektif!"
+                };
+                playSound('win');
+            } else if (totalXP >= 400) {
+                rank = {
+                    title: "Cyber Technician Rookie 🔧",
+                    icon: "🔧",
+                    message: "Usaha yang baik! Server berhasil menyala tetapi masih ada beberapa bug tersembunyi. Pelajari kembali materi perangkat keras dan coba lagi!"
+                };
+            } else {
+                rank = {
+                    title: "Trainee Cadet ⚠️",
+                    icon: "🔰",
+                    message: "Sistem masih dalam kondisi darurat! Jangan menyerah, baca kembali modul Informatika Kelas 7 dan ulangi misimu untuk mengalahkan Bug-X!"
+                };
+            }
+
+            document.getElementById('rankIcon').innerText = rank.icon;
+            document.getElementById('rankTitle').innerText = rank.title;
+            document.getElementById('rankMessage').innerText = rank.message;
+
+            buildReviewSection();
+        }
+
+        function toggleReviewSection() {
+            playSound('click');
+            const reviewContainer = document.getElementById('reviewContainer');
+            const chevron = document.getElementById('reviewChevron');
+            reviewContainer.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        }
+
+        function buildReviewSection() {
+            const container = document.getElementById('reviewContainer');
+            container.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const userAns = playerAnswers[idx];
+                const correctOpt = q.options.find(o => o.correct);
+
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-xl border text-xs font-mono leading-relaxed ${userAns.isCorrect ? 'bg-emerald-950/20 border-emerald-500/40' : 'bg-red-950/20 border-red-500/40'}`;
+
+                div.innerHTML = `
+                    <div class="flex items-center justify-between font-bold mb-1">
+                        <span class="${userAns.isCorrect ? 'text-emerald-400' : 'text-red-400'}">
+                            ${userAns.isCorrect ? '✓ KASUS TERPECAHKAN' : '✗ KASUS GAGAL'} (#0${idx+1})
+                        </span>
+                        <span class="text-slate-400">${q.level}</span>
+                    </div>
+                    <p class="font-sans text-slate-200 mb-2 font-medium">${q.question}</p>
+                    <div class="text-slate-300 space-y-0.5">
+                        <div>Jawaban Kamu: <span class="${userAns.isCorrect ? 'text-emerald-400 font-bold' : 'text-red-400 font-bold'}">${userAns.selectedKey}. ${userAns.selectedText}</span></div>
+                        ${!userAns.isCorrect ? `<div>Kunci Jawaban: <span class="text-emerald-400 font-bold">${correctOpt.key}. ${correctOpt.text}</span></div>` : ''}
+                    </div>
+                    <div class="mt-2 text-slate-400 border-t border-slate-700/60 pt-2 font-sans italic">
+                        💡 ${q.explanation}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function restartGame() {
+            playSound('click');
+            document.getElementById('endScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        // Lightweight Particles & Confetti system
+        const canvas = document.getElementById('fxCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createParticles(x, y, color, count = 30) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8 - 2,
+                    size: Math.random() * 6 + 3,
+                    color: color,
+                    alpha: 1,
+                    decay: Math.random() * 0.02 + 0.015
+                });
+            }
+        }
+
+        function triggerConfetti() {
+            const colors = ['#f59e0b', '#10b981', '#38bdf8', '#ec4899', '#8b5cf6'];
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: -10,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 5 + 3,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: 1,
+                    decay: Math.random() * 0.008 + 0.004
+                });
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.onload = function() {
+            animateParticles();
+        };
+    </script>
+</body>
+</html>
