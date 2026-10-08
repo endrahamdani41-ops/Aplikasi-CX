@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberNum - Media Interaktif Konversi Bilangan Informatika Kelas 8</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icon CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#0b0f19',
+                            card: '#111827',
+                            border: '#1f293d',
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                            purple: '#a855f7',
+                            pink: '#ec4899',
+                            amber: '#f59e0b',
+                            blue: '#3b82f6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 20px rgba(6, 182, 212, 0.35)',
+                        'neon-purple': '0 0 20px rgba(168, 85, 247, 0.35)',
+                        'neon-emerald': '0 0 20px rgba(16, 185, 129, 0.35)',
+                        'neon-amber': '0 0 20px rgba(245, 158, 11, 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+
+        /* Glowing text effects */
+        .glow-cyan {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+        }
+        .glow-purple {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+        }
+        .glow-emerald {
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Glassmorphism style */
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Tab active highlight animation */
+        .tab-active {
+            position: relative;
+        }
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #06b6d4, #a855f7);
+            border-radius: 3px 3px 0 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-cyber-cyan selection:text-slate-900">
+
+    <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyber-cyan to-cyber-purple flex items-center justify-center shadow-neon-cyan">
+                    <i class="fa-solid fa-calculator text-slate-950 text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="text-xl font-extrabold tracking-tight font-mono text-white glow-cyan">
+                            CYBER<span class="text-cyber-cyan">NUM</span>
+                        </h1>
+                        <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider font-mono bg-cyber-purple/20 text-cyber-purple border border-cyber-purple/40 rounded-full">
+                            SMP KELAS 8
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400">Media Interaktif & Simulator Konversi Bilangan</p>
+                </div>
+            </div>
+
+            <!-- Global Controls & Score Indicator -->
+            <div class="flex items-center space-x-3">
+                <!-- XP Badge -->
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 flex items-center space-x-2 text-xs font-mono">
+                    <i class="fa-solid fa-bolt text-cyber-amber text-sm animate-pulse"></i>
+                    <span class="text-slate-400 hidden sm:inline">SKOR XP:</span>
+                    <span id="globalXPDisplay" class="text-cyber-amber font-bold text-sm">0</span>
+                </div>
+
+                <!-- Audio Switch Button -->
+                <button id="audioToggleBtn" onclick="toggleGlobalAudio()" title="Suara Efek" 
+                    class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyber-cyan text-slate-300 hover:text-cyber-cyan transition-all flex items-center justify-center">
+                    <i id="audioToggleIcon" class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex overflow-x-auto space-x-2 sm:space-x-6 border-t border-slate-800/60 pt-2 text-sm font-medium">
+            <button onclick="switchTab('modul')" id="tabBtn-modul" class="tab-btn tab-active px-4 py-2.5 rounded-t-lg transition flex items-center space-x-2 whitespace-nowrap text-cyber-cyan">
+                <i class="fa-solid fa-book-open"></i>
+                <span>1. Modul Belajar</span>
+            </button>
+            <button onclick="switchTab('simulator')" id="tabBtn-simulator" class="tab-btn px-4 py-2.5 rounded-t-lg transition flex items-center space-x-2 whitespace-nowrap text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-sliders"></i>
+                <span>2. Simulator & Langkah</span>
+            </button>
+            <button onclick="switchTab('kuis')" id="tabBtn-kuis" class="tab-btn px-4 py-2.5 rounded-t-lg transition flex items-center space-x-2 whitespace-nowrap text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-gamepad"></i>
+                <span>3. Kuis & Mini Game</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow z-10 w-full">
+
+        <!-- ========================================================================= -->
+        <!-- TAB 1: MODUL BELAJAR (TEORI & PANDUAN LANGKAH DEMI LANGKAH) -->
+        <!-- ========================================================================= -->
+        <section id="tabContent-modul" class="space-y-6">
+            
+            <!-- Welcome Banner -->
+            <div class="glass-panel rounded-2xl p-6 border-l-4 border-cyber-cyan shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl text-cyber-cyan pointer-events-none">
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+                <div class="relative z-10">
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-white mb-2 flex items-center space-x-2">
+                        <span>Pahami Sistem Bilangan Komputer</span>
+                        <i class="fa-solid fa-lightbulb text-cyber-amber text-lg animate-bounce"></i>
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
+                        Komputer mengolah informasi dalam bentuk sinyal digital elektrik. Di Informatika Kelas 8, kita mempelajari 3 sistem bilangan utama: <strong class="text-cyber-cyan">Desimal (Basis 10)</strong> yang digunakan manusia sehari-hari, <strong class="text-cyber-emerald">Biner (Basis 2)</strong> yang dipahami mesin komputer, dan <strong class="text-cyber-purple">Oktal (Basis 8)</strong> sebagai bentuk penyederhanaan data biner.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Overview Cards of 3 Number Systems -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Desimal Card -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-800 hover:border-cyber-cyan/50 transition-all duration-300 shadow-lg">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/30">
+                            BASIS 10 (RADIX 10)
+                        </span>
+                        <i class="fa-solid fa-user-group text-cyber-cyan text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Sistem Desimal</h3>
+                    <p class="text-xs text-slate-400 mb-3">Digunakan oleh manusia sehari-hari.</p>
+                    <div class="bg-slate-900/90 rounded-xl p-3 text-xs font-mono border border-slate-800 space-y-2">
+                        <div class="text-slate-300"><span class="text-cyber-cyan font-bold">Simbol Simbol:</span> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</div>
+                        <div class="text-slate-400"><span class="text-slate-300 font-bold">Bobot Pangkat:</span> 10⁰, 10¹, 10², 10³, ...</div>
+                        <div class="text-slate-400"><span class="text-slate-300 font-bold">Contoh:</span> (25)₁₀ atau 25</div>
+                    </div>
+                </div>
+
+                <!-- Biner Card -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-800 hover:border-cyber-emerald/50 transition-all duration-300 shadow-lg">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyber-emerald/10 text-cyber-emerald border border-cyber-emerald/30">
+                            BASIS 2 (RADIX 2)
+                        </span>
+                        <i class="fa-solid fa-microchip text-cyber-emerald text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Sistem Biner</h3>
+                    <p class="text-xs text-slate-400 mb-3">Bahasa mesin komputer (Sinyal On/Off).</p>
+                    <div class="bg-slate-900/90 rounded-xl p-3 text-xs font-mono border border-slate-800 space-y-2">
+                        <div class="text-slate-300"><span class="text-cyber-emerald font-bold">Simbol Simbol:</span> 0 dan 1 (Bit)</div>
+                        <div class="text-slate-400"><span class="text-slate-300 font-bold">Bobot Pangkat:</span> 2⁰, 2¹, 2², 2³, ...</div>
+                        <div class="text-slate-400"><span class="text-slate-300 font-bold">Contoh:</span> (11001)₂</div>
+                    </div>
+                </div>
+
+                <!-- Oktal Card -->
+                <div class="glass-panel rounded-2xl p-5 border border-slate-800 hover:border-cyber-purple/50 transition-all duration-300 shadow-lg">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyber-purple/10 text-cyber-purple border border-cyber-purple/30">
+                            BASIS 8 (RADIX 8)
+                        </span>
+                        <i class="fa-solid fa-cubes text-cyber-purple text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-1">Sistem Oktal</h3>
+                    <p class="text-xs text-slate-400 mb-3">Penyederhanaan penulisan bit biner.</p>
+                    <div class="bg-slate-900/90 rounded-xl p-3 text-xs font-mono border border-slate-800 space-y-2">
+                        <div class="text-slate-300"><span class="text-cyber-purple font-bold">Simbol Simbol:</span> 0, 1, 2, 3, 4, 5, 6, 7</div>
+                        <div class="text-slate-400"><span class="text-slate-300 font-bold">Bobot Pangkat:</span> 8⁰, 8¹, 8², 8³, ...</div>
+                        <div class="text-slate-400"><span class="text-slate-300 font-bold">Contoh:</span> (31)₈</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white font-mono flex items-center space-x-2">
+                            <i class="fa-solid fa-graduation-cap text-cyber-cyan"></i>
+                            <span>PANDUAN LANGKAH-DEMI-LANGKAH KONVERSI</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">Pilih jenis konversi di bawah ini untuk melihat simulasi rumusnya:</p>
+                    </div>
+
+                    <!-- Guide Selector Pills -->
+                    <div class="flex flex-wrap gap-2 text-xs font-mono">
+                        <button onclick="selectModulGuide('dec2bin')" id="modulGuideBtn-dec2bin" class="modul-guide-btn px-3 py-2 rounded-xl bg-cyber-cyan text-slate-950 font-bold shadow-neon-cyan transition">
+                            Desimal ➔ Biner
+                        </button>
+                        <button onclick="selectModulGuide('bin2dec')" id="modulGuideBtn-bin2dec" class="modul-guide-btn px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                            Biner ➔ Desimal
+                        </button>
+                        <button onclick="selectModulGuide('dec2oct')" id="modulGuideBtn-dec2oct" class="modul-guide-btn px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                            Desimal ➔ Oktal
+                        </button>
+                        <button onclick="selectModulGuide('oct2dec')" id="modulGuideBtn-oct2dec" class="modul-guide-btn px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                            Oktal ➔ Desimal
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Guide Content Panel -->
+                <div id="modulGuideContent" class="space-y-4">
+                    <!-- Dynamic Content Injected via JS -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 2: SIMULATOR & KALKULATOR TUKAR BILANGAN (INTERAKTIF & LANGKAH COMPLEET) -->
+        <!-- ========================================================================= -->
+        <section id="tabContent-simulator" class="hidden space-y-6">
+            
+            <!-- Header Banner -->
+            <div class="glass-panel rounded-2xl p-6 border-l-4 border-cyber-purple shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-white mb-1 flex items-center space-x-2">
+                        <i class="fa-solid fa-microchip text-cyber-purple"></i>
+                        <span>SIMULATOR & STEP-BY-STEP SOLVER</span>
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-300">
+                        Masukkan angka berapapun! Simulator ini akan membedah setiap langkah perhitungannya secara matematis dan rinci.
+                    </p>
+                </div>
+                
+                <!-- Mode Selector Dropdown -->
+                <div class="w-full md:w-64">
+                    <label class="block text-xs font-mono text-slate-400 mb-1">MODE KONVERSI:</label>
+                    <select id="simulatorModeSelect" onchange="runSimulator()" 
+                        class="w-full bg-slate-900 border border-cyber-purple/50 focus:border-cyber-cyan text-white text-xs font-mono font-bold rounded-xl px-3 py-2.5 outline-none transition shadow-neon-purple">
+                        <option value="dec2bin">Desimal (10) ➔ Biner (2)</option>
+                        <option value="bin2dec">Biner (2) ➔ Desimal (10)</option>
+                        <option value="dec2oct">Desimal (10) ➔ Oktal (8)</option>
+                        <option value="oct2dec">Oktal (8) ➔ Desimal (10)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Input & Interactive Controls Card -->
+            <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-5">
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <!-- Input Field -->
+                    <div class="md:col-span-2">
+                        <label id="simulatorInputLabel" for="simulatorInput" class="block text-xs font-mono text-cyber-cyan font-bold mb-2">
+                            MASUKKAN BILANGAN DESIMAL:
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="simulatorInput" value="25" oninput="runSimulator()" placeholder="Ketik angka di sini..." 
+                                class="w-full bg-slate-950 border border-slate-700 focus:border-cyber-cyan text-white text-lg font-mono font-bold rounded-xl px-4 py-3 outline-none transition shadow-inner">
+                            <button onclick="clearSimulatorInput()" class="absolute right-3 top-3 text-slate-500 hover:text-slate-300 text-sm">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                        <p id="simulatorInputError" class="text-xs text-cyber-pink font-mono mt-1 hidden">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> Input tidak valid!
+                        </p>
+                    </div>
+
+                    <!-- Action Preset Buttons -->
+                    <div>
+                        <span class="block text-xs font-mono text-slate-400 mb-2">CONTOH CEPAT:</span>
+                        <div class="flex flex-wrap gap-2" id="simulatorPresetContainer">
+                            <!-- Injected dynamically based on mode -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Result Output Card -->
+                <div class="bg-slate-900/90 rounded-2xl p-5 border border-slate-700/80 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-inner">
+                    <div>
+                        <span class="text-xs font-mono text-slate-400 block mb-1">HASIL KONVERSI AKHIR:</span>
+                        <div id="simulatorResultDisplay" class="text-2xl sm:text-3xl font-extrabold font-mono text-cyber-emerald glow-emerald">
+                            (11001)₂
+                        </div>
+                    </div>
+                    <button onclick="copySimulatorResult()" class="w-full sm:w-auto px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 rounded-xl text-xs font-mono flex items-center justify-center space-x-2 transition">
+                        <i class="fa-solid fa-copy text-cyber-cyan"></i>
+                        <span id="copyBtnText">Salin Hasil</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="text-base font-bold text-white font-mono flex items-center space-x-2">
+                        <i class="fa-solid fa-list-check text-cyber-cyan"></i>
+                        <span>LANGKAH PENYELESAIAN LENGKAP (STEP-BY-STEP)</span>
+                    </h3>
+                    <span class="text-xs font-mono bg-cyber-cyan/10 text-cyber-cyan px-3 py-1 rounded-full border border-cyber-cyan/30">
+                        Otomatis
+                    </span>
+                </div>
+
+                <div id="simulatorStepContainer" class="space-y-4 font-mono text-xs sm:text-sm">
+                    <!-- Step-by-step breakdown rendered dynamically by JS -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 3: KUIS TANTANGAN & MINI GAME (LATIHAN SOAL & RANK CERTIFICATE) -->
+        <!-- ========================================================================= -->
+        <section id="tabContent-kuis" class="hidden space-y-6">
+            
+            <!-- 1. START GAME SCREEN -->
+            <div id="quizStartScreen" class="glass-panel rounded-2xl p-6 md:p-10 border border-slate-800 text-center max-w-2xl mx-auto shadow-2xl relative overflow-hidden">
+                <div class="w-16 h-16 rounded-2xl bg-cyber-purple/20 border border-cyber-purple/50 text-cyber-purple flex items-center justify-center mx-auto mb-4 text-3xl shadow-neon-purple">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">TANTANGAN CYBER HACKER</h2>
+                <p class="text-slate-300 text-xs sm:text-sm mb-6 leading-relaxed">
+                    Uji pemahamanmu tentang konversi bilangan! Selesaikan soal acak, kumpulkan XP, pertahankan 3 nyawa jantungmu, dan dapatkan gelar <strong class="text-cyber-cyan">Cyber Master</strong>!
+                </p>
+
+                <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 text-left mb-6 space-y-2 text-xs font-mono text-slate-300">
+                    <div class="flex items-center space-x-2 text-cyber-amber">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span class="font-bold">ATURAN PERMAINAN:</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 text-slate-400 pl-2">
+                        <li>Kamu memiliki <strong class="text-cyber-pink">3 Nyawa Jantung ❤️</strong>.</li>
+                        <li>Setiap jawaban benar memberikan <strong class="text-cyber-amber">+100 XP</strong>.</li>
+                        <li>Tersedia penjelasan langkah demi langkah setelah setiap soal.</li>
+                    </ul>
+                </div>
+
+                <!-- Student Name Input -->
+                <div class="mb-6 text-left">
+                    <label for="studentNameInput" class="block text-xs font-mono text-cyber-cyan mb-2">
+                        <i class="fa-solid fa-user-astronaut mr-1"></i> NAMA SISWA / HACKER:
+                    </label>
+                    <input type="text" id="studentNameInput" value="Siswa Kelas 8" placeholder="Masukkan nama kamu..." 
+                        class="w-full bg-slate-900 border border-slate-700 focus:border-cyber-purple text-white text-sm font-medium rounded-xl px-4 py-3 outline-none transition">
+                </div>
+
+                <button onclick="startQuizGame()" class="w-full py-4 bg-gradient-to-r from-cyber-cyan via-cyber-blue to-cyber-purple hover:opacity-90 text-slate-950 font-extrabold font-mono rounded-xl shadow-neon-cyan transition-all transform hover:-translate-y-0.5 text-sm sm:text-base tracking-wider flex items-center justify-center space-x-2">
+                    <span>MULAI PETUALANGAN MISI</span>
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+
+            <!-- 2. GAMEPLAY SCREEN -->
+            <div id="quizPlayScreen" class="hidden space-y-5 max-w-3xl mx-auto">
+                
+                <!-- Game Status Header -->
+                <div class="glass-panel rounded-2xl p-4 border border-slate-800 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+                    <!-- Lives / Hearts -->
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-mono text-slate-400 mr-1">NYAWA:</span>
+                        <div id="quizLivesContainer" class="flex space-x-1 text-cyber-pink text-lg">
+                            <i class="fa-solid fa-heart"></i>
+                            <i class="fa-solid fa-heart"></i>
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                    </div>
+
+                    <!-- Progress Indicator -->
+                    <div class="flex-1 max-w-xs mx-2">
+                        <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                            <span>SOAL <span id="quizCurrentNum">1</span>/5</span>
+                            <span id="quizProgressPct">20%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                            <div id="quizProgressBar" class="h-full bg-gradient-to-r from-cyber-cyan to-cyber-purple transition-all duration-300 w-1/5"></div>
+                        </div>
+                    </div>
+
+                    <!-- Score Box -->
+                    <div class="bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800 flex items-center space-x-2 text-xs font-mono">
+                        <i class="fa-solid fa-star text-cyber-amber"></i>
+                        <span id="quizScoreDisplay" class="text-cyber-amber font-bold text-sm">0 XP</span>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="glass-panel rounded-2xl p-6 border border-slate-800 shadow-2xl space-y-5">
+                    
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <span id="quizTypeBadge" class="px-3 py-1 rounded-full bg-cyber-cyan/10 border border-cyber-cyan/30 text-cyber-cyan text-xs font-mono font-bold">
+                            DESIMAL ➔ BINER
+                        </span>
+                        <span class="text-xs font-mono text-cyber-amber">+100 XP</span>
+                    </div>
+
+                    <h3 id="quizQuestionText" class="text-base sm:text-lg font-bold text-white leading-relaxed font-mono">
+                        Konversikan bilangan desimal <span class="text-cyber-cyan">(25)₁₀</span> ke sistem biner!
+                    </h3>
+
+                    <!-- Options Grid -->
+                    <div id="quizOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <!-- Options injected dynamically -->
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- 3. FEEDBACK MODAL OVERLAY -->
+            <div id="quizFeedbackModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden transition-all">
+                <div id="quizFeedbackCard" class="glass-panel rounded-2xl max-w-lg w-full p-6 border-2 shadow-2xl transform transition-transform scale-95 space-y-4">
+                    
+                    <div class="text-center">
+                        <div id="quizFeedbackIcon" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 text-3xl border-2">
+                            <i class="fa-solid"></i>
+                        </div>
+                        <h3 id="quizFeedbackTitle" class="text-xl font-extrabold mb-1 font-mono">
+                            JAWABAN BENAR!
+                        </h3>
+                        <p id="quizFeedbackSub" class="text-xs font-mono text-slate-400">
+                            +100 XP Ditambahkan
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 text-xs sm:text-sm font-mono text-slate-300 leading-relaxed max-h-60 overflow-y-auto">
+                        <div class="font-bold text-cyber-amber mb-2 flex items-center space-x-2">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>PEMBAHASAN LANGKAH MATEMATIS:</span>
+                        </div>
+                        <div id="quizFeedbackExplanation" class="space-y-1">
+                            <!-- Dynamic math explanation -->
+                        </div>
+                    </div>
+
+                    <button onclick="nextQuizQuestion()" class="w-full py-3 bg-cyber-cyan hover:bg-cyan-400 text-slate-950 font-bold font-mono rounded-xl transition shadow-neon-cyan flex items-center justify-center space-x-2 text-sm">
+                        <span>LANJUTKAN SOAL BERIKUTNYA</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. END GAME SCREEN / CERTIFICATE -->
+            <div id="quizEndScreen" class="hidden glass-panel rounded-2xl p-6 sm:p-10 border border-slate-800 text-center max-w-2xl mx-auto shadow-2xl relative overflow-hidden space-y-6">
+                
+                <div class="inline-block px-4 py-1.5 rounded-full bg-cyber-purple/20 border border-cyber-purple/40 text-cyber-purple text-xs font-mono font-bold uppercase tracking-wider">
+                    🏆 HASIL LATIHAN TANTANGAN
+                </div>
+
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+                    MISI SELESAI!
+                </h2>
+                <p id="endStudentName" class="text-sm font-mono text-slate-400">Hacker: Siswa Kelas 8</p>
+
+                <!-- Rank Card -->
+                <div class="bg-slate-900/90 rounded-2xl p-6 border-2 border-cyber-cyan/40 max-w-md mx-auto shadow-neon-cyan relative overflow-hidden">
+                    <div id="endRankIcon" class="text-5xl mb-3">
+                        🧙‍♂️
+                    </div>
+                    <div class="text-xs font-mono text-slate-400 uppercase tracking-widest mb-1">GELAR RESMI:</div>
+                    <h3 id="endRankTitle" class="text-xl font-extrabold text-cyber-cyan font-mono mb-3">
+                        MASTER BINARY HACKER
+                    </h3>
+
+                    <!-- Final XP Score -->
+                    <div class="inline-flex items-center space-x-2 bg-slate-800 px-4 py-2 rounded-xl border border-slate-700 mb-3 font-mono">
+                        <span class="text-xs text-slate-400">TOTAL XP:</span>
+                        <span id="endFinalXP" class="text-xl font-bold text-cyber-amber">500</span>
+                        <span class="text-xs text-slate-400">XP</span>
+                    </div>
+
+                    <p id="endRankMessage" class="text-xs text-slate-300 leading-relaxed italic">
+                        Hebat sekali! Kamu menguasai seluruh konsep konversi sistem bilangan desimal, biner, dan oktal dengan sempurna!
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row justify-center gap-3 max-w-md mx-auto pt-2">
+                    <button onclick="startQuizGame()" class="flex-1 py-3 px-6 bg-cyber-purple hover:bg-purple-500 text-white font-bold font-mono rounded-xl transition shadow-neon-purple text-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>MAIN LAGI</span>
+                    </button>
+                    <button onclick="switchTab('simulator')" class="flex-1 py-3 px-6 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold font-mono rounded-xl border border-slate-700 transition text-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-sliders text-cyber-cyan"></i>
+                        <span>Buka Simulator</span>
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="w-full border-t border-slate-800/80 py-4 glass-panel text-center text-xs text-slate-500 font-mono z-10 mt-6">
+        <p>Informatika SMP Kelas 8 • Kurikulum Merdeka • Sistem & Konversi Bilangan Digital</p>
+    </footer>
+
+    <script>
+        /* ========================================================================= */
+        /* AUDIO ENGINE (Web Audio API Synthesizer - No External Audio Files) */
+        /* ========================================================================= */
+        let globalAudioEnabled = true;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function toggleGlobalAudio() {
+            globalAudioEnabled = !globalAudioEnabled;
+            const icon = document.getElementById('audioToggleIcon');
+            if (globalAudioEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-sm';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-sm text-slate-500';
+            }
+        }
+
+        function playSound(type) {
+            if (!globalAudioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.setValueAtTime(164.81, now + 0.12); // E3
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'win') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const noteOsc = ctx.createOscillator();
+                        const noteGain = ctx.createGain();
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(ctx.destination);
+                        noteOsc.type = 'triangle';
+                        noteOsc.frequency.setValueAtTime(freq, now + (idx * 0.1));
+                        noteGain.gain.setValueAtTime(0.15, now + (idx * 0.1));
+                        noteGain.gain.linearRampToValueAtTime(0.01, now + (idx * 0.1) + 0.2);
+                        noteOsc.start(now + (idx * 0.1));
+                        noteOsc.stop(now + (idx * 0.1) + 0.2);
+                    });
+                }
+            } catch (e) {
+                console.log('Audio playback error:', e);
+            }
+        }
+
+        /* ========================================================================= */
+        /* TAB NAVIGATION LOGIC */
+        /* ========================================================================= */
+        let currentTab = 'modul';
+
+        function switchTab(tabId) {
+            playSound('click');
+            currentTab = tabId;
+
+            // Hide all tab contents
+            document.getElementById('tabContent-modul').classList.add('hidden');
+            document.getElementById('tabContent-simulator').classList.add('hidden');
+            document.getElementById('tabContent-kuis').classList.add('hidden');
+
+            // Reset tab button styles
+            ['modul', 'simulator', 'kuis'].forEach(id => {
+                const btn = document.getElementById(`tabBtn-${id}`);
+                btn.classList.remove('tab-active', 'text-cyber-cyan');
+                btn.classList.add('text-slate-400');
+            });
+
+            // Show active tab
+            document.getElementById(`tabContent-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tabBtn-${tabId}`);
+            activeBtn.classList.add('tab-active', 'text-cyber-cyan');
+            activeBtn.classList.remove('text-slate-400');
+
+            if (tabId === 'simulator') {
+                runSimulator();
+            }
+        }
+
+        /* ========================================================================= */
+        /* TAB 1: MODUL GUIDE SELECTOR LOGIC */
+        /* ========================================================================= */
+        const modulGuideData = {
+            dec2bin: {
+                title: "Desimal ke Biner (Teknik Sisa Pembagian / Modulo 2)",
+                desc: "Bagi bilangan desimal secara berulang dengan angka 2 sampai hasilnya 0. Catat sisa pembagiannya (0 atau 1) pada setiap langkah. Hasil biner dibaca dari sisa pembagian paling bawah ke paling atas.",
+                exampleNum: "25",
+                resultStr: "11001",
+                stepsHtml: `
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse font-mono text-xs sm:text-sm">
+                            <thead>
+                                <tr class="bg-slate-900 text-cyber-cyan border-b border-slate-800">
+                                    <th class="p-2.5">Langkah</th>
+                                    <th class="p-2.5">Pembagian (÷ 2)</th>
+                                    <th class="p-2.5">Hasil Bagi</th>
+                                    <th class="p-2.5 text-cyber-emerald font-bold">Sisa Pembagian (Bit)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                                <tr>
+                                    <td class="p-2">1</td>
+                                    <td class="p-2">25 ÷ 2</td>
+                                    <td class="p-2">12</td>
+                                    <td class="p-2 text-cyber-emerald font-bold">1 (LSB - Bit Terakhir)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2">2</td>
+                                    <td class="p-2">12 ÷ 2</td>
+                                    <td class="p-2">6</td>
+                                    <td class="p-2 text-cyber-emerald font-bold">0</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2">3</td>
+                                    <td class="p-2">6 ÷ 2</td>
+                                    <td class="p-2">3</td>
+                                    <td class="p-2 text-cyber-emerald font-bold">0</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2">4</td>
+                                    <td class="p-2">3 ÷ 2</td>
+                                    <td class="p-2">1</td>
+                                    <td class="p-2 text-cyber-emerald font-bold">1</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2">5</td>
+                                    <td class="p-2">1 ÷ 2</td>
+                                    <td class="p-2">0</td>
+                                    <td class="p-2 text-cyber-emerald font-bold">1 (MSB - Bit Pertama)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bg-cyber-cyan/10 border border-cyber-cyan/30 rounded-xl p-3 text-xs font-mono text-cyber-cyan flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-up-long text-lg"></i>
+                        <span>Bacalah sisa pembagian dari BAWAH ke ATAS ➔ <strong>(11001)₂</strong></span>
+                    </div>
+                `
+            },
+            bin2dec: {
+                title: "Biner ke Desimal (Teknik Penjumlahan Bobot Pangkat 2ⁿ)",
+                desc: "Setiap digit biner (bit) dikalikan dengan bobot 2ⁿ sesuai dengan posisinya (dimulai dari indeks 0 paling kanan). Setelah itu, jumlahkan semua hasil perkaliannya.",
+                exampleNum: "11001",
+                resultStr: "25",
+                stepsHtml: `
+                    <div class="space-y-3 font-mono text-xs sm:text-sm">
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 leading-relaxed">
+                            <strong>Rumus:</strong> (d₄ × 2⁴) + (d₃ × 2³) + (d₂ × 2²) + (d₁ × 2¹) + (d₀ × 2⁰)
+                        </div>
+                        <div class="space-y-1.5 pl-2 text-slate-300">
+                            <div>• Bit-0 (kanan): <span class="text-cyber-cyan">1</span> × 2⁰ = 1 × 1 = <strong class="text-cyber-emerald">1</strong></div>
+                            <div>• Bit-1: <span class="text-cyber-cyan">0</span> × 2¹ = 0 × 2 = <strong class="text-cyber-emerald">0</strong></div>
+                            <div>• Bit-2: <span class="text-cyber-cyan">0</span> × 2² = 0 × 4 = <strong class="text-cyber-emerald">0</strong></div>
+                            <div>• Bit-3: <span class="text-cyber-cyan">1</span> × 2³ = 1 × 8 = <strong class="text-cyber-emerald">8</strong></div>
+                            <div>• Bit-4 (kiri): <span class="text-cyber-cyan">1</span> × 2⁴ = 1 × 16 = <strong class="text-cyber-emerald">16</strong></div>
+                        </div>
+                        <div class="bg-cyber-emerald/10 border border-cyber-emerald/30 rounded-xl p-3 text-xs text-cyber-emerald font-bold">
+                            Total Penjumlahan = 16 + 8 + 0 + 0 + 1 = <strong>(25)₁₀</strong>
+                        </div>
+                    </div>
+                `
+            },
+            dec2oct: {
+                title: "Desimal ke Oktal (Teknik Sisa Pembagian / Modulo 8)",
+                desc: "Bagi bilangan desimal secara berulang dengan angka 8 sampai hasilnya 0. Catat sisa pembagiannya (0 sampai 7). Hasil oktal dibaca dari sisa pembagian paling bawah ke atas.",
+                exampleNum: "85",
+                resultStr: "125",
+                stepsHtml: `
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse font-mono text-xs sm:text-sm">
+                            <thead>
+                                <tr class="bg-slate-900 text-cyber-purple border-b border-slate-800">
+                                    <th class="p-2.5">Langkah</th>
+                                    <th class="p-2.5">Pembagian (÷ 8)</th>
+                                    <th class="p-2.5">Hasil Bagi</th>
+                                    <th class="p-2.5 text-cyber-amber font-bold">Sisa Pembagian</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                                <tr>
+                                    <td class="p-2">1</td>
+                                    <td class="p-2">85 ÷ 8</td>
+                                    <td class="p-2">10</td>
+                                    <td class="p-2 text-cyber-amber font-bold">5</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2">2</td>
+                                    <td class="p-2">10 ÷ 8</td>
+                                    <td class="p-2">1</td>
+                                    <td class="p-2 text-cyber-amber font-bold">2</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2">3</td>
+                                    <td class="p-2">1 ÷ 8</td>
+                                    <td class="p-2">0</td>
+                                    <td class="p-2 text-cyber-amber font-bold">1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bg-cyber-purple/10 border border-cyber-purple/30 rounded-xl p-3 text-xs font-mono text-cyber-purple flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-up-long text-lg"></i>
+                        <span>Bacalah sisa pembagian dari BAWAH ke ATAS ➔ <strong>(125)₈</strong></span>
+                    </div>
+                `
+            },
+            oct2dec: {
+                title: "Oktal ke Desimal (Teknik Penjumlahan Bobot Pangkat 8ⁿ)",
+                desc: "Setiap digit oktal dikalikan dengan bobot 8ⁿ sesuai posisi digitnya (dimulai dari indeks 0 paling kanan). Kemudian jumlahkan seluruh hasilnya.",
+                exampleNum: "125",
+                resultStr: "85",
+                stepsHtml: `
+                    <div class="space-y-3 font-mono text-xs sm:text-sm">
+                        <div class="p-3 bg-slate-900 rounded-xl border border-slate-800 leading-relaxed">
+                            <strong>Rumus:</strong> (d₂ × 8²) + (d₁ × 8¹) + (d₀ × 8⁰)
+                        </div>
+                        <div class="space-y-1.5 pl-2 text-slate-300">
+                            <div>• Digit-0 (kanan): <span class="text-cyber-purple">5</span> × 8⁰ = 5 × 1 = <strong class="text-cyber-amber">5</strong></div>
+                            <div>• Digit-1: <span class="text-cyber-purple">2</span> × 8¹ = 2 × 8 = <strong class="text-cyber-amber">16</strong></div>
+                            <div>• Digit-2 (kiri): <span class="text-cyber-purple">1</span> × 8² = 1 × 64 = <strong class="text-cyber-amber">64</strong></div>
+                        </div>
+                        <div class="bg-cyber-amber/10 border border-cyber-amber/30 rounded-xl p-3 text-xs text-cyber-amber font-bold">
+                            Total Penjumlahan = 64 + 16 + 5 = <strong>(85)₁₀</strong>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function selectModulGuide(key) {
+            playSound('click');
+            // Update pill buttons CSS
+            document.querySelectorAll('.modul-guide-btn').forEach(btn => {
+                btn.className = 'modul-guide-btn px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition';
+            });
+            const activeBtn = document.getElementById(`modulGuideBtn-${key}`);
+            if (activeBtn) {
+                activeBtn.className = 'modul-guide-btn px-3 py-2 rounded-xl bg-cyber-cyan text-slate-950 font-bold shadow-neon-cyan transition';
+            }
+
+            const data = modulGuideData[key];
+            const container = document.getElementById('modulGuideContent');
+            container.innerHTML = `
+                <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 space-y-3">
+                    <h4 class="text-base font-bold text-cyber-cyan font-mono">${data.title}</h4>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${data.desc}</p>
+                    <div class="border-t border-slate-800 pt-3">
+                        <div class="text-xs font-mono text-slate-400 mb-2">CONTOH SIMULASI CONTOH (${data.exampleNum}):</div>
+                        ${data.stepsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ========================================================================= */
+        /* TAB 2: SIMULATOR & STEP-BY-STEP MATHEMATICAL ENGINE */
+        /* ========================================================================= */
+        const presetData = {
+            dec2bin: ['25', '42', '100', '255'],
+            bin2dec: ['11001', '101010', '11111111'],
+            dec2oct: ['85', '157', '512'],
+            oct2dec: ['125', '235', '1000']
+        };
+
+        function clearSimulatorInput() {
+            playSound('click');
+            document.getElementById('simulatorInput').value = '';
+            runSimulator();
+        }
+
+        function setSimulatorInput(val) {
+            playSound('click');
+            document.getElementById('simulatorInput').value = val;
+            runSimulator();
+        }
+
+        function runSimulator() {
+            const mode = document.getElementById('simulatorModeSelect').value;
+            const inputVal = document.getElementById('simulatorInput').value.trim();
+            const inputLabel = document.getElementById('simulatorInputLabel');
+            const errorElement = document.getElementById('simulatorInputError');
+            const presetContainer = document.getElementById('simulatorPresetContainer');
+            const resultDisplay = document.getElementById('simulatorResultDisplay');
+            const stepContainer = document.getElementById('simulatorStepContainer');
+
+            // Render Presets
+            presetContainer.innerHTML = '';
+            (presetData[mode] || []).forEach(p => {
+                const btn = document.createElement('button');
+                btn.onclick = () => setSimulatorInput(p);
+                btn.className = 'px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-mono text-slate-300 transition';
+                btn.innerText = p;
+                presetContainer.appendChild(btn);
+            });
+
+            // Update Input Labels
+            if (mode === 'dec2bin' || mode === 'dec2oct') {
+                inputLabel.innerText = 'MASUKKAN BILANGAN DESIMAL (POSI TIF):';
+            } else if (mode === 'bin2dec') {
+                inputLabel.innerText = 'MASUKKAN BILANGAN BINER (ANGKA 0 & 1):';
+            } else if (mode === 'oct2dec') {
+                inputLabel.innerText = 'MASUKKAN BILANGAN OKTAL (DIGIT 0 - 7):';
+            }
+
+            errorElement.classList.add('hidden');
+
+            if (!inputVal) {
+                resultDisplay.innerText = '-';
+                stepContainer.innerHTML = '<div class="text-slate-500 italic text-xs">Silakan ketik angka pada kolom input di atas untuk melihat perhitungan otomatis...</div>';
+                return;
+            }
+
+            // Perform Validations & Step Computation
+            try {
+                if (mode === 'dec2bin') {
+                    if (!/^\d+$/.test(inputVal)) throw new Error('Hanya menerima angka bulat desimal positif!');
+                    const n = parseInt(inputVal, 10);
+                    const steps = getDecToBinSteps(n);
+                    resultDisplay.innerText = `(${steps.binary})₂`;
+                    renderDecToBaseStepUI(steps, 2, 'Biner');
+
+                } else if (mode === 'bin2dec') {
+                    if (!/^[01]+$/.test(inputVal)) throw new Error('Sistem Biner hanya boleh mengandung angka 0 dan 1!');
+                    const steps = getBinToDecSteps(inputVal);
+                    resultDisplay.innerText = `(${steps.decimal})₁₀`;
+                    renderBaseToDecStepUI(steps, 2, 'Biner');
+
+                } else if (mode === 'dec2oct') {
+                    if (!/^\d+$/.test(inputVal)) throw new Error('Hanya menerima angka bulat desimal positif!');
+                    const n = parseInt(inputVal, 10);
+                    const steps = getDecToOctSteps(n);
+                    resultDisplay.innerText = `(${steps.octal})₈`;
+                    renderDecToBaseStepUI(steps, 8, 'Oktal');
+
+                } else if (mode === 'oct2dec') {
+                    if (!/^[0-7]+$/.test(inputVal)) throw new Error('Sistem Oktal hanya boleh mengandung digit 0 sampai 7!');
+                    const steps = getOctToDecSteps(inputVal);
+                    resultDisplay.innerText = `(${steps.decimal})₁₀`;
+                    renderBaseToDecStepUI(steps, 8, 'Oktal');
+                }
+            } catch (err) {
+                errorElement.innerText = `⚠️ ${err.message}`;
+                errorElement.classList.remove('hidden');
+                resultDisplay.innerText = 'Input Salah!';
+                stepContainer.innerHTML = `<div class="p-3 bg-red-950/30 border border-red-500/40 rounded-xl text-red-400 text-xs">${err.message}</div>`;
+            }
+        }
+
+        // --- Step Generator Helpers ---
+        function getDecToBinSteps(num) {
+            if (num === 0) return { binary: '0', rows: [{ step: 1, val: 0, div: 2, quotient: 0, rem: 0 }] };
+            let current = num;
+            const rows = [];
+            let step = 1;
+            while (current > 0) {
+                const quotient = Math.floor(current / 2);
+                const rem = current % 2;
+                rows.push({ step, val: current, div: 2, quotient, rem });
+                current = quotient;
+                step++;
+            }
+            const binary = rows.map(r => r.rem).reverse().join('');
+            return { binary, rows };
+        }
+
+        function getDecToOctSteps(num) {
+            if (num === 0) return { octal: '0', rows: [{ step: 1, val: 0, div: 8, quotient: 0, rem: 0 }] };
+            let current = num;
+            const rows = [];
+            let step = 1;
+            while (current > 0) {
+                const quotient = Math.floor(current / 8);
+                const rem = current % 8;
+                rows.push({ step, val: current, div: 8, quotient, rem });
+                current = quotient;
+                step++;
+            }
+            const octal = rows.map(r => r.rem).reverse().join('');
+            return { octal, rows };
+        }
+
+        function getBinToDecSteps(binStr) {
+            const len = binStr.length;
+            let sum = 0;
+            const terms = [];
+            for (let i = 0; i < len; i++) {
+                const digit = parseInt(binStr[len - 1 - i], 10);
+                const weight = Math.pow(2, i);
+                const termVal = digit * weight;
+                sum += termVal;
+                terms.push({ pos: i, digit, weight, termVal });
+            }
+            return { decimal: sum, terms: terms.reverse(), binStr };
+        }
+
+        function getOctToDecSteps(octStr) {
+            const len = octStr.length;
+            let sum = 0;
+            const terms = [];
+            for (let i = 0; i < len; i++) {
+                const digit = parseInt(octStr[len - 1 - i], 10);
+                const weight = Math.pow(8, i);
+                const termVal = digit * weight;
+                sum += termVal;
+                terms.push({ pos: i, digit, weight, termVal });
+            }
+            return { decimal: sum, terms: terms.reverse(), octStr };
+        }
+
+        // --- Render UI Tables for Simulator ---
+        function renderDecToBaseStepUI(data, base, baseName) {
+            const container = document.getElementById('simulatorStepContainer');
+            let tableRows = '';
+            data.rows.forEach(r => {
+                tableRows += `
+                    <tr class="hover:bg-slate-800/40 border-b border-slate-800">
+                        <td class="p-2 text-slate-400">${r.step}</td>
+                        <td class="p-2 font-bold text-white">${r.val} ÷ ${base}</td>
+                        <td class="p-2 text-slate-300">${r.quotient}</td>
+                        <td class="p-2 font-bold text-cyber-emerald">${r.rem}</td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-cyber-cyan border-b border-slate-800">
+                                <th class="p-2">Langkah</th>
+                                <th class="p-2">Pembagian</th>
+                                <th class="p-2">Hasil Bagi</th>
+                                <th class="p-2 text-cyber-emerald">Sisa Pembagian</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60">
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-cyber-cyan/10 border border-cyber-cyan/30 rounded-xl p-3 text-xs text-cyber-cyan flex items-center space-x-2">
+                    <i class="fa-solid fa-arrow-up-long text-lg"></i>
+                    <span>Bacalah Sisa Pembagian dari BAWAH ke ATAS ➔ <strong>(${data.binary || data.octal})<sub>${base}</sub></strong></span>
+                </div>
+            `;
+        }
+
+        function renderBaseToDecStepUI(data, base, baseName) {
+            const container = document.getElementById('simulatorStepContainer');
+            let termsHtml = '';
+            const sumArray = [];
+
+            data.terms.forEach(t => {
+                sumArray.push(t.termVal);
+                termsHtml += `
+                    <div class="flex items-center justify-between p-2 bg-slate-900/80 rounded-lg border border-slate-800">
+                        <span>Indeks Posisi <strong>${t.pos}</strong> (Digit: <strong class="text-cyber-cyan">${t.digit}</strong>)</span>
+                        <span class="text-slate-400">${t.digit} × ${base}<sup>${t.pos}</sup> (${t.weight}) = <strong class="text-cyber-emerald">${t.termVal}</strong></span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="space-y-2">
+                    ${termsHtml}
+                </div>
+                <div class="bg-cyber-emerald/10 border border-cyber-emerald/30 rounded-xl p-3 text-xs text-cyber-emerald font-bold">
+                    Jumlahkan Seluruh Hasil Perkalian: ${sumArray.reverse().join(' + ')} = <strong>(${data.decimal})₁₀</strong>
+                </div>
+            `;
+        }
+
+        function copySimulatorResult() {
+            const text = document.getElementById('simulatorResultDisplay').innerText;
+            if (!text || text === '-') return;
+            
+            // Clipboard fallback
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            playSound('click');
+            const copyBtnText = document.getElementById('copyBtnText');
+            copyBtnText.innerText = 'Tersalin!';
+            setTimeout(() => {
+                copyBtnText.innerText = 'Salin Hasil';
+            }, 2000);
+        }
+
+        /* ========================================================================= */
+        /* TAB 3: KUIS TANTANGAN & MINI GAME ENGINE */
+        /* ========================================================================= */
+        const quizBank = [
+            {
+                type: 'dec2bin',
+                typeLabel: 'DESIMAL ➔ BINER',
+                qText: 'Konversikan bilangan desimal (19)₁₀ ke dalam bentuk sistem Biner!',
+                correctOpt: '10011',
+                options: ['10011', '10101', '11001', '10001'],
+                explanation: '19 ÷ 2 = 9 (sisa 1), 9 ÷ 2 = 4 (sisa 1), 4 ÷ 2 = 2 (sisa 0), 2 ÷ 2 = 1 (sisa 0), 1 ÷ 2 = 0 (sisa 1). Urutkan dari bawah ke atas ➔ (10011)₂.'
+            },
+            {
+                type: 'bin2dec',
+                typeLabel: 'BINER ➔ DESIMAL',
+                qText: 'Berapakah nilai desimal dari kode biner (1101)₂ ?',
+                correctOpt: '13',
+                options: ['11', '13', '15', '9'],
+                explanation: '(1×2³) + (1×2²) + (0×2¹) + (1×2⁰) = 8 + 4 + 0 + 1 = 13.'
+            },
+            {
+                type: 'dec2oct',
+                typeLabel: 'DESIMAL ➔ OKTAL',
+                qText: 'Konversikan bilangan desimal (50)₁₀ ke dalam sistem bilangan Oktal!',
+                correctOpt: '62',
+                options: ['52', '62', '72', '42'],
+                explanation: '50 ÷ 8 = 6 (sisa 2), 6 ÷ 8 = 0 (sisa 6). Urutkan sisa pembagian dari bawah ke atas ➔ (62)₈.'
+            },
+            {
+                type: 'oct2dec',
+                typeLabel: 'OKTAL ➔ DESIMAL',
+                qText: 'Berapakah nilai desimal dari bilangan oktal (35)₈ ?',
+                correctOpt: '29',
+                options: ['27', '29', '31', '25'],
+                explanation: '(3×8¹) + (5×8⁰) = (3×8) + (5×1) = 24 + 5 = 29.'
+            },
+            {
+                type: 'dec2bin',
+                typeLabel: 'DESIMAL ➔ BINER',
+                qText: 'Angka desimal (32)₁₀ jika dikonversi ke Biner adalah...',
+                correctOpt: '100000',
+                options: ['100000', '11111', '100001', '011111'],
+                explanation: '32 adalah 2⁵, sehingga dalam biner diwakili oleh angka 1 diikuti 5 buah angka 0 ➔ (100000)₂.'
+            }
+        ];
+
+        let quizState = {
+            studentName: 'Siswa Kelas 8',
+            currentIndex: 0,
+            scoreXP: 0,
+            lives: 3,
+            answers: []
+        };
+
+        function startQuizGame() {
+            playSound('click');
+            const nameInput = document.getElementById('studentNameInput').value.trim();
+            if (nameInput) quizState.studentName = nameInput;
+
+            quizState.currentIndex = 0;
+            quizState.scoreXP = 0;
+            quizState.lives = 3;
+            quizState.answers = [];
+
+            updateGlobalXP(0);
+
+            document.getElementById('quizStartScreen').classList.add('hidden');
+            document.getElementById('quizEndScreen').classList.add('hidden');
+            document.getElementById('quizPlayScreen').classList.remove('hidden');
+
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            const q = quizBank[quizState.currentIndex];
+
+            // Render Header Stats
+            document.getElementById('quizCurrentNum').innerText = quizState.currentIndex + 1;
+            const progressPct = Math.round(((quizState.currentIndex + 1) / quizBank.length) * 100);
+            document.getElementById('quizProgressPct').innerText = `${progressPct}%`;
+            document.getElementById('quizProgressBar').style.width = `${progressPct}%`;
+            document.getElementById('quizScoreDisplay').innerText = `${quizState.scoreXP} XP`;
+
+            // Render Hearts/Lives
+            const livesContainer = document.getElementById('quizLivesContainer');
+            livesContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                if (i < quizState.lives) {
+                    livesContainer.innerHTML += '<i class="fa-solid fa-heart"></i>';
+                } else {
+                    livesContainer.innerHTML += '<i class="fa-solid fa-heart text-slate-700"></i>';
+                }
+            }
+
+            // Question Card UI
+            document.getElementById('quizTypeBadge').innerText = q.typeLabel;
+            document.getElementById('quizQuestionText').innerText = q.qText;
+
+            // Options Grid UI
+            const grid = document.getElementById('quizOptionsGrid');
+            grid.innerHTML = '';
+
+            // Shuffle options copy
+            const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
+            shuffledOpts.forEach((opt, idx) => {
+                const letter = String.fromCharCode(65 + idx);
+                const btn = document.createElement('button');
+                btn.onclick = () => handleQuizAnswer(opt);
+                btn.className = 'p-3.5 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 hover:border-cyber-cyan text-left transition-all duration-200 flex items-center space-x-3 group';
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 group-hover:border-cyber-cyan group-hover:bg-cyber-cyan group-hover:text-slate-950 font-bold font-mono text-slate-300 text-xs flex items-center justify-center transition">
+                        ${letter}
+                    </span>
+                    <span class="text-xs sm:text-sm text-slate-200 group-hover:text-white font-mono font-bold">
+                        ${opt}
+                    </span>
+                `;
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(selectedOpt) {
+            const q = quizBank[quizState.currentIndex];
+            const isCorrect = (selectedOpt === q.correctOpt);
+
+            if (isCorrect) {
+                quizState.scoreXP += 100;
+                updateGlobalXP(quizState.scoreXP);
+                playSound('correct');
+                showQuizFeedback(true, q.explanation);
+            } else {
+                quizState.lives--;
+                playSound('wrong');
+                showQuizFeedback(false, q.explanation, q.correctOpt);
+            }
+        }
+
+        function showQuizFeedback(isCorrect, explanation, correctAns = '') {
+            const modal = document.getElementById('quizFeedbackModal');
+            const card = document.getElementById('quizFeedbackCard');
+            const icon = document.getElementById('quizFeedbackIcon');
+            const title = document.getElementById('quizFeedbackTitle');
+            const sub = document.getElementById('quizFeedbackSub');
+            const exp = document.getElementById('quizFeedbackExplanation');
+
+            if (isCorrect) {
+                card.className = 'glass-panel rounded-2xl max-w-lg w-full p-6 border-2 border-cyber-emerald shadow-neon-emerald transform transition-transform scale-100 space-y-4';
+                icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 text-3xl border-2 bg-cyber-emerald/20 border-cyber-emerald text-cyber-emerald';
+                icon.innerHTML = '<i class="fa-solid fa-check"></i>';
+                title.innerText = 'JAWABAN BENAR!';
+                title.className = 'text-xl font-extrabold mb-1 font-mono text-cyber-emerald glow-emerald';
+                sub.innerText = '+100 XP Berhasil Ditambahkan';
+            } else {
+                card.className = 'glass-panel rounded-2xl max-w-lg w-full p-6 border-2 border-cyber-pink shadow-2xl transform transition-transform scale-100 space-y-4';
+                icon.className = 'w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3 text-3xl border-2 bg-cyber-pink/20 border-cyber-pink text-cyber-pink';
+                icon.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                title.innerText = 'JAWABAN KURANG TEPAT!';
+                title.className = 'text-xl font-extrabold mb-1 font-mono text-cyber-pink';
+                sub.innerText = `Kunci Jawaban Tepat: (${correctAns})`;
+            }
+
+            exp.innerHTML = `<p>${explanation}</p>`;
+            modal.classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            playSound('click');
+            document.getElementById('quizFeedbackModal').classList.add('hidden');
+
+            quizState.currentIndex++;
+
+            if (quizState.lives <= 0 || quizState.currentIndex >= quizBank.length) {
+                finishQuizGame();
+            } else {
+                loadQuizQuestion();
+            }
+        }
+
+        function finishQuizGame() {
+            document.getElementById('quizPlayScreen').classList.add('hidden');
+            document.getElementById('quizEndScreen').classList.remove('hidden');
+
+            document.getElementById('endStudentName').innerText = `Hacker: ${quizState.studentName}`;
+            document.getElementById('endFinalXP').innerText = quizState.scoreXP;
+
+            let rank = {};
+            if (quizState.scoreXP >= 400) {
+                rank = {
+                    title: 'MASTER BINARY HACKER 🌟',
+                    icon: '🧙‍♂️',
+                    msg: 'Luar biasa! Kamu menguasai seluruh logika konversi sistem bilangan desimal, biner, dan oktal dengan sangat lancar!'
+                };
+                playSound('win');
+            } else if (quizState.scoreXP >= 200) {
+                rank = {
+                    title: 'CYBER SPECIALIST 🛡️',
+                    icon: '👨‍💻',
+                    msg: 'Kerja bagus! Pemahamanmu sudah sangat baik. Pelajari lagi sisa pembagian dan kamu akan menjadi Master Hacker!'
+                };
+            } else {
+                rank = {
+                    title: 'CYBER CADET 🔧',
+                    icon: '🔰',
+                    msg: 'Tetap semangat! Bukalah Tab 1 Modul Belajar dan coba Simulator Konversi untuk memperkuat latihanmu!'
+                };
+            }
+
+            document.getElementById('endRankIcon').innerText = rank.icon;
+            document.getElementById('endRankTitle').innerText = rank.title;
+            document.getElementById('endRankMessage').innerText = rank.msg;
+        }
+
+        function updateGlobalXP(xp) {
+            document.getElementById('globalXPDisplay').innerText = xp;
+        }
+
+        /* ========================================================================= */
+        /* CANVAS BACKGROUND PARTICLE ANIMATION */
+        /* ========================================================================= */
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function initParticles() {
+            particles = [];
+            const count = Math.floor(window.innerWidth / 20);
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    alpha: Math.random() * 0.5 + 0.2
+                });
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#06b6d4';
+
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.onload = function() {
+            initParticles();
+            animateParticles();
+            selectModulGuide('dec2bin');
+            runSimulator();
+        };
+    </script>
+</body>
+</html>
