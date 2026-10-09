@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Absensi Wajah Siswa Realtime (Standalone)</title>
+  <meta name="description" content="Sistem Presensi Wajah Siswa Realtime berbasis Browser tanpa backend tambahan." />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#10B981', 600: '#059669', 700: '#047857' }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Supabase JS Client v2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- face-api.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased">
+
+  <!-- TOP BAR NAVIGATION -->
+  <header class="h-16 border-b border-slate-800 bg-slate-900/90 backdrop-blur px-6 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+        <i class="fa-solid fa-camera"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-base tracking-tight text-white flex items-center gap-2">
+          Presensi Wajah Siswa
+          <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-normal">Realtime</span>
+        </h1>
+        <p class="text-xs text-slate-400">SMA / SMK Digital Attendance System</p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60">
+      <button id="tab-btn-presensi" onclick="switchTab('presensi')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-emerald-600 text-white shadow-sm flex items-center gap-2">
+        <i class="fa-solid fa-video"></i> Presensi Kelas
+      </button>
+      <button id="tab-btn-enroll" onclick="switchTab('enroll')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-300 hover:text-white flex items-center gap-2">
+        <i class="fa-solid fa-user-plus"></i> Pendaftaran Wajah
+      </button>
+      <button id="tab-btn-config" onclick="switchTab('config')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-300 hover:text-white flex items-center gap-2">
+        <i class="fa-solid fa-gear"></i> Konfigurasi Database
+      </button>
+    </nav>
+
+    <!-- Status Badges -->
+    <div class="flex items-center gap-4 text-xs font-mono">
+      <div id="model-status-indicator" class="flex items-center gap-1.5 text-amber-400">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span id="model-status-text">Memuat AI Model...</span>
+      </div>
+      <div id="db-status-indicator" class="flex items-center gap-1.5 text-slate-400">
+        <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+        <span id="db-status-text">Memeriksa Database...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="flex-1 p-5 max-w-7xl w-full mx-auto overflow-hidden">
+    
+    <!-- TAB 1: MODE PRESENSI KELAS -->
+    <section id="view-presensi" class="grid grid-cols-1 lg:grid-cols-12 gap-5 h-full">
+      
+      <!-- Sisi Kiri: Kamera & Overlay Deteksi -->
+      <div class="lg:col-span-7 flex flex-col gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 relative shadow-xl">
+          
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+              <h2 class="text-sm font-semibold text-slate-200">Kamera Presensi Langsung</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="camera-select" class="bg-slate-800 border border-slate-700 text-xs rounded-lg px-2.5 py-1 text-slate-200 focus:outline-none focus:border-emerald-500 max-w-[200px] truncate">
+                <option value="">Kamera Utama</option>
+              </select>
+              <button id="btn-toggle-cam" onclick="toggleCamera()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5">
+                <i class="fa-solid fa-play"></i> Mulai Kamera
+              </button>
+            </div>
+          </div>
+
+          <!-- Video & Canvas Viewport -->
+          <div class="relative w-full aspect-[4/3] bg-slate-950 rounded-lg overflow-hidden border border-slate-800/80 flex items-center justify-center">
+            <video id="webcam-video" autoplay muted playsinline class="absolute inset-0 w-full h-full object-cover transform -scale-x-100"></video>
+            <canvas id="detection-canvas" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100 pointer-events-none"></canvas>
+
+            <!-- Placeholder if camera off -->
+            <div id="cam-placeholder" class="text-center p-6 text-slate-500 flex flex-col items-center">
+              <i class="fa-solid fa-video-slash text-4xl mb-2 text-slate-600"></i>
+              <p class="text-sm font-medium text-slate-300">Kamera Belum Aktif</p>
+              <p class="text-xs text-slate-500 mt-1">Klik tombol "Mulai Kamera" di atas untuk memindai kehadiran siswa</p>
+            </div>
+
+            <!-- Recognition Success Toast Banner -->
+            <div id="success-toast" class="absolute top-4 inset-x-4 bg-emerald-600/90 border border-emerald-400/50 backdrop-blur-md text-white rounded-lg p-3.5 shadow-2xl flex items-center justify-between transform -translate-y-20 opacity-0 transition-all duration-300 z-30">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                  <div class="text-xs uppercase tracking-wider text-emerald-200 font-semibold">Presensi Berhasil</div>
+                  <div id="toast-student-name" class="font-bold text-base text-white">Nama Siswa</div>
+                  <div id="toast-student-meta" class="text-xs text-emerald-100 font-mono">NISN: - · Kelas: -</div>
+                </div>
+              </div>
+              <div id="toast-student-time" class="text-right font-mono text-sm text-emerald-100">00:00:00</div>
+            </div>
+          </div>
+
+          <!-- Camera Footnote -->
+          <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+            <span class="flex items-center gap-2">
+              <i class="fa-solid fa-circle-info text-slate-500"></i> Arahkan wajah menghadap kamera dengan pencahayaan memadai
+            </span>
+            <span id="fps-counter" class="font-mono text-slate-500">Pendeteksian: Aktif</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sisi Kanan: Log Kehadiran Realtime -->
+      <div class="lg:col-span-5 flex flex-col gap-4">
+        
+        <!-- Summary Stats Card -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
+            <span class="text-xs text-slate-400">Total Siswa</span>
+            <div id="stat-total" class="text-2xl font-bold font-mono text-white mt-1">0</div>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
+            <span class="text-xs text-emerald-400">Hadir Hari Ini</span>
+            <div id="stat-present" class="text-2xl font-bold font-mono text-emerald-400 mt-1">0</div>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
+            <span class="text-xs text-slate-400">Belum Hadir</span>
+            <div id="stat-absent" class="text-2xl font-bold font-mono text-slate-400 mt-1">0</div>
+          </div>
+        </div>
+
+        <!-- Attendance List Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex-1 flex flex-col min-h-0 overflow-hidden shadow-xl">
+          <div class="flex items-center justify-between mb-3 shrink-0">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-200">Log Kehadiran Siswa</h3>
+              <p id="today-date-text" class="text-xs text-slate-400 font-mono">Hari ini</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="class-filter" onchange="renderAttendanceList()" class="bg-slate-800 border border-slate-700 text-xs rounded-lg px-2 py-1 text-slate-300">
+                <option value="ALL">Semua Kelas</option>
+              </select>
+              <button onclick="exportToCSV()" title="Ekspor CSV" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-slate-300 transition-colors">
+                <i class="fa-solid fa-download"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Search Input -->
+          <div class="mb-3 shrink-0">
+            <div class="relative">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+              <input type="text" id="search-student" oninput="renderAttendanceList()" placeholder="Cari nama atau NISN siswa..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+
+          <!-- Students List Scrollable Area -->
+          <div id="attendance-list-container" class="flex-1 overflow-y-auto pr-1 space-y-2">
+            <!-- Populated via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: PENDAFTARAN WAJAH SISWA (ENROLLMENT) -->
+    <section id="view-enroll" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 h-full">
+      <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col gap-4 shadow-xl">
+        <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+          <i class="fa-solid fa-id-card text-emerald-400"></i> Pendaftaran Siswa Baru
+        </h2>
+        <p class="text-xs text-slate-400 -mt-2">Ambil foto langsung melalui webcam atau unggah foto untuk mengekstrak vektor 128-fitur wajah.</p>
+
+        <form id="form-enroll" onsubmit="handleEnrollSubmit(event)" class="flex flex-col gap-3">
+          <div>
+            <label class="text-xs text-slate-300 mb-1 block">NISN Siswa *</label>
+            <input type="text" id="enroll-nisn" required placeholder="Contoh: 0071283941" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 mb-1 block">Nama Lengkap Siswa *</label>
+            <input type="text" id="enroll-name" required placeholder="Contoh: Ahmad Rizky Pratama" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 mb-1 block">Kelas *</label>
+            <input type="text" id="enroll-class" required placeholder="Contoh: XII-MIPA 1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <!-- Capture / Upload Preview -->
+          <div class="border border-dashed border-slate-700 rounded-lg p-3 text-center flex flex-col items-center justify-center bg-slate-950/60">
+            <div id="enroll-preview-box" class="w-36 h-36 rounded-lg bg-slate-900 overflow-hidden flex items-center justify-center relative mb-2 border border-slate-800">
+              <video id="enroll-webcam" autoplay muted playsinline class="hidden w-full h-full object-cover transform -scale-x-100"></video>
+              <img id="enroll-photo-img" class="hidden w-full h-full object-cover" alt="Preview Wajah">
+              <span id="enroll-placeholder-icon" class="text-slate-600 text-3xl"><i class="fa-solid fa-user"></i></span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="startEnrollWebcam()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition-colors flex items-center gap-1.5">
+                <i class="fa-solid fa-camera"></i> Buka Kamera
+              </button>
+              <button type="button" id="btn-snap-enroll" onclick="snapEnrollPhoto()" class="hidden px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-lg transition-colors flex items-center gap-1.5">
+                <i class="fa-solid fa-camera-retro"></i> Ambil Foto
+              </button>
+              <label class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition-colors cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-upload"></i> Unggah File
+                <input type="file" id="enroll-file-input" accept="image/*" onchange="handleEnrollFileUpload(event)" class="hidden">
+              </label>
+            </div>
+
+            <!-- Descriptor Validation Status -->
+            <div id="enroll-descriptor-status" class="mt-2 text-xs font-mono text-slate-400">
+              Menunggu pengambilan/pengunggahan foto wajah...
+            </div>
+          </div>
+
+          <button type="submit" id="btn-save-enroll" class="w-full mt-2 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Simpan Siswa & Sinkronkan Wajah
+          </button>
+        </form>
+      </div>
+
+      <!-- Directory Siswa Terdaftar -->
+      <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-semibold text-slate-100">Daftar Siswa Terdaftar</h2>
+            <p class="text-xs text-slate-400">Data siswa beserta vektor biometrik wajah yang tersimpan di sistem.</p>
+          </div>
+          <span id="registered-count-badge" class="font-mono text-xs px-2.5 py-1 bg-slate-800 text-slate-300 rounded-md">0 Siswa</span>
+        </div>
+
+        <div id="registered-students-table" class="flex-1 overflow-y-auto space-y-2 pr-1">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: KONFIGURASI SUPABASE & SQL -->
+    <section id="view-config" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 h-full overflow-y-auto">
+      <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col gap-4 shadow-xl">
+        <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+          <i class="fa-solid fa-database text-emerald-400"></i> Pengaturan Supabase Backend
+        </h2>
+        <p class="text-xs text-slate-400 -mt-2">Kredensial disimpan secara aman di LocalStorage browser perangkat sekolah ini.</p>
+
+        <form onsubmit="handleSaveConfig(event)" class="flex flex-col gap-3">
+          <div>
+            <label class="text-xs text-slate-300 mb-1 block">SUPABASE URL</label>
+            <input type="text" id="cfg-url" placeholder="https://xyzcompany.supabase.co" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
+          </div>
+          <div>
+            <label class="text-xs text-slate-300 mb-1 block">SUPABASE ANON KEY</label>
+            <input type="password" id="cfg-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
+          </div>
+
+          <div class="flex items-center gap-2 pt-2">
+            <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-check"></i> Simpan & Uji Koneksi
+            </button>
+            <button type="button" onclick="loadSampleDemoData()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5">
+              <i class="fa-solid fa-box-archive"></i> Muat Data Demo Offline
+            </button>
+          </div>
+        </form>
+
+        <div id="cfg-test-result" class="p-3 rounded-lg text-xs font-mono bg-slate-950 border border-slate-800 text-slate-400">
+          Status koneksi akan tampil di sini saat diuji.
+        </div>
+      </div>
+
+      <!-- Panduan & Skrip SQL -->
+      <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col gap-3 shadow-xl">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+            <i class="fa-solid fa-code text-emerald-400"></i> Skrip SQL Migrasi Database
+          </h2>
+          <button onclick="copySqlScript()" id="btn-copy-sql" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition-colors flex items-center gap-1">
+            <i class="fa-solid fa-copy"></i> Salin Skrip
+          </button>
+        </div>
+        <p class="text-xs text-slate-400">Buka Supabase Dashboard > Proyek Anda > Menu <b>SQL Editor</b> > Tempel skrip ini dan klik <b>RUN</b>.</p>
+
+        <pre class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-xs font-mono text-emerald-400 overflow-x-auto max-h-[360px] whitespace-pre">-- ==============================================================================
+-- SISTEM ABSENSI WAJAH SISWA REALTIME - SKEMA DATABASE SUPABASE
+-- Jalankan skrip ini pada menu "SQL Editor" di Dashboard Supabase Anda
+-- ==============================================================================
+
+-- 1. Buat Tabel Siswa (students)
+CREATE TABLE IF NOT EXISTS public.students (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nisn TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    class_name TEXT NOT NULL,
+    face_descriptor JSONB, -- Menyimpan 128 vektor float hasil ekstraksi wajah
+    photo_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Index untuk mempercepat query pencarian NISN dan kelas
+CREATE INDEX IF NOT EXISTS idx_students_nisn ON public.students(nisn);
+CREATE INDEX IF NOT EXISTS idx_students_class ON public.students(class_name);
+
+-- 2. Buat Tabel Presensi (attendances)
+CREATE TABLE IF NOT EXISTS public.attendances (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    student_id UUID NOT NULL REFERENCES public.students(id) ON DELETE CASCADE,
+    class_name TEXT NOT NULL,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    time TIME NOT NULL DEFAULT CURRENT_TIME,
+    status TEXT NOT NULL DEFAULT 'Hadir',
+    created_at TIMESTAMPTZ DEFAULT now(),
+    -- Cegah presensi ganda untuk siswa yang sama pada hari yang sama
+    CONSTRAINT unique_student_daily_attendance UNIQUE (student_id, date)
+);
+
+-- Index untuk mempercepat query log presensi harian
+CREATE INDEX IF NOT EXISTS idx_attendances_date ON public.attendances(date);
+CREATE INDEX IF NOT EXISTS idx_attendances_student ON public.attendances(student_id);
+
+-- 3. Konfigurasi Row Level Security (RLS)
+-- Aktifkan RLS untuk keamanan data
+ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.attendances ENABLE ROW LEVEL SECURITY;
+
+-- Buat Kebijakan Akses (Policy) untuk Anonymous Key (Aplikasi Browser Kelas)
+-- Catatan: Untuk produksi publik, Anda bisa membatasi hanya untuk user terotentikasi (Guru/Admin)
+DROP POLICY IF EXISTS "Akses Penuh Siswa untuk Aplikasi Sekolah" ON public.students;
+CREATE POLICY "Akses Penuh Siswa untuk Aplikasi Sekolah"
+    ON public.students
+    FOR ALL
+    TO anon, authenticated
+    USING (true)
+    WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Akses Penuh Presensi untuk Aplikasi Sekolah" ON public.attendances;
+CREATE POLICY "Akses Penuh Presensi untuk Aplikasi Sekolah"
+    ON public.attendances
+    FOR ALL
+    TO anon, authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- 4. Aktifkan Supabase Realtime untuk Tabel attendances
+-- Memastikan event INSERT/UPDATE tersiar otomatis ke browser monitor kelas
+ALTER PUBLICATION supabase_realtime ADD TABLE public.attendances;
+
+-- ==============================================================================
+-- SELESAI. Salin dan klik "RUN" di Supabase SQL Editor.
+-- ==============================================================================
+</pre>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    // --- STATE MANAGEMENT ---
+    let supabaseClient = null;
+    let registeredStudents = [];
+    let todayAttendances = [];
+    let faceMatcher = null;
+    let videoStream = null;
+    let isDetecting = false;
+    let detectionInterval = null;
+    let enrollmentDescriptor = null;
+    let enrollmentStream = null;
+    let lastSpokenStudentId = null;
+    let lastSpokenTime = 0;
+
+    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+
+    // --- AUDIO CHIME SYNTHESIZER ---
+    function playSuccessChime() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+        
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(880, now);
+        gain1.gain.setValueAtTime(0, now);
+        gain1.gain.linearRampToValueAtTime(0.2, now + 0.02);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.22);
+
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1318.5, now + 0.08);
+        gain2.gain.setValueAtTime(0, now + 0.08);
+        gain2.gain.linearRampToValueAtTime(0.25, now + 0.1);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now + 0.08);
+        osc2.stop(now + 0.48);
+      } catch (e) {
+        console.warn('Audio chime error:', e);
+      }
+    }
+
+    // --- INITIALIZATION ---
+    window.addEventListener('DOMContentLoaded', async () => {
+      updateTodayDateDisplay();
+      initSupabase();
+      await loadFaceApiModels();
+      await loadInitialData();
+      populateCameraList();
+    });
+
+    function updateTodayDateDisplay() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('today-date-text').textContent = now.toLocaleDateString('id-ID', options);
+    }
+
+    // --- TAB SWITCHING ---
+    function switchTab(tab) {
+      document.getElementById('view-presensi').classList.toggle('hidden', tab !== 'presensi');
+      document.getElementById('view-enroll').classList.toggle('hidden', tab !== 'enroll');
+      document.getElementById('view-config').classList.toggle('hidden', tab !== 'config');
+
+      const tabs = ['presensi', 'enroll', 'config'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tab-btn-' + t);
+        if (t === tab) {
+          btn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-emerald-600 text-white shadow-sm flex items-center gap-2';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-300 hover:text-white flex items-center gap-2';
+        }
+      });
+
+      if (tab === 'enroll') {
+        renderRegisteredStudentsTable();
+      }
+    }
+
+    // --- SUPABASE CLIENT ---
+    function initSupabase() {
+      const url = localStorage.getItem('absensi_supabase_url') || '';
+      const key = localStorage.getItem('absensi_supabase_anon_key') || '';
+      document.getElementById('cfg-url').value = url;
+      document.getElementById('cfg-key').value = key;
+
+      const dbStatusInd = document.getElementById('db-status-indicator');
+      const dbStatusTxt = document.getElementById('db-status-text');
+
+      if (url && key && window.supabase) {
+        try {
+          supabaseClient = window.supabase.createClient(url, key);
+          dbStatusInd.className = 'flex items-center gap-1.5 text-emerald-400';
+          dbStatusInd.firstElementChild.className = 'w-2 h-2 rounded-full bg-emerald-400';
+          dbStatusTxt.textContent = 'Supabase Terhubung';
+          subscribeRealtime();
+        } catch (e) {
+          console.error(e);
+          dbStatusTxt.textContent = 'Konfigurasi DB Salah';
+        }
+      } else {
+        dbStatusInd.className = 'flex items-center gap-1.5 text-amber-400';
+        dbStatusInd.firstElementChild.className = 'w-2 h-2 rounded-full bg-amber-400';
+        dbStatusTxt.textContent = 'Mode Offline (Demo)';
+      }
+    }
+
+    // --- REALTIME SUBSCRIPTION ---
+    function subscribeRealtime() {
+      if (!supabaseClient) return;
+      try {
+        supabaseClient
+          .channel('public:attendances')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'attendances' }, payload => {
+            if (payload.new) {
+              const rec = payload.new;
+              if (!todayAttendances.some(a => a.id === rec.id)) {
+                todayAttendances.unshift(rec);
+                renderAttendanceList();
+              }
+            }
+          })
+          .subscribe();
+      } catch (err) {
+        console.warn('Realtime subscription failed:', err);
+      }
+    }
+
+    // --- LOAD FACE-API MODELS ---
+    async function loadFaceApiModels() {
+      const modelStatus = document.getElementById('model-status-indicator');
+      const modelText = document.getElementById('model-status-text');
+      try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+        
+        modelStatus.className = 'flex items-center gap-1.5 text-emerald-400';
+        modelStatus.firstElementChild.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        modelText.textContent = 'Face-AI Siap';
+      } catch (e) {
+        console.error('Error loading face-api models:', e);
+        modelStatus.className = 'flex items-center gap-1.5 text-rose-400';
+        modelStatus.firstElementChild.className = 'w-2 h-2 rounded-full bg-rose-400';
+        modelText.textContent = 'Gagal Memuat AI Model';
+      }
+    }
+
+    // --- LOAD DATA ---
+    async function loadInitialData() {
+      let loadedFromSupabase = false;
+      if (supabaseClient) {
+        try {
+          const { data: stdData, error: stdErr } = await supabaseClient.from('students').select('*').order('name');
+          if (!stdErr && stdData) {
+            registeredStudents = stdData;
+            loadedFromSupabase = true;
+          }
+          const today = new Date().toISOString().split('T')[0];
+          const { data: attData } = await supabaseClient.from('attendances').select('*').eq('date', today);
+          if (attData) todayAttendances = attData;
+        } catch (e) {
+          console.warn('Supabase fetch failed:', e);
+        }
+      }
+
+      if (!loadedFromSupabase) {
+        const storedStudents = localStorage.getItem('absensi_local_students');
+        if (storedStudents) {
+          try { registeredStudents = JSON.parse(storedStudents); } catch (e) { registeredStudents = []; }
+        } else {
+          loadSampleDemoData();
+        }
+      }
+
+      rebuildFaceMatcher();
+      populateClassFilter();
+      renderAttendanceList();
+    }
+
+    // --- BUILD FACE MATCHER ---
+    function rebuildFaceMatcher() {
+      if (!window.faceapi) return;
+      const labeledDescriptors = [];
+
+      for (const s of registeredStudents) {
+        if (s.face_descriptor && Array.isArray(s.face_descriptor) && s.face_descriptor.length >= 128) {
+          try {
+            const floatArr = new Float32Array(s.face_descriptor);
+            labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(s.id, [floatArr]));
+          } catch (e) {
+            console.warn(e);
+          }
+        }
+      }
+
+      if (labeledDescriptors.length > 0) {
+        faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.52);
+      } else {
+        faceMatcher = null;
+      }
+    }
+
+    // --- CAMERA ENGINE ---
+    async function populateCameraList() {
+      const select = document.getElementById('camera-select');
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === 'videoinput');
+        select.innerHTML = '';
+        videoDevices.forEach((device, i) => {
+          const opt = document.createElement('option');
+          opt.value = device.deviceId;
+          opt.text = device.label || 'Kamera ' + (i + 1);
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.warn('Cannot enumerate devices:', e);
+      }
+    }
+
+    async function toggleCamera() {
+      const btn = document.getElementById('btn-toggle-cam');
+      if (videoStream) {
+        stopCamera();
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Mulai Kamera';
+        btn.className = 'px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5';
+      } else {
+        await startCamera();
+        btn.innerHTML = '<i class="fa-solid fa-stop"></i> Matikan Kamera';
+        btn.className = 'px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5';
+      }
+    }
+
+    async function startCamera() {
+      const video = document.getElementById('webcam-video');
+      const select = document.getElementById('camera-select');
+      const placeholder = document.getElementById('cam-placeholder');
+
+      const constraints = {
+        video: select.value ? { deviceId: { exact: select.value } } : { width: { ideal: 640 }, height: { ideal: 480 } }
+      };
+
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = videoStream;
+        placeholder.classList.add('hidden');
+        video.onloadedmetadata = () => {
+          video.play();
+          startDetectionLoop();
+        };
+      } catch (e) {
+        alert('Gagal mengakses kamera: ' + e.message);
+      }
+    }
+
+    function stopCamera() {
+      if (detectionInterval) clearInterval(detectionInterval);
+      if (videoStream) {
+        videoStream.getTracks().forEach(t => t.stop());
+        videoStream = null;
+      }
+      const video = document.getElementById('webcam-video');
+      video.srcObject = null;
+      document.getElementById('cam-placeholder').classList.remove('hidden');
+      const canvas = document.getElementById('detection-canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // --- REALTIME DETECTION LOOP ---
+    function startDetectionLoop() {
+      const video = document.getElementById('webcam-video');
+      const canvas = document.getElementById('detection-canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (detectionInterval) clearInterval(detectionInterval);
+
+      detectionInterval = setInterval(async () => {
+        if (!video || video.paused || video.ended || !faceapi) return;
+
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+
+        try {
+          const detections = await faceapi
+            .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.45 }))
+            .withFaceLandmarks()
+            .withFaceDescriptors();
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          if (!detections || detections.length === 0) return;
+
+          for (const det of detections) {
+            const box = det.detection.box;
+            let label = 'Wajah Terdeteksi';
+            let matchedStudent = null;
+
+            if (faceMatcher && det.descriptor) {
+              const bestMatch = faceMatcher.findBestMatch(det.descriptor);
+              if (bestMatch.label !== 'unknown') {
+                matchedStudent = registeredStudents.find(s => s.id === bestMatch.label);
+                if (matchedStudent) {
+                  label = matchedStudent.name;
+                  triggerAttendance(matchedStudent);
+                }
+              } else {
+                label = 'Belum Terdaftar';
+              }
+            }
+
+            // Draw bounding box
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = matchedStudent ? '#10B981' : '#F59E0B';
+            ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+            // Draw label box
+            ctx.fillStyle = matchedStudent ? '#10B981' : '#F59E0B';
+            ctx.fillRect(box.x, box.y - 24, Math.max(120, box.width), 24);
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 12px Plus Jakarta Sans, sans-serif';
+            ctx.fillText(label, box.x + 6, box.y - 7);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, 350);
+    }
+
+    // --- RECORD ATTENDANCE ---
+    async function triggerAttendance(student) {
+      const today = new Date().toISOString().split('T')[0];
+      const now = new Date();
+      const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+
+      // Debounce: prevent spamming same student in 10 seconds
+      if (lastSpokenStudentId === student.id && (Date.now() - lastSpokenTime) < 10000) {
+        return;
+      }
+
+      // Check if already attended today
+      const already = todayAttendances.find(a => a.student_id === student.id && a.date === today);
+      if (already) {
+        lastSpokenStudentId = student.id;
+        lastSpokenTime = Date.now();
+        showSuccessToast(student, already.time, 'Sudah Absen Hari Ini');
+        return;
+      }
+
+      lastSpokenStudentId = student.id;
+      lastSpokenTime = Date.now();
+
+      playSuccessChime();
+
+      const newRec = {
+        id: 'att-' + Date.now(),
+        student_id: student.id,
+        class_name: student.class_name,
+        date: today,
+        time: timeStr,
+        status: 'Hadir'
+      };
+
+      todayAttendances.unshift(newRec);
+      renderAttendanceList();
+      showSuccessToast(student, timeStr, 'Presensi Berhasil');
+
+      // Push to Supabase if connected
+      if (supabaseClient) {
+        try {
+          await supabaseClient.from('attendances').insert([{
+            student_id: student.id,
+            class_name: student.class_name,
+            date: today,
+            time: timeStr,
+            status: 'Hadir'
+          }]);
+        } catch (e) {
+          console.error('Supabase attendance insert error:', e);
+        }
+      } else {
+        localStorage.setItem('absensi_local_attendances', JSON.stringify(todayAttendances));
+      }
+    }
+
+    function showSuccessToast(student, time, title) {
+      const toast = document.getElementById('success-toast');
+      document.getElementById('toast-student-name').textContent = student.name;
+      document.getElementById('toast-student-meta').textContent = 'NISN: ' + student.nisn + ' · Kelas: ' + student.class_name;
+      document.getElementById('toast-student-time').textContent = time + ' WIB';
+
+      toast.classList.remove('-translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-20', 'opacity-0');
+      }, 4000);
+    }
+
+    // --- RENDER LOG LIST ---
+    function renderAttendanceList() {
+      const container = document.getElementById('attendance-list-container');
+      const search = (document.getElementById('search-student').value || '').toLowerCase();
+      const filterClass = document.getElementById('class-filter').value;
+      const today = new Date().toISOString().split('T')[0];
+
+      let list = registeredStudents.map(s => {
+        const att = todayAttendances.find(a => a.student_id === s.id && a.date === today);
+        return {
+          ...s,
+          isAttended: !!att,
+          attendanceTime: att ? att.time : null
+        };
+      });
+
+      if (filterClass !== 'ALL') {
+        list = list.filter(s => s.class_name === filterClass);
+      }
+      if (search) {
+        list = list.filter(s => s.name.toLowerCase().includes(search) || s.nisn.includes(search));
+      }
+
+      // Sort: Hadir first, then name
+      list.sort((a, b) => {
+        if (a.isAttended && !b.isAttended) return -1;
+        if (!a.isAttended && b.isAttended) return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      // Update counters
+      const total = list.length;
+      const present = list.filter(s => s.isAttended).length;
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-present').textContent = present;
+      document.getElementById('stat-absent').textContent = total - present;
+
+      if (list.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-xs text-slate-500">Tidak ada siswa ditemukan.</div>';
+        return;
+      }
+
+      container.innerHTML = list.map(s => `
+        <div class="p-2.5 rounded-lg border ${s.isAttended ? 'bg-slate-900/90 border-emerald-500/30' : 'bg-slate-950/60 border-slate-800'} flex items-center justify-between transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full ${s.isAttended ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500'} flex items-center justify-center font-bold text-xs shrink-0">
+              ${s.name.charAt(0)}
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-slate-200">${s.name}</div>
+              <div class="text-[11px] text-slate-400 font-mono">NISN: ${s.nisn} · ${s.class_name}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            ${s.isAttended 
+              ? `<span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-mono font-medium">Hadir ${s.attendanceTime}</span>`
+              : `<span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 font-medium">Belum Hadir</span>`
+            }
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function populateClassFilter() {
+      const select = document.getElementById('class-filter');
+      const classes = Array.from(new Set(registeredStudents.map(s => s.class_name))).filter(Boolean);
+      select.innerHTML = '<option value="ALL">Semua Kelas</option>';
+      classes.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.text = c;
+        select.appendChild(opt);
+      });
+    }
+
+    // --- ENROLLMENT ENGINE ---
+    async function startEnrollWebcam() {
+      const video = document.getElementById('enroll-webcam');
+      const img = document.getElementById('enroll-photo-img');
+      const icon = document.getElementById('enroll-placeholder-icon');
+      const snapBtn = document.getElementById('btn-snap-enroll');
+
+      try {
+        enrollmentStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 320 } });
+        video.srcObject = enrollmentStream;
+        video.classList.remove('hidden');
+        img.classList.add('hidden');
+        icon.classList.add('hidden');
+        snapBtn.classList.remove('hidden');
+      } catch (e) {
+        alert('Gagal membuka kamera: ' + e.message);
+      }
+    }
+
+    async function snapEnrollPhoto() {
+      const video = document.getElementById('enroll-webcam');
+      const img = document.getElementById('enroll-photo-img');
+      const snapBtn = document.getElementById('btn-snap-enroll');
+      const statusText = document.getElementById('enroll-descriptor-status');
+
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 320;
+      canvas.height = video.videoHeight || 320;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+
+      const dataUrl = canvas.toDataURL('image/jpeg');
+      img.src = dataUrl;
+      img.classList.remove('hidden');
+      video.classList.add('hidden');
+      snapBtn.classList.add('hidden');
+
+      if (enrollmentStream) {
+        enrollmentStream.getTracks().forEach(t => t.stop());
+        enrollmentStream = null;
+      }
+
+      statusText.innerHTML = '<span class="text-amber-400"><i class="fa-solid fa-spinner fa-spin"></i> Mengekstrak vektor 128-fitur wajah...</span>';
+      await processEnrollImage(img);
+    }
+
+    function handleEnrollFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const img = document.getElementById('enroll-photo-img');
+      const video = document.getElementById('enroll-webcam');
+      const icon = document.getElementById('enroll-placeholder-icon');
+      const statusText = document.getElementById('enroll-descriptor-status');
+
+      video.classList.add('hidden');
+      icon.classList.add('hidden');
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        img.src = e.target.result;
+        img.classList.remove('hidden');
+        statusText.innerHTML = '<span class="text-amber-400"><i class="fa-solid fa-spinner fa-spin"></i> Mengekstrak vektor 128-fitur wajah...</span>';
+        await processEnrollImage(img);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function processEnrollImage(imageEl) {
+      const statusText = document.getElementById('enroll-descriptor-status');
+      try {
+        const detection = await faceapi
+          .detectSingleFace(imageEl, new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.4 }))
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+
+        if (detection && detection.descriptor) {
+          enrollmentDescriptor = Array.from(detection.descriptor);
+          statusText.innerHTML = '<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> Wajah Terverifikasi (128 Vektor Biometrik Siap)</span>';
+        } else {
+          enrollmentDescriptor = null;
+          statusText.innerHTML = '<span class="text-rose-400"><i class="fa-solid fa-triangle-exclamation"></i> Wajah tidak terdeteksi. Pastikan pencahayaan cukup dan wajah menghadap lurus.</span>';
+        }
+      } catch (err) {
+        enrollmentDescriptor = null;
+        statusText.innerHTML = '<span class="text-rose-400">Gagal memproses gambar: ' + err.message + '</span>';
+      }
+    }
+
+    async function handleEnrollSubmit(event) {
+      event.preventDefault();
+      const nisn = document.getElementById('enroll-nisn').value.trim();
+      const name = document.getElementById('enroll-name').value.trim();
+      const className = document.getElementById('enroll-class').value.trim();
+      const img = document.getElementById('enroll-photo-img');
+
+      if (!enrollmentDescriptor) {
+        alert('Mohon ambil foto wajah atau unggah file foto terlebih dahulu hingga wajah berhasil diekstrak.');
+        return;
+      }
+
+      const newStudent = {
+        id: crypto.randomUUID ? crypto.randomUUID() : 'std-' + Date.now(),
+        nisn,
+        name,
+        class_name: className,
+        face_descriptor: enrollmentDescriptor,
+        photo_url: img.src.startsWith('data:') ? img.src : '',
+        created_at: new Date().toISOString()
+      };
+
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient.from('students').insert([{
+            nisn: newStudent.nisn,
+            name: newStudent.name,
+            class_name: newStudent.class_name,
+            face_descriptor: newStudent.face_descriptor,
+            photo_url: null
+          }]).select().single();
+
+          if (!error && data) newStudent.id = data.id;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      registeredStudents.unshift(newStudent);
+      localStorage.setItem('absensi_local_students', JSON.stringify(registeredStudents));
+
+      rebuildFaceMatcher();
+      populateClassFilter();
+      renderAttendanceList();
+      renderRegisteredStudentsTable();
+
+      alert('Siswa ' + name + ' berhasil didaftarkan!');
+      event.target.reset();
+      img.classList.add('hidden');
+      document.getElementById('enroll-placeholder-icon').classList.remove('hidden');
+      document.getElementById('enroll-descriptor-status').textContent = 'Menunggu pengambilan foto wajah...';
+      enrollmentDescriptor = null;
+    }
+
+    function renderRegisteredStudentsTable() {
+      const container = document.getElementById('registered-students-table');
+      const badge = document.getElementById('registered-count-badge');
+      badge.textContent = registeredStudents.length + ' Siswa';
+
+      if (registeredStudents.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-xs text-slate-500">Belum ada siswa terdaftar.</div>';
+        return;
+      }
+
+      container.innerHTML = registeredStudents.map(s => `
+        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-lg flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs text-slate-300">
+              ${s.name.charAt(0)}
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-slate-200">${s.name}</div>
+              <div class="text-[11px] text-slate-400 font-mono">NISN: ${s.nisn} · ${s.class_name}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+              ${s.face_descriptor ? '128 Vektor' : 'Tanpa Vektor'}
+            </span>
+            <button onclick="deleteStudent('${s.id}')" class="p-1 text-slate-500 hover:text-rose-400 text-xs transition-colors">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function deleteStudent(id) {
+      if (!confirm('Hapus siswa ini dari sistem?')) return;
+      registeredStudents = registeredStudents.filter(s => s.id !== id);
+      localStorage.setItem('absensi_local_students', JSON.stringify(registeredStudents));
+      if (supabaseClient) {
+        try { await supabaseClient.from('students').delete().eq('id', id); } catch (e) { console.error(e); }
+      }
+      rebuildFaceMatcher();
+      renderAttendanceList();
+      renderRegisteredStudentsTable();
+    }
+
+    // --- CONFIG & DEMO DATA ---
+    async function handleSaveConfig(event) {
+      event.preventDefault();
+      const url = document.getElementById('cfg-url').value.trim();
+      const key = document.getElementById('cfg-key').value.trim();
+      const res = document.getElementById('cfg-test-result');
+
+      localStorage.setItem('absensi_supabase_url', url);
+      localStorage.setItem('absensi_supabase_anon_key', key);
+      initSupabase();
+
+      if (!url || !key) {
+        res.innerHTML = '<span class="text-amber-400">Kredensial dikosongkan. Kembali ke mode offline.</span>';
+        return;
+      }
+
+      res.innerHTML = '<span class="text-slate-400"><i class="fa-solid fa-spinner fa-spin"></i> Menguji koneksi ke Supabase...</span>';
+      try {
+        const { count, error } = await supabaseClient.from('students').select('*', { count: 'exact', head: true });
+        if (error) throw error;
+        res.innerHTML = '<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> Sukses terhubung ke Supabase! Total ' + (count || 0) + ' siswa ditemukan.</span>';
+        await loadInitialData();
+      } catch (e) {
+        res.innerHTML = '<span class="text-rose-400"><i class="fa-solid fa-triangle-exclamation"></i> Gagal koneksi: ' + e.message + '</span>';
+      }
+    }
+
+    function loadSampleDemoData() {
+      registeredStudents = [
+        { id: 'std-1', nisn: '0071283941', name: 'Ahmad Rizky Pratama', class_name: 'XII-MIPA 1', face_descriptor: null },
+        { id: 'std-2', nisn: '0071283942', name: 'Siti Nurhaliza Putri', class_name: 'XII-MIPA 1', face_descriptor: null },
+        { id: 'std-3', nisn: '0071283943', name: 'Budi Santoso Wibowo', class_name: 'XII-MIPA 1', face_descriptor: null },
+        { id: 'std-4', nisn: '0071283944', name: 'Dewi Lestari Anggraeni', class_name: 'XII-MIPA 1', face_descriptor: null },
+        { id: 'std-5', nisn: '0071283945', name: 'Muhammad Fadhil Ramadhan', class_name: 'XII-MIPA 2', face_descriptor: null },
+        { id: 'std-6', nisn: '0071283946', name: 'Anindya Putri Mahadewi', class_name: 'XII-MIPA 2', face_descriptor: null }
+      ];
+      localStorage.setItem('absensi_local_students', JSON.stringify(registeredStudents));
+      populateClassFilter();
+      renderAttendanceList();
+      renderRegisteredStudentsTable();
+      alert('Data demo siswa SMA/SMK berhasil dimuat!');
+    }
+
+    function copySqlScript() {
+      const sql = `-- ==============================================================================
+-- SISTEM ABSENSI WAJAH SISWA REALTIME - SKEMA DATABASE SUPABASE
+-- Jalankan skrip ini pada menu "SQL Editor" di Dashboard Supabase Anda
+-- ==============================================================================
+
+-- 1. Buat Tabel Siswa (students)
+CREATE TABLE IF NOT EXISTS public.students (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nisn TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    class_name TEXT NOT NULL,
+    face_descriptor JSONB, -- Menyimpan 128 vektor float hasil ekstraksi wajah
+    photo_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Index untuk mempercepat query pencarian NISN dan kelas
+CREATE INDEX IF NOT EXISTS idx_students_nisn ON public.students(nisn);
+CREATE INDEX IF NOT EXISTS idx_students_class ON public.students(class_name);
+
+-- 2. Buat Tabel Presensi (attendances)
+CREATE TABLE IF NOT EXISTS public.attendances (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    student_id UUID NOT NULL REFERENCES public.students(id) ON DELETE CASCADE,
+    class_name TEXT NOT NULL,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    time TIME NOT NULL DEFAULT CURRENT_TIME,
+    status TEXT NOT NULL DEFAULT 'Hadir',
+    created_at TIMESTAMPTZ DEFAULT now(),
+    -- Cegah presensi ganda untuk siswa yang sama pada hari yang sama
+    CONSTRAINT unique_student_daily_attendance UNIQUE (student_id, date)
+);
+
+-- Index untuk mempercepat query log presensi harian
+CREATE INDEX IF NOT EXISTS idx_attendances_date ON public.attendances(date);
+CREATE INDEX IF NOT EXISTS idx_attendances_student ON public.attendances(student_id);
+
+-- 3. Konfigurasi Row Level Security (RLS)
+-- Aktifkan RLS untuk keamanan data
+ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.attendances ENABLE ROW LEVEL SECURITY;
+
+-- Buat Kebijakan Akses (Policy) untuk Anonymous Key (Aplikasi Browser Kelas)
+-- Catatan: Untuk produksi publik, Anda bisa membatasi hanya untuk user terotentikasi (Guru/Admin)
+DROP POLICY IF EXISTS "Akses Penuh Siswa untuk Aplikasi Sekolah" ON public.students;
+CREATE POLICY "Akses Penuh Siswa untuk Aplikasi Sekolah"
+    ON public.students
+    FOR ALL
+    TO anon, authenticated
+    USING (true)
+    WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Akses Penuh Presensi untuk Aplikasi Sekolah" ON public.attendances;
+CREATE POLICY "Akses Penuh Presensi untuk Aplikasi Sekolah"
+    ON public.attendances
+    FOR ALL
+    TO anon, authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- 4. Aktifkan Supabase Realtime untuk Tabel attendances
+-- Memastikan event INSERT/UPDATE tersiar otomatis ke browser monitor kelas
+ALTER PUBLICATION supabase_realtime ADD TABLE public.attendances;
+
+-- ==============================================================================
+-- SELESAI. Salin dan klik "RUN" di Supabase SQL Editor.
+-- ==============================================================================
+`;
+      navigator.clipboard.writeText(sql);
+      const btn = document.getElementById('btn-copy-sql');
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin!';
+      setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-copy"></i> Salin Skrip'; }, 2000);
+    }
+
+    function exportToCSV() {
+      const today = new Date().toISOString().split('T')[0];
+      let csv = 'NISN,Nama Siswa,Kelas,Tanggal,Jam Hadir,Status\n';
+      registeredStudents.forEach(s => {
+        const att = todayAttendances.find(a => a.student_id === s.id && a.date === today);
+        csv += `"${s.nisn}","${s.name}","${s.class_name}","${today}","${att ? att.time : '-'}","${att ? 'Hadir' : 'Belum Hadir'}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Absensi_Siswa_${today}.csv`;
+      a.click();
+    }
+  </script>
+</body>
+</html>
