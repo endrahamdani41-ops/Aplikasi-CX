@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistem Absensi Wajah Siswa - Google Sheets Ready</title>
+  <title>Sistem Absensi Wajah Siswa</title>
   <meta name="description" content="Sistem Presensi Wajah Siswa Realtime berbasis Browser terintegrasi Google Sheets & Supabase." />
   
   <!-- Tailwind CSS CDN -->
@@ -54,7 +54,6 @@
       <div>
         <h1 class="font-bold text-base tracking-tight text-white flex items-center gap-2">
           Presensi Wajah Siswa
-          <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-normal">Google Sheets Ready</span>
         </h1>
         <p class="text-xs text-slate-400">SMPN 110 JAKARTA</p>
       </div>
@@ -63,13 +62,16 @@
     <!-- Navigation Tabs -->
     <nav class="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60">
       <button id="tab-btn-presensi" onclick="switchTab('presensi')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-emerald-600 text-white shadow-sm flex items-center gap-2">
-        <i class="fa-solid fa-video"></i> Presensi Kelas
+        <i class="fa-solid fa-video"></i>
       </button>
       <button id="tab-btn-enroll" onclick="switchTab('enroll')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-300 hover:text-white flex items-center gap-2">
-        <i class="fa-solid fa-user-plus"></i> Pendaftaran Wajah
+        <i class="fa-solid fa-user-plus"></i>
       </button>
       <button id="tab-btn-config" onclick="switchTab('config')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-300 hover:text-white flex items-center gap-2">
-        <i class="fa-solid fa-gear"></i> Konfigurasi Database
+        <i class="fa-solid fa-gear"></i>
+      </button>
+      <button onclick="clearLocalData()" title="Hapus Data Lokal Browser" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-rose-400 hover:bg-rose-900/50 hover:text-rose-200 flex items-center gap-1.5 border-l border-slate-700/60 ml-1 pl-2.5">
+        <i class="fa-solid fa-trash-can"></i>
       </button>
     </nav>
 
@@ -288,7 +290,7 @@
         <form onsubmit="handleSaveGSheetsConfig(event)" class="flex flex-col gap-3">
           <div>
             <label class="text-xs text-slate-300 mb-1 block">GOOGLE APPS SCRIPT WEB APP URL</label>
-            <input type="text" id="cfg-gsheets-url" placeholder="AKfycbyz4qNWm5FJXGnjnyi6sXgn98Zjl_-nw6qpf1WIdfj8pOye88WTboO9F7XAYSCympRRIg" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
+            <input type="text" id="cfg-gsheets-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
           </div>
 
           <div class="flex items-center gap-2 pt-1">
@@ -324,7 +326,8 @@
     if (data.action === "enroll_student") {
       var stdSheet = sheet.getSheetByName("Siswa") || sheet.insertSheet("Siswa");
       if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Siswa", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
-      stdSheet.appendRow([data.id, "'" + data.nisn, data.name, data.class_name, JSON.stringify(data.face_descriptor), new Date().toISOString()]);
+      var wibDate = Utilities.formatDate(new Date(), "Asia/Jakarta", "dd/MM/yyyy HH:mm:ss");
+      stdSheet.appendRow([data.id, "'" + data.nisn, data.name, data.class_name, JSON.stringify(data.face_descriptor), wibDate]);
       return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
     }
   } catch (err) {
@@ -342,7 +345,7 @@ function doGet(e) {
       if (data[i][0]) {
         students.push({
           id: String(data[i][0]),
-          nisn: String(data[i][1]),
+          nisn: String(data[i][1]).replace(/^'/, ''),
           name: data[i][2],
           class_name: data[i][3],
           face_descriptor: JSON.parse(data[i][4] || "[]")
@@ -375,9 +378,6 @@ function doGet(e) {
           <div class="flex items-center gap-2 pt-2">
             <button type="submit" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5">
               <i class="fa-solid fa-check"></i> Simpan Supabase
-            </button>
-            <button type="button" onclick="clearLocalData()" class="px-4 py-2 bg-rose-900/40 hover:bg-rose-800/60 text-rose-300 border border-rose-700/50 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5">
-              <i class="fa-solid fa-trash-can"></i> Hapus Data Lokal
             </button>
           </div>
         </form>
@@ -1184,7 +1184,8 @@ function doGet(e) {
     if (data.action === "enroll_student") {
       var stdSheet = sheet.getSheetByName("Siswa") || sheet.insertSheet("Siswa");
       if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Siswa", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
-      stdSheet.appendRow([data.id, "'" + data.nisn, data.name, data.class_name, JSON.stringify(data.face_descriptor), new Date().toISOString()]);
+      var wibDate = Utilities.formatDate(new Date(), "Asia/Jakarta", "dd/MM/yyyy HH:mm:ss");
+      stdSheet.appendRow([data.id, "'" + data.nisn, data.name, data.class_name, JSON.stringify(data.face_descriptor), wibDate]);
       return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
     }
   } catch (err) {
@@ -1202,7 +1203,7 @@ function doGet(e) {
       if (data[i][0]) {
         students.push({
           id: String(data[i][0]),
-          nisn: String(data[i][1]),
+          nisn: String(data[i][1]).replace(/^'/, ''),
           name: data[i][2],
           class_name: data[i][3],
           face_descriptor: JSON.parse(data[i][4] || "[]")
