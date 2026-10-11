@@ -29,7 +29,7 @@
   <!-- FontAwesome Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-  <!-- SheetJS CDN (Untuk Membaca File Excel) -->
+  <!-- SheetJS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <!-- Supabase JS Client v2 CDN -->
@@ -119,7 +119,8 @@
           <!-- Video & Canvas Viewport -->
           <div class="relative w-full aspect-[4/3] bg-slate-950 rounded-lg overflow-hidden border border-slate-800/80 flex items-center justify-center">
             <video id="webcam-video" autoplay muted playsinline class="absolute inset-0 w-full h-full object-cover transform -scale-x-100"></video>
-            <canvas id="detection-canvas" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100 pointer-events-none"></canvas>
+            <!-- Canvas tanpa -scale-x-100 agar teks tidak terbalik -->
+            <canvas id="detection-canvas" class="absolute inset-0 w-full h-full object-cover pointer-events-none"></canvas>
 
             <!-- Placeholder if camera off -->
             <div id="cam-placeholder" class="text-center p-6 text-slate-500 flex flex-col items-center">
@@ -206,7 +207,7 @@
       </div>
     </section>
 
-    <!-- TAB 2: PENDAFTARAN WAJAH MURID (ENROLLMENT & EXCEL IMPORT) -->
+    <!-- TAB 2: PENDAFTARAN WAJAH MURID -->
     <section id="view-enroll" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 h-full overflow-y-auto">
       
       <!-- Sisi Kiri: Form Single Enroll & Box Excel Import -->
@@ -304,7 +305,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: KONFIGURASI DATABASE (GOOGLE SHEETS & SUPABASE) -->
+    <!-- TAB 3: KONFIGURASI DATABASE -->
     <section id="view-config" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 h-full overflow-y-auto">
       
       <!-- Panel Google Sheets Web App -->
@@ -320,7 +321,7 @@
         <form onsubmit="handleSaveGSheetsConfig(event)" class="flex flex-col gap-3">
           <div>
             <label class="text-xs text-slate-300 mb-1 block">GOOGLE APPS SCRIPT WEB APP URL</label>
-            <input type="text" id="cfg-gsheets-url" placeholder="https://script.google.com/macros/s/AKfycbwQv-jHaHPkAGibeEXG0PcdwnzXjfZV_TGOhyGfsMqqN_Ljea3YnghG6dz6QdOqeoeJeQ/exec" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
+            <input type="text" id="cfg-gsheets-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
           </div>
 
           <div class="flex items-center gap-2 pt-1">
@@ -348,7 +349,6 @@
     var sheet = SpreadsheetApp.getActiveSpreadsheet();
     var data = JSON.parse(e.postData.contents);
     
-    // Log Presensi Harian
     if (data.action === "add_attendance") {
       var attSheet = sheet.getSheetByName("Presensi") || sheet.insertSheet("Presensi");
       if (attSheet.getLastRow() === 0) attSheet.appendRow(["NISN", "Nama Murid", "Kelas", "Tanggal", "Jam Hadir", "Status"]);
@@ -356,7 +356,6 @@
       return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // Pendaftaran Massal dari Excel (Bulk Upload ke Data_Murid)
     if (data.action === "bulk_enroll_student") {
       var stdSheet = sheet.getSheetByName("Data_Murid") || sheet.insertSheet("Data_Murid");
       if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Murid", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
@@ -370,7 +369,6 @@
       return ContentService.createTextOutput(JSON.stringify({ status: "success", count: rows.length })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // Pendaftaran Tunggal
     if (data.action === "enroll_student") {
       var stdSheet = sheet.getSheetByName("Data_Murid") || sheet.insertSheet("Data_Murid");
       if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Murid", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
@@ -735,7 +733,7 @@ function doGet(e) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // --- REALTIME DETECTION LOOP ---
+    // --- REALTIME DETECTION LOOP (POSISI X DICERMINKAN AGAR TEKS TIDAK TERBALIK) ---
     function startDetectionLoop() {
       const video = document.getElementById('webcam-video');
       const canvas = document.getElementById('detection-canvas');
@@ -761,6 +759,9 @@ function doGet(e) {
 
           for (const det of detections) {
             const box = det.detection.box;
+            // Hitung posisi X terbalik secara manual
+            const mirroredX = canvas.width - box.x - box.width;
+
             let label = 'Wajah Terdeteksi';
             let matchedStudent = null;
 
@@ -779,14 +780,14 @@ function doGet(e) {
 
             ctx.lineWidth = 3;
             ctx.strokeStyle = matchedStudent ? '#10B981' : '#F59E0B';
-            ctx.strokeRect(box.x, box.y, box.width, box.height);
+            ctx.strokeRect(mirroredX, box.y, box.width, box.height);
 
             ctx.fillStyle = matchedStudent ? '#10B981' : '#F59E0B';
-            ctx.fillRect(box.x, box.y - 24, Math.max(120, box.width), 24);
+            ctx.fillRect(mirroredX, box.y - 24, Math.max(120, box.width), 24);
 
             ctx.fillStyle = '#FFFFFF';
             ctx.font = 'bold 12px Plus Jakarta Sans, sans-serif';
-            ctx.fillText(label, box.x + 6, box.y - 7);
+            ctx.fillText(label, mirroredX + 6, box.y - 7);
           }
         } catch (e) {
           console.error(e);
@@ -883,7 +884,7 @@ function doGet(e) {
       }, 4000);
     }
 
-    // --- RENDER LOG LIST (TERURUT KELAS A-Z LALU NAMA A-Z) ---
+    // --- RENDER LOG LIST ---
     function renderAttendanceList() {
       const container = document.getElementById('attendance-list-container');
       const search = (document.getElementById('search-student').value || '').toLowerCase();
@@ -906,7 +907,6 @@ function doGet(e) {
         list = list.filter(s => s.name.toLowerCase().includes(search) || String(s.nisn).includes(search));
       }
 
-      // Pengisihan: Kehadiran -> Kelas (A-Z) -> Nama (A-Z)
       list.sort((a, b) => {
         if (a.isAttended && !b.isAttended) return -1;
         if (!a.isAttended && b.isAttended) return 1;
@@ -964,7 +964,7 @@ function doGet(e) {
       });
     }
 
-    // --- EXCEL IMPORT ENGINE (BULK & BATCH) ---
+    // --- EXCEL IMPORT ENGINE ---
     async function handleExcelUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1021,7 +1021,6 @@ function doGet(e) {
           return;
         }
 
-        // 1. PROSES SUPABASE (Chunk Batch per 50 items)
         if (supabaseClient && newStudents.length > 0) {
           statusTxt.innerHTML = `<span class="text-amber-400"><i class="fa-solid fa-spinner fa-spin"></i> Supabase (0/${newStudents.length})...</span>`;
           
@@ -1057,7 +1056,6 @@ function doGet(e) {
           }
         }
 
-        // 2. PROSES GOOGLE SHEETS (Bulk POST ke Data_Murid)
         if (gsheetsUrl && newStudents.length > 0) {
           statusTxt.innerHTML = `<span class="text-amber-400"><i class="fa-solid fa-spinner fa-spin"></i> Google Sheets...</span>`;
           try {
@@ -1319,7 +1317,6 @@ function doGet(e) {
         return;
       }
 
-      // Urutkan A-Z per Kelas, lalu A-Z per Nama
       const sortedStudents = [...registeredStudents].sort((a, b) => {
         const classCompare = (a.class_name || '').localeCompare(b.class_name || '', 'id', { numeric: true, sensitivity: 'base' });
         if (classCompare !== 0) return classCompare;
