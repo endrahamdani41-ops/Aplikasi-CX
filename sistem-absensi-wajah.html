@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistem Absensi Wajah Siswa</title>
-  <meta name="description" content="Sistem Presensi Wajah Siswa Realtime berbasis Browser terintegrasi Google Sheets & Supabase." />
+  <title>Sistem Absensi Wajah Murid</title>
+  <meta name="description" content="Sistem Presensi Wajah Murid Realtime berbasis Browser terintegrasi Google Sheets & Supabase." />
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -28,6 +28,9 @@
   
   <!-- FontAwesome Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- SheetJS CDN (Untuk Membaca File Excel) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <!-- Supabase JS Client v2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -53,7 +56,7 @@
       </div>
       <div>
         <h1 class="font-bold text-base tracking-tight text-white flex items-center gap-2">
-          Presensi Wajah Siswa
+          Presensi Wajah Murid
         </h1>
         <p class="text-xs text-slate-400">SMPN 110 JAKARTA</p>
       </div>
@@ -62,16 +65,16 @@
     <!-- Navigation Tabs -->
     <nav class="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60">
       <button id="tab-btn-presensi" onclick="switchTab('presensi')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-emerald-600 text-white shadow-sm flex items-center gap-2">
-        <i class="fa-solid fa-video"></i>
+        <i class="fa-solid fa-video"></i> Presensi Kelas
       </button>
       <button id="tab-btn-enroll" onclick="switchTab('enroll')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-300 hover:text-white flex items-center gap-2">
-        <i class="fa-solid fa-user-plus"></i>
+        <i class="fa-solid fa-user-plus"></i> Pendaftaran Murid
       </button>
       <button id="tab-btn-config" onclick="switchTab('config')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-slate-300 hover:text-white flex items-center gap-2">
-        <i class="fa-solid fa-gear"></i>
+        <i class="fa-solid fa-gear"></i> Konfigurasi Database
       </button>
       <button onclick="clearLocalData()" title="Hapus Data Lokal Browser" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-rose-400 hover:bg-rose-900/50 hover:text-rose-200 flex items-center gap-1.5 border-l border-slate-700/60 ml-1 pl-2.5">
-        <i class="fa-solid fa-trash-can"></i>
+        <i class="fa-solid fa-trash-can"></i> Hapus Data Lokal
       </button>
     </nav>
 
@@ -122,7 +125,7 @@
             <div id="cam-placeholder" class="text-center p-6 text-slate-500 flex flex-col items-center">
               <i class="fa-solid fa-video-slash text-4xl mb-2 text-slate-600"></i>
               <p class="text-sm font-medium text-slate-300">Kamera Belum Aktif</p>
-              <p class="text-xs text-slate-500 mt-1">Klik tombol "Mulai Kamera" di atas untuk memindai kehadiran siswa</p>
+              <p class="text-xs text-slate-500 mt-1">Klik tombol "Mulai Kamera" di atas untuk memindai kehadiran Murid</p>
             </div>
 
             <!-- Recognition Success Toast Banner -->
@@ -133,8 +136,8 @@
                 </div>
                 <div>
                   <div class="text-xs uppercase tracking-wider text-emerald-200 font-semibold">Presensi Berhasil</div>
-                  <div id="toast-student-name" class="font-bold text-base text-white">Nama Siswa</div>
-                  <div id="toast-student-meta" class="text-xs text-emerald-100 font-mono">NISN: - · Kelas: -</div>
+                  <div id="toast-student-name" class="font-bold text-base text-white">Nama Murid</div>
+                  <div id="toast-student-meta" class="text-xs text-emerald-100 font-mono">NISN: - • Kelas: -</div>
                 </div>
               </div>
               <div id="toast-student-time" class="text-right font-mono text-sm text-emerald-100">00:00:00</div>
@@ -157,7 +160,7 @@
         <!-- Summary Stats Card -->
         <div class="grid grid-cols-3 gap-3">
           <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
-            <span class="text-xs text-slate-400">Total Siswa</span>
+            <span class="text-xs text-slate-400">Total Murid</span>
             <div id="stat-total" class="text-2xl font-bold font-mono text-white mt-1">0</div>
           </div>
           <div class="bg-slate-900 border border-slate-800 rounded-xl p-3">
@@ -174,7 +177,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex-1 flex flex-col min-h-0 overflow-hidden shadow-xl">
           <div class="flex items-center justify-between mb-3 shrink-0">
             <div>
-              <h3 class="text-sm font-semibold text-slate-200">Log Kehadiran Siswa</h3>
+              <h3 class="text-sm font-semibold text-slate-200">Log Kehadiran Murid</h3>
               <p id="today-date-text" class="text-xs text-slate-400 font-mono">Hari ini</p>
             </div>
             <div class="flex items-center gap-2">
@@ -191,7 +194,7 @@
           <div class="mb-3 shrink-0">
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-              <input type="text" id="search-student" oninput="renderAttendanceList()" placeholder="Cari nama atau NISN siswa..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+              <input type="text" id="search-student" oninput="renderAttendanceList()" placeholder="Cari nama atau NISN Murid..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
             </div>
           </div>
 
@@ -203,69 +206,96 @@
       </div>
     </section>
 
-    <!-- TAB 2: PENDAFTARAN WAJAH SISWA (ENROLLMENT) -->
-    <section id="view-enroll" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 h-full">
-      <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col gap-4 shadow-xl">
-        <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
-          <i class="fa-solid fa-id-card text-emerald-400"></i> Pendaftaran Siswa Baru
-        </h2>
-        <p class="text-xs text-slate-400 -mt-2">Ambil foto langsung melalui webcam atau unggah foto untuk mengekstrak vektor 128-fitur wajah.</p>
+    <!-- TAB 2: PENDAFTARAN WAJAH MURID (ENROLLMENT & EXCEL IMPORT) -->
+    <section id="view-enroll" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-5 h-full overflow-y-auto">
+      
+      <!-- Sisi Kiri: Form Single Enroll & Box Excel Import -->
+      <div class="lg:col-span-5 flex flex-col gap-4">
+        
+        <!-- CARD 1: EXCEL IMPORT -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col gap-3 shadow-xl">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-semibold text-slate-100 flex items-center gap-2">
+              <i class="fa-solid fa-file-excel text-emerald-400"></i> Import Data dari Excel
+            </h2>
+            <button type="button" onclick="downloadExcelTemplate()" class="text-[11px] text-emerald-400 hover:underline flex items-center gap-1 font-mono">
+              <i class="fa-solid fa-download"></i> Format Excel
+            </button>
+          </div>
+          <p class="text-xs text-slate-400">Unggah file Excel (.xlsx / .csv) dengan kolom <b>NISN</b>, <b>Nama</b>, dan <b>Kelas</b>.</p>
 
-        <form id="form-enroll" onsubmit="handleEnrollSubmit(event)" class="flex flex-col gap-3">
-          <div>
-            <label class="text-xs text-slate-300 mb-1 block">NISN Siswa *</label>
-            <input type="text" id="enroll-nisn" required placeholder="Contoh: 0071283941" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
+          <div class="flex items-center gap-2 pt-1">
+            <label class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition-colors cursor-pointer flex items-center gap-1.5">
+              <i class="fa-solid fa-file-import"></i> Pilih File Excel / CSV
+              <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)" class="hidden">
+            </label>
+            <span id="excel-upload-status" class="text-xs text-slate-400 font-mono truncate max-w-[180px]">Belum ada file</span>
           </div>
-          <div>
-            <label class="text-xs text-slate-300 mb-1 block">Nama Lengkap Siswa *</label>
-            <input type="text" id="enroll-name" required placeholder="Contoh: Ahmad Rizky Pratama" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
-          </div>
-          <div>
-            <label class="text-xs text-slate-300 mb-1 block">Kelas *</label>
-            <input type="text" id="enroll-class" required placeholder="Contoh: XII-MIPA 1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
-          </div>
+        </div>
 
-          <!-- Capture / Upload Preview -->
-          <div class="border border-dashed border-slate-700 rounded-lg p-3 text-center flex flex-col items-center justify-center bg-slate-950/60">
-            <div id="enroll-preview-box" class="w-36 h-36 rounded-lg bg-slate-900 overflow-hidden flex items-center justify-center relative mb-2 border border-slate-800">
-              <video id="enroll-webcam" autoplay muted playsinline class="hidden w-full h-full object-cover transform -scale-x-100"></video>
-              <img id="enroll-photo-img" class="hidden w-full h-full object-cover" alt="Preview Wajah">
-              <span id="enroll-placeholder-icon" class="text-slate-600 text-3xl"><i class="fa-solid fa-user"></i></span>
+        <!-- CARD 2: SINGLE ENROLLMENT FORM -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col gap-4 shadow-xl">
+          <h2 class="text-base font-semibold text-slate-100 flex items-center gap-2">
+            <i class="fa-solid fa-id-card text-emerald-400"></i> Pendaftaran / Foto Wajah Murid
+          </h2>
+          <p class="text-xs text-slate-400 -mt-2">Ambil foto webcam atau unggah foto untuk mengekstrak 128-fitur biometrik wajah.</p>
+
+          <form id="form-enroll" onsubmit="handleEnrollSubmit(event)" class="flex flex-col gap-3">
+            <div>
+              <label class="text-xs text-slate-300 mb-1 block">NISN Murid *</label>
+              <input type="text" id="enroll-nisn" required placeholder="Contoh: 0071283941" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
+            </div>
+            <div>
+              <label class="text-xs text-slate-300 mb-1 block">Nama Lengkap Murid *</label>
+              <input type="text" id="enroll-name" required placeholder="Contoh: Ahmad Rizky Pratama" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="text-xs text-slate-300 mb-1 block">Kelas *</label>
+              <input type="text" id="enroll-class" required placeholder="Contoh: XII-MIPA 1" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
             </div>
 
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="startEnrollWebcam()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition-colors flex items-center gap-1.5">
-                <i class="fa-solid fa-camera"></i> Buka Kamera
-              </button>
-              <button type="button" id="btn-snap-enroll" onclick="snapEnrollPhoto()" class="hidden px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-lg transition-colors flex items-center gap-1.5">
-                <i class="fa-solid fa-camera-retro"></i> Ambil Foto
-              </button>
-              <label class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition-colors cursor-pointer flex items-center gap-1.5">
-                <i class="fa-solid fa-upload"></i> Unggah File
-                <input type="file" id="enroll-file-input" accept="image/*" onchange="handleEnrollFileUpload(event)" class="hidden">
-              </label>
+            <!-- Capture / Upload Preview -->
+            <div class="border border-dashed border-slate-700 rounded-lg p-3 text-center flex flex-col items-center justify-center bg-slate-950/60">
+              <div id="enroll-preview-box" class="w-36 h-36 rounded-lg bg-slate-900 overflow-hidden flex items-center justify-center relative mb-2 border border-slate-800">
+                <video id="enroll-webcam" autoplay muted playsinline class="hidden w-full h-full object-cover transform -scale-x-100"></video>
+                <img id="enroll-photo-img" class="hidden w-full h-full object-cover" alt="Preview Wajah">
+                <span id="enroll-placeholder-icon" class="text-slate-600 text-3xl"><i class="fa-solid fa-user"></i></span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="startEnrollWebcam()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition-colors flex items-center gap-1.5">
+                  <i class="fa-solid fa-camera"></i> Buka Kamera
+                </button>
+                <button type="button" id="btn-snap-enroll" onclick="snapEnrollPhoto()" class="hidden px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-lg transition-colors flex items-center gap-1.5">
+                  <i class="fa-solid fa-camera-retro"></i> Ambil Foto
+                </button>
+                <label class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition-colors cursor-pointer flex items-center gap-1.5">
+                  <i class="fa-solid fa-upload"></i> Unggah File
+                  <input type="file" id="enroll-file-input" accept="image/*" onchange="handleEnrollFileUpload(event)" class="hidden">
+                </label>
+              </div>
+
+              <!-- Descriptor Validation Status -->
+              <div id="enroll-descriptor-status" class="mt-2 text-xs font-mono text-slate-400">
+                Menunggu pengambilan/pengunggahan foto wajah...
+              </div>
             </div>
 
-            <!-- Descriptor Validation Status -->
-            <div id="enroll-descriptor-status" class="mt-2 text-xs font-mono text-slate-400">
-              Menunggu pengambilan/pengunggahan foto wajah...
-            </div>
-          </div>
-
-          <button type="submit" id="btn-save-enroll" class="w-full mt-2 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center gap-2">
-            <i class="fa-solid fa-floppy-disk"></i> Simpan Siswa & Sinkronkan Wajah
-          </button>
-        </form>
+            <button type="submit" id="btn-save-enroll" class="w-full mt-2 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i> Simpan Murid & Sinkronkan Wajah
+            </button>
+          </form>
+        </div>
       </div>
 
-      <!-- Directory Siswa Terdaftar -->
+      <!-- Directory Murid Terdaftar -->
       <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col shadow-xl">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-base font-semibold text-slate-100">Daftar Siswa Terdaftar</h2>
-            <p class="text-xs text-slate-400">Data siswa beserta vektor biometrik wajah yang tersimpan di sistem.</p>
+            <h2 class="text-base font-semibold text-slate-100">Daftar Murid Terdaftar</h2>
+            <p class="text-xs text-slate-400">Data Murid beserta status vektor biometrik wajah di sistem (Urut A-Z per Kelas).</p>
           </div>
-          <span id="registered-count-badge" class="font-mono text-xs px-2.5 py-1 bg-slate-800 text-slate-300 rounded-md">0 Siswa</span>
+          <span id="registered-count-badge" class="font-mono text-xs px-2.5 py-1 bg-slate-800 text-slate-300 rounded-md">0 Murid</span>
         </div>
 
         <div id="registered-students-table" class="flex-1 overflow-y-auto space-y-2 pr-1">
@@ -290,7 +320,7 @@
         <form onsubmit="handleSaveGSheetsConfig(event)" class="flex flex-col gap-3">
           <div>
             <label class="text-xs text-slate-300 mb-1 block">GOOGLE APPS SCRIPT WEB APP URL</label>
-            <input type="text" id="cfg-gsheets-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
+            <input type="text" id="cfg-gsheets-url" placeholder="https://script.google.com/macros/s/AKfycbwQv-jHaHPkAGibeEXG0PcdwnzXjfZV_TGOhyGfsMqqN_Ljea3YnghG6dz6QdOqeoeJeQ/exec" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono">
           </div>
 
           <div class="flex items-center gap-2 pt-1">
@@ -317,19 +347,38 @@
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet();
     var data = JSON.parse(e.postData.contents);
+    
+    // Log Presensi Harian
     if (data.action === "add_attendance") {
       var attSheet = sheet.getSheetByName("Presensi") || sheet.insertSheet("Presensi");
-      if (attSheet.getLastRow() === 0) attSheet.appendRow(["NISN", "Nama Siswa", "Kelas", "Tanggal", "Jam Hadir", "Status"]);
+      if (attSheet.getLastRow() === 0) attSheet.appendRow(["NISN", "Nama Murid", "Kelas", "Tanggal", "Jam Hadir", "Status"]);
       attSheet.appendRow(["'" + data.nisn, data.name, data.class_name, data.date, data.time, data.status]);
       return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
     }
+    
+    // Pendaftaran Massal dari Excel (Bulk Upload)
+    if (data.action === "bulk_enroll_student") {
+      var stdSheet = sheet.getSheetByName("Murid") || sheet.insertSheet("Murid");
+      if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Murid", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
+      
+      var wibDate = Utilities.formatDate(new Date(), "Asia/Jakarta", "dd/MM/yyyy HH:mm:ss");
+      var rows = data.students.map(function(s) {
+        return [s.id, "'" + s.nisn, s.name, s.class_name, JSON.stringify(s.face_descriptor || []), wibDate];
+      });
+      
+      stdSheet.getRange(stdSheet.getLastRow() + 1, 1, rows.length, 6).setValues(rows);
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", count: rows.length })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Pendaftaran Tunggal
     if (data.action === "enroll_student") {
-      var stdSheet = sheet.getSheetByName("Siswa") || sheet.insertSheet("Siswa");
-      if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Siswa", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
+      var stdSheet = sheet.getSheetByName("Murid") || sheet.insertSheet("Murid");
+      if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Murid", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
       var wibDate = Utilities.formatDate(new Date(), "Asia/Jakarta", "dd/MM/yyyy HH:mm:ss");
       stdSheet.appendRow([data.id, "'" + data.nisn, data.name, data.class_name, JSON.stringify(data.face_descriptor), wibDate]);
       return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
     }
+
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
@@ -337,7 +386,7 @@
 
 function doGet(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var stdSheet = sheet.getSheetByName("Siswa");
+  var stdSheet = sheet.getSheetByName("Murid");
   var students = [];
   if (stdSheet) {
     var data = stdSheet.getDataRange().getValues();
@@ -444,7 +493,6 @@ function doGet(e) {
 
     // --- INITIALIZATION ---
     window.addEventListener('DOMContentLoaded', async () => {
-      // Auto-purge sisa data demo dari LocalStorage lama jika ada
       const oldStorage = localStorage.getItem('absensi_local_students');
       if (oldStorage && oldStorage.includes('0071283941')) {
         localStorage.removeItem('absensi_local_students');
@@ -495,6 +543,14 @@ function doGet(e) {
       document.getElementById('cfg-url').value = url;
       document.getElementById('cfg-key').value = key;
 
+      if (url && key && window.supabase) {
+        try {
+          supabaseClient = window.supabase.createClient(url, key);
+        } catch (e) {
+          console.warn('Supabase init error:', e);
+        }
+      }
+
       const dbStatusInd = document.getElementById('db-status-indicator');
       const dbStatusTxt = document.getElementById('db-status-text');
 
@@ -502,15 +558,10 @@ function doGet(e) {
         dbStatusInd.className = 'flex items-center gap-1.5 text-emerald-400';
         dbStatusInd.firstElementChild.className = 'w-2 h-2 rounded-full bg-emerald-400';
         dbStatusTxt.textContent = 'Google Sheets Aktif';
-      } else if (url && key && window.supabase) {
-        try {
-          supabaseClient = window.supabase.createClient(url, key);
-          dbStatusInd.className = 'flex items-center gap-1.5 text-emerald-400';
-          dbStatusInd.firstElementChild.className = 'w-2 h-2 rounded-full bg-emerald-400';
-          dbStatusTxt.textContent = 'Supabase Terhubung';
-        } catch (e) {
-          dbStatusTxt.textContent = 'DB Error';
-        }
+      } else if (supabaseClient) {
+        dbStatusInd.className = 'flex items-center gap-1.5 text-emerald-400';
+        dbStatusInd.firstElementChild.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        dbStatusTxt.textContent = 'Supabase Terhubung';
       } else {
         dbStatusInd.className = 'flex items-center gap-1.5 text-amber-400';
         dbStatusInd.firstElementChild.className = 'w-2 h-2 rounded-full bg-amber-400';
@@ -542,7 +593,7 @@ function doGet(e) {
     async function loadInitialData() {
       let loadedFromRemote = false;
 
-      // 1. Coba muat dari Google Sheets jika URL diatur
+      // 1. Coba muat dari Google Sheets
       if (gsheetsUrl) {
         try {
           const resp = await fetch(gsheetsUrl);
@@ -556,10 +607,15 @@ function doGet(e) {
         }
       }
 
-      // 2. Coba muat dari Supabase jika belum dari Google Sheets
+      // 2. Coba muat dari Supabase
       if (!loadedFromRemote && supabaseClient) {
         try {
-          const { data: stdData, error: stdErr } = await supabaseClient.from('students').select('*').order('name');
+          const { data: stdData, error: stdErr } = await supabaseClient
+            .from('students')
+            .select('*')
+            .order('class_name', { ascending: true })
+            .order('name', { ascending: true });
+
           if (!stdErr && stdData) {
             registeredStudents = stdData;
             loadedFromRemote = true;
@@ -572,7 +628,7 @@ function doGet(e) {
         }
       }
 
-      // 3. Fallback ke LocalStorage jika tidak terhubung ke remote
+      // 3. Fallback ke LocalStorage
       if (!loadedFromRemote) {
         const storedStudents = localStorage.getItem('absensi_local_students');
         if (storedStudents) {
@@ -585,6 +641,7 @@ function doGet(e) {
       rebuildFaceMatcher();
       populateClassFilter();
       renderAttendanceList();
+      renderRegisteredStudentsTable();
     }
 
     // --- BUILD FACE MATCHER ---
@@ -719,12 +776,10 @@ function doGet(e) {
               }
             }
 
-            // Draw bounding box
             ctx.lineWidth = 3;
             ctx.strokeStyle = matchedStudent ? '#10B981' : '#F59E0B';
             ctx.strokeRect(box.x, box.y, box.width, box.height);
 
-            // Draw label box
             ctx.fillStyle = matchedStudent ? '#10B981' : '#F59E0B';
             ctx.fillRect(box.x, box.y - 24, Math.max(120, box.width), 24);
 
@@ -744,12 +799,10 @@ function doGet(e) {
       const now = new Date();
       const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
 
-      // Debounce: cegah pengulangan nama yang sama dalam 10 detik
       if (lastSpokenStudentId === student.id && (Date.now() - lastSpokenTime) < 10000) {
         return;
       }
 
-      // Cek apakah sudah absen hari ini
       const already = todayAttendances.find(a => a.student_id === student.id && a.date === today);
       if (already) {
         lastSpokenStudentId = student.id;
@@ -776,7 +829,6 @@ function doGet(e) {
       renderAttendanceList();
       showSuccessToast(student, timeStr, 'Presensi Berhasil');
 
-      // 1. Kirim ke Google Sheets
       if (gsheetsUrl) {
         try {
           fetch(gsheetsUrl, {
@@ -798,7 +850,6 @@ function doGet(e) {
         }
       }
 
-      // 2. Kirim ke Supabase jika aktif
       if (supabaseClient) {
         try {
           await supabaseClient.from('attendances').insert([{
@@ -819,7 +870,7 @@ function doGet(e) {
     function showSuccessToast(student, time, title) {
       const toast = document.getElementById('success-toast');
       document.getElementById('toast-student-name').textContent = student.name;
-      document.getElementById('toast-student-meta').textContent = 'NISN: ' + student.nisn + ' · Kelas: ' + student.class_name;
+      document.getElementById('toast-student-meta').textContent = 'NISN: ' + student.nisn + ' • Kelas: ' + student.class_name;
       document.getElementById('toast-student-time').textContent = time + ' WIB';
 
       toast.classList.remove('-translate-y-20', 'opacity-0');
@@ -867,7 +918,7 @@ function doGet(e) {
       document.getElementById('stat-absent').textContent = total - present;
 
       if (list.length === 0) {
-        container.innerHTML = '<div class="text-center py-8 text-xs text-slate-500">Belum ada data presensi/siswa terdaftar.</div>';
+        container.innerHTML = '<div class="text-center py-8 text-xs text-slate-500">Belum ada data presensi/Murid terdaftar.</div>';
         return;
       }
 
@@ -879,7 +930,7 @@ function doGet(e) {
             </div>
             <div>
               <div class="text-xs font-semibold text-slate-200">${s.name}</div>
-              <div class="text-[11px] text-slate-400 font-mono">NISN: ${s.nisn} · ${s.class_name}</div>
+              <div class="text-[11px] text-slate-400 font-mono">NISN: ${s.nisn} • ${s.class_name}</div>
             </div>
           </div>
           <div class="text-right">
@@ -894,7 +945,10 @@ function doGet(e) {
 
     function populateClassFilter() {
       const select = document.getElementById('class-filter');
-      const classes = Array.from(new Set(registeredStudents.map(s => s.class_name))).filter(Boolean);
+      const classes = Array.from(new Set(registeredStudents.map(s => s.class_name)))
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b, 'id', { numeric: true, sensitivity: 'base' }));
+
       select.innerHTML = '<option value="ALL">Semua Kelas</option>';
       classes.forEach(c => {
         const opt = document.createElement('option');
@@ -902,6 +956,147 @@ function doGet(e) {
         opt.text = c;
         select.appendChild(opt);
       });
+    }
+
+    // --- EXCEL IMPORT ENGINE (BULK & BATCH) ---
+    async function handleExcelUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusTxt = document.getElementById('excel-upload-status');
+      statusTxt.innerHTML = '<span class="text-amber-400"><i class="fa-solid fa-spinner fa-spin"></i> Membaca file...</span>';
+
+      try {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const firstSheet = workbook.Sheets[firstSheetName];
+        const jsonRows = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+
+        if (!jsonRows || jsonRows.length === 0) {
+          throw new Error("File Excel kosong atau format tidak sesuai.");
+        }
+
+        const newStudents = [];
+        let updatedCount = 0;
+        let insertedCount = 0;
+
+        for (const r of jsonRows) {
+          const nisn = String(r.NISN || r.nisn || r['Nisn'] || '').trim();
+          const name = String(r.Nama || r['Nama Murid'] || r['Nama Lengkap'] || r.name || r.NAME || '').trim();
+          const className = String(r.Kelas || r['Class'] || r.class_name || r.KELAS || '').trim();
+
+          if (!nisn || !name) continue;
+
+          const existingIndex = registeredStudents.findIndex(s => String(s.nisn).trim() === nisn);
+
+          if (existingIndex !== -1) {
+            registeredStudents[existingIndex].name = name;
+            registeredStudents[existingIndex].class_name = className;
+            updatedCount++;
+          } else {
+            const stdObj = {
+              id: crypto.randomUUID ? crypto.randomUUID() : 'std-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+              nisn,
+              name,
+              class_name: className,
+              face_descriptor: [],
+              created_at: new Date().toISOString()
+            };
+            newStudents.push(stdObj);
+            registeredStudents.push(stdObj);
+            insertedCount++;
+          }
+        }
+
+        if (insertedCount === 0 && updatedCount === 0) {
+          alert('Tidak ada data murid yang valid ditemukan. Pastikan header kolom Excel adalah NISN, Nama, dan Kelas.');
+          statusTxt.textContent = 'Gagal impor.';
+          return;
+        }
+
+        // 1. PROSES SUPABASE (Chunk Batch per 50 items dengan Upsert)
+        if (supabaseClient && newStudents.length > 0) {
+          statusTxt.innerHTML = `<span class="text-amber-400"><i class="fa-solid fa-spinner fa-spin"></i> Supabase (0/${newStudents.length})...</span>`;
+          
+          const chunkSize = 50;
+          for (let i = 0; i < newStudents.length; i += chunkSize) {
+            const chunk = newStudents.slice(i, i + chunkSize).map(s => ({
+              nisn: s.nisn,
+              name: s.name,
+              class_name: s.class_name,
+              face_descriptor: []
+            }));
+
+            try {
+              const { data: dbData, error } = await supabaseClient
+                .from('students')
+                .upsert(chunk, { onConflict: 'nisn' })
+                .select();
+
+              if (!error && dbData) {
+                dbData.forEach(dbItem => {
+                  const localMatch = registeredStudents.find(s => s.nisn === dbItem.nisn);
+                  if (localMatch) localMatch.id = dbItem.id;
+                });
+              } else if (error) {
+                console.error('Supabase batch error:', error);
+              }
+            } catch (err) {
+              console.error('Supabase chunk exception:', err);
+            }
+
+            const progress = Math.min(i + chunkSize, newStudents.length);
+            statusTxt.innerHTML = `<span class="text-amber-400"><i class="fa-solid fa-spinner fa-spin"></i> Supabase (${progress}/${newStudents.length})...</span>`;
+          }
+        }
+
+        // 2. PROSES GOOGLE SHEETS (1 Single Bulk POST Payload)
+        if (gsheetsUrl && newStudents.length > 0) {
+          statusTxt.innerHTML = `<span class="text-amber-400"><i class="fa-solid fa-spinner fa-spin"></i> Google Sheets...</span>`;
+          try {
+            await fetch(gsheetsUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain' },
+              body: JSON.stringify({
+                action: 'bulk_enroll_student',
+                students: newStudents
+              })
+            });
+          } catch (e) {
+            console.error('GSheets bulk error:', e);
+          }
+        }
+
+        localStorage.setItem('absensi_local_students', JSON.stringify(registeredStudents));
+
+        rebuildFaceMatcher();
+        populateClassFilter();
+        renderAttendanceList();
+        renderRegisteredStudentsTable();
+
+        statusTxt.innerHTML = `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> ${insertedCount} Murid Sukses!</span>`;
+        alert(`Berhasil mengimpor ${insertedCount} murid baru ke database! (${updatedCount} data diperbarui)`);
+
+      } catch (err) {
+        console.error('Excel Import Error:', err);
+        statusTxt.innerHTML = `<span class="text-rose-400"><i class="fa-solid fa-triangle-exclamation"></i> Gagal</span>`;
+        alert('Gagal memproses file Excel: ' + err.message);
+      } finally {
+        event.target.value = '';
+      }
+    }
+
+    function downloadExcelTemplate() {
+      const csvContent = "data:text/csv;charset=utf-8,NISN,Nama,Kelas\n0081234561,Ahmad Fauzi,7A\n0081234562,Siti Nurhaliza,7A\n0081234563,Budi Santoso,7B\n";
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Template_Data_Murid.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     // --- ENROLLMENT ENGINE ---
@@ -1005,53 +1200,95 @@ function doGet(e) {
         return;
       }
 
-      const newStudent = {
-        id: crypto.randomUUID ? crypto.randomUUID() : 'std-' + Date.now(),
-        nisn,
-        name,
-        class_name: className,
-        face_descriptor: enrollmentDescriptor,
-        created_at: new Date().toISOString()
-      };
+      const existingStudent = registeredStudents.find(s => String(s.nisn).trim() === nisn);
 
-      // 1. Kirim Pendaftaran ke Google Sheets
-      if (gsheetsUrl) {
-        try {
-          fetch(gsheetsUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({
-              action: 'enroll_student',
-              id: newStudent.id,
+      if (existingStudent) {
+        existingStudent.name = name;
+        existingStudent.class_name = className;
+        existingStudent.face_descriptor = enrollmentDescriptor;
+
+        if (supabaseClient) {
+          try {
+            await supabaseClient.from('students').update({
+              name,
+              class_name: className,
+              face_descriptor: enrollmentDescriptor
+            }).eq('id', existingStudent.id);
+          } catch (e) {
+            console.error('Supabase update error:', e);
+          }
+        }
+
+        if (gsheetsUrl) {
+          try {
+            fetch(gsheetsUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain' },
+              body: JSON.stringify({
+                action: 'enroll_student',
+                id: existingStudent.id,
+                nisn,
+                name,
+                class_name: className,
+                face_descriptor: enrollmentDescriptor
+              })
+            });
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        alert('Data & foto biometrik murid ' + name + ' berhasil diperbarui!');
+      } else {
+        const newStudent = {
+          id: crypto.randomUUID ? crypto.randomUUID() : 'std-' + Date.now(),
+          nisn,
+          name,
+          class_name: className,
+          face_descriptor: enrollmentDescriptor,
+          created_at: new Date().toISOString()
+        };
+
+        if (gsheetsUrl) {
+          try {
+            fetch(gsheetsUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain' },
+              body: JSON.stringify({
+                action: 'enroll_student',
+                id: newStudent.id,
+                nisn: newStudent.nisn,
+                name: newStudent.name,
+                class_name: newStudent.class_name,
+                face_descriptor: newStudent.face_descriptor
+              })
+            });
+          } catch (e) {
+            console.error('Google Sheets enroll error:', e);
+          }
+        }
+
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient.from('students').insert([{
               nisn: newStudent.nisn,
               name: newStudent.name,
               class_name: newStudent.class_name,
               face_descriptor: newStudent.face_descriptor
-            })
-          });
-        } catch (e) {
-          console.error('Google Sheets enroll error:', e);
+            }]).select().single();
+
+            if (!error && data) newStudent.id = data.id;
+          } catch (e) {
+            console.error(e);
+          }
         }
+
+        registeredStudents.push(newStudent);
+        alert('Murid ' + name + ' berhasil didaftarkan!');
       }
 
-      // 2. Kirim Pendaftaran ke Supabase jika ada
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient.from('students').insert([{
-            nisn: newStudent.nisn,
-            name: newStudent.name,
-            class_name: newStudent.class_name,
-            face_descriptor: newStudent.face_descriptor
-          }]).select().single();
-
-          if (!error && data) newStudent.id = data.id;
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      registeredStudents.unshift(newStudent);
       localStorage.setItem('absensi_local_students', JSON.stringify(registeredStudents));
 
       rebuildFaceMatcher();
@@ -1059,7 +1296,6 @@ function doGet(e) {
       renderAttendanceList();
       renderRegisteredStudentsTable();
 
-      alert('Siswa ' + name + ' berhasil didaftarkan!');
       event.target.reset();
       img.classList.add('hidden');
       document.getElementById('enroll-placeholder-icon').classList.remove('hidden');
@@ -1070,46 +1306,86 @@ function doGet(e) {
     function renderRegisteredStudentsTable() {
       const container = document.getElementById('registered-students-table');
       const badge = document.getElementById('registered-count-badge');
-      badge.textContent = registeredStudents.length + ' Siswa';
+      badge.textContent = registeredStudents.length + ' Murid';
 
       if (registeredStudents.length === 0) {
-        container.innerHTML = '<div class="text-center py-8 text-xs text-slate-500">Belum ada siswa terdaftar.</div>';
+        container.innerHTML = '<div class="text-center py-8 text-xs text-slate-500">Belum ada Murid terdaftar.</div>';
         return;
       }
 
-      container.innerHTML = registeredStudents.map(s => `
-        <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-lg flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs text-slate-300">
-              ${s.name.charAt(0)}
+      // Urutkan A-Z per Kelas, lalu A-Z per Nama
+      const sortedStudents = [...registeredStudents].sort((a, b) => {
+        const classCompare = (a.class_name || '').localeCompare(b.class_name || '', 'id', { numeric: true, sensitivity: 'base' });
+        if (classCompare !== 0) return classCompare;
+        return (a.name || '').localeCompare(b.name || '', 'id', { sensitivity: 'base' });
+      });
+
+      container.innerHTML = sortedStudents.map(s => {
+        const hasFace = s.face_descriptor && Array.isArray(s.face_descriptor) && s.face_descriptor.length >= 128;
+        return `
+          <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-lg flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full ${hasFace ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'} flex items-center justify-center font-bold text-xs">
+                ${s.name.charAt(0)}
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-slate-200">${s.name}</div>
+                <div class="text-[11px] text-slate-400 font-mono">NISN: ${s.nisn} • ${s.class_name}</div>
+              </div>
             </div>
-            <div>
-              <div class="text-xs font-semibold text-slate-200">${s.name}</div>
-              <div class="text-[11px] text-slate-400 font-mono">NISN: ${s.nisn} · ${s.class_name}</div>
+            <div class="flex items-center gap-2">
+              ${hasFace 
+                ? `<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono"><i class="fa-solid fa-circle-check"></i> 128 Vektor</span>`
+                : `<button onclick="prepareEnrollFace('${s.nisn}', '${s.name.replace(/'/g, "\\'")}', '${s.class_name.replace(/'/g, "\\'")}')" class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 font-medium transition-colors flex items-center gap-1"><i class="fa-solid fa-camera"></i> Lengkapi Wajah</button>`
+              }
+              <button onclick="deleteStudent('${s.id}')" title="Hapus Murid" class="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-colors">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
-              ${s.face_descriptor ? '128 Vektor' : 'Tanpa Vektor'}
-            </span>
-            <button onclick="deleteStudent('${s.id}')" class="p-1 text-slate-500 hover:text-rose-400 text-xs transition-colors">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+    }
+
+    function prepareEnrollFace(nisn, name, className) {
+      document.getElementById('enroll-nisn').value = nisn;
+      document.getElementById('enroll-name').value = name;
+      document.getElementById('enroll-class').value = className;
+      document.getElementById('form-enroll').scrollIntoView({ behavior: 'smooth' });
+      alert(`Data murid ${name} telah dimuat ke formulir pendaftaran. Silakan ambil foto webcam atau unggah foto untuk melengkapi vektor biometrik!`);
     }
 
     async function deleteStudent(id) {
-      if (!confirm('Hapus siswa ini dari sistem?')) return;
+      const student = registeredStudents.find(s => s.id === id);
+      if (!student) return;
+
+      const isConfirmed = confirm(
+        `⚠️ KONFIRMASI HAPUS MURID\n\n` +
+        `Apakah Anda yakin ingin menghapus data murid berikut?\n` +
+        `• Nama : ${student.name}\n` +
+        `• NISN : ${student.nisn}\n` +
+        `• Kelas : ${student.class_name}\n\n` +
+        `Tindakan ini akan menghapus data biometrik dari Supabase & penyimpanan lokal secara permanen.`
+      );
+
+      if (!isConfirmed) return;
+
       registeredStudents = registeredStudents.filter(s => s.id !== id);
       localStorage.setItem('absensi_local_students', JSON.stringify(registeredStudents));
+
       if (supabaseClient) {
-        try { await supabaseClient.from('students').delete().eq('id', id); } catch (e) { console.error(e); }
+        try { 
+          await supabaseClient.from('students').delete().eq('id', id); 
+        } catch (e) { 
+          console.error('Gagal menghapus dari Supabase:', e); 
+        }
       }
+
       rebuildFaceMatcher();
       renderAttendanceList();
       renderRegisteredStudentsTable();
+
+      alert(`Data murid ${student.name} berhasil dihapus.`);
     }
 
     // --- SAVE CONFIG HANDLERS ---
@@ -1139,18 +1415,25 @@ function doGet(e) {
 
       localStorage.setItem('absensi_supabase_url', url);
       localStorage.setItem('absensi_supabase_anon_key', key);
-      initStorageStatus();
 
       if (!url || !key) {
+        supabaseClient = null;
         res.innerHTML = '<span class="text-amber-400">Kredensial dikosongkan. Kembali ke mode offline.</span>';
+        initStorageStatus();
         return;
       }
 
       res.innerHTML = '<span class="text-slate-400"><i class="fa-solid fa-spinner fa-spin"></i> Menguji koneksi ke Supabase...</span>';
+      
       try {
+        if (!window.supabase) throw new Error("Library Supabase JS belum siap.");
+        supabaseClient = window.supabase.createClient(url, key);
+        
         const { count, error } = await supabaseClient.from('students').select('*', { count: 'exact', head: true });
         if (error) throw error;
-        res.innerHTML = '<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> Sukses terhubung ke Supabase! Total ' + (count || 0) + ' siswa ditemukan.</span>';
+        
+        res.innerHTML = '<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> Sukses terhubung ke Supabase! Total ' + (count || 0) + ' Murid ditemukan.</span>';
+        initStorageStatus();
         await loadInitialData();
       } catch (e) {
         res.innerHTML = '<span class="text-rose-400"><i class="fa-solid fa-triangle-exclamation"></i> Gagal koneksi: ' + e.message + '</span>';
@@ -1175,19 +1458,35 @@ function doGet(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet();
     var data = JSON.parse(e.postData.contents);
+    
     if (data.action === "add_attendance") {
       var attSheet = sheet.getSheetByName("Presensi") || sheet.insertSheet("Presensi");
-      if (attSheet.getLastRow() === 0) attSheet.appendRow(["NISN", "Nama Siswa", "Kelas", "Tanggal", "Jam Hadir", "Status"]);
+      if (attSheet.getLastRow() === 0) attSheet.appendRow(["NISN", "Nama Murid", "Kelas", "Tanggal", "Jam Hadir", "Status"]);
       attSheet.appendRow(["'" + data.nisn, data.name, data.class_name, data.date, data.time, data.status]);
       return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
     }
+    
+    if (data.action === "bulk_enroll_student") {
+      var stdSheet = sheet.getSheetByName("Murid") || sheet.insertSheet("Murid");
+      if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Murid", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
+      
+      var wibDate = Utilities.formatDate(new Date(), "Asia/Jakarta", "dd/MM/yyyy HH:mm:ss");
+      var rows = data.students.map(function(s) {
+        return [s.id, "'" + s.nisn, s.name, s.class_name, JSON.stringify(s.face_descriptor || []), wibDate];
+      });
+      
+      stdSheet.getRange(stdSheet.getLastRow() + 1, 1, rows.length, 6).setValues(rows);
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", count: rows.length })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     if (data.action === "enroll_student") {
-      var stdSheet = sheet.getSheetByName("Siswa") || sheet.insertSheet("Siswa");
-      if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Siswa", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
+      var stdSheet = sheet.getSheetByName("Murid") || sheet.insertSheet("Murid");
+      if (stdSheet.getLastRow() === 0) stdSheet.appendRow(["ID", "NISN", "Nama Murid", "Kelas", "Face Descriptor", "Tanggal Terdaftar"]);
       var wibDate = Utilities.formatDate(new Date(), "Asia/Jakarta", "dd/MM/yyyy HH:mm:ss");
       stdSheet.appendRow([data.id, "'" + data.nisn, data.name, data.class_name, JSON.stringify(data.face_descriptor), wibDate]);
       return ContentService.createTextOutput(JSON.stringify({ status: "success" })).setMimeType(ContentService.MimeType.JSON);
     }
+
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
@@ -1195,7 +1494,7 @@ function doGet(e) {
 
 function doGet(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var stdSheet = sheet.getSheetByName("Siswa");
+  var stdSheet = sheet.getSheetByName("Murid");
   var students = [];
   if (stdSheet) {
     var data = stdSheet.getDataRange().getValues();
@@ -1221,7 +1520,7 @@ function doGet(e) {
 
     function exportToCSV() {
       const today = new Date().toISOString().split('T')[0];
-      let csv = 'NISN,Nama Siswa,Kelas,Tanggal,Jam Hadir,Status\n';
+      let csv = 'NISN,Nama Murid,Kelas,Tanggal,Jam Hadir,Status\n';
       registeredStudents.forEach(s => {
         const att = todayAttendances.find(a => a.student_id === s.id && a.date === today);
         csv += `"${s.nisn}","${s.name}","${s.class_name}","${today}","${att ? att.time : '-'}","${att ? 'Hadir' : 'Belum Hadir'}"\n`;
@@ -1231,7 +1530,7 @@ function doGet(e) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Absensi_Siswa_${today}.csv`;
+      a.download = `Absensi_Murid_${today}.csv`;
       a.click();
     }
   </script>
