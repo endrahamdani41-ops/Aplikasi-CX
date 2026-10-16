@@ -132,8 +132,6 @@
   }
   .custom-option:hover { background: var(--bg); }
   .custom-option:last-child { border-bottom: none; }
-  
-  /* BARANG TERLAMA = HIJAU (FIFO Priority) */
   .custom-option.oldest {
     background: rgba(16,185,129,0.15);
     border-left: 4px solid var(--success);
@@ -141,7 +139,6 @@
   }
   .custom-option.oldest:hover { background: rgba(16,185,129,0.25); }
   .custom-option.oldest .option-stok { color: var(--success); font-weight: bold; }
-  
   .badge-fifo {
     background: var(--success); color: white;
     padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold;
@@ -156,9 +153,33 @@
     .main { margin-left: 0; width: 100%; padding: 15px; padding-top: 70px; }
     .topbar { padding: 12px 15px; } .topbar h1 { font-size: 18px; }
     .form-row, .form-row-3 { grid-template-columns: 1fr; }
-    .stats-grid { grid-template-columns: 1fr 1fr; }
     .summary-box { grid-template-columns: 1fr; }
     table { font-size: 11px; } th, td { padding: 6px; }
+    .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+    .stat-card { padding: 15px; min-height: 70px; }
+    .stat-icon { width: 50px; height: 50px; font-size: 22px; }
+    .stat-info h3 { font-size: 12px; }
+    .stat-info p { font-size: 22px; }
+    .chart-container { grid-template-columns: 1fr; gap: 15px; }
+    .content-card { padding: 15px; }
+    .content-card h2 { font-size: 16px; }
+    .bar-chart { height: 180px; gap: 8px; }
+    .bar-label { font-size: 10px; }
+    .bar-value { font-size: 11px; }
+    .card-header { flex-direction: column; align-items: stretch; gap: 10px; }
+    .card-header .btn { width: 100%; justify-content: center; }
+    .search-bar { flex-direction: column; }
+    .search-bar input, .search-bar select { width: 100%; min-width: 100%; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { gap: 10px; }
+    .stat-card { padding: 12px; }
+    .stat-icon { width: 45px; height: 45px; font-size: 20px; }
+    .stat-info p { font-size: 20px; }
+    .stat-info h3 { font-size: 11px; }
+    .bar-chart { height: 150px; }
+    .topbar h1 { font-size: 16px; }
+    .date-info { font-size: 11px; }
   }
   @media print { .sidebar, .topbar, .btn, .search-bar, .toggle-btn, .theme-toggle, .overlay, .loading-overlay { display: none !important; } .main { margin: 0; padding: 0; width: 100%; } }
 </style>
@@ -171,7 +192,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header"><div class="logo-circle">📚</div><h2>SIMBAR</h2><p>SMPN 110 Jakarta</p></div>
   <nav class="menu">
-    <div class="menu-item active" onclick="showPage('dashboard', this)"><span class="menu-icon">🏠</span><span>Dashboard</span></div>
+    <div class="menu-item active" onclick="showPage('dashboard', this)"><span class="menu-icon"></span><span>Dashboard</span></div>
     <div class="menu-item" onclick="showPage('barang', this)"><span class="menu-icon">📋</span><span>Stock Barang</span></div>
     <div class="menu-item" onclick="showPage('masuk', this)"><span class="menu-icon">📥</span><span>Barang Masuk</span></div>
     <div class="menu-item" onclick="showPage('keluar', this)"><span class="menu-icon">📤</span><span>Barang Keluar</span></div>
@@ -203,7 +224,7 @@
     </div>
   </div>
 
-  <!-- STOCK BARANG (Sesuai Excel) -->
+  <!-- STOCK BARANG -->
   <div class="page" id="barang">
     <div class="content-card">
       <div class="card-header">
@@ -211,7 +232,7 @@
         <button class="btn btn-primary" onclick="openModalBarang()">➕ Tambah Baris</button>
       </div>
       <div class="search-bar">
-        <input type="text" id="searchBarang" placeholder="🔍 Cari Kode atau Nama Item..." oninput="renderBarang()">
+        <input type="text" id="searchBarang" placeholder=" Cari Kode atau Nama Item..." oninput="renderBarang()">
       </div>
       <div class="table-wrapper">
         <table>
@@ -266,7 +287,7 @@
     <div class="content-card">
       <div class="card-header">
         <h2>📤 Transaksi Barang Keluar</h2>
-        <button class="btn btn-primary" onclick="openModalKeluar()">➕ Catat Keluar</button>
+        <button class="btn btn-primary" onclick="openModalKeluar()"> Catat Keluar</button>
       </div>
       <div class="table-wrapper">
         <table>
@@ -377,7 +398,6 @@
         <input type="hidden" id="pilihBarangKeluar" value="">
       </div>
       
-      <!-- Detail Barang Terpilih -->
       <div id="detailKeluar" class="detail-panel" style="display: none;">
         <div class="detail-grid">
           <div><strong>Kode:</strong> <span id="detailKode">-</span></div>
@@ -416,17 +436,18 @@ async function apiCall(action, payload = {}) {
       const res = await fetch(`${API_URL}?action=getAll`);
       const result = await res.json();
       if (result.success) {
+        // Parse harga dari format US (10,545.00) ke angka
         result.data.barang = result.data.barang.map(b => ({
           ...b, 
-          harga: parseFloat(String(b.harga).replace(/,/g, '')) || 0, 
+          harga: parseHarga(b.harga), 
           stok: parseFloat(b.stok) || 0
         }));
         result.data.transaksiMasuk = result.data.transaksiMasuk.map(t => ({
           ...t, 
           jumlah: parseFloat(t.jumlah) || 0,
-          hargaSatuan: parseFloat(t.hargaSatuan) || 0,
-          ppn: parseFloat(t.ppn) || 0,
-          totalHarga: parseFloat(t.totalHarga) || 0
+          hargaSatuan: parseHarga(t.hargaSatuan),
+          ppn: parseHarga(t.ppn),
+          totalHarga: parseHarga(t.totalHarga)
         }));
         result.data.transaksiKeluar = result.data.transaksiKeluar.map(t => ({...t, jumlah: parseFloat(t.jumlah) || 0}));
         db = result.data;
@@ -441,11 +462,34 @@ async function apiCall(action, payload = {}) {
   finally { showLoading(false); }
 }
 
+// Parse harga dari format US (10,545.00) atau Indonesia (10.545,00) ke angka
+function parseHarga(val) {
+  if (!val && val !== 0) return 0;
+  const s = String(val).trim();
+  // Jika format US: 10,545.00
+  if (s.includes('.') && s.includes(',')) {
+    return parseFloat(s.replace(/,/g, ''));
+  }
+  // Jika format Indonesia: 10.545,00
+  if (s.includes(',') && !s.includes('.')) {
+    return parseFloat(s.replace(/\./g, '').replace(',', '.'));
+  }
+  // Jika hanya titik sebagai desimal (US): 10545.00
+  if (s.includes('.')) {
+    return parseFloat(s);
+  }
+  // Jika hanya koma sebagai desimal: 10545,00
+  if (s.includes(',')) {
+    return parseFloat(s.replace(',', '.'));
+  }
+  return parseFloat(s) || 0;
+}
+
 // ============ FORMAT HELPERS ============
 function formatTanggal(dateStr) {
   if (!dateStr) return '-';
   const s = String(dateStr).trim();
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s; // Sudah DD/MM/YYYY
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     const p = s.split('-');
     return `${p[2]}/${p[1]}/${p[0]}`;
@@ -568,7 +612,7 @@ function renderBarang() {
       <td class="${stokClass} text-right">${formatRupiah(b.stok)}</td>
       <td>
         <button class="btn btn-warning btn-sm btn-icon" onclick="editBarang('${b.id}')" title="Edit">✏️</button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteItem('Barang', '${b.id}')" title="Hapus">🗑️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteItem('Barang', '${b.id}')" title="Hapus">️</button>
       </td>
     </tr>`;
   }).join('');
@@ -810,12 +854,10 @@ document.addEventListener('click', function(e) {
 });
 
 function generateCustomSelectOptions() {
-  // Urutkan: tanggal terlama dulu (FIFO)
   const barangList = [...db.barang]
     .filter(b => b.stok > 0)
     .sort((a, b) => new Date(toDateInputValue(a.tanggal)) - new Date(toDateInputValue(b.tanggal)));
   
-  // Kelompokkan berdasarkan nama barang
   const groupedByNama = {};
   barangList.forEach(b => {
     if (!groupedByNama[b.nama]) groupedByNama[b.nama] = [];
@@ -825,16 +867,13 @@ function generateCustomSelectOptions() {
   let html = '';
   Object.keys(groupedByNama).sort().forEach(nama => {
     const items = groupedByNama[nama];
-    // Header grup nama barang
     html += `<div class="custom-option-group">${nama}</div>`;
     
     items.forEach((b, index) => {
-      // Batch terlama dari grup ini = hijau (FIFO priority)
       const isOldest = (index === 0 && items.length > 1) || items.length === 1;
       const classOldest = isOldest ? 'oldest' : '';
       const fifoBadge = isOldest && items.length > 1 ? '<span class="badge-fifo">Keluarkan Duluan</span>' : '';
       
-      // HANYA menampilkan Stok dan Satuan, tanpa kode/tanggal/batch
       html += `
         <div class="custom-option ${classOldest}" 
              data-id="${b.id}" 
@@ -855,10 +894,8 @@ function selectBarangKeluar(idBarang) {
   const barang = db.barang.find(b => String(b.id) === String(idBarang));
   if (!barang) return;
   
-  // Set hidden input
   document.getElementById('pilihBarangKeluar').value = idBarang;
   
-  // Update tampilan trigger (Hanya Nama dan Stok)
   const trigger = document.getElementById('customSelectText');
   trigger.innerHTML = `
     <div class="selected-display">
@@ -868,14 +905,11 @@ function selectBarangKeluar(idBarang) {
   `;
   trigger.style.color = 'var(--text)';
   
-  // Tutup dropdown
   document.getElementById('customSelectTrigger').classList.remove('open');
   document.getElementById('customSelectOptions').classList.remove('open');
   
-  // Tampilkan detail
   showDetailKeluar(barang);
   
-  // Reset validasi stok
   document.getElementById('keluarJumlah').style.borderColor = '';
   document.getElementById('keluarJumlah').style.background = '';
 }
@@ -899,14 +933,12 @@ function openModalKeluar() {
   document.getElementById('detailKeluar').style.display = 'none';
   document.getElementById('pilihBarangKeluar').value = '';
   
-  // Reset trigger
   const trigger = document.getElementById('customSelectText');
   trigger.innerHTML = '-- Pilih Baris Stock --';
   trigger.style.color = 'var(--text-light)';
   document.getElementById('customSelectTrigger').classList.remove('open');
   document.getElementById('customSelectOptions').classList.remove('open');
   
-  // Generate options FIFO
   generateCustomSelectOptions();
   
   document.getElementById('modalKeluar').classList.add('active');
