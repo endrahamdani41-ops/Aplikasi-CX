@@ -80,7 +80,7 @@
   .search-bar input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: var(--card); color: var(--text); flex: 1; min-width: 200px; }
   .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
   .modal.active { display: flex; }
-  .modal-content { background: var(--card); border-radius: 10px; padding: 25px; width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto; }
+  .modal-content { background: var(--card); border-radius: 10px; padding: 25px; width: 95%; max-width: 700px; max-height: 90vh; overflow-y: auto; }
   .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
   .modal-header h3 { color: var(--primary); }
   .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light); }
@@ -93,16 +93,63 @@
   .stok-zero { color: var(--danger); font-weight: bold; }
   .stok-low { color: var(--warning); font-weight: bold; }
   .text-right { text-align: right; }
-  .text-center { text-align: center; }
   .summary-box { background: var(--bg); padding: 15px; border-radius: 8px; margin-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .summary-item { text-align: center; }
   .summary-item label { font-size: 12px; color: var(--text-light); display: block; margin-bottom: 5px; }
   .summary-item .value { font-size: 18px; font-weight: bold; color: var(--primary); }
   .readonly-field { background: var(--bg) !important; cursor: not-allowed; }
-  .fifo-info { background: rgba(16,185,129,0.1); border-left: 4px solid var(--success); padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
-  .fifo-warning { background: rgba(245,158,11,0.1); border-left-color: var(--warning); }
   .detail-panel { background: var(--bg); padding: 12px; border-radius: 6px; margin-bottom: 15px; }
   .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
+
+  /* ============ CUSTOM DROPDOWN FIFO ============ */
+  .custom-select { position: relative; width: 100%; }
+  .custom-select-trigger {
+    padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--card); color: var(--text); cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; min-height: 40px; transition: border-color 0.2s;
+  }
+  .custom-select-trigger:hover { border-color: var(--primary); }
+  .custom-select-trigger .arrow { transition: transform 0.2s; font-size: 12px; }
+  .custom-select-trigger.open .arrow { transform: rotate(180deg); }
+  .custom-select-options {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 6px; max-height: 350px; overflow-y: auto;
+    z-index: 100; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .custom-select-options.open { display: block; }
+  .custom-option-group {
+    padding: 8px 12px; font-size: 12px; font-weight: bold;
+    color: var(--text-light); background: var(--bg);
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1;
+  }
+  .custom-option {
+    padding: 10px 12px; cursor: pointer; font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    transition: background 0.15s;
+  }
+  .custom-option:hover { background: var(--bg); }
+  .custom-option:last-child { border-bottom: none; }
+  
+  /* BARANG TERLAMA = HIJAU (FIFO Priority) */
+  .custom-option.oldest {
+    background: rgba(16,185,129,0.15);
+    border-left: 4px solid var(--success);
+    font-weight: 600;
+  }
+  .custom-option.oldest:hover { background: rgba(16,185,129,0.25); }
+  .custom-option.oldest .option-stok { color: var(--success); font-weight: bold; }
+  
+  .badge-fifo {
+    background: var(--success); color: white;
+    padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold;
+  }
+  .selected-display { display: flex; align-items: center; gap: 8px; }
+  .selected-nama { font-weight: 500; }
+  .selected-stok { color: var(--success); font-weight: bold; }
+
   @media (max-width: 768px) {
     .sidebar { transform: translateX(-100%); }
     .sidebar:not(.collapsed) { transform: translateX(0); }
@@ -156,7 +203,7 @@
     </div>
   </div>
 
-  <!-- STOCK BARANG -->
+  <!-- STOCK BARANG (Sesuai Excel) -->
   <div class="page" id="barang">
     <div class="content-card">
       <div class="card-header">
@@ -170,8 +217,8 @@
         <table>
           <thead>
             <tr>
-              <th>NO</th><th>KODE</th><th>NAMA ITEM</th><th>TANGGAL</th>
-              <th>SATUAN</th><th>HARGA</th><th>NO BAST</th><th>MERK</th>
+              <th>NO</th><th>KODE</th><th>NAMA ITEM/OBAT</th><th>TANGGAL OLEH</th>
+              <th>SATUAN</th><th>HARGA</th><th>NO BAST</th><th>MERK/KEMASAN</th>
               <th>STOCK</th><th>AKSI</th>
             </tr>
           </thead>
@@ -249,16 +296,16 @@
     <form onsubmit="saveBarang(event)">
       <input type="hidden" id="barangId">
       <div class="form-row">
-        <div class="form-group"><label>KODE * (contoh: 1.1.7.01.01.01.027.00005)</label><input type="text" class="form-control" id="kodeBarang" required></div>
-        <div class="form-group"><label>NAMA ITEM *</label><input type="text" class="form-control" id="namaBarang" required></div>
+        <div class="form-group"><label>KODE *</label><input type="text" class="form-control" id="kodeBarang" required></div>
+        <div class="form-group"><label>NAMA ITEM/OBAT *</label><input type="text" class="form-control" id="namaBarang" required></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>TANGGAL *</label><input type="date" class="form-control" id="tanggalBarang" required></div>
-        <div class="form-group"><label>SATUAN * (PCS, DUS, BUAH, dll)</label><input type="text" class="form-control" id="satuanBarang" required></div>
+        <div class="form-group"><label>TANGGAL OLEH *</label><input type="date" class="form-control" id="tanggalBarang" required></div>
+        <div class="form-group"><label>SATUAN *</label><input type="text" class="form-control" id="satuanBarang" required></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label>HARGA * (Rp)</label><input type="number" class="form-control" id="hargaBarang" min="0" step="0.01" required></div>
-        <div class="form-group"><label>NO BAST</label><input type="text" class="form-control" id="noBastBarang" placeholder="51166::BA1.2000004"></div>
+        <div class="form-group"><label>NO BAST</label><input type="text" class="form-control" id="noBastBarang"></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label>MERK/KEMASAN</label><input type="text" class="form-control" id="merkBarang"></div>
@@ -310,31 +357,41 @@
   </div>
 </div>
 
-<!-- MODAL BARANG KELUAR (FIFO) -->
+<!-- MODAL BARANG KELUAR (FIFO + Custom Dropdown) -->
 <div class="modal" id="modalKeluar">
   <div class="modal-content">
-    <div class="modal-header"><h3>📤 Catat Barang Keluar (FIFO)</h3><button class="close-btn" onclick="closeModal('modalKeluar')">×</button></div>
+    <div class="modal-header">
+      <h3>📤 Catat Barang Keluar (FIFO)</h3>
+      <button class="close-btn" onclick="closeModal('modalKeluar')">×</button>
+    </div>
     <form onsubmit="saveKeluar(event)">
- 
       <div class="form-group">
-        <label>Pilih Baris Stock <span style="color: var(--success); font-size: 11px;">(FIFO - Terlama Duluan)</span> *</label>
-        <select class="form-control" id="pilihBarangKeluar" required onchange="showDetailKeluar()">
-          <option value="">-- Pilih Barang --</option>
-        </select>
+        <label>Pilih Baris Stock <span style="color: var(--success); font-size: 11px;">(Hijau = Keluarkan Duluan)</span> *</label>
+        <div class="custom-select" id="customSelectKeluar">
+          <div class="custom-select-trigger" id="customSelectTrigger" onclick="toggleCustomSelect()">
+            <span id="customSelectText" style="color: var(--text-light);">-- Pilih Baris Stock --</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="custom-select-options" id="customSelectOptions"></div>
+        </div>
+        <input type="hidden" id="pilihBarangKeluar" value="">
       </div>
+      
+      <!-- Detail Barang Terpilih -->
       <div id="detailKeluar" class="detail-panel" style="display: none;">
         <div class="detail-grid">
           <div><strong>Kode:</strong> <span id="detailKode">-</span></div>
-          <div><strong>Tanggal:</strong> <span id="detailTanggal">-</span></div>
-          <div><strong>Stok:</strong> <span id="detailStok">-</span></div>
-          <div><strong>Harga:</strong> <span id="detailHarga">-</span></div>
+          <div><strong>Tanggal Perolehan:</strong> <span id="detailTanggal">-</span></div>
+          <div><strong>Stok Tersedia:</strong> <span id="detailStok">-</span></div>
+          <div><strong>Harga Satuan:</strong> <span id="detailHarga">-</span></div>
         </div>
       </div>
+      
       <div class="form-row">
-        <div class="form-group"><label>Jumlah *</label><input type="number" class="form-control" id="keluarJumlah" min="1" step="0.01" required oninput="checkStokKeluar()"></div>
+        <div class="form-group"><label>Jumlah Keluar *</label><input type="number" class="form-control" id="keluarJumlah" min="1" step="0.01" required oninput="checkStokKeluar()"></div>
         <div class="form-group"><label>Tanggal *</label><input type="date" class="form-control" id="keluarTanggal" required></div>
       </div>
-      <div class="form-group"><label>Penerima *</label><input type="text" class="form-control" id="keluarPenerima" required></div>
+      <div class="form-group"><label>Penerima *</label><input type="text" class="form-control" id="keluarPenerima" required placeholder="Nama Guru / Ruang / Kegiatan"></div>
       <div class="form-group"><label>Keterangan</label><textarea class="form-control" id="keluarKet" rows="2"></textarea></div>
       <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
         <button type="button" class="btn btn-secondary" onclick="closeModal('modalKeluar')">Batal</button>
@@ -345,7 +402,7 @@
 </div>
 
 <script>
-// GANTI DENGAN URL WEB APP ANDA
+// ⚠️ GANTI DENGAN URL WEB APP ANDA
 const API_URL = "https://script.google.com/macros/s/AKfycbx2y92SV8lBUcETfhsXQmpSNHaSIeDen52F9t8R281IdhlftmUnQUdHIjQ8QVFjcwSf/exec"; 
 
 let db = { barang: [], transaksiMasuk: [], transaksiKeluar: [] };
@@ -388,7 +445,7 @@ async function apiCall(action, payload = {}) {
 function formatTanggal(dateStr) {
   if (!dateStr) return '-';
   const s = String(dateStr).trim();
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s; // Sudah DD/MM/YYYY
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
     const p = s.split('-');
     return `${p[2]}/${p[1]}/${p[0]}`;
@@ -446,7 +503,7 @@ function toggleSidebar() {
   const isMobile = window.innerWidth <= 768;
   sidebar.classList.toggle('collapsed');
   if (!isMobile) { main.classList.toggle('expanded'); btn.textContent = sidebar.classList.contains('collapsed') ? '☰' : '✕'; } 
-  else { overlay.classList.toggle('active'); btn.textContent = sidebar.classList.contains('collapsed') ? '☰' : ''; }
+  else { overlay.classList.toggle('active'); btn.textContent = sidebar.classList.contains('collapsed') ? '☰' : '✕'; }
 }
 function closeSidebar() { document.getElementById('sidebar').classList.add('collapsed'); document.getElementById('mainContent').classList.add('expanded'); document.getElementById('overlay').classList.remove('active'); document.getElementById('sidebarToggle').textContent = '☰'; }
 function initTheme() { const t = localStorage.getItem('simbar_theme') || 'light'; document.documentElement.setAttribute('data-theme', t); document.getElementById('themeToggle').textContent = t === 'dark' ? '☀️' : '🌙'; }
@@ -555,7 +612,7 @@ function renderMasuk() {
 function renderKeluar() {
   const list = db.transaksiKeluar;
   document.getElementById('tableKeluar').innerHTML = list.length === 0 ? `<tr><td colspan="7" style="text-align: center; color: var(--text-light); padding: 30px;">Belum ada transaksi</td></tr>` : [...list].sort((a,b) => new Date(toDateInputValue(b.tanggal)) - new Date(toDateInputValue(a.tanggal))).map(t => {
-    return `<tr><td><small>${t.kodeTransaksi || t.id}</small></td><td>${formatTanggal(t.tanggal)}</td><td>${t.namaBarang}</td><td><span class="badge badge-info">${t.jumlah}</span></td><td>${t.pihak || t.penerima || '-'}</td><td>${t.keterangan || '-'}</td><td><button class="btn btn-danger btn-sm btn-icon" onclick="deleteItem('TransaksiKeluar', '${t.id}')">️</button></td></tr>`;
+    return `<tr><td><small>${t.kodeTransaksi || t.id}</small></td><td>${formatTanggal(t.tanggal)}</td><td>${t.namaBarang}</td><td><span class="badge badge-info">${t.jumlah}</span></td><td>${t.pihak || t.penerima || '-'}</td><td>${t.keterangan || '-'}</td><td><button class="btn btn-danger btn-sm btn-icon" onclick="deleteItem('TransaksiKeluar', '${t.id}')">🗑️</button></td></tr>`;
   }).join('');
 }
 
@@ -574,7 +631,7 @@ function renderLaporan() {
     <tr><td><strong>Total Nilai Aset</strong></td><td>: Rp ${totalNilai.toLocaleString('id-ID')}</td></tr>
   </table>
   <h3 style="margin: 25px 0 10px; color: var(--primary);">📋 Daftar Stock Barang</h3>
-  <table><thead><tr><th>NO</th><th>KODE</th><th>NAMA</th><th>TANGGAL</th><th>SATUAN</th><th>HARGA</th><th>NO BAST</th><th>MERK</th><th>STOCK</th><th>NILAI</th></tr></thead><tbody>`;
+  <table><thead><tr><th>NO</th><th>KODE</th><th>NAMA ITEM/OBAT</th><th>TANGGAL OLEH</th><th>SATUAN</th><th>HARGA</th><th>NO BAST</th><th>MERK/KEMASAN</th><th>STOCK</th><th>NILAI</th></tr></thead><tbody>`;
   
   db.barang.forEach((b, i) => {
     const nilaiTotal = Number(b.stok) * Number(b.harga || 0);
@@ -732,72 +789,99 @@ async function saveMasuk(e) {
   
   closeModal('modalMasuk'); 
   renderMasuk(); 
-  alert(`Barang masuk berhasil disimpan!\n\nSubtotal: ${formatRupiahFull(subtotal)}\nPPN (11%): ${formatRupiahFull(ppn)}\nTotal: ${formatRupiahFull(totalHarga)}\n\nStok ${barang.nama} bertambah ${jumlah} ${barang.satuan}`);
+  alert(`✅ Barang masuk berhasil disimpan!\n\nSubtotal: ${formatRupiahFull(subtotal)}\nPPN (11%): ${formatRupiahFull(ppn)}\nTotal: ${formatRupiahFull(totalHarga)}\n\nStok ${barang.nama} bertambah ${jumlah} ${barang.satuan}`);
 }
 
-// ============ MODAL BARANG KELUAR (FIFO) ============
-function openModalKeluar() {
-  document.getElementById('keluarJumlah').value = 1;
-  document.getElementById('keluarTanggal').value = new Date().toISOString().split('T')[0];
-  document.getElementById('keluarPenerima').value = '';
-  document.getElementById('keluarKet').value = '';
-  document.getElementById('detailKeluar').style.display = 'none';
-  
-  // FIFO: urutkan berdasarkan tanggal terlama (ascending)
+// ============ CUSTOM DROPDOWN FIFO ============
+
+function toggleCustomSelect() {
+  const trigger = document.getElementById('customSelectTrigger');
+  const options = document.getElementById('customSelectOptions');
+  trigger.classList.toggle('open');
+  options.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  const select = document.getElementById('customSelectKeluar');
+  if (select && !select.contains(e.target)) {
+    document.getElementById('customSelectTrigger').classList.remove('open');
+    document.getElementById('customSelectOptions').classList.remove('open');
+  }
+});
+
+function generateCustomSelectOptions() {
+  // Urutkan: tanggal terlama dulu (FIFO)
   const barangList = [...db.barang]
     .filter(b => b.stok > 0)
     .sort((a, b) => new Date(toDateInputValue(a.tanggal)) - new Date(toDateInputValue(b.tanggal)));
   
-  // Kelompokkan berdasarkan nama
+  // Kelompokkan berdasarkan nama barang
   const groupedByNama = {};
   barangList.forEach(b => {
     if (!groupedByNama[b.nama]) groupedByNama[b.nama] = [];
     groupedByNama[b.nama].push(b);
   });
   
-  let optionsHtml = '<option value="">-- Pilih Baris Stock --</option>';
-  
+  let html = '';
   Object.keys(groupedByNama).sort().forEach(nama => {
     const items = groupedByNama[nama];
-    const isMultiple = items.length > 1;
+    // Header grup nama barang
+    html += `<div class="custom-option-group">${nama}</div>`;
     
     items.forEach((b, index) => {
-      const dateObj = new Date(toDateInputValue(b.tanggal));
-      const now = new Date();
-      const diffDays = Math.floor((now - dateObj) / (1000 * 60 * 60 * 24));
+      // Batch terlama dari grup ini = hijau (FIFO priority)
+      const isOldest = (index === 0 && items.length > 1) || items.length === 1;
+      const classOldest = isOldest ? 'oldest' : '';
+      const fifoBadge = isOldest && items.length > 1 ? '<span class="badge-fifo">Keluarkan Duluan</span>' : '';
       
-      let priorityLabel = '';
-      let emoji = '';
-      
-      if (index === 0 && isMultiple) {
-        if (diffDays > 365) { priorityLabel = '️ PALING LAMA'; emoji = ''; }
-        else if (diffDays > 180) { priorityLabel = ' Lama'; emoji = '🟠'; }
-        else { priorityLabel = '✅ FIFO'; emoji = '🟢'; }
-      } else if (isMultiple) {
-        priorityLabel = `Batch ${index + 1}`;
-        emoji = '';
-      }
-      
-      optionsHtml += `<option value="${b.id}">${emoji} ${b.kode} | ${b.nama} | ${formatTanggal(b.tanggal)} | Stok: ${b.stok} ${b.satuan} ${priorityLabel ? '| ' + priorityLabel : ''}</option>`;
+      // HANYA menampilkan Stok dan Satuan, tanpa kode/tanggal/batch
+      html += `
+        <div class="custom-option ${classOldest}" 
+             data-id="${b.id}" 
+             onclick="selectBarangKeluar('${b.id}')">
+          <span class="option-info">
+            <span class="option-stok">${b.stok} ${b.satuan}</span>
+          </span>
+          ${fifoBadge}
+        </div>
+      `;
     });
   });
   
-  document.getElementById('pilihBarangKeluar').innerHTML = optionsHtml;
-  document.getElementById('modalKeluar').classList.add('active');
+  document.getElementById('customSelectOptions').innerHTML = html;
 }
 
-function showDetailKeluar() {
-  const idBarang = document.getElementById('pilihBarangKeluar').value;
-  const detailPanel = document.getElementById('detailKeluar');
-  const fifoInfo = document.getElementById('fifoInfo');
-  
-  if (!idBarang) {
-    detailPanel.style.display = 'none';
-    return;
-  }
-  
+function selectBarangKeluar(idBarang) {
   const barang = db.barang.find(b => String(b.id) === String(idBarang));
   if (!barang) return;
+  
+  // Set hidden input
+  document.getElementById('pilihBarangKeluar').value = idBarang;
+  
+  // Update tampilan trigger (Hanya Nama dan Stok)
+  const trigger = document.getElementById('customSelectText');
+  trigger.innerHTML = `
+    <div class="selected-display">
+      <span class="selected-nama">${barang.nama}</span>
+      <span class="selected-stok">• ${barang.stok} ${barang.satuan}</span>
+    </div>
+  `;
+  trigger.style.color = 'var(--text)';
+  
+  // Tutup dropdown
+  document.getElementById('customSelectTrigger').classList.remove('open');
+  document.getElementById('customSelectOptions').classList.remove('open');
+  
+  // Tampilkan detail
+  showDetailKeluar(barang);
+  
+  // Reset validasi stok
+  document.getElementById('keluarJumlah').style.borderColor = '';
+  document.getElementById('keluarJumlah').style.background = '';
+}
+
+function showDetailKeluar(barang) {
+  const detailPanel = document.getElementById('detailKeluar');
   
   document.getElementById('detailKode').textContent = barang.kode;
   document.getElementById('detailTanggal').textContent = formatTanggal(barang.tanggal);
@@ -805,20 +889,27 @@ function showDetailKeluar() {
   document.getElementById('detailHarga').textContent = formatRupiahFull(barang.harga);
   
   detailPanel.style.display = 'block';
+}
+
+function openModalKeluar() {
+  document.getElementById('keluarJumlah').value = 1;
+  document.getElementById('keluarTanggal').value = new Date().toISOString().split('T')[0];
+  document.getElementById('keluarPenerima').value = '';
+  document.getElementById('keluarKet').value = '';
+  document.getElementById('detailKeluar').style.display = 'none';
+  document.getElementById('pilihBarangKeluar').value = '';
   
-  // Cek apakah ini batch terlama
-  const sameNameItems = db.barang
-    .filter(b => b.nama === barang.nama && b.stok > 0)
-    .sort((a, b) => new Date(toDateInputValue(a.tanggal)) - new Date(toDateInputValue(b.tanggal)));
+  // Reset trigger
+  const trigger = document.getElementById('customSelectText');
+  trigger.innerHTML = '-- Pilih Baris Stock --';
+  trigger.style.color = 'var(--text-light)';
+  document.getElementById('customSelectTrigger').classList.remove('open');
+  document.getElementById('customSelectOptions').classList.remove('open');
   
-  if (sameNameItems.length > 0 && String(sameNameItems[0].id) === String(barang.id)) {
-    fifoInfo.innerHTML = `<strong>✅ Benar! Ini adalah batch TERLAMA</strong><br><span style="color: var(--text-light);">Tanggal: <strong>${formatTanggal(barang.tanggal)}</strong> | Stok: <strong>${barang.stok} ${barang.satuan}</strong></span>`;
-    fifoInfo.className = 'fifo-info';
-  } else if (sameNameItems.length > 0) {
-    const oldest = sameNameItems[0];
-    fifoInfo.innerHTML = `<strong>⚠️ Perhatian: Bukan batch terlama!</strong><br><span style="color: var(--text-light);">Batch terlama: <strong>${oldest.nama}</strong> (${formatTanggal(oldest.tanggal)}) stok ${oldest.stok} ${oldest.satuan}. Disarankan FIFO.</span>`;
-    fifoInfo.className = 'fifo-info fifo-warning';
-  }
+  // Generate options FIFO
+  generateCustomSelectOptions();
+  
+  document.getElementById('modalKeluar').classList.add('active');
 }
 
 function checkStokKeluar() {
@@ -849,7 +940,7 @@ async function saveKeluar(e) {
   const barang = db.barang.find(b => String(b.id) === String(idBarang));
   const jumlah = parseFloat(document.getElementById('keluarJumlah').value);
   
-  if (!barang) { alert('Pilih barang!'); return; }
+  if (!barang) { alert('Pilih barang terlebih dahulu!'); return; }
   if (jumlah > barang.stok) { 
     alert(`Stok tidak mencukupi! Tersedia: ${barang.stok} ${barang.satuan}`); 
     return; 
@@ -874,7 +965,7 @@ async function saveKeluar(e) {
 
   closeModal('modalKeluar'); 
   renderKeluar(); 
-  alert(`Barang keluar berhasil disimpan!\n\n${barang.nama}\nJumlah: ${jumlah} ${barang.satuan}\nSisa stok: ${newStok} ${barang.satuan}`);
+  alert(`✅ Barang keluar berhasil disimpan!\n\n ${barang.nama}\n📤 Jumlah: ${jumlah} ${barang.satuan}\n📊 Sisa stok: ${newStok} ${barang.satuan}`);
 }
 
 // ============ DELETE ============
