@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Media Pembelajaran Interaktif</title>
+    <title>Portal Belajar Siswa</title>
     <style>
         :root {
             --bg: #F0F4F8; --card: #FFFFFF; --text: #2C3E50; --text-muted: #7F8C8D;
-            --primary: #4A90E2; --primary-dark: #357ABD; --success: #27AE60;
-            --warning: #F5A623; --danger: #E74C3C; --border: #E0E6ED;
+            --primary: #4A90E2; --primary-dark: #357ABD; --border: #E0E6ED;
             --shadow: 0 4px 12px rgba(0,0,0,0.08); --radius: 16px;
         }
         body.dark-mode {
@@ -16,118 +15,101 @@
             --primary: #64B5F6; --primary-dark: #42A5F5; --border: #333333;
             --shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
             background: var(--bg); color: var(--text);
-            margin: 0; padding: 0; transition: background 0.3s, color 0.3s;
-            min-height: 100vh;
+            margin: 0; padding: 0; transition: 0.3s; min-height: 100vh;
         }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px 15px 80px; }
-
-        /* HEADER */
-        .header {
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px 15px 80px; }
+        
+        .portal-header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white; padding: 25px 20px; border-radius: 0 0 25px 25px;
-            text-align: center; box-shadow: var(--shadow); margin-bottom: 20px;
-            position: relative;
+            color: white; padding: 30px 20px; border-radius: 0 0 25px 25px;
+            text-align: center; box-shadow: var(--shadow); margin-bottom: 30px;
         }
-        .header h1 { margin: 0; font-size: 1.6rem; font-weight: 700; }
-        .header p { margin: 8px 0 0; opacity: 0.9; font-size: 0.95rem; }
-        .btn-back {
-            position: absolute; top: 15px; left: 15px;
-            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
-            color: white; padding: 8px 14px; border-radius: 20px;
-            cursor: pointer; font-size: 0.85rem; display: none;
-        }
-        .btn-back:hover { background: rgba(255,255,255,0.3); }
+        .portal-header h1 { margin: 0; font-size: 1.8rem; }
+        .portal-header p { margin: 8px 0 0; opacity: 0.9; }
 
-        /* SECTIONS */
-        .section { display: none; animation: fadeIn 0.4s; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-
-        /* CARD */
-        .card {
-            background: var(--card); border-radius: var(--radius);
-            padding: 22px; box-shadow: var(--shadow);
-            margin-bottom: 20px; border: 1px solid var(--border);
-        }
-
-        /* PORTAL GRID */
         .info-box {
             background: var(--card); border: 1px solid var(--border);
             border-left: 4px solid var(--primary); padding: 15px 20px;
             border-radius: 10px; margin-bottom: 25px;
-            font-size: 0.95rem; color: var(--text); box-shadow: var(--shadow);
+            font-size: 0.95rem; box-shadow: var(--shadow);
         }
         .info-box strong { color: var(--primary); }
+
+        /* Grid Mapel */
         .mapel-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px;
         }
         .mapel-card {
             background: var(--card); padding: 22px 12px; border-radius: var(--radius);
             box-shadow: var(--shadow); cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent; display: flex;
-            flex-direction: column; align-items: center; text-align: center;
-            position: relative; overflow: hidden;
+            transition: all 0.3s; border: 2px solid transparent;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
         }
-        .mapel-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: var(--primary); transform: scaleX(0); transition: transform 0.3s;
-        }
-        .mapel-card:hover, .mapel-card:active {
+        .mapel-card:hover {
             transform: translateY(-5px); border-color: var(--primary);
             box-shadow: 0 10px 25px rgba(74, 144, 226, 0.25);
         }
-        .mapel-card:hover::before { transform: scaleX(1); }
         .icon-wrapper {
             width: 65px; height: 65px; margin-bottom: 10px;
             display: flex; align-items: center; justify-content: center;
             background: var(--bg); border-radius: 50%; padding: 10px;
-            transition: transform 0.3s;
         }
-        .mapel-card:hover .icon-wrapper { transform: scale(1.1); }
         .icon-wrapper svg { width: 100%; height: 100%; }
-        .name { font-weight: 700; font-size: 0.95rem; line-height: 1.3; color: var(--text); }
-        .desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; }
-
-        /* FORM */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
-        input, select, textarea {
-            width: 100%; padding: 12px; border: 1px solid var(--border);
-            border-radius: 8px; background: var(--bg); color: var(--text);
-            font-size: 16px; font-family: inherit;
+        .name { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+        .topic-count {
+            font-size: 0.75rem; color: var(--text-muted);
+            margin-top: 5px; background: var(--bg);
+            padding: 3px 10px; border-radius: 12px;
         }
-        input:disabled, input[readonly] { opacity: 0.6; cursor: not-allowed; border-style: dashed; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
 
-        /* BUTTONS */
-        .btn {
-            display: block; width: 100%; padding: 14px;
-            background: var(--primary); color: white; border: none;
-            border-radius: 8px; font-size: 1rem; font-weight: 600;
-            cursor: pointer; margin-top: 10px; transition: 0.2s; text-align: center;
+        /* Modal Topik */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none;
+            justify-content: center; align-items: center; z-index: 1000;
+            backdrop-filter: blur(5px);
         }
-        .btn:active { transform: scale(0.98); }
-        .btn-secondary { background: var(--text-muted); }
-        .btn-success { background: var(--success); }
-        .btn-warning { background: var(--warning); color: #222; }
-        .btn-danger { background: var(--danger); }
-
-        /* QUIZ */
-        .quiz-opt {
-            background: var(--bg); border: 2px solid var(--border);
-            padding: 15px; margin-bottom: 10px; border-radius: 8px;
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center;
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: var(--card); border-radius: 16px; padding: 30px;
+            max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        .quiz-opt.selected { border-color: var(--primary); background: rgba(74,144,226,0.1); font-weight: bold; }
-        .quiz-img { max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px; display: block; }
-        .doc-card { border-left: 5px solid var(--danger) !important; }
+        .modal h3 { margin-top: 0; color: var(--primary); }
+        .modal-close {
+            float: right; background: none; border: none;
+            font-size: 1.5rem; cursor: pointer; color: var(--text-muted);
+        }
+        .topic-list { list-style: none; padding: 0; margin: 20px 0; }
+        .topic-item {
+            padding: 15px; margin: 8px 0; background: var(--bg);
+            border-radius: 8px; cursor: pointer; transition: 0.2s;
+            border: 2px solid transparent;
+        }
+        .topic-item:hover {
+            border-color: var(--primary); background: rgba(74, 144, 226, 0.1);
+        }
+        .topic-item.empty {
+            text-align: center; color: var(--text-muted);
+            font-style: italic; cursor: default;
+        }
+        .topic-item.empty:hover { border-color: transparent; background: var(--bg); }
 
-        /* THEME TOGGLE */
+        /* Loading */
+        .loading {
+            text-align: center; padding: 20px; color: var(--text-muted);
+        }
+        .spinner {
+            border: 3px solid var(--border); border-top: 3px solid var(--primary);
+            border-radius: 50%; width: 30px; height: 30px;
+            animation: spin 1s linear infinite; margin: 0 auto 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         .theme-toggle {
             position: fixed; bottom: 25px; right: 25px;
             background: var(--card); color: var(--text);
@@ -135,466 +117,218 @@
             display: flex; align-items: center; justify-content: center;
             box-shadow: var(--shadow); cursor: pointer; z-index: 100;
             border: 1px solid var(--border); font-size: 1.6rem;
-            transition: transform 0.3s;
         }
-        .theme-toggle:hover { transform: rotate(20deg) scale(1.1); }
 
-        /* FOOTER */
         .footer { text-align: center; margin-top: 40px; font-size: 0.85rem; color: var(--text-muted); }
 
         @media (max-width: 600px) {
-            .container { padding: 10px 10px 80px; }
-            .header { padding: 20px 15px 25px; }
-            .header h1 { font-size: 1.3rem; }
+            .portal-header { padding: 25px 15px; }
+            .portal-header h1 { font-size: 1.4rem; }
             .mapel-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .mapel-card { padding: 18px 8px; }
             .icon-wrapper { width: 55px; height: 55px; padding: 8px; }
             .name { font-size: 0.88rem; }
-            .btn-back { top: 10px; left: 10px; padding: 6px 10px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
-    <div class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌓</div>
-
+    <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+    
     <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-            <button class="btn-back" id="btnBackPortal" onclick="backToPortal()">← Portal</button>
-            <h1 id="appTitle">🎓 Portal Belajar</h1>
-            <p id="appSub">Pilih mata pelajaran untuk mulai belajar</p>
+        <div class="portal-header">
+            <h1>🎓 Portal Belajar</h1>
+            <p>Pilih mata pelajaran untuk melihat topik yang tersedia</p>
         </div>
 
-        <!-- ==================== SECTION: PORTAL ==================== -->
-        <div id="sec-portal" class="section active">
-            <div class="info-box">
-                💡 <strong>Petunjuk:</strong> Klik salah satu kartu di bawah untuk mulai belajar. Pastikan kamu sudah memiliki <strong>NIS</strong> yang terdaftar di sekolah.
+        <div class="info-box">
+            💡 <strong>Petunjuk:</strong> Klik mata pelajaran untuk melihat daftar topik yang sudah dibuat guru. Pastikan kamu sudah memiliki <strong>NIS</strong> yang terdaftar.
+        </div>
+        
+        <!-- Grid Mapel -->
+        <div class="mapel-grid">
+            <div class="mapel-card" onclick="showTopics('PAI', 'Pendidikan Agama Islam')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><path fill="#D4A017" d="M32 8 C32 8, 20 15, 20 25 L20 50 L44 50 L44 25 C44 15, 32 8, 32 8 Z"/><rect fill="#8B6F47" x="15" y="50" width="34" height="4"/></svg>
+                </div>
+                <div class="name">Pendidikan Agama Islam</div>
+                <div class="topic-count" id="count-PAI">Memuat...</div>
             </div>
 
-            <div class="mapel-grid">
-                <!-- 1. PAI -->
-                <div class="mapel-card" onclick="pilihMapel('PAI', 'Rukun Islam')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><path fill="#D4A017" d="M32 8 C32 8, 20 15, 20 25 L20 50 L44 50 L44 25 C44 15, 32 8, 32 8 Z"/><rect fill="#8B6F47" x="15" y="50" width="34" height="4"/><rect fill="#D4A017" x="28" y="40" width="8" height="10"/><circle fill="#D4A017" cx="32" cy="3" r="1.5"/><path fill="#8B6F47" d="M24 25 Q24 20, 28 20 Q28 25, 24 25 Z"/><path fill="#8B6F47" d="M40 25 Q40 20, 36 20 Q36 25, 40 25 Z"/></svg>
-                    </div>
-                    <div class="name">Pendidikan Agama Islam</div>
-                    <div class="desc">Rukun Islam</div>
+            <div class="mapel-card" onclick="showTopics('PPKN', 'Pendidikan Pancasila')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><path fill="#E74C3C" d="M32 6 L58 20 L58 45 C58 52, 45 58, 32 62 C19 58, 6 52, 6 45 L6 20 Z"/><path fill="#F1C40F" d="M32 18 L42 24 L42 38 C42 42, 37 45, 32 47 C27 45, 22 42, 22 38 L22 24 Z"/></svg>
                 </div>
-
-                <!-- 2. PPKN -->
-                <div class="mapel-card" onclick="pilihMapel('PPKN', 'Pancasila sebagai Dasar Negara')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><path fill="#E74C3C" d="M32 6 L58 20 L58 45 C58 52, 45 58, 32 62 C19 58, 6 52, 6 45 L6 20 Z"/><path fill="#F1C40F" d="M32 18 L42 24 L42 38 C42 42, 37 45, 32 47 C27 45, 22 42, 22 38 L22 24 Z"/><path fill="#2C3E50" d="M32 22 L32 35 M28 28 L36 28 M26 32 L38 32"/><circle fill="#F1C40F" cx="32" cy="14" r="3"/></svg>
-                    </div>
-                    <div class="name">Pendidikan Pancasila</div>
-                    <div class="desc">Pancasila sebagai Dasar Negara</div>
-                </div>
-
-                <!-- 3. B.IND -->
-                <div class="mapel-card" onclick="pilihMapel('B_IND', 'Teks Deskripsi')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><path fill="#3498DB" d="M12 10 L40 10 L48 18 L48 54 L12 54 Z"/><path fill="#2980B9" d="M40 10 L40 18 L48 18 Z"/><rect fill="#ECF0F1" x="18" y="24" width="24" height="2"/><rect fill="#ECF0F1" x="18" y="30" width="20" height="2"/><rect fill="#ECF0F1" x="18" y="36" width="22" height="2"/><rect fill="#ECF0F1" x="18" y="42" width="18" height="2"/></svg>
-                    </div>
-                    <div class="name">Bahasa Indonesia</div>
-                    <div class="desc">Teks Deskripsi</div>
-                </div>
-
-                <!-- 4. MTK -->
-                <div class="mapel-card" onclick="pilihMapel('MTK', 'Operasi Pecahan')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><rect fill="#8E44AD" x="8" y="8" width="48" height="48" rx="4"/><circle fill="#E74C3C" cx="22" cy="22" r="4"/><circle fill="#3498DB" cx="32" cy="22" r="4"/><circle fill="#2ECC71" cx="42" cy="22" r="4"/><circle fill="#F39C12" cx="22" cy="32" r="4"/><circle fill="#E74C3C" cx="32" cy="32" r="4"/><circle fill="#3498DB" cx="42" cy="32" r="4"/><circle fill="#2ECC71" cx="22" cy="42" r="4"/><circle fill="#F39C12" cx="32" cy="42" r="4"/><circle fill="#E74C3C" cx="42" cy="42" r="4"/><line stroke="white" stroke-width="2" x1="16" y1="28" x2="48" y2="28"/><line stroke="white" stroke-width="2" x1="16" y1="38" x2="48" y2="38"/></svg>
-                    </div>
-                    <div class="name">Matematika</div>
-                    <div class="desc">Operasi Pecahan</div>
-                </div>
-
-                <!-- 5. IPA -->
-                <div class="mapel-card" onclick="pilihMapel('IPA', 'Sistem Tata Surya')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><circle fill="#34495E" cx="32" cy="32" r="14"/><circle fill="#2C3E50" cx="32" cy="32" r="10"/><path fill="#7F8C8D" d="M28 10 L36 10 L34 22 L30 22 Z"/><circle fill="#ECF0F1" cx="32" cy="8" r="3"/><circle fill="#F39C12" cx="46" cy="20" r="2"/><circle fill="#3498DB" cx="18" cy="24" r="2"/></svg>
-                    </div>
-                    <div class="name">Ilmu Pengetahuan Alam</div>
-                    <div class="desc">Sistem Tata Surya</div>
-                </div>
-
-                <!-- 6. IPS -->
-                <div class="mapel-card" onclick="pilihMapel('IPS', 'Kerajaan Hindu-Buddha')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><path fill="#7F8C8D" d="M8 50 L56 50 L56 54 L8 54 Z"/><path fill="#95A5A6" d="M12 50 L12 30 L20 30 L20 50 Z"/><path fill="#95A5A6" d="M26 50 L26 30 L34 30 L34 50 Z"/><path fill="#95A5A6" d="M40 50 L40 30 L48 30 L48 50 Z"/><path fill="#BDC3C7" d="M6 30 L58 30 L58 34 L6 34 Z"/><path fill="#34495E" d="M32 10 L54 26 L10 26 Z"/></svg>
-                    </div>
-                    <div class="name">Ilmu Pengetahuan Sosial</div>
-                    <div class="desc">Kerajaan Hindu-Buddha</div>
-                </div>
-
-                <!-- 7. INGGRIS -->
-                <div class="mapel-card" onclick="pilihMapel('INGGRIS', 'Simple Present Tense')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><circle fill="#3498DB" cx="32" cy="32" r="22"/><path fill="#2ECC71" d="M10 32 Q10 10, 32 10 Q20 20, 18 32 Q20 44, 32 54 Q10 54, 10 32 Z"/><path fill="#E74C3C" d="M54 32 Q54 54, 32 54 Q44 44, 46 32 Q44 20, 32 10 Q54 10, 54 32 Z"/><circle fill="#ECF0F1" cx="32" cy="32" r="4"/></svg>
-                    </div>
-                    <div class="name">Bahasa Inggris</div>
-                    <div class="desc">Simple Present Tense</div>
-                </div>
-
-                <!-- 8. PJOK -->
-                <div class="mapel-card" onclick="pilihMapel('PJOK', 'Permainan Bola Besar')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><circle fill="#ECF0F1" cx="32" cy="32" r="22"/><path fill="#2C3E50" d="M32 10 Q40 20, 38 32 Q36 44, 32 54 Q28 44, 26 32 Q24 20, 32 10 Z"/><path fill="#2C3E50" d="M10 32 Q20 30, 32 32 Q44 34, 54 32 Q44 36, 32 34 Q20 32, 10 32 Z"/></svg>
-                    </div>
-                    <div class="name">Pendidikan Jasmani</div>
-                    <div class="desc">Permainan Bola Besar</div>
-                </div>
-
-                <!-- 9. INFORMATIKA -->
-                <div class="mapel-card" onclick="pilihMapel('INFORMATIKA', 'Berpikir Komputasional')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><rect fill="#34495E" x="8" y="10" width="48" height="32" rx="2"/><rect fill="#3498DB" x="14" y="16" width="36" height="20" rx="1"/><text x="18" y="28" font-family="monospace" font-size="8" fill="#ECF0F1">&lt;/&gt;</text><rect fill="#7F8C8D" x="24" y="44" width="16" height="4"/><rect fill="#95A5A6" x="18" y="48" width="28" height="3" rx="1"/></svg>
-                    </div>
-                    <div class="name">Informatika</div>
-                    <div class="desc">Berpikir Komputasional</div>
-                </div>
-
-                <!-- 10. SENI BUDAYA -->
-                <div class="mapel-card" onclick="pilihMapel('SENI_BUDAYA', 'Menggambar Komik')">
-                    <div class="icon-wrapper">
-                        <svg viewBox="0 0 64 64"><ellipse fill="#ECF0F1" cx="32" cy="36" rx="22" ry="16"/><circle fill="#E74C3C" cx="22" cy="28" r="5"/><circle fill="#3498DB" cx="34" cy="24" r="5"/><circle fill="#F39C12" cx="44" cy="30" r="5"/><circle fill="#2ECC71" cx="26" cy="38" r="4"/><circle fill="#9B59B6" cx="38" cy="38" r="4"/><path fill="#8E44AD" d="M44 14 L48 10 L52 14 L48 18 Z"/><rect fill="#8E44AD" x="46" y="16" width="4" height="14" transform="rotate(15 48 23)"/></svg>
-                    </div>
-                    <div class="name">Seni Budaya</div>
-                    <div class="desc">Menggambar Komik</div>
-                </div>
+                <div class="name">Pendidikan Pancasila</div>
+                <div class="topic-count" id="count-PPKN">Memuat...</div>
             </div>
 
-            <div class="footer">
-                <p>© 2026 Media Pembelajaran Interaktif</p>
-                <p style="font-size:0.75rem;">Dibuat untuk mendukung pembelajaran digital</p>
+            <div class="mapel-card" onclick="showTopics('B_IND', 'Bahasa Indonesia')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><path fill="#3498DB" d="M12 10 L40 10 L48 18 L48 54 L12 54 Z"/><path fill="#2980B9" d="M40 10 L40 18 L48 18 Z"/></svg>
+                </div>
+                <div class="name">Bahasa Indonesia</div>
+                <div class="topic-count" id="count-B_IND">Memuat...</div>
+            </div>
+
+            <div class="mapel-card" onclick="showTopics('MTK', 'Matematika')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><rect fill="#8E44AD" x="8" y="8" width="48" height="48" rx="4"/><circle fill="#E74C3C" cx="22" cy="22" r="4"/><circle fill="#3498DB" cx="32" cy="22" r="4"/><circle fill="#2ECC71" cx="42" cy="22" r="4"/></svg>
+                </div>
+                <div class="name">Matematika</div>
+                <div class="topic-count" id="count-MTK">Memuat...</div>
+            </div>
+
+            <div class="mapel-card" onclick="showTopics('IPA', 'Ilmu Pengetahuan Alam')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><circle fill="#34495E" cx="32" cy="32" r="14"/><path fill="#7F8C8D" d="M28 10 L36 10 L34 22 L30 22 Z"/></svg>
+                </div>
+                <div class="name">Ilmu Pengetahuan Alam</div>
+                <div class="topic-count" id="count-IPA">Memuat...</div>
+            </div>
+
+            <div class="mapel-card" onclick="showTopics('IPS', 'Ilmu Pengetahuan Sosial')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><path fill="#7F8C8D" d="M8 50 L56 50 L56 54 L8 54 Z"/><path fill="#95A5A6" d="M12 50 L12 30 L20 30 L20 50 Z"/><path fill="#34495E" d="M32 10 L54 26 L10 26 Z"/></svg>
+                </div>
+                <div class="name">Ilmu Pengetahuan Sosial</div>
+                <div class="topic-count" id="count-IPS">Memuat...</div>
+            </div>
+
+            <div class="mapel-card" onclick="showTopics('INGGRIS', 'Bahasa Inggris')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><circle fill="#3498DB" cx="32" cy="32" r="22"/><path fill="#2ECC71" d="M10 32 Q10 10, 32 10 Q20 20, 18 32 Q20 44, 32 54 Q10 54, 10 32 Z"/></svg>
+                </div>
+                <div class="name">Bahasa Inggris</div>
+                <div class="topic-count" id="count-INGGRIS">Memuat...</div>
+            </div>
+
+            <div class="mapel-card" onclick="showTopics('PJOK', 'Pendidikan Jasmani')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><circle fill="#ECF0F1" cx="32" cy="32" r="22"/><path fill="#2C3E50" d="M32 10 Q40 20, 38 32 Q36 44, 32 54 Q28 44, 26 32 Q24 20, 32 10 Z"/></svg>
+                </div>
+                <div class="name">Pendidikan Jasmani</div>
+                <div class="topic-count" id="count-PJOK">Memuat...</div>
+            </div>
+
+            <div class="mapel-card" onclick="showTopics('INFORMATIKA', 'Informatika')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><rect fill="#34495E" x="8" y="10" width="48" height="32" rx="2"/><rect fill="#3498DB" x="14" y="16" width="36" height="20" rx="1"/></svg>
+                </div>
+                <div class="name">Informatika</div>
+                <div class="topic-count" id="count-INFORMATIKA">Memuat...</div>
+            </div>
+
+            <div class="mapel-card" onclick="showTopics('SENI_BUDAYA', 'Seni Budaya')">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64"><ellipse fill="#ECF0F1" cx="32" cy="36" rx="22" ry="16"/><circle fill="#E74C3C" cx="22" cy="28" r="5"/><circle fill="#3498DB" cx="34" cy="24" r="5"/><circle fill="#F39C12" cx="44" cy="30" r="5"/></svg>
+                </div>
+                <div class="name">Seni Budaya</div>
+                <div class="topic-count" id="count-SENI_BUDAYA">Memuat...</div>
             </div>
         </div>
 
-        <!-- ==================== SECTION: LOGIN NIS ==================== -->
-        <div id="sec-login" class="section card">
-            <h3>📝 Identitas Siswa</h3>
-            <p style="font-size:0.9em; color:var(--text-muted); margin-bottom:20px;">
-                Mapel: <strong id="loginSubject">-</strong> | Topik: <strong id="loginTopic">-</strong>
-            </p>
-
-            <div class="form-group">
-                <label>Nomor Induk Siswa (NIS)</label>
-                <input type="number" id="inpNIS" placeholder="Contoh: 12345" onkeypress="if(event.key==='Enter') verifyNIS()">
-                <button class="btn btn-warning" id="btnCheckNIS" onclick="verifyNIS()">🔍 CEK DATA SISWA</button>
-            </div>
-
-            <div id="studentDataArea" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px;">
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" id="inpName" readonly disabled>
-                </div>
-                <div class="form-group">
-                    <label>Kelas</label>
-                    <input type="text" id="inpClass" readonly disabled>
-                </div>
-                <button class="btn btn-success" onclick="startLearning()">🚀 MULAI BELAJAR</button>
-                <button class="btn btn-secondary" onclick="resetLogin()" style="margin-top:10px; font-size:0.9em;">Ganti NIS</button>
-            </div>
-
-            <div id="nisFeedback" style="margin-top:15px; text-align:center; font-weight:bold; min-height: 20px;"></div>
-        </div>
-
-        <!-- ==================== SECTION: MATERI ==================== -->
-        <div id="sec-materi" class="section card">
-            <h3>📖 Materi Pembelajaran</h3>
-            <div id="materiContent"><p style="text-align:center">Memuat materi...</p></div>
-            <button class="btn btn-success" onclick="goTo('sec-latihan')">LANJUT KE LATIHAN ➡️</button>
-        </div>
-
-        <!-- ==================== SECTION: LATIHAN ==================== -->
-        <div id="sec-latihan" class="section card">
-            <h3>✏️ Latihan Soal</h3>
-            <div style="background:var(--border); height:8px; border-radius:4px; margin-bottom:20px; overflow:hidden;">
-                <div id="quizProgress" style="background:var(--primary); height:100%; width:0%; transition:0.3s;"></div>
-            </div>
-            <div id="quizContainer"></div>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn btn-secondary" id="btnPrev" onclick="prevQ()" style="display:none">⬅️</button>
-                <button class="btn" id="btnNext" onclick="nextQ()">Selanjutnya ➡️</button>
-                <button class="btn btn-success" id="btnSubmit" onclick="finishQuiz()" style="display:none">✅ KIRIM JAWABAN</button>
-            </div>
-        </div>
-
-        <!-- ==================== SECTION: HASIL ==================== -->
-        <div id="sec-hasil" class="section card" style="text-align:center">
-            <h2>🎉 Hasil Latihan</h2>
-            <div style="font-size:3rem; font-weight:bold; color:var(--primary); margin:20px 0;" id="scoreDisplay">0</div>
-            <p>Benar: <span id="correctDisplay" style="color:var(--success); font-weight:bold">0</span> | 
-               Salah: <span id="wrongDisplay" style="color:var(--danger); font-weight:bold">0</span></p>
-            <button class="btn" onclick="goTo('sec-refleksi')">💭 ISI REFLEKSI</button>
-        </div>
-
-        <!-- ==================== SECTION: REFLEKSI ==================== -->
-        <div id="sec-refleksi" class="section card">
-            <h3>💭 Refleksi Pembelajaran</h3>
-            <div class="form-group">
-                <label>Tingkat Pemahaman:</label>
-                <select id="refUnderstand">
-                    <option>Sangat Paham</option><option>Paham</option>
-                    <option>Cukup</option><option>Kurang</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Kesulitan yang dialami:</label>
-                <textarea id="refDiff" rows="3" placeholder="Ceritakan..."></textarea>
-            </div>
-            <button class="btn btn-success" onclick="submitReflection()">📤 SELESAI & KIRIM</button>
+        <div class="footer">
+            <p>© 2026 Media Pembelajaran Interaktif</p>
         </div>
     </div>
 
-<script>
-    // ============================================
-    // KONFIGURASI
-    // ============================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbzHKRFpPP43Ct0QvKVtbKbnWMWHMloDCyDLqKisjz8236iIDCD_3s0Z3gDN7aOCZtfFzw/exec";
-    
-    // State Global
-    let selectedSubject = '';
-    let selectedTopic = '';
-    let student = {};
-    let sessionId = 'SES_' + Date.now();
-    let questions = [];
-    let currQIdx = 0;
-    let answers = [];
+    <!-- MODAL TOPIK -->
+    <div class="modal-overlay" id="topicModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <h3 id="modal-title">Pilih Topik</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Pilih topik yang ingin kamu pelajari:</p>
+            <ul class="topic-list" id="topic-list">
+                <li class="loading"><div class="spinner"></div>Memuat topik...</li>
+            </ul>
+        </div>
+    </div>
 
-    // ============================================
-    // NAVIGASI SECTION
-    // ============================================
-    function goTo(id) {
-        document.querySelectorAll('.section').forEach(e => e.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0, 0);
-        
-        // Tampilkan/sembunyikan tombol kembali ke portal
-        const btnBack = document.getElementById('btnBackPortal');
-        if (id === 'sec-portal') {
-            btnBack.style.display = 'none';
-            document.getElementById('appTitle').innerText = ' Portal Belajar';
-            document.getElementById('appSub').innerText = 'Pilih mata pelajaran untuk mulai belajar';
-        } else {
-            btnBack.style.display = 'block';
-        }
-    }
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzHKRFpPP43Ct0QvKVtbKbnWMWHMloDCyDLqKisjz8236iIDCD_3s0Z3gDN7aOCZtfFzw/exec"; // ← WAJIB DIGANTI
+        let currentSubject = '';
 
-    // ============================================
-    // PILIH MAPEL DARI PORTAL
-    // ============================================
-    function pilihMapel(subject, topic) {
-        selectedSubject = subject;
-        selectedTopic = topic;
-        
-        document.getElementById('loginSubject').innerText = subject;
-        document.getElementById('loginTopic').innerText = topic;
-        document.getElementById('appTitle').innerText = subject;
-        document.getElementById('appSub').innerText = topic;
-        
-        goTo('sec-login');
-    }
-
-    function backToPortal() {
-        // Reset state
-        resetLogin();
-        selectedSubject = '';
-        selectedTopic = '';
-        goTo('sec-portal');
-    }
-
-    // ============================================
-    // VALIDASI NIS
-    // ============================================
-    async function verifyNIS() {
-        const nis = document.getElementById('inpNIS').value.trim();
-        const feedback = document.getElementById('nisFeedback');
-        const btn = document.getElementById('btnCheckNIS');
-        
-        if (!nis) return alert("Masukkan NIS terlebih dahulu!");
-        
-        btn.disabled = true; btn.innerText = "⏳ Mengecek..."; feedback.innerText = "";
-        
-        try {
-            const res = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'checkNIS', nis: nis })
-            });
-            const result = await res.json();
-            
-            if (result.status === 'found') {
-                document.getElementById('inpName').value = result.name;
-                document.getElementById('inpClass').value = result.class;
-                document.getElementById('studentDataArea').style.display = 'block';
-                document.getElementById('btnCheckNIS').style.display = 'none';
-                document.getElementById('inpNIS').disabled = true;
-                feedback.innerText = "✅ Data Siswa Ditemukan!";
-                feedback.style.color = "var(--success)";
-            } else {
-                feedback.innerText = "❌ " + (result.message || "NIS tidak valid.");
-                feedback.style.color = "var(--danger)";
-                btn.disabled = false; btn.innerText = "🔍 CEK DATA SISWA";
+        // Load jumlah topik saat halaman dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllTopicCounts();
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
             }
-        } catch (err) {
-            feedback.innerText = "️ Gagal terhubung ke server.";
-            btn.disabled = false; btn.innerText = "🔍 CEK DATA SISWA";
-        }
-    }
-
-    function resetLogin() {
-        document.getElementById('inpNIS').value = '';
-        document.getElementById('inpNIS').disabled = false;
-        document.getElementById('inpName').value = '';
-        document.getElementById('inpClass').value = '';
-        document.getElementById('studentDataArea').style.display = 'none';
-        document.getElementById('btnCheckNIS').style.display = 'block';
-        document.getElementById('btnCheckNIS').disabled = false;
-        document.getElementById('btnCheckNIS').innerText = "🔍 CEK DATA SISWA";
-        document.getElementById('nisFeedback').innerText = "";
-    }
-
-    // ============================================
-    // MULAI BELAJAR
-    // ============================================
-    async function startLearning() {
-        const name = document.getElementById('inpName').value;
-        const cls = document.getElementById('inpClass').value;
-        const nis = document.getElementById('inpNIS').value;
-        
-        student = { name, class: cls, nis };
-        
-        // Simpan data siswa
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'saveStudent', sessionId, nis, name, class: cls,
-                subject: selectedSubject, topic: selectedTopic
-            })
         });
-        
-        await Promise.all([loadMaterials(), loadQuestions()]);
-        goTo('sec-materi');
-    }
 
-    // ============================================
-    // LOAD MATERI
-    // ============================================
-    async function loadMaterials() {
-        try {
-            const res = await fetch(`${API_URL}?action=getMaterial&subject=${selectedSubject}&topic=${selectedTopic}`);
-            const data = await res.json();
-            const div = document.getElementById('materiContent');
+        async function loadAllTopicCounts() {
+            const subjects = ['PAI', 'PPKN', 'B_IND', 'MTK', 'IPA', 'IPS', 'INGGRIS', 'PJOK', 'INFORMATIKA', 'SENI_BUDAYA'];
             
-            if (!data || data.length === 0) {
-                div.innerHTML = "<p>Materi belum tersedia untuk topik ini.</p>";
-                return;
-            }
-            
-            let html = '';
-            data.forEach(m => {
-                if (m.urlFile && m.urlFile.trim() !== '') {
-                    html += `<div class="card doc-card"><h4>📄 ${m.title}</h4><p>Materi lengkap tersedia dalam format dokumen.</p><a href="${m.urlFile}" target="_blank" class="btn btn-danger" style="width:auto; display:inline-block; padding:10px 20px;">📥 Buka / Download Materi</a></div>`;
-                } else if (m.content && m.content.trim() !== '') {
-                    html += `<div class="card"><h4>📖 ${m.title}</h4><div style="white-space:pre-wrap">${m.content}</div></div>`;
+            for (const sub of subjects) {
+                try {
+                    const res = await fetch(`${API_URL}?action=getTopics&subject=${sub}`);
+                    const topics = await res.json();
+                    const count = topics ? topics.length : 0;
+                    const el = document.getElementById(`count-${sub}`);
+                    if (el) {
+                        el.textContent = count > 0 ? `${count} topik tersedia` : 'Belum ada topik';
+                    }
+                } catch (e) {
+                    console.error(`Error loading ${sub}:`, e);
                 }
-            });
-            div.innerHTML = html;
-        } catch (e) {
-            document.getElementById('materiContent').innerHTML = "<p>Gagal memuat materi.</p>";
+            }
         }
-    }
 
-    // ============================================
-    // LOAD SOAL
-    // ============================================
-    async function loadQuestions() {
-        try {
-            const res = await fetch(`${API_URL}?action=getQuestions&subject=${selectedSubject}&topic=${selectedTopic}`);
-            const json = await res.json();
-            questions = json.data || [];
-            answers = new Array(questions.length).fill(null);
-            currQIdx = 0;
-            renderQ();
-        } catch (e) {
-            console.error(e);
-        }
-    }
+        async function showTopics(subject, subjectName) {
+            currentSubject = subject;
+            const modal = document.getElementById('topicModal');
+            const topicList = document.getElementById('topic-list');
+            const modalTitle = document.getElementById('modal-title');
+            
+            modalTitle.textContent = ` ${subjectName}`;
+            topicList.innerHTML = '<li class="loading"><div class="spinner"></div>Memuat topik...</li>';
+            modal.classList.add('show');
 
-    function renderQ() {
-        if (!questions.length) {
-            document.getElementById('quizContainer').innerHTML = "<p>Belum ada soal untuk topik ini.</p>";
-            return;
+            try {
+                const res = await fetch(`${API_URL}?action=getTopics&subject=${subject}`);
+                const topics = await res.json();
+                
+                topicList.innerHTML = '';
+                
+                if (!topics || topics.length === 0) {
+                    topicList.innerHTML = '<li class="topic-item empty">Belum ada topik untuk mata pelajaran ini. Silakan hubungi guru.</li>';
+                    return;
+                }
+
+                topics.forEach(topic => {
+                    const li = document.createElement('li');
+                    li.className = 'topic-item';
+                    li.textContent = `📖 ${topic}`;
+                    li.onclick = () => startLearning(subject, topic);
+                    topicList.appendChild(li);
+                });
+
+            } catch (err) {
+                topicList.innerHTML = '<li class="topic-item empty">❌ Gagal memuat topik. Periksa koneksi internet.</li>';
+            }
         }
-        const q = questions[currQIdx];
-        let html = `<p style="font-weight:600; font-size:1.1em; margin-bottom:10px;">Soal ${currQIdx+1}: ${q.question}</p>`;
-        if (q.questionImg) html += `<img src="${q.questionImg}" class="quiz-img">`;
-        
-        q.options.forEach((opt, idx) => {
-            const sel = answers[currQIdx] === idx ? 'selected' : '';
-            html += `<div class="quiz-opt ${sel}" onclick="pickAns(${idx})">`;
-            if (opt.image) html += `<img src="${opt.image}" style="max-height:80px; margin-right:10px; border-radius:4px;">`;
-            html += `<div><b>${String.fromCharCode(65+idx)}.</b> ${opt.text}</div></div>`;
+
+        function startLearning(subject, topic) {
+            closeModal();
+            // Redirect ke index.html dengan parameter yang COCOK dengan database
+            const url = `index.html?subject=${encodeURIComponent(subject)}&topic=${encodeURIComponent(topic)}`;
+            window.location.href = url;
+        }
+
+        function closeModal() {
+            document.getElementById('topicModal').classList.remove('show');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        // Tutup modal jika klik di luar
+        document.getElementById('topicModal').addEventListener('click', (e) => {
+            if (e.target.id === 'topicModal') closeModal();
         });
-        
-        document.getElementById('quizContainer').innerHTML = html;
-        document.getElementById('quizProgress').style.width = ((currQIdx+1)/questions.length*100)+'%';
-        
-        document.getElementById('btnPrev').style.display = currQIdx > 0 ? 'block' : 'none';
-        if (currQIdx === questions.length - 1) {
-            document.getElementById('btnNext').style.display = 'none';
-            document.getElementById('btnSubmit').style.display = 'block';
-        } else {
-            document.getElementById('btnNext').style.display = 'block';
-            document.getElementById('btnSubmit').style.display = 'none';
-        }
-    }
-
-    function pickAns(i) { answers[currQIdx] = i; renderQ(); }
-    function nextQ() { if (answers[currQIdx] === null) return alert("Pilih jawaban dulu!"); currQIdx++; renderQ(); }
-    function prevQ() { currQIdx--; renderQ(); }
-
-    function finishQuiz() {
-        if (answers[currQIdx] === null) return alert("Pilih jawaban dulu!");
-        let correct = questions.reduce((acc, q, i) => acc + (answers[i] === q.correctIndex ? 1 : 0), 0);
-        const score = Math.round((correct / questions.length) * 100);
-        
-        document.getElementById('scoreDisplay').innerText = score;
-        document.getElementById('correctDisplay').innerText = correct;
-        document.getElementById('wrongDisplay').innerText = questions.length - correct;
-        
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'saveExercise', sessionId, nis: student.nis, name: student.name,
-                class: student.class, subject: selectedSubject, topic: selectedTopic,
-                score, correct, wrong: questions.length - correct
-            })
-        });
-        goTo('sec-hasil');
-    }
-
-    function submitReflection() {
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'saveReflection', sessionId, nis: student.nis, name: student.name,
-                class: student.class, understanding: document.getElementById('refUnderstand').value,
-                difficulty: document.getElementById('refDiff').value
-            })
-        });
-        alert("✅ Terima kasih! Semua data berhasil disimpan.");
-        backToPortal();
-    }
-
-    // ============================================
-    // DARK MODE
-    // ============================================
-    function toggleTheme() {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    }
-    if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
-</script>
+    </script>
 </body>
 </html>
