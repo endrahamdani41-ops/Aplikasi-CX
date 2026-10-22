@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Rapor Kelas VIII-D - SMPN 110 Jakarta</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+            --border: #d1d5db;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 { margin: 0; font-size: 1.8rem; }
+        header p { margin: 5px 0 0; opacity: 0.9; }
+        .container { max-width: 100%; margin: 20px auto; padding: 0 20px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn {
+            padding: 12px 24px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .tab-content {
+            display: none;
+            background: var(--card);
+            padding: 20px;
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .tab-content.active { display: block; }
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 6px 4px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        th {
+            background-color: var(--primary);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.75rem;
+        }
+        th.subject-name {
+            font-size: 0.7rem;
+            padding: 8px 4px;
+            white-space: normal;
+            line-height: 1.2;
+            cursor: help;
+        }
+        th.sub-type {
+            font-size: 0.7rem;
+            padding: 4px;
+            background-color: #2563eb;
+        }
+        tr:nth-child(even) { background-color: #f9fafb; }
+        tr:hover { background-color: #eff6ff; }
+        td input {
+            width: 100%;
+            max-width: 55px;
+            min-width: 45px;
+            padding: 5px 3px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        td input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            background-color: #fef3c7;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.3s;
+            margin-right: 5px;
+        }
+        .btn:hover { background: var(--primary); }
+        .btn-danger { background: #ef4444; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #047857; }
+        .btn-warning { background: #f59e0b; }
+        .btn-warning:hover { background: #d97706; }
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .upload-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #fef3c7;
+            border: 2px dashed #f59e0b;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .upload-area input[type="file"] { flex: 1; padding: 8px; }
+        .rapor-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .rapor-controls select {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            min-width: 300px;
+        }
+        .rapor-page {
+            background: white;
+            padding: 30px;
+            border: 1px solid var(--border);
+            max-width: 210mm;
+            margin: 0 auto;
+            font-family: 'Times New Roman', Times, serif;
+            color: black;
+            overflow: hidden;
+        }
+        .rapor-header { text-align: center; margin-bottom: 20px; }
+        .rapor-header h2 { margin: 0; font-size: 1.1rem; font-weight: bold; }
+        .rapor-header h3 { margin: 0; font-size: 1rem; }
+        .rapor-header p { margin: 2px 0; font-size: 0.85rem; }
+        .rapor-title { text-align: center; margin: 25px 0; font-weight: bold; }
+        .rapor-title h2 { margin: 5px 0; font-size: 1rem;  }
+        .rapor-title h3 { margin: 5px 0; font-size: 0.95rem; }
+        
+        /* Info rapor dengan flexbox 2 kolom */
+        .rapor-info { margin-bottom: 20px; }
+        .rapor-info-wrapper {
+            display: flex;
+            width: 100%;
+            align-items: flex-start;
+        }
+        .rapor-info-left { width: 40%; }
+        .rapor-info-right { width: 60%; padding-left: 30px; }
+        .rapor-info-left table, .rapor-info-right table {
+            width: 100%;
+            border: none;
+            border-collapse: collapse;
+        }
+        .rapor-info-left td, .rapor-info-right td {
+            border: none;
+            padding: 4px 5px;
+            font-size: 0.9rem;
+            white-space: normal;
+            vertical-align: top;
+        }
+        
+        /* Tabel nilai rapor */
+        .rapor-grades { margin-bottom: 25px; }
+        .rapor-grades table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 0.85rem; 
+            table-layout: fixed;
+        }
+        .rapor-grades th, .rapor-grades td { 
+            border: 1px solid black; 
+            padding: 5px 4px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .rapor-grades th { 
+            background: #ffffff; 
+            color: #000000;
+            text-align: center; 
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .rapor-grades td { text-align: center; font-size: 0.85rem; }
+        .rapor-grades td:nth-child(2) { text-align: left; }
+        
+        /* Tabel ko-kurikuler & ketidakhadiran */
+        .rapor-extra {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+        .rapor-extra table {
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .rapor-extra th, .rapor-extra td {
+            border: 1px solid black;
+            padding: 5px 8px;
+        }
+        .rapor-extra th {
+            background: #ffffff;
+            color: #000000;
+            font-weight: bold;
+        }
+        
+        .rapor-sign { margin-top: 40px; display: flex; justify-content: space-between; }
+        .sign-box { text-align: center; width: 45%; }
+        .sign-box p { margin: 4px 0; font-size: 0.9rem; }
+        .sign-space { height: 70px; }
+        .sign-name { font-weight: bold; }
+        .sign-line {
+            border-bottom: 1px solid black;
+            display: inline-block;
+            min-width: 200px;
+            height: 20px;
+        }
+        
+        @media print {
+            @page { size: A4; margin: 15mm; }
+            body { background: white; margin: 0; padding: 0; }
+            body * { visibility: hidden; }
+            .rapor-page, .rapor-page * { visibility: visible; }
+            .rapor-page {
+                position: absolute; left: 0; top: 0;
+                width: 100%; max-width: 100%;
+                margin: 0; padding: 0;
+                border: none; box-shadow: none;
+                overflow: visible;
+            }
+            .no-print { display: none !important; }
+        }
+        .notification {
+            position: fixed; top: 20px; right: 20px;
+            padding: 15px 25px; background: #10b981; color: white;
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none; z-index: 1000; font-weight: 600;
+        }
+        .status-bar {
+            padding: 10px; background: #dbeafe;
+            border-left: 4px solid var(--secondary);
+            margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem;
+        }
+        .error-bar {
+            padding: 10px; background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            margin-bottom: 15px; border-radius: 4px; font-size: 0.9rem; color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+
+<header class="no-print">
+    <h1>APLIKASI RAPOR DIGITAL</h1>
+    <p>SMP Negeri 110 Jakarta | Kelas VIII-D | Tahun Pelajaran 2026/2027</p>
+</header>
+
+<div class="container">
+    <div class="tabs no-print">
+        <button class="tab-btn active" onclick="openTab(event, 'leger')">📊 Leger & Input Nilai</button>
+        <button class="tab-btn" onclick="openTab(event, 'rapor')">📄 Cetak Rapor</button>
+    </div>
+
+    <div id="leger" class="tab-content active">
+        <div class="upload-area no-print">
+            <label for="excelFile"><strong>📁 Upload File Excel:</strong></label>
+            <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleExcelUpload(event)">
+            <button class="btn btn-warning" onclick="downloadTemplate()">️ Download Template</button>
+        </div>
+        <div class="status-bar no-print" id="statusBar">
+            💡 <strong>Petunjuk:</strong> Upload file "APLIKASI RAPORT TS-8D.xlsx" untuk mengisi nilai otomatis.
+        </div>
+        <div class="action-bar">
+            <button class="btn btn-success" onclick="saveData()">💾 Simpan Data</button>
+            <button class="btn btn-danger" onclick="resetData()">🗑️ Reset Semua Nilai</button>
+            <span style="margin-left: auto; color: #6b7280; font-style: italic; font-size: 0.9rem;">*Geser tabel ke kanan/kiri untuk melihat semua kolom</span>
+        </div>
+        <div class="table-wrapper">
+            <table id="legerTable">
+                <thead id="legerHead"></thead>
+                <tbody id="legerBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="rapor" class="tab-content">
+        <div class="rapor-controls no-print">
+            <label for="studentSelect"><strong>Pilih Siswa:</strong></label>
+            <select id="studentSelect" onchange="renderRapor()"></select>
+            <button class="btn" onclick="window.print()">🖨️ Cetak Rapor</button>
+        </div>
+        <div id="raporPreview" class="rapor-page"></div>
+    </div>
+</div>
+
+<div id="notification" class="notification"></div>
+
+<script>
+    const students = [
+        { no: 1, nis: "12888", nama: "ADDA KAAYUAN AULIA CAKRA NIRMALA", lp: "P" },
+        { no: 2, nis: "12921", nama: "ATHAYA KHANSA BATUBARA", lp: "P" },
+        { no: 3, nis: "12998", nama: "ATHIRA SABRINA", lp: "P" },
+        { no: 4, nis: "13034", nama: "AWALIA RAMADHAN", lp: "P" },
+        { no: 5, nis: "12894", nama: "CARISSA ALYA FERICA", lp: "L" },
+        { no: 6, nis: "13038", nama: "DELLA SAKINAH AZZAHRA", lp: "P" },
+        { no: 7, nis: "13071", nama: "DZAKIRA FAHIMA", lp: "L" },
+        { no: 8, nis: "13074", nama: "FITRIA AULIA SURYA", lp: "L" },
+        { no: 9, nis: "13043", nama: "JONATHAN DOKSEN SIAGIAN", lp: "L" },
+        { no: 10, nis: "12901", nama: "KAHLA GHAISA SHIBA", lp: "P" },
+        { no: 11, nis: "12930", nama: "KAYLA MANTIKA HERMANSYAH", lp: "P" },
+        { no: 12, nis: "13046", nama: "KENZI AKHTAR ALMALIKI", lp: "L" },
+        { no: 13, nis: "13011", nama: "LUTHFI SAKHI ZAIDAN HAKIM", lp: "L" },
+        { no: 14, nis: "13012", nama: "LYUDMILA METIA", lp: "P" },
+        { no: 15, nis: "12904", nama: "MAHIRA HANDAYANI", lp: "P" },
+        { no: 16, nis: "13050", nama: "MUCH ZIDNI ILMAN", lp: "L" },
+        { no: 17, nis: "12907", nama: "MUHAMMAD ERLANGGA SYAQIB", lp: "L" },
+        { no: 18, nis: "12981", nama: "MUHAMMAD FAIDZ AIRLANGGA", lp: "L" },
+        { no: 19, nis: "12909", nama: "MUHAMMAD FAREEZ PRATAMA", lp: "L" },
+        { no: 20, nis: "13085", nama: "MUHAMMAD IMAM MUSTHAFA", lp: "L" },
+        { no: 21, nis: "13087", nama: "NADHIF RAIHAN PRASETYO", lp: "L" },
+        { no: 22, nis: "12911", nama: "NALENDRA ZAKI MUBARAK", lp: "L" },
+        { no: 23, nis: "12940", nama: "NAPSAH DJUNAIDI", lp: "P" },
+        { no: 24, nis: "13090", nama: "NAYLA ANASTASYA", lp: "P" },
+        { no: 25, nis: "13091", nama: "NOVI ZHAFIRAH PRAMUDITA", lp: "P" },
+        { no: 26, nis: "12985", nama: "RAFA RIZKI MAULANA", lp: "L" },
+        { no: 27, nis: "13058", nama: "RAFAN ADHIRA ABQARY", lp: "L" },
+        { no: 28, nis: "13022", nama: "RAFARDHAN AQILA SAKHI", lp: "L" },
+        { no: 29, nis: "13059", nama: "RAYSA DELIA", lp: "P" },
+        { no: 30, nis: "12987", nama: "RAYSKA NURAISYAH PUTRI", lp: "P" },
+        { no: 31, nis: "12945", nama: "RIDHO ABIYU KAFI", lp: "L" },
+        { no: 32, nis: "12949", nama: "SALSA APRILIA PUTRI", lp: "P" },
+        { no: 33, nis: "12990", nama: "SHALSA BILLAH KAYLA IBRAHIM", lp: "P" },
+        { no: 34, nis: "12918", nama: "TRI YUSUF JAMAL LUDIN", lp: "L" },
+        { no: 35, nis: "13098", nama: "WINDA SRI HANDAYANI", lp: "P" },
+        { no: 36, nis: "12953", nama: "YAKE FAIN SETO", lp: "L" }
+    ];
+
+    const subjects = [
+        { full: "Pendidikan Agama dan Budi Pekerti", short: "PAI" },
+        { full: "Pendidikan Pancasila", short: "PPKn" },
+        { full: "Bahasa Indonesia", short: "B.Indo" },
+        { full: "Matematika", short: "MTK" },
+        { full: "Ilmu Pengetahuan Alam", short: "IPA" },
+        { full: "Ilmu Pengetahuan Sosial", short: "IPS" },
+        { full: "Bahasa Inggris", short: "B.Ing" },
+        { full: "Pendidikan Jasmani, Olahraga, dan Kesehatan", short: "PJOK" },
+        { full: "Informatika", short: "INFO" },
+        { full: "Seni Budaya/Seni Musik", short: "Seni" }
+    ];
+
+    // Data wali kelas
+    const waliKelas = {
+        nama: "ENDRA TRIYANTO H., S.Kom",
+        nip: "197601042014121003"
+    };
+
+    let grades = JSON.parse(localStorage.getItem('rapor8d_grades')) || {};
+
+    if (Object.keys(grades).length === 0) {
+        students.forEach(s => {
+            grades[s.nis] = { 
+                spiritual: '', 
+                sosial: '',
+                subjects: {}, 
+                ekskulWajib: '', 
+                nilaiEkskulWajib: '',
+                ekskulPilihan: '', 
+                nilaiEkskulPilihan: '',
+                attendance: { s: 0, i: 0, a: 0 } 
+            };
+            subjects.forEach(sub => {
+                grades[s.nis].subjects[sub.full] = { tp1: '', tp2: '', pts: '' };
+            });
+        });
+    }
+
+    function roundValue(val) {
+        if (val === '' || val === '-' || val === null || val === undefined) return '';
+        const num = Number(val);
+        if (isNaN(num)) return '';
+        return Math.round(num);
+    }
+
+    function handleExcelUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const firstSheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { 
+                    header: 1, defval: '', raw: true, blankrows: false
+                });
+                processExcelData(jsonData, file.name);
+            } catch (error) {
+                console.error("Error:", error);
+                showStatus("error", "❌ Gagal membaca file Excel: " + error.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function processExcelData(rows, fileName) {
+        let headerRowIndex = -1;
+        let headerRow = null;
+        for (let i = 0; i < Math.min(rows.length, 15); i++) {
+            const row = rows[i];
+            if (!row || row.length === 0) continue;
+            const rowStr = row.map(c => String(c || '').toUpperCase()).join(' | ');
+            if (rowStr.includes('URUT') && rowStr.includes('INDUK') && rowStr.includes('NAMA SISWA')) {
+                headerRowIndex = i;
+                headerRow = row;
+                break;
+            }
+        }
+        if (headerRowIndex === -1 || !headerRow) {
+            showStatus("error", "❌ Format Excel tidak dikenali.");
+            return;
+        }
+        const headerStrings = headerRow.map(c => String(c || '').toUpperCase().trim());
+        const COL_NIS = headerStrings.findIndex(h => h.includes('INDUK') || h === 'NOMOR INDUK');
+        const COL_LP = headerStrings.findIndex(h => h === 'L/P');
+        const COL_SPIRITUAL = headerStrings.findIndex(h => h === 'SPIRITUAL');
+        const COL_SOSIAL = headerStrings.findIndex(h => h === 'SOSIAL');
+        let COL_S = -1, COL_I = -1, COL_A = -1;
+        for (let i = headerStrings.length - 1; i >= 0; i--) {
+            const h = headerStrings[i];
+            if (h === 'A' && COL_A === -1) COL_A = i;
+            else if (h === 'I' && COL_I === -1) COL_I = i;
+            else if (h === 'S' && COL_S === -1) COL_S = i;
+        }
+        let subjectStartCol = -1;
+        if (COL_SOSIAL !== -1) subjectStartCol = COL_SOSIAL + 1;
+        else if (COL_SPIRITUAL !== -1) subjectStartCol = COL_SPIRITUAL + 2;
+        else if (COL_LP !== -1) subjectStartCol = COL_LP + 3;
+        else subjectStartCol = 6;
+
+        // Kolom ekskul (setelah 10 mapel x 3 = 30 kolom)
+        const ekskulWajibCol = subjectStartCol + 30;
+        const nilaiEkskulWajibCol = ekskulWajibCol + 1;
+        const ekskulPilihanCol = ekskulWajibCol + 2;
+        const nilaiEkskulPilihanCol = ekskulWajibCol + 3;
+
+        let importedCount = 0;
+        let skippedCount = 0;
+        const dataStartIndex = headerRowIndex + 1;
+        for (let i = dataStartIndex; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || row.length === 0) continue;
+            if (row.length < 10) continue;
+            const nis = String(row[COL_NIS] || '').trim();
+            if (!nis || nis === '0' || nis === '-') continue;
+            const student = students.find(s => s.nis === nis);
+            if (!student) { skippedCount++; continue; }
+
+            // Spiritual & Sosial
+            if (COL_SPIRITUAL !== -1) {
+                grades[nis].spiritual = roundValue(row[COL_SPIRITUAL]);
+            }
+            if (COL_SOSIAL !== -1) {
+                grades[nis].sosial = roundValue(row[COL_SOSIAL]);
+            }
+
+            // Nilai mapel
+            subjects.forEach((sub, idx) => {
+                const baseCol = subjectStartCol + (idx * 3);
+                const tp1 = (row[baseCol] !== undefined) ? row[baseCol] : '';
+                const tp2 = (row[baseCol + 1] !== undefined) ? row[baseCol + 1] : '';
+                const pts = (row[baseCol + 2] !== undefined) ? row[baseCol + 2] : '';
+                grades[nis].subjects[sub.full] = {
+                    tp1: roundValue(tp1),
+                    tp2: roundValue(tp2),
+                    pts: roundValue(pts)
+                };
+            });
+
+            // Ekskul
+            if (row[ekskulWajibCol] !== undefined) {
+                grades[nis].ekskulWajib = row[ekskulWajibCol] !== '' ? row[ekskulWajibCol] : '';
+            }
+            if (row[nilaiEkskulWajibCol] !== undefined) {
+                grades[nis].nilaiEkskulWajib = roundValue(row[nilaiEkskulWajibCol]);
+            }
+            if (row[ekskulPilihanCol] !== undefined) {
+                grades[nis].ekskulPilihan = row[ekskulPilihanCol] !== '' ? row[ekskulPilihanCol] : '';
+            }
+            if (row[nilaiEkskulPilihanCol] !== undefined) {
+                grades[nis].nilaiEkskulPilihan = roundValue(row[nilaiEkskulPilihanCol]);
+            }
+
+            // Ketidakhadiran
+            if (COL_S !== -1 && row[COL_S] !== undefined) {
+                const sVal = row[COL_S];
+                grades[nis].attendance.s = (sVal !== '' && sVal !== '-' && sVal !== null) ? (Math.round(Number(sVal)) || 0) : 0;
+            }
+            if (COL_I !== -1 && row[COL_I] !== undefined) {
+                const iVal = row[COL_I];
+                grades[nis].attendance.i = (iVal !== '' && iVal !== '-' && iVal !== null) ? (Math.round(Number(iVal)) || 0) : 0;
+            }
+            if (COL_A !== -1 && row[COL_A] !== undefined) {
+                const aVal = row[COL_A];
+                grades[nis].attendance.a = (aVal !== '' && aVal !== '-' && aVal !== null) ? (Math.round(Number(aVal)) || 0) : 0;
+            }
+            importedCount++;
+        }
+        localStorage.setItem('rapor8d_grades', JSON.stringify(grades));
+        renderLeger();
+        renderRaporSelect();
+        showStatus("success", "✅ Berhasil mengimpor data " + importedCount + " siswa dari file \"" + fileName + "\"!");
+        showNotification("✅ Berhasil mengimpor " + importedCount + " siswa!");
+    }
+
+    function showStatus(type, msg) {
+        const statusBar = document.getElementById('statusBar');
+        if (type === 'error') statusBar.className = 'error-bar no-print';
+        else statusBar.className = 'status-bar no-print';
+        statusBar.innerHTML = msg;
+    }
+
+    function downloadTemplate() {
+        const headers = ['No Urut', 'Nomor Induk', 'Nama Siswa', 'L/P', 'SPIRITUAL', 'SOSIAL'];
+        subjects.forEach(sub => {
+            headers.push(`${sub.short} - TP1`, `${sub.short} - TP2`, `${sub.short} - PTS`);
+        });
+        headers.push('Ekskul Wajib', 'Nilai', 'Ekskul Pilihan', 'Nilai', 'S', 'I', 'A');
+        const data = [headers];
+        students.forEach(s => {
+            const row = [s.no, s.nis, s.nama, s.lp, '', ''];
+            subjects.forEach(() => row.push('', '', ''));
+            row.push('', '', '', '', 0, 0, 0);
+            data.push(row);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Leger VIII-D');
+        XLSX.writeFile(wb, 'Template_Leger_VIII-D.xlsx');
+    }
+
+    function renderLeger() {
+        const thead = document.getElementById('legerHead');
+        const tbody = document.getElementById('legerBody');
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+        let row1 = `<tr>
+            <th rowspan="2" style="width: 35px; min-width: 35px;">No</th>
+            <th rowspan="2" style="width: 70px; min-width: 70px;">NIS</th>
+            <th rowspan="2" style="width: 200px; min-width: 200px;">Nama Siswa</th>
+            <th rowspan="2" style="width: 45px; min-width: 45px;">L/P</th>
+            <th rowspan="2" style="width: 40px;">Sprit</th>
+            <th rowspan="2" style="width: 40px;">Sosial</th>`;
+        subjects.forEach(sub => {
+            row1 += `<th colspan="3" class="subject-name" title="${sub.full}">${sub.short}</th>`;
+        });
+        row1 += `<th colspan="2">Ekskul Wajib</th><th colspan="2">Ekskul Pilihan</th>`;
+        row1 += `<th colspan="3">Ketidakhadiran</th></tr>`;
+        let row2 = `<tr>`;
+        subjects.forEach(() => {
+            row2 += `<th class="sub-type">TP1</th><th class="sub-type">TP2</th><th class="sub-type">PTS</th>`;
+        });
+        row2 += `<th class="sub-type">Nama</th><th class="sub-type">Nilai</th>`;
+        row2 += `<th class="sub-type">Nama</th><th class="sub-type">Nilai</th>`;
+        row2 += `<th class="sub-type">S</th><th class="sub-type">I</th><th class="sub-type">A</th></tr>`;
+        thead.innerHTML = row1 + row2;
+        students.forEach(s => {
+            const g = grades[s.nis];
+            let row = `<tr>
+                <td>${s.no}</td>
+                <td>${s.nis}</td>
+                <td style="text-align: left; padding-left: 5px;" title="${s.nama}">${s.nama}</td>
+                <td>${s.lp}</td>
+                <td><input type="number" step="1" min="0" max="100" value="${g.spiritual}" onchange="updateExtra('${s.nis}', 'spiritual', this.value)"></td>
+                <td><input type="number" step="1" min="0" max="100" value="${g.sosial}" onchange="updateExtra('${s.nis}', 'sosial', this.value)"></td>`;
+            subjects.forEach(sub => {
+                const val = g.subjects[sub.full];
+                row += `<td><input type="number" step="1" min="0" max="100" value="${val.tp1}" oninput="autoRound(this)" onchange="updateGrade('${s.nis}', '${sub.full}', 'tp1', this.value)" title="${sub.full} - TP1"></td>`;
+                row += `<td><input type="number" step="1" min="0" max="100" value="${val.tp2}" oninput="autoRound(this)" onchange="updateGrade('${s.nis}', '${sub.full}', 'tp2', this.value)" title="${sub.full} - TP2"></td>`;
+                row += `<td><input type="number" step="1" min="0" max="100" value="${val.pts}" oninput="autoRound(this)" onchange="updateGrade('${s.nis}', '${sub.full}', 'pts', this.value)" title="${sub.full} - PTS"></td>`;
+            });
+            row += `<td><input type="text" value="${g.ekskulWajib}" onchange="updateExtra('${s.nis}', 'ekskulWajib', this.value)" style="max-width: 80px;"></td>`;
+            row += `<td><input type="number" step="1" min="0" max="100" value="${g.nilaiEkskulWajib}" onchange="updateExtra('${s.nis}', 'nilaiEkskulWajib', this.value)"></td>`;
+            row += `<td><input type="text" value="${g.ekskulPilihan}" onchange="updateExtra('${s.nis}', 'ekskulPilihan', this.value)" style="max-width: 80px;"></td>`;
+            row += `<td><input type="number" step="1" min="0" max="100" value="${g.nilaiEkskulPilihan}" onchange="updateExtra('${s.nis}', 'nilaiEkskulPilihan', this.value)"></td>`;
+            const att = g.attendance;
+            row += `<td><input type="number" step="1" min="0" max="99" value="${att.s}" onchange="updateAtt('${s.nis}', 's', this.value)"></td>`;
+            row += `<td><input type="number" step="1" min="0" max="99" value="${att.i}" onchange="updateAtt('${s.nis}', 'i', this.value)"></td>`;
+            row += `<td><input type="number" step="1" min="0" max="99" value="${att.a}" onchange="updateAtt('${s.nis}', 'a', this.value)"></td>`;
+            row += `</tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function autoRound(input) {
+        let val = input.value.replace(/[^0-9.]/g, '');
+        if (val.includes('.') || val.includes(',')) return;
+        if (val !== '' && Number(val) > 100) val = '100';
+        input.value = val;
+    }
+
+    function updateGrade(nis, sub, type, val) {
+        const rounded = roundValue(val);
+        grades[nis].subjects[sub][type] = rounded;
+        event.target.value = rounded;
+    }
+
+    function updateExtra(nis, field, val) {
+        if (field === 'spiritual' || field === 'sosial' || field === 'nilaiEkskulWajib' || field === 'nilaiEkskulPilihan') {
+            grades[nis][field] = roundValue(val);
+        } else {
+            grades[nis][field] = val;
+        }
+    }
+
+    function updateAtt(nis, type, val) {
+        grades[nis].attendance[type] = Math.round(Number(val) || 0);
+    }
+
+    function saveData() {
+        localStorage.setItem('rapor8d_grades', JSON.stringify(grades));
+        showNotification("💾 Data nilai berhasil disimpan!");
+    }
+
+    function resetData() {
+        if(confirm("Yakin ingin menghapus semua nilai yang sudah diinput?")) {
+            localStorage.removeItem('rapor8d_grades');
+            location.reload();
+        }
+    }
+
+    function showNotification(msg) {
+        const notif = document.getElementById('notification');
+        notif.innerHTML = msg;
+        notif.style.display = 'block';
+        setTimeout(() => { notif.style.display = 'none'; }, 3000);
+    }
+
+    function renderRaporSelect() {
+        const select = document.getElementById('studentSelect');
+        select.innerHTML = '';
+        students.forEach(s => {
+            select.innerHTML += `<option value="${s.nis}">${s.no}. ${s.nama} (${s.nis})</option>`;
+        });
+        renderRapor();
+    }
+
+    function renderRapor() {
+        const nis = document.getElementById('studentSelect').value;
+        const student = students.find(s => s.nis === nis);
+        const data = grades[nis];
+        const totalAbsen = data.attendance.s + data.attendance.i + data.attendance.a;
+
+        let rows = '';
+        subjects.forEach((sub, i) => {
+            const val = data.subjects[sub.full];
+            rows += `<tr>
+                <td style="width: 5%; font-size: 0.85rem;">${i + 1}</td>
+                <td style="width: 48%; text-align: left; padding-left: 8px; font-size: 0.85rem;">${sub.full}</td>
+                <td style="width: 8%; font-size: 0.8rem;">82</td>
+                <td style="width: 8%; font-size: 0.8rem;">${val.tp1 || '-'}</td>
+                <td style="width: 8%; font-size: 0.8rem;">${val.tp2 || '-'}</td>
+                <td style="width: 8%; font-size: 0.8rem;">${val.pts || '-'}</td>
+                <td style="width: 15%;"></td>
+            </tr>`;
+        });
+
+        const raporHTML = `
+            <div class="rapor-header">
+                <h2>PEMERINTAH PROVINSI DAERAH KHUSUS IBU KOTA JAKARTA</h2>
+                <h3>DINAS PENDIDIKAN</h3>
+                <h2>SEKOLAH MENENGAH PERTAMA (SMP) NEGERI 110 JAKARTA</h2>
+                <p>Jalan Kemajuan Petukangan Selatan Tel/Fax : (021) 7342288 email : smpncx@yahoo.co.id</p>
+                <p>Kota Administrasi Jakarta Selatan &nbsp;&nbsp; Kode Pos : 12270</p>
+            </div>
+            <div class="rapor-title">
+                <h2>LAPORAN HASIL BELAJAR MURID</h2>
+                <h3>TENGAH SEMESTER GANJIL</h3>
+                <h3>TAHUN PELAJARAN 2026/2027</h3>
+            </div>
+            
+            <!-- Info rapor dengan flexbox -->
+            <div class="rapor-info">
+                <div class="rapor-info-wrapper">
+                    <div class="rapor-info-left">
+                        <table>
+                            <tr>
+                                <td style="width: 35%;">Nama Sekolah</td>
+                                <td style="width: 5%;">:</td>
+                                <td style="width: 60%;">SMP Negeri 110 Jakarta</td>
+                            </tr>
+                            <tr>
+                                <td>Alamat</td>
+                                <td>:</td>
+                                <td>Jl. Kemajuan Petukangan Selatan</td>
+                            </tr>
+                            <tr>
+                                <td>Nama Peserta Didik</td>
+                                <td>:</td>
+                                <td><strong>${student.nama}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Nomor Induk</td>
+                                <td>:</td>
+                                <td>${student.nis}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="rapor-info-right">
+                        <table>
+                            <tr>
+                                <td style="width: 30%; text-align: right;">Kelas</td>
+                                <td style="width: 5%; text-align: center;">:</td>
+                                <td style="width: 65%; text-align: left; padding-left: 10px;">VIII-D</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right;">Semester</td>
+                                <td style="text-align: center;">:</td>
+                                <td style="text-align: left; padding-left: 10px;">Ganjil</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: right;">Tahun Pelajaran</td>
+                                <td style="text-align: center;">:</td>
+                                <td style="text-align: left; padding-left: 10px;">2026/2027</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabel Nilai Mata Pelajaran -->
+            <div class="rapor-grades">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">No.</th>
+                            <th style="width: 48%;">Mata Pelajaran</th>
+                            <th style="width: 8%;">KKTP</th>
+                            <th style="width: 8%;">PH1</th>
+                            <th style="width: 8%;">PH2</th>
+                            <th style="width: 8%;">PSTS</th>
+                            <th style="width: 15%;">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+            
+            <!-- Tabel Ko-Kurikuler & Ketidakhadiran -->
+            <div class="rapor-extra">
+                <div>
+                    <table>
+                        <tr>
+                            <th colspan="2">Nilai Ko-Kurikuler</th>
+                        </tr>
+                        <tr>
+                            <td>Spiritual</td>
+                            <td>${data.spiritual || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Sosial</td>
+                            <td>${data.sosial || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Ekskul Wajib</td>
+                            <td>${data.ekskulWajib || '-'} ${data.nilaiEkskulWajib ? '(' + data.nilaiEkskulWajib + ')' : ''}</td>
+                        </tr>
+                        <tr>
+                            <td>Ekskul Pilihan</td>
+                            <td>${data.ekskulPilihan || '-'} ${data.nilaiEkskulPilihan ? '(' + data.nilaiEkskulPilihan + ')' : ''}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="margin-left: auto;">
+                    <table>
+                        <tr>
+                            <th colspan="2">Ketidakhadiran</th>
+                        </tr>
+                        <tr>
+                            <td>1. Sakit</td>
+                            <td>${data.attendance.s} hari</td>
+                        </tr>
+                        <tr>
+                            <td>2. Izin</td>
+                            <td>${data.attendance.i} hari</td>
+                        </tr>
+                        <tr>
+                            <td>3. Alpa</td>
+                            <td>${data.attendance.a} hari</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jumlah</strong></td>
+                            <td><strong>${totalAbsen} hari</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Tanda Tangan -->
+            <div class="rapor-sign">
+                <div class="sign-box">
+                    <p>Mengetahui,</p>
+                    <p>Orang Tua/Wali</p>
+                    <div class="sign-space"></div>
+                    <div class="sign-line"></div>
+                </div>
+                <div class="sign-box">
+                    <p>Jakarta, 23 Oktober 2026</p>
+                    <p>Wali Kelas</p>
+                    <div class="sign-space"></div>
+                    <p class="sign-name">${waliKelas.nama}</p>
+                    <p>NIP. ${waliKelas.nip}</p>
+                </div>
+            </div>
+        `;
+        document.getElementById('raporPreview').innerHTML = raporHTML;
+    }
+
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) tabcontent[i].classList.remove('active');
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) tablinks[i].classList.remove('active');
+        document.getElementById(tabName).classList.add('active');
+        evt.currentTarget.classList.add('active');
+        if(tabName === 'rapor') renderRapor();
+    }
+
+    window.onload = function() {
+        renderLeger();
+        renderRaporSelect();
+    };
+</script>
+
+</body>
+</html>
