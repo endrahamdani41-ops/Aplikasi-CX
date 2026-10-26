@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family 100 - Informatika Kelas 7 (Scratch)</title>
+    <title>Family 100 - Informatika Kelas 7 (Scratch) + Voice</title>
     <style>
         /* ==========================================================================
            1. STYLES & THEMING (TV GAME SHOW THEME)
@@ -23,12 +23,7 @@
             --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 
         body {
             font-family: var(--font-family);
@@ -39,7 +34,7 @@
             flex-direction: column;
             justify-content: space-between;
             overflow-x: hidden;
-            padding-bottom: 120px; /* Space for fixed bottom control panel */
+            padding-bottom: 140px;
         }
 
         /* HEADER SECTION */
@@ -53,355 +48,142 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* SVG Scratch Logo Emblem */
-        .logo-icon {
-            width: 50px;
-            height: 50px;
-            filter: drop-shadow(0 0 8px var(--gold-primary));
-        }
-
+        .logo-container { display: flex; align-items: center; gap: 15px; }
+        .logo-icon { width: 50px; height: 50px; filter: drop-shadow(0 0 8px var(--gold-primary)); }
         .header-title h1 {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 1.5px;
+            font-size: 1.8rem; font-weight: 900; letter-spacing: 1.5px;
             background: linear-gradient(90deg, var(--gold-primary), var(--cyan-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase;
         }
-
-        .header-title p {
-            font-size: 0.95rem;
-            color: #a0aec0;
-            font-weight: 600;
-        }
-
+        .header-title p { font-size: 0.95rem; color: #a0aec0; font-weight: 600; }
         .question-badge {
             background: linear-gradient(135deg, #1e295d, #3b82f6);
-            border: 2px solid var(--cyan-accent);
-            border-radius: 30px;
-            padding: 8px 20px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #fff;
+            border: 2px solid var(--cyan-accent); border-radius: 30px;
+            padding: 8px 20px; font-size: 1.1rem; font-weight: 800; color: #fff;
             box-shadow: var(--shadow-glow);
         }
 
         /* MAIN CONTAINER */
         .main-container {
-            display: grid;
-            grid-template-columns: 280px 1fr 280px;
-            gap: 20px;
-            padding: 20px 30px;
-            max-width: 1600px;
-            margin: 0 auto;
-            width: 100%;
-            flex-grow: 1;
+            display: grid; grid-template-columns: 280px 1fr 280px; gap: 20px;
+            padding: 20px 30px; max-width: 1600px; margin: 0 auto; width: 100%; flex-grow: 1;
         }
 
         /* TEAM PANELS */
         .team-panel {
-            background: var(--panel-bg);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 15px;
-            transition: all 0.3s ease;
-            position: relative;
-            backdrop-filter: blur(10px);
+            background: var(--panel-bg); border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 20px; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; gap: 15px;
+            transition: all 0.3s ease; position: relative; backdrop-filter: blur(10px);
         }
-
         .team-panel.active-turn {
-            border-color: var(--gold-primary);
-            box-shadow: 0 0 30px var(--gold-glow);
-            transform: scale(1.02);
+            border-color: var(--gold-primary); box-shadow: 0 0 30px var(--gold-glow); transform: scale(1.02);
         }
-
         .active-tag {
-            display: none;
-            position: absolute;
-            top: -12px;
-            background: var(--gold-primary);
-            color: #000;
-            font-weight: 900;
-            font-size: 0.75rem;
-            padding: 3px 12px;
-            border-radius: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            display: none; position: absolute; top: -12px; background: var(--gold-primary);
+            color: #000; font-weight: 900; font-size: 0.75rem; padding: 3px 12px;
+            border-radius: 10px; text-transform: uppercase; letter-spacing: 1px;
         }
-
-        .team-panel.active-turn .active-tag {
-            display: block;
-        }
-
+        .team-panel.active-turn .active-tag { display: block; }
         .team-name-input {
-            background: transparent;
-            border: none;
-            border-bottom: 2px dashed rgba(255, 255, 255, 0.3);
-            color: #fff;
-            font-size: 1.4rem;
-            font-weight: 800;
-            text-align: center;
-            width: 100%;
-            padding: 5px;
+            background: transparent; border: none; border-bottom: 2px dashed rgba(255, 255, 255, 0.3);
+            color: #fff; font-size: 1.4rem; font-weight: 800; text-align: center;
+            width: 100%; padding: 5px; user-select: text;
         }
-
-        .team-name-input:focus {
-            outline: none;
-            border-bottom-color: var(--cyan-accent);
-        }
-
+        .team-name-input:focus { outline: none; border-bottom-color: var(--cyan-accent); }
         .score-box {
-            background: #060a17;
-            border: 3px solid var(--cyan-accent);
-            border-radius: 15px;
-            width: 100%;
-            padding: 15px 0;
-            text-align: center;
+            background: #060a17; border: 3px solid var(--cyan-accent); border-radius: 15px;
+            width: 100%; padding: 15px 0; text-align: center;
             box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.2);
         }
-
-        .score-label {
-            font-size: 0.8rem;
-            color: #8a99ad;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
+        .score-label { font-size: 0.8rem; color: #8a99ad; letter-spacing: 2px; text-transform: uppercase; }
         .score-value {
-            font-size: 3.2rem;
-            font-weight: 900;
-            color: var(--gold-primary);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-            line-height: 1;
-            margin-top: 5px;
+            font-size: 3.2rem; font-weight: 900; color: var(--gold-primary);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); line-height: 1; margin-top: 5px;
         }
 
         /* STRIKE X INDICATORS */
-        .strike-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
+        .strike-container { display: flex; gap: 10px; margin-top: 10px; }
         .strike-box {
-            width: 55px;
-            height: 55px;
-            background: rgba(0,0,0,0.4);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2rem;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            width: 55px; height: 55px; background: rgba(0,0,0,0.4);
+            border: 2px solid rgba(255,255,255,0.2); border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; font-weight: 900; color: rgba(255, 255, 255, 0.1); transition: all 0.3s ease;
         }
-
         .strike-box.active {
-            color: var(--red-strike);
-            border-color: var(--red-strike);
-            background: rgba(255, 42, 109, 0.15);
-            text-shadow: 0 0 15px var(--red-strike);
+            color: var(--red-strike); border-color: var(--red-strike);
+            background: rgba(255, 42, 109, 0.15); text-shadow: 0 0 15px var(--red-strike);
             animation: popIn 0.3s ease;
         }
 
         /* QUIZ BOARD AREA */
-        .quiz-board {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
+        .quiz-board { display: flex; flex-direction: column; gap: 20px; }
         .question-box {
-            background: var(--panel-bg);
-            border: 2px solid var(--cyan-accent);
-            border-radius: 20px;
-            padding: 20px 25px;
-            text-align: center;
-            box-shadow: var(--shadow-glow);
-            position: relative;
+            background: var(--panel-bg); border: 2px solid var(--cyan-accent);
+            border-radius: 20px; padding: 20px 25px; text-align: center;
+            box-shadow: var(--shadow-glow); position: relative;
         }
-
-        .question-text {
-            font-size: 1.35rem;
-            font-weight: 700;
-            line-height: 1.4;
-            color: #ffffff;
-        }
+        .question-text { font-size: 1.35rem; font-weight: 700; line-height: 1.4; color: #ffffff; }
 
         /* SURVEY CARDS BOARD */
-        .answers-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        /* 3D FLIP CARD */
-        .card-container {
-            perspective: 1000px;
-            height: 62px;
-            width: 100%;
-        }
-
+        .answers-grid { display: flex; flex-direction: column; gap: 12px; }
+        .card-container { perspective: 1000px; height: 62px; width: 100%; }
         .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
+            position: relative; width: 100%; height: 100%; text-align: center;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
         }
-
-        .card-container.revealed .card-inner {
-            transform: rotateY(180deg);
-        }
-
+        .card-container.revealed .card-inner { transform: rotateY(180deg); }
         .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden;
+            backface-visibility: hidden; border-radius: 12px; display: flex;
+            align-items: center; padding: 0 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.3);
             border: 2px solid rgba(255,255,255,0.15);
         }
-
-        .card-front {
-            background: var(--card-front-bg);
-            justify-content: space-between;
-        }
-
+        .card-front { background: var(--card-front-bg); justify-content: space-between; }
         .card-number {
-            background: var(--cyan-accent);
-            color: #000;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 1.2rem;
-            box-shadow: 0 0 10px var(--cyan-accent);
+            background: var(--cyan-accent); color: #000; width: 38px; height: 38px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 10px var(--cyan-accent);
         }
-
-        .card-points-preview {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #94a3b8;
-            letter-spacing: 1px;
-        }
-
+        .card-points-preview { font-size: 1.1rem; font-weight: 800; color: #94a3b8; letter-spacing: 1px; }
         .card-back {
-            background: var(--card-back-bg);
-            color: #ffffff;
-            transform: rotateY(180deg);
-            justify-content: space-between;
-            border-color: var(--gold-primary);
+            background: var(--card-back-bg); color: #ffffff; transform: rotateY(180deg);
+            justify-content: space-between; border-color: var(--gold-primary);
         }
-
         .card-answer-text {
-            font-size: 1.2rem;
-            font-weight: 800;
-            text-align: left;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            flex-grow: 1;
-            padding-right: 15px;
+            font-size: 1.2rem; font-weight: 800; text-align: left;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); flex-grow: 1; padding-right: 15px;
         }
-
         .card-points-badge {
-            background: #000;
-            color: var(--gold-primary);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            border: 1px solid var(--gold-primary);
-            box-shadow: inset 0 0 5px rgba(255,215,0,0.5);
+            background: #000; color: var(--gold-primary); padding: 6px 16px;
+            border-radius: 20px; font-weight: 900; font-size: 1.1rem;
+            border: 1px solid var(--gold-primary); box-shadow: inset 0 0 5px rgba(255,215,0,0.5);
         }
 
         /* OPERATOR CONTROL PANEL (BOTTOM FIXED) */
         .control-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #070a14;
-            border-top: 3px solid var(--cyan-accent);
-            padding: 12px 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.8);
-            z-index: 100;
+            position: fixed; bottom: 0; left: 0; right: 0; background: #070a14;
+            border-top: 3px solid var(--cyan-accent); padding: 12px 25px;
+            display: flex; flex-direction: column; gap: 10px;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.8); z-index: 100;
         }
-
-        .control-row-1 {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
+        .control-row-1 { display: flex; gap: 12px; align-items: center; }
         .input-box {
-            flex-grow: 1;
-            background: #121829;
-            border: 2px solid #2d3748;
-            border-radius: 10px;
-            padding: 10px 18px;
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: all 0.2s;
+            flex-grow: 1; background: #121829; border: 2px solid #2d3748;
+            border-radius: 10px; padding: 10px 18px; color: #fff;
+            font-size: 1.1rem; font-weight: 600; transition: all 0.2s; user-select: text;
         }
-
-        .input-box:focus {
-            outline: none;
-            border-color: var(--cyan-accent);
-            box-shadow: 0 0 10px rgba(0,243,255,0.3);
-        }
-
+        .input-box:focus { outline: none; border-color: var(--cyan-accent); box-shadow: 0 0 10px rgba(0,243,255,0.3); }
+        
         .btn {
-            padding: 10px 18px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 800;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            padding: 10px 18px; border-radius: 10px; border: none; font-weight: 800;
+            font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center;
+            justify-content: center; gap: 6px; transition: all 0.2s;
+            text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
         }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn:active { transform: translateY(0); }
         .btn-check { background: linear-gradient(135deg, #10b981, #059669); color: white; }
         .btn-wrong { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
         .btn-switch { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
@@ -409,174 +191,104 @@
         .btn-reveal-all { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
         .btn-next { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
         .btn-reset-game { background: #334155; color: #cbd5e1; }
-
-        .control-row-2 {
-            display: flex;
-            gap: 10px;
-            justify-content: space-between;
-            align-items: center;
+        .btn-edit { background: linear-gradient(135deg, #ec4899, #be185d); color: white; }
+        
+        /* MICROPHONE BUTTON STYLES */
+        .btn-mic { 
+            background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; 
+            min-width: 160px; position: relative; overflow: hidden;
+        }
+        .btn-mic.listening {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: pulse-mic 1.5s infinite;
+        }
+        @keyframes pulse-mic {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
-        .manual-btn-group {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .manual-label {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            font-weight: 700;
-            margin-right: 4px;
-        }
-
+        .control-row-2 { display: flex; gap: 10px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .manual-btn-group { display: flex; gap: 6px; align-items: center; }
+        .manual-label { font-size: 0.85rem; color: #94a3b8; font-weight: 700; margin-right: 4px; }
         .btn-manual-num {
-            background: #1e293b;
-            border: 1px solid #475569;
-            color: #fff;
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: #1e293b; border: 1px solid #475569; color: #fff;
+            width: 34px; height: 34px; border-radius: 8px; font-weight: 800;
+            cursor: pointer; transition: all 0.2s;
         }
-
-        .btn-manual-num:hover {
-            background: var(--cyan-accent);
-            color: #000;
-        }
+        .btn-manual-num:hover { background: var(--cyan-accent); color: #000; }
 
         /* ANIMATION OVERLAYS */
         .strike-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s ease;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center;
+            align-items: center; z-index: 999; pointer-events: none;
+            opacity: 0; transition: opacity 0.2s ease;
         }
-
-        .strike-overlay.show {
-            opacity: 1;
-        }
-
+        .strike-overlay.show { opacity: 1; }
         .big-x {
-            font-size: 22rem;
-            font-weight: 900;
-            color: var(--red-strike);
+            font-size: 22rem; font-weight: 900; color: var(--red-strike);
             text-shadow: 0 0 50px var(--red-strike), 0 0 100px #ff0055;
             animation: zoomPulse 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-
-        /* FLOATING SCORE ANIMATION */
         .floating-points {
-            position: fixed;
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--gold-primary);
-            text-shadow: 0 0 20px var(--gold-glow);
-            pointer-events: none;
-            z-index: 1000;
+            position: fixed; font-size: 2.5rem; font-weight: 900; color: var(--gold-primary);
+            text-shadow: 0 0 20px var(--gold-glow); pointer-events: none; z-index: 1000;
             animation: floatUp 1.2s forwards cubic-bezier(0.215, 0.61, 0.355, 1);
         }
 
-        /* VICTORY MODAL */
+        /* MODALS (Victory & Edit) */
         .modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(5, 8, 20, 0.95);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            backdrop-filter: blur(10px);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(5, 8, 20, 0.95); display: none; justify-content: center;
+            align-items: center; z-index: 2000; backdrop-filter: blur(10px);
         }
-
-        .modal-backdrop.active {
-            display: flex;
-        }
-
-        .victory-card {
+        .modal-backdrop.active { display: flex; }
+        .victory-card, .edit-card {
             background: linear-gradient(135deg, #101735, #0a0f24);
-            border: 3px solid var(--gold-primary);
-            border-radius: 25px;
-            padding: 40px;
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.4);
-            position: relative;
-            overflow: hidden;
-            animation: popIn 0.5s ease;
+            border: 3px solid var(--gold-primary); border-radius: 25px;
+            padding: 30px; text-align: center; max-width: 700px; width: 90%;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.4); position: relative;
+            overflow: hidden; animation: popIn 0.5s ease; max-height: 90vh; overflow-y: auto;
         }
-
         .victory-title {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--gold-primary);
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            text-shadow: 0 0 15px var(--gold-glow);
+            font-size: 2.5rem; font-weight: 900; color: var(--gold-primary);
+            text-transform: uppercase; margin-bottom: 10px; text-shadow: 0 0 15px var(--gold-glow);
         }
-
         .winner-announcement {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #fff;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
+            font-size: 1.8rem; font-weight: 800; color: #fff; margin: 20px 0;
+            padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 15px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .final-scores {
-            display: flex;
-            justify-content: space-around;
-            margin: 25px 0;
-        }
-
-        .final-team-score {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
+        .final-scores { display: flex; justify-content: space-around; margin: 25px 0; }
+        .final-team-score { display: flex; flex-direction: column; gap: 5px; }
         .final-team-name { font-size: 1.1rem; color: #a0aec0; font-weight: 700; }
         .final-score-num { font-size: 2.8rem; font-weight: 900; color: var(--cyan-accent); }
+        #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
-        #confetti-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+        /* EDIT MODAL SPECIFIC STYLES */
+        .edit-title { font-size: 1.5rem; font-weight: 800; color: var(--cyan-accent); margin-bottom: 20px; }
+        .edit-form-group { margin-bottom: 15px; text-align: left; }
+        .edit-label { display: block; font-size: 0.9rem; color: #94a3b8; margin-bottom: 5px; font-weight: 700; }
+        .edit-input, .edit-textarea {
+            width: 100%; background: #121829; border: 1px solid #2d3748; border-radius: 8px;
+            padding: 10px; color: #fff; font-size: 0.95rem; user-select: text;
         }
+        .edit-textarea { min-height: 60px; resize: vertical; }
+        .edit-input:focus, .edit-textarea:focus { outline: none; border-color: var(--cyan-accent); }
+        .edit-row { display: grid; grid-template-columns: 2fr 1fr 2fr; gap: 10px; align-items: end; }
+        .edit-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .btn-save { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-cancel { background: #475569; color: white; }
+        .btn-reset-default { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
 
         /* KEYFRAME ANIMATIONS */
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes zoomPulse {
             0% { transform: scale(0.2); opacity: 0; }
             50% { transform: scale(1.1); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
-
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
             100% { opacity: 0; transform: translateY(-80px) scale(1.3); }
@@ -584,25 +296,26 @@
 
         /* RESPONSIVE DESIGN */
         @media (max-width: 1024px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-            .team-panel {
-                flex-direction: row;
-                justify-content: space-between;
-            }
+            .main-container { grid-template-columns: 1fr; }
+            .team-panel { flex-direction: row; justify-content: space-between; }
             .score-box { width: 180px; }
+        }
+        @media (max-width: 768px) {
+            .control-row-1, .control-row-2 { flex-wrap: wrap; justify-content: center; }
+            .input-box { width: 100%; margin-bottom: 8px; }
+            .btn { flex: 1 1 30%; font-size: 0.8rem; padding: 8px 5px; }
+            .card-container { height: 50px; }
+            .card-answer-text { font-size: 0.9rem; padding-right: 5px; }
+            .card-points-badge { padding: 4px 8px; font-size: 0.9rem; }
+            .edit-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==========================================================================
-         2. HEADER & TOP BAR
-         ========================================================================== -->
+    <!-- HEADER & TOP BAR -->
     <header>
         <div class="logo-container">
-            <!-- Scratch SVG Mascot Logo -->
             <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="100" height="100" rx="22" fill="#FFAB19"/>
                 <path d="M25 68C25 68 32 75 50 75C68 75 75 68 75 68" stroke="white" stroke-width="6" stroke-linecap="round"/>
@@ -620,12 +333,9 @@
         <div class="question-badge" id="questionProgress">Soal 1 dari 10</div>
     </header>
 
-    <!-- ==========================================================================
-         3. MAIN LAYOUT (TEAM PANELS + QUIZ BOARD)
-         ========================================================================== -->
+    <!-- MAIN LAYOUT -->
     <div class="main-container">
-        
-        <!-- PANEL TIM 1 (KIRI) -->
+        <!-- PANEL TIM 1 -->
         <div class="team-panel active-turn" id="panelTeam1">
             <span class="active-tag">GILIRAN BERMAIN</span>
             <input type="text" class="team-name-input" id="nameTeam1" value="TIM 1" spellcheck="false">
@@ -640,19 +350,15 @@
             </div>
         </div>
 
-        <!-- AREA PAPAN KUIS (TENGAH) -->
+        <!-- AREA PAPAN KUIS -->
         <div class="quiz-board">
             <div class="question-box">
                 <div class="question-text" id="questionText">Memuat pertanyaan...</div>
             </div>
-
-            <!-- 5 KOTAK JAWABAN SURVEI -->
-            <div class="answers-grid" id="answersGrid">
-                <!-- Template untuk 5 Jawaban -->
-            </div>
+            <div class="answers-grid" id="answersGrid"></div>
         </div>
 
-        <!-- PANEL TIM 2 (KANAN) -->
+        <!-- PANEL TIM 2 -->
         <div class="team-panel" id="panelTeam2">
             <span class="active-tag">GILIRAN BERMAIN</span>
             <input type="text" class="team-name-input" id="nameTeam2" value="TIM 2" spellcheck="false">
@@ -666,62 +372,45 @@
                 <div class="strike-box" id="t2_strike_3">❌</div>
             </div>
         </div>
-
     </div>
 
-    <!-- ==========================================================================
-         4. CONTROL PANEL OPERATOR GURU (BOTTOM FIXED)
-         ========================================================================== -->
+    <!-- CONTROL PANEL OPERATOR GURU -->
     <div class="control-panel">
         <div class="control-row-1">
-            <input type="text" id="inputAnswer" class="input-box" placeholder="Ketik jawaban siswa di sini lalu tekan Enter..." autocomplete="off">
-            <button class="btn btn-check" onclick="handleCheckAnswer()">
-                <span>🔍</span> Cek Jawaban
+            <input type="text" id="inputAnswer" class="input-box" placeholder="Ketik atau gunakan suara..." autocomplete="off">
+            
+            <!-- TOMBOL MIKROFON BARU -->
+            <button class="btn btn-mic" id="micBtn" onclick="toggleVoiceInput()">
+                <span id="micIcon">🎙️</span> <span id="micText">Aktifkan Suara</span>
             </button>
-            <button class="btn btn-wrong" onclick="triggerStrike()">
-                <span>❌</span> Salah
-            </button>
-            <button class="btn btn-switch" onclick="toggleActiveTeam()">
-                <span>🔄</span> Ganti Tim
-            </button>
-        </div>
 
+            <button class="btn btn-check" onclick="handleCheckAnswer()"><span>🔍</span> Cek</button>
+            <button class="btn btn-wrong" onclick="triggerStrike()"><span>❌</span> Salah</button>
+            <button class="btn btn-switch" onclick="toggleActiveTeam()"><span>🔄</span> Ganti Tim</button>
+        </div>
         <div class="control-row-2">
             <div class="manual-btn-group">
-                <span class="manual-label">Buka Manual:</span>
+                <span class="manual-label">Buka:</span>
                 <button class="btn-manual-num" onclick="manualReveal(0)">1</button>
                 <button class="btn-manual-num" onclick="manualReveal(1)">2</button>
                 <button class="btn-manual-num" onclick="manualReveal(2)">3</button>
                 <button class="btn-manual-num" onclick="manualReveal(3)">4</button>
                 <button class="btn-manual-num" onclick="manualReveal(4)">5</button>
             </div>
-
-            <div style="display: flex; gap: 8px;">
-                <button class="btn btn-reset-x" onclick="resetStrikes()">
-                    <span>🧹</span> Reset X
-                </button>
-                <button class="btn btn-reveal-all" onclick="revealAllAnswers()">
-                    <span>👁️</span> Buka Semua
-                </button>
-                <button class="btn btn-next" onclick="nextQuestion()">
-                    <span>➡️</span> Soal Berikutnya
-                </button>
-                <button class="btn btn-reset-game" onclick="resetGame()">
-                    <span>↺</span> Reset Game
-                </button>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
+                <button class="btn btn-edit" onclick="openEditModal()"><span>⚙️</span> Edit Soal</button>
+                <button class="btn btn-reset-x" onclick="resetStrikes()"><span>🧹</span> Reset X</button>
+                <button class="btn btn-reveal-all" onclick="revealAllAnswers()"><span>👁️</span> Buka Semua</button>
+                <button class="btn btn-next" onclick="nextQuestion()"><span>➡️</span> Soal Berikutnya</button>
+                <button class="btn btn-reset-game" onclick="resetGame()"><span>↺</span> Reset Game</button>
             </div>
         </div>
     </div>
 
-    <!-- ==========================================================================
-         5. ANIMATION OVERLAYS & MODALS
-         ========================================================================== -->
-    <!-- Large Red X Overlay -->
-    <div class="strike-overlay" id="strikeOverlay">
-        <div class="big-x">❌</div>
-    </div>
+    <!-- ANIMATION OVERLAYS -->
+    <div class="strike-overlay" id="strikeOverlay"><div class="big-x">❌</div></div>
 
-    <!-- Victory Modal Popup -->
+    <!-- VICTORY MODAL -->
     <div class="modal-backdrop" id="victoryModal">
         <div class="victory-card">
             <canvas id="confetti-canvas"></canvas>
@@ -738,20 +427,45 @@
                     <span class="final-score-num" id="finalScoreT2">0</span>
                 </div>
             </div>
-            <button class="btn btn-check" style="font-size: 1.1rem; padding: 12px 30px; margin-top: 15px;" onclick="resetGame()">
-                🎮 Main Lagi
-            </button>
+            <button class="btn btn-check" style="font-size: 1.1rem; padding: 12px 30px; margin-top: 15px;" onclick="resetGame()">🎮 Main Lagi</button>
         </div>
     </div>
 
-    <!-- ==========================================================================
-         6. JAVASCRIPT LOGIC & WEB AUDIO API
-         ========================================================================== -->
+    <!-- EDIT SOAL MODAL -->
+    <div class="modal-backdrop" id="editModal">
+        <div class="edit-card">
+            <div class="edit-title">⚙️ Edit Bank Soal</div>
+            
+            <div class="edit-form-group">
+                <label class="edit-label">Pilih Nomor Soal:</label>
+                <select id="editQIndex" class="edit-input" onchange="loadQuestionToEdit(this.value)">
+                    <!-- Options generated by JS -->
+                </select>
+            </div>
+
+            <div class="edit-form-group">
+                <label class="edit-label">Pertanyaan:</label>
+                <textarea id="editQText" class="edit-textarea"></textarea>
+            </div>
+
+            <div id="editAnswersContainer">
+                <!-- Generated by JS -->
+            </div>
+
+            <div class="edit-actions">
+                <button class="btn btn-save" onclick="saveEditedQuestion()">💾 Simpan Perubahan</button>
+                <button class="btn btn-cancel" onclick="closeEditModal()">❌ Batal</button>
+                <button class="btn btn-reset-default" onclick="resetToDefaultQuestions()">⚠️ Reset ke Default</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         /* ==========================================================================
-           BANK SOAL INFORMATIKA KELAS 7 (MATERI SCRATCH) - 10 SOAL
+           DEFAULT BANK SOAL
            ========================================================================== */
-        const quizBank = [
+        const defaultQuizBank = [
             {
                 id: 1,
                 question: "Sebutkan nama kategori/warna blok utama yang ada pada aplikasi Scratch!",
@@ -865,48 +579,118 @@
         ];
 
         /* ==========================================================================
-           STATE MANAGEMENT
+           STATE MANAGEMENT & INITIALIZATION
            ========================================================================== */
+        let quizBank = JSON.parse(localStorage.getItem('family100_quizBank')) || JSON.parse(JSON.stringify(defaultQuizBank));
         let currentQuestionIndex = 0;
-        let activeTeam = 1; // 1 or 2
+        let activeTeam = 1;
         let scores = { team1: 0, team2: 0 };
         let strikes = { team1: 0, team2: 0 };
         let revealedCards = [false, false, false, false, false];
+        let isProcessing = false;
+
+        /* ==========================================================================
+           WEB SPEECH API (VOICE RECOGNITION)
+           ========================================================================== */
+        let recognition = null;
+        let isListening = false;
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("⚠️ Browser Anda tidak mendukung fitur pengenalan suara.\n\nSilakan gunakan Google Chrome atau Microsoft Edge untuk fitur ini.");
+                document.getElementById('micBtn').style.display = 'none';
+                return;
+            }
+            recognition = new SpeechRecognition();
+            recognition.lang = 'id-ID'; // Bahasa Indonesia
+            recognition.continuous = false; // Berhenti setelah satu kalimat
+            recognition.interimResults = true; // Tampilkan hasil sementara saat bicara
+
+            recognition.onstart = () => {
+                isListening = true;
+                const btn = document.getElementById('micBtn');
+                const icon = document.getElementById('micIcon');
+                const text = document.getElementById('micText');
+                btn.classList.add('listening');
+                icon.innerText = '🔴';
+                text.innerText = 'Mendengarkan...';
+                document.getElementById('inputAnswer').placeholder = "Silakan bicara sekarang...";
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                const btn = document.getElementById('micBtn');
+                const icon = document.getElementById('micIcon');
+                const text = document.getElementById('micText');
+                btn.classList.remove('listening');
+                icon.innerText = '🎙️';
+                text.innerText = 'Aktifkan Suara';
+                document.getElementById('inputAnswer').placeholder = "Ketik atau gunakan suara...";
+            };
+
+            recognition.onresult = (event) => {
+                // Ambil hasil transkrip terbaru
+                const transcript = Array.from(event.results)
+                    .map(result => result[0])
+                    .map(result => result.transcript)
+                    .join('');
+                
+                document.getElementById('inputAnswer').value = transcript;
+
+                // Jika hasil sudah final (selesai bicara), otomatis cek jawaban
+                if (event.results[0].isFinal) {
+                    setTimeout(() => {
+                        handleCheckAnswer();
+                    }, 600); // Jeda 600ms agar transkrip terlihat dulu oleh guru
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error", event.error);
+                if (event.error === 'not-allowed') {
+                    alert("🚫 Izin mikrofon ditolak.\n\nSilakan klik ikon kunci/gembok di address bar browser Anda, lalu izinkan akses mikrofon.");
+                } else if (event.error === 'no-speech') {
+                    console.log("Tidak ada suara yang terdeteksi.");
+                }
+                recognition.stop();
+            };
+        }
+
+        function toggleVoiceInput() {
+            if (!recognition) initSpeechRecognition();
+            if (isListening) {
+                recognition.stop();
+            } else {
+                document.getElementById('inputAnswer').value = ''; // Kosongkan input sebelum mulai
+                recognition.start();
+            }
+        }
 
         /* ==========================================================================
            WEB AUDIO API SOUND SYNTHESIZER
            ========================================================================== */
         let audioCtx = null;
-
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        // Sound Effect: Correct Answer (Chime)
         function playCorrectSound() {
             initAudio();
             const now = audioCtx.currentTime;
-            const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-            freqs.forEach((freq, index) => {
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, index) => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(freq, now + index * 0.08);
                 gain.gain.setValueAtTime(0.3, now + index * 0.08);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.08 + 0.3);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now + index * 0.08);
-                osc.stop(now + index * 0.08 + 0.3);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now + index * 0.08); osc.stop(now + index * 0.08 + 0.3);
             });
         }
 
-        // Sound Effect: Wrong Answer (Buzzer)
         function playWrongSound() {
             initAudio();
             const now = audioCtx.currentTime;
@@ -917,20 +701,14 @@
             osc.frequency.linearRampToValueAtTime(70, now + 0.4);
             gain.gain.setValueAtTime(0.4, now);
             gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(now);
-            osc.stop(now + 0.4);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now); osc.stop(now + 0.4);
         }
 
-        // Sound Effect: Victory Fanfare
         function playVictorySound() {
             initAudio();
             const now = audioCtx.currentTime;
-            const notes = [
-                { f: 523.25, d: 0.15 }, { f: 659.25, d: 0.15 }, { f: 783.99, d: 0.15 },
-                { f: 1046.50, d: 0.4 }, { f: 880.00, d: 0.2 }, { f: 1046.50, d: 0.6 }
-            ];
+            const notes = [{ f: 523.25, d: 0.15 }, { f: 659.25, d: 0.15 }, { f: 783.99, d: 0.15 }, { f: 1046.50, d: 0.4 }, { f: 880.00, d: 0.2 }, { f: 1046.50, d: 0.6 }];
             let elapsed = 0;
             notes.forEach(note => {
                 const osc = audioCtx.createOscillator();
@@ -939,10 +717,8 @@
                 osc.frequency.setValueAtTime(note.f, now + elapsed);
                 gain.gain.setValueAtTime(0.4, now + elapsed);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + elapsed + note.d);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now + elapsed);
-                osc.stop(now + elapsed + note.d);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(now + elapsed); osc.stop(now + elapsed + note.d);
                 elapsed += note.d + 0.05;
             });
         }
@@ -953,13 +729,13 @@
         window.onload = () => {
             renderQuestion();
             setupEventListeners();
+            populateEditDropdown();
+            initSpeechRecognition(); // Inisialisasi mic saat load
         };
 
         function setupEventListeners() {
             document.getElementById('inputAnswer').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    handleCheckAnswer();
-                }
+                if (e.key === 'Enter') handleCheckAnswer();
             });
         }
 
@@ -989,19 +765,21 @@
                 `;
                 grid.insertAdjacentHTML('beforeend', cardHTML);
             });
-
             resetStrikes();
         }
 
         /* ==========================================================================
-           ANSWER MATCHING & LOGIC (FUZZY / KEYWORD MATCHING)
+           ANSWER MATCHING & LOGIC
            ========================================================================== */
         function handleCheckAnswer() {
+            if (isProcessing) return;
+            isProcessing = true;
             initAudio();
+            
             const inputField = document.getElementById('inputAnswer');
             const rawInput = inputField.value.trim().toLowerCase();
             
-            if (!rawInput) return;
+            if (!rawInput) { isProcessing = false; return; }
 
             const currentQ = quizBank[currentQuestionIndex];
             let matchFound = false;
@@ -1009,7 +787,6 @@
             for (let i = 0; i < currentQ.answers.length; i++) {
                 if (!revealedCards[i]) {
                     const keywords = currentQ.answers[i].keywords;
-                    // Check if input contains any keyword or matches
                     const isMatch = keywords.some(kw => rawInput.includes(kw) || kw.includes(rawInput));
 
                     if (isMatch) {
@@ -1021,17 +798,14 @@
                 }
             }
 
-            if (!matchFound) {
-                triggerStrike();
-            }
+            if (!matchFound) triggerStrike();
+            setTimeout(() => { isProcessing = false; }, 500);
         }
 
         function revealCard(index, addPoints = true) {
             if (revealedCards[index]) return;
-
             revealedCards[index] = true;
-            const cardEl = document.getElementById(`card-${index}`);
-            cardEl.classList.add('revealed');
+            document.getElementById(`card-${index}`).classList.add('revealed');
 
             if (addPoints) {
                 const pts = quizBank[currentQuestionIndex].answers[index].points;
@@ -1043,17 +817,13 @@
 
         function manualReveal(index) {
             initAudio();
-            if (!revealedCards[index]) {
-                revealCard(index, true);
-            }
+            if (!revealedCards[index]) revealCard(index, true);
         }
 
         function revealAllAnswers() {
             initAudio();
             for (let i = 0; i < 5; i++) {
-                if (!revealedCards[i]) {
-                    revealCard(i, false); // Buka tanpa tambah poin
-                }
+                if (!revealedCards[i]) revealCard(i, false);
             }
         }
 
@@ -1073,16 +843,13 @@
         function triggerStrike() {
             initAudio();
             playWrongSound();
-
             const teamKey = `team${activeTeam}`;
             if (strikes[teamKey] < 3) {
                 strikes[teamKey]++;
                 const strikeEl = document.getElementById(`t${activeTeam}_strike_${strikes[teamKey]}`);
                 if (strikeEl) strikeEl.classList.add('active');
             }
-
             showStrikeOverlay();
-
             if (strikes[teamKey] >= 3) {
                 setTimeout(() => {
                     alert(`3 KESALAHAN! Giliran ${activeTeam === 1 ? 'TIM 1' : 'TIM 2'} telah habis. Mengoper giliran ke tim lawan!`);
@@ -1092,8 +859,7 @@
         }
 
         function resetStrikes() {
-            strikes.team1 = 0;
-            strikes.team2 = 0;
+            strikes.team1 = 0; strikes.team2 = 0;
             for (let t = 1; t <= 2; t++) {
                 for (let s = 1; s <= 3; s++) {
                     const el = document.getElementById(`t${t}_strike_${s}`);
@@ -1106,14 +872,8 @@
             activeTeam = activeTeam === 1 ? 2 : 1;
             const p1 = document.getElementById('panelTeam1');
             const p2 = document.getElementById('panelTeam2');
-
-            if (activeTeam === 1) {
-                p1.classList.add('active-turn');
-                p2.classList.remove('active-turn');
-            } else {
-                p2.classList.add('active-turn');
-                p1.classList.remove('active-turn');
-            }
+            if (activeTeam === 1) { p1.classList.add('active-turn'); p2.classList.remove('active-turn'); }
+            else { p2.classList.add('active-turn'); p1.classList.remove('active-turn'); }
         }
 
         /* ==========================================================================
@@ -1122,26 +882,19 @@
         function showStrikeOverlay() {
             const overlay = document.getElementById('strikeOverlay');
             overlay.classList.add('show');
-            setTimeout(() => {
-                overlay.classList.remove('show');
-            }, 800);
+            setTimeout(() => overlay.classList.remove('show'), 800);
         }
 
         function showFloatingPoints(pts) {
             const activePanel = document.getElementById(`panelTeam${activeTeam}`);
             const rect = activePanel.getBoundingClientRect();
-
             const floatEl = document.createElement('div');
             floatEl.className = 'floating-points';
             floatEl.innerText = `+${pts} POIN!`;
             floatEl.style.left = `${rect.left + rect.width / 4}px`;
             floatEl.style.top = `${rect.top + 20}px`;
-
             document.body.appendChild(floatEl);
-
-            setTimeout(() => {
-                floatEl.remove();
-            }, 1200);
+            setTimeout(() => floatEl.remove(), 1200);
         }
 
         /* ==========================================================================
@@ -1158,8 +911,7 @@
 
         function resetGame() {
             currentQuestionIndex = 0;
-            scores.team1 = 0;
-            scores.team2 = 0;
+            scores.team1 = 0; scores.team2 = 0;
             document.getElementById('scoreTeam1').innerText = '0';
             document.getElementById('scoreTeam2').innerText = '0';
             document.getElementById('victoryModal').classList.remove('active');
@@ -1174,73 +926,138 @@
             const modal = document.getElementById('victoryModal');
             const name1 = document.getElementById('nameTeam1').value || 'TIM 1';
             const name2 = document.getElementById('nameTeam2').value || 'TIM 2';
-
             document.getElementById('finalNameT1').innerText = name1;
             document.getElementById('finalNameT2').innerText = name2;
             document.getElementById('finalScoreT1').innerText = scores.team1;
             document.getElementById('finalScoreT2').innerText = scores.team2;
 
             const winnerEl = document.getElementById('winnerText');
-            if (scores.team1 > scores.team2) {
-                winnerEl.innerText = `🏆 ${name1.toUpperCase()} MENANG!`;
-            } else if (scores.team2 > scores.team1) {
-                winnerEl.innerText = `🏆 ${name2.toUpperCase()} MENANG!`;
-            } else {
-                winnerEl.innerText = `🤝 HASIL SERI! (SKOR SAMA)`;
-            }
+            if (scores.team1 > scores.team2) winnerEl.innerText = `🏆 ${name1.toUpperCase()} MENANG!`;
+            else if (scores.team2 > scores.team1) winnerEl.innerText = `🏆 ${name2.toUpperCase()} MENANG!`;
+            else winnerEl.innerText = `🤝 HASIL SERI! (SKOR SAMA)`;
 
             modal.classList.add('active');
             startConfetti();
         }
 
-        /* ==========================================================================
-           CANVAS CONFETTI SELEBRASI
-           ========================================================================== */
         function startConfetti() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
-
             const particles = [];
             const colors = ['#ffd700', '#00f3ff', '#ff2a6d', '#05ffa1', '#ffffff'];
-
             for (let i = 0; i < 80; i++) {
                 particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    size: Math.random() * 8 + 4,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    speedY: Math.random() * 3 + 2,
-                    speedX: Math.random() * 2 - 1,
-                    rotation: Math.random() * 360
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4, color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2, speedX: Math.random() * 2 - 1, rotation: Math.random() * 360
                 });
             }
-
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 particles.forEach(p => {
-                    p.y += p.speedY;
-                    p.x += p.speedX;
-                    p.rotation += 2;
-
-                    ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate((p.rotation * Math.PI) / 180);
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    p.y += p.speedY; p.x += p.speedX; p.rotation += 2;
+                    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
                     ctx.restore();
-
-                    if (p.y > canvas.height) {
-                        p.y = -10;
-                        p.x = Math.random() * canvas.width;
-                    }
+                    if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
                 });
-                if (document.getElementById('victoryModal').classList.contains('active')) {
-                    requestAnimationFrame(animate);
-                }
+                if (document.getElementById('victoryModal').classList.contains('active')) requestAnimationFrame(animate);
             }
             animate();
+            window.addEventListener('resize', () => {
+                if (document.getElementById('victoryModal').classList.contains('active')) {
+                    canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+                }
+            });
+        }
+
+        /* ==========================================================================
+           EDIT SOAL FEATURE
+           ========================================================================== */
+        function populateEditDropdown() {
+            const select = document.getElementById('editQIndex');
+            select.innerHTML = '';
+            quizBank.forEach((q, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = `Soal ${index + 1}: ${q.question.substring(0, 40)}...`;
+                select.appendChild(option);
+            });
+        }
+
+        function openEditModal() {
+            document.getElementById('editModal').classList.add('active');
+            loadQuestionToEdit(currentQuestionIndex);
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        function loadQuestionToEdit(index) {
+            const q = quizBank[index];
+            document.getElementById('editQIndex').value = index;
+            document.getElementById('editQText').value = q.question;
+            
+            const container = document.getElementById('editAnswersContainer');
+            container.innerHTML = '';
+            
+            q.answers.forEach((ans, i) => {
+                const row = document.createElement('div');
+                row.className = 'edit-form-group';
+                row.innerHTML = `
+                    <label class="edit-label">Jawaban ${i + 1}:</label>
+                    <div class="edit-row">
+                        <input type="text" id="editAnsText_${i}" class="edit-input" value="${ans.text}" placeholder="Teks Jawaban">
+                        <input type="number" id="editAnsPoints_${i}" class="edit-input" value="${ans.points}" placeholder="Poin">
+                        <input type="text" id="editAnsKeywords_${i}" class="edit-input" value="${ans.keywords.join(', ')}" placeholder="Kata Kunci (pisahkan dengan koma)">
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function saveEditedQuestion() {
+            const index = parseInt(document.getElementById('editQIndex').value);
+            const newQ = {
+                id: index + 1,
+                question: document.getElementById('editQText').value,
+                answers: []
+            };
+            
+            for (let i = 0; i < 5; i++) {
+                const text = document.getElementById(`editAnsText_${i}`).value;
+                const points = parseInt(document.getElementById(`editAnsPoints_${i}`).value) || 0;
+                const keywordsRaw = document.getElementById(`editAnsKeywords_${i}`).value;
+                const keywords = keywordsRaw.split(',').map(k => k.trim().toLowerCase()).filter(k => k);
+                
+                newQ.answers.push({ text, points, keywords });
+            }
+            
+            quizBank[index] = newQ;
+            localStorage.setItem('family100_quizBank', JSON.stringify(quizBank));
+            
+            populateEditDropdown();
+            document.getElementById('editQIndex').value = index;
+            
+            alert('✅ Soal berhasil disimpan! Perubahan akan langsung terlihat.');
+            
+            if (index === currentQuestionIndex) {
+                renderQuestion();
+            }
+        }
+
+        function resetToDefaultQuestions() {
+            if (confirm('⚠️ PERINGATAN: Yakin ingin mengembalikan SEMUA soal ke pengaturan awal? Data soal yang sudah Anda edit secara manual akan hilang permanen.')) {
+                localStorage.removeItem('family100_quizBank');
+                quizBank = JSON.parse(JSON.stringify(defaultQuizBank));
+                populateEditDropdown();
+                renderQuestion();
+                closeEditModal();
+                alert('✅ Bank soal berhasil direset ke default.');
+            }
         }
     </script>
 </body>
