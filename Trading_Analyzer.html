@@ -2,72 +2,253 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Trading Analyzer</title>
 <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
-  .header { background: linear-gradient(135deg, #161b22, #0d1117); padding: 15px 25px; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-  .logo { font-size: 22px; font-weight: 700; color: #58a6ff; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; padding-bottom: 20px; }
+  
+  /* ===== HEADER ===== */
+  .header { 
+    background: linear-gradient(135deg, #161b22, #0d1117); 
+    padding: 12px 15px; 
+    border-bottom: 1px solid #30363d; 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-size: 18px; font-weight: 700; color: #58a6ff; white-space: nowrap; }
   .logo span { color: #f0b90b; }
-  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  select, button { background: #21262d; color: #e6edf3; border: 1px solid #30363d; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+  .logo .version { font-size: 10px; color: #8b949e; margin-left: 4px; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex: 1; }
+  select, button { 
+    background: #21262d; 
+    color: #e6edf3; 
+    border: 1px solid #30363d; 
+    padding: 8px 12px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-size: 13px; 
+    min-height: 36px;
+    transition: all 0.2s;
+  }
+  select { min-width: 110px; }
   select:hover, button:hover { border-color: #58a6ff; }
   button.active { background: #1f6feb; border-color: #1f6feb; }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   .tf-select select {
-    padding: 8px 32px 8px 14px;
+    padding: 8px 30px 8px 12px;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat; background-position: right 8px center; background-size: 16px;
-    min-width: 140px;
+    background-repeat: no-repeat; 
+    background-position: right 8px center; 
+    background-size: 14px;
   }
   .tf-select option.optgroup-label { background: #0d1117; color: #8b949e; font-weight: 700; font-size: 11px; letter-spacing: 1px; }
-  .container { display: grid; grid-template-columns: 1fr 320px; gap: 15px; padding: 15px; }
-  .chart-area { background: #161b22; border-radius: 10px; padding: 15px; border: 1px solid #30363d; }
-  .sidebar { display: flex; flex-direction: column; gap: 15px; }
-  .card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 18px; }
-  .card h3 { font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-  .price-display { font-size: 32px; font-weight: 700; }
-  .price-change { font-size: 16px; margin-top: 5px; }
-  .up { color: #3fb950; } .down { color: #f85149; }
-  .live-badge { display: inline-block; background: #3fb950; color: #0d1117; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-left: 8px; animation: pulse 2s infinite; }
-  .stale-badge { display: inline-block; background: #f0b90b; color: #0d1117; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-left: 8px; }
+  
+  .status-bar { 
+    padding: 5px 12px; 
+    font-size: 11px; 
+    border-radius: 6px; 
+    margin: 8px 15px 0; 
+    display: inline-block;
+  }
+  .status-ok { background: rgba(63,185,80,0.15); color: #3fb950; }
+  .status-error { background: rgba(248,81,73,0.15); color: #f85149; }
+  
+  /* ===== CONTAINER ===== */
+  .container { 
+    display: grid; 
+    grid-template-columns: 1fr 320px; 
+    gap: 12px; 
+    padding: 12px; 
+  }
+  
+  /* ===== CHART AREA ===== */
+  .chart-area { 
+    background: #161b22; 
+    border-radius: 10px; 
+    padding: 12px; 
+    border: 1px solid #30363d; 
+    min-width: 0;
+  }
+  .sub-chart { margin-top: 10px; }
+  .sub-chart-label { font-size: 11px; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; }
+  
+  /* ===== SIDEBAR ===== */
+  .sidebar { display: flex; flex-direction: column; gap: 12px; }
+  .card { 
+    background: #161b22; 
+    border: 1px solid #30363d; 
+    border-radius: 10px; 
+    padding: 15px; 
+  }
+  .card h3 { 
+    font-size: 11px; 
+    color: #8b949e; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .price-display { font-size: 28px; font-weight: 700; word-break: break-all; }
+  .price-change { font-size: 14px; margin-top: 4px; }
+  .up { color: #3fb950; } 
+  .down { color: #f85149; }
+  
+  .live-badge { 
+    display: inline-block; 
+    background: #3fb950; 
+    color: #0d1117; 
+    font-size: 9px; 
+    font-weight: 700; 
+    padding: 2px 5px; 
+    border-radius: 3px; 
+    animation: pulse 2s infinite; 
+  }
+  .stale-badge { 
+    display: inline-block; 
+    background: #f0b90b; 
+    color: #0d1117; 
+    font-size: 9px; 
+    font-weight: 700; 
+    padding: 2px 5px; 
+    border-radius: 3px; 
+  }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-  .signal-box { text-align: center; padding: 25px 15px; border-radius: 8px; font-weight: 700; font-size: 28px; letter-spacing: 2px; }
+  
+  .signal-box { 
+    text-align: center; 
+    padding: 20px 12px; 
+    border-radius: 8px; 
+    font-weight: 700; 
+    font-size: 24px; 
+    letter-spacing: 2px; 
+  }
   .signal-buy { background: rgba(63,185,80,0.15); color: #3fb950; border: 2px solid #3fb950; }
   .signal-sell { background: rgba(248,81,73,0.15); color: #f85149; border: 2px solid #f85149; }
   .signal-neutral { background: rgba(139,148,158,0.15); color: #8b949e; border: 2px solid #8b949e; }
-  .indicator-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #21262d; font-size: 14px; }
+  
+  .indicator-row { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 6px 0; 
+    border-bottom: 1px solid #21262d; 
+    font-size: 13px; 
+  }
   .indicator-row:last-child { border-bottom: none; }
-  .indicator-label { color: #8b949e; } .indicator-value { font-weight: 600; }
-  .meter { height: 8px; background: #21262d; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .indicator-label { color: #8b949e; } 
+  .indicator-value { font-weight: 600; }
+  
+  .meter { height: 6px; background: #21262d; border-radius: 3px; overflow: hidden; margin-top: 8px; }
   .meter-fill { height: 100%; transition: width 0.5s, background 0.5s; }
-  .reason-list { list-style: none; font-size: 13px; }
-  .reason-list li { padding: 6px 0; padding-left: 20px; position: relative; }
-  .reason-list li::before { content: '●'; position: absolute; left: 0; }
+  
+  .reason-list { list-style: none; font-size: 12px; }
+  .reason-list li { padding: 5px 0; padding-left: 18px; position: relative; }
+  .reason-list li::before { content: '●'; position: absolute; left: 0; font-size: 10px; }
   .reason-list li.bull::before { color: #3fb950; }
   .reason-list li.bear::before { color: #f85149; }
   .reason-list li.neu::before { color: #8b949e; }
-  .sub-chart { margin-top: 10px; }
-  .sub-chart-label { font-size: 11px; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; }
-  .status-bar { padding: 6px 15px; font-size: 12px; border-radius: 6px; margin: 10px 15px 0; display: inline-block; }
-  .status-ok { background: rgba(63,185,80,0.15); color: #3fb950; }
-  .status-error { background: rgba(248,81,73,0.15); color: #f85149; }
-  .last-update { font-size: 11px; color: #6e7681; margin-top: 4px; }
-  .tf-info { font-size: 11px; color: #58a6ff; margin-top: 4px; font-style: italic; }
-  .api-source { font-size: 11px; color: #3fb950; margin-top: 2px; }
-  .live-source { font-size: 11px; color: #d2a8ff; margin-top: 2px; }
+  
+  .last-update { font-size: 10px; color: #6e7681; margin-top: 4px; }
+  .tf-info { font-size: 10px; color: #58a6ff; margin-top: 4px; font-style: italic; }
+  .api-source { font-size: 10px; color: #3fb950; margin-top: 2px; }
+  .live-source { font-size: 10px; color: #d2a8ff; margin-top: 2px; }
   .candle-update { font-size: 10px; color: #3fb950; margin-top: 2px; }
-  .disclaimer { text-align: center; font-size: 11px; color: #6e7681; padding: 15px; margin-top: 10px; }
-  @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+  .disclaimer { text-align: center; font-size: 10px; color: #6e7681; padding: 12px; margin-top: 10px; }
+  
+  /* ===== RESPONSIVE - TABLET ===== */
+  @media (max-width: 1024px) {
+    .container { grid-template-columns: 1fr 280px; }
+    .price-display { font-size: 26px; }
+  }
+  
+  /* ===== RESPONSIVE - MOBILE ===== */
+  @media (max-width: 768px) {
+    .header { padding: 10px 12px; gap: 8px; }
+    .logo { font-size: 16px; }
+    .logo .version { display: none; }
+    .controls { width: 100%; justify-content: flex-start; }
+    select, button { 
+      padding: 10px 12px; 
+      font-size: 14px; 
+      min-height: 40px;
+      flex: 1;
+      min-width: 0;
+    }
+    .tf-select select { min-width: 100px; flex: 0.8; }
+    #symbolSelect { flex: 1; }
+    #refreshBtn, #autoBtn { flex: 0.6; min-width: 80px; }
+    
+    .container { 
+      grid-template-columns: 1fr; 
+      padding: 10px; 
+      gap: 10px;
+    }
+    
+    .chart-area { padding: 8px; }
+    #mainChart { height: 300px !important; }
+    #rsiChart, #macdChart { height: 100px !important; }
+    
+    .sidebar { order: 2; }
+    .chart-area { order: 1; }
+    
+    .card { padding: 12px; }
+    .price-display { font-size: 24px; }
+    .signal-box { font-size: 20px; padding: 16px 10px; }
+    .indicator-row { font-size: 12px; padding: 5px 0; }
+  }
+  
+  /* ===== RESPONSIVE - SMALL MOBILE ===== */
+  @media (max-width: 480px) {
+    .header { padding: 8px 10px; }
+    .logo { font-size: 14px; }
+    .controls { gap: 6px; }
+    select, button { 
+      padding: 8px 8px; 
+      font-size: 12px; 
+      min-height: 36px;
+    }
+    
+    .container { padding: 8px; gap: 8px; }
+    #mainChart { height: 250px !important; }
+    #rsiChart, #macdChart { height: 80px !important; }
+    
+    .price-display { font-size: 22px; }
+    .price-change { font-size: 13px; }
+    .signal-box { font-size: 18px; padding: 14px 8px; }
+    .card { padding: 10px; }
+    .card h3 { font-size: 10px; }
+  }
+  
+  /* ===== RESPONSIVE - VERY SMALL ===== */
+  @media (max-width: 360px) {
+    .logo { font-size: 13px; }
+    #mainChart { height: 220px !important; }
+    .price-display { font-size: 20px; }
+  }
+  
+  /* ===== LANDSCAPE MOBILE ===== */
+  @media (max-width: 900px) and (orientation: landscape) {
+    .container { 
+      grid-template-columns: 1.5fr 1fr; 
+    }
+    #mainChart { height: 280px !important; }
+  }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo">Trading<span>Analyzer</span> Pro <span style="font-size:11px;color:#8b949e;">v7.5</span></div>
+  <div class="logo">Trading<span>Analyzer</span> Pro <span class="version">v7.6</span></div>
   <div class="controls">
     <select id="symbolSelect">
       <option value="BTCUSDT">BTC/USDT</option>
@@ -88,7 +269,7 @@
         <option class="optgroup-label" disabled>─── HOURS ───</option>
         <option value="1h" selected>1 hour ★</option>
         <option value="4h">4 hours</option>
-        <option class="optgroup-label" disabled>─── DAYS ───</option>
+        <option class="optgroup-label" disabled>─── DAYS ──</option>
         <option value="1d">1 day</option>
         <option value="1w">1 week</option>
       </select>
@@ -126,7 +307,7 @@
     <div class="card">
       <h3>Sinyal Trading</h3>
       <div class="signal-box signal-neutral" id="signalBox">ANALISIS...</div>
-      <div style="margin-top: 12px; font-size: 13px; color: #8b949e;">
+      <div style="margin-top: 10px; font-size: 12px; color: #8b949e;">
         Confidence: <span id="confidence" style="color:#e6edf3; font-weight:600;">-</span>
       </div>
       <div class="meter"><div class="meter-fill" id="confidenceMeter" style="width:0%; background:#8b949e;"></div></div>
@@ -151,10 +332,9 @@
 <div class="disclaimer">⚠️ Disclaimer: Aplikasi ini hanya untuk edukasi. Bukan saran finansial. Selalu lakukan riset sendiri (DYOR) dan gunakan manajemen risiko.</div>
 
 <script>
-console.log('%c[TradingAnalyzer v7.5] Fixed - Free APIs Only!', 'color: #58a6ff; font-weight: bold; font-size: 14px;');
+console.log('%c[TradingAnalyzer v7.6] Mobile Responsive Ready!', 'color: #58a6ff; font-weight: bold; font-size: 14px;');
 
 // ===== KONFIGURASI =====
-// Limit 200 untuk CryptoCompare (gratis tanpa API key)
 const TF_MAPPING = {
   '5m':  { cc: 5,  limit: 200, label: '5m (~16h)',   actual: '5 menit',  candleMs: 5 * 60 * 1000 },
   '15m': { cc: 15, limit: 200, label: '15m (~2d)',   actual: '15 menit', candleMs: 15 * 60 * 1000 },
@@ -416,7 +596,7 @@ async function fetchWithTimeout(url, timeoutMs = 8000) {
   }
 }
 
-// ===== FETCH CHART - CRYPTOCOMPARE (limit 200, gratis) =====
+// ===== FETCH CHART - CRYPTOCOMPARE =====
 async function fetchChartFromCryptoCompare(symbol, tfKey) {
   const maps = SYMBOL_MAP[symbol] || SYMBOL_MAP['BTCUSDT'];
   const tf = TF_MAPPING[tfKey];
@@ -452,7 +632,6 @@ async function fetchChartFromCryptoCompare(symbol, tfKey) {
 // ===== FETCH CHART - COINGECKO (fallback) =====
 async function fetchChartFromCoinGecko(symbol, tfKey) {
   const maps = SYMBOL_MAP[symbol] || SYMBOL_MAP['BTCUSDT'];
-  // CoinGecko OHLC: 1 hari = per menit, 7 hari = per jam, 30+ hari = per 4 jam
   const daysMap = { '5m': 1, '15m': 7, '30m': 7, '1h': 7, '4h': 30, '1d': 90, '1w': 365 };
   const days = daysMap[tfKey] || 7;
   const url = `https://api.coingecko.com/api/v3/coins/${maps.cg}/ohlc?vs_currency=usd&days=${days}`;
@@ -468,9 +647,8 @@ async function fetchChartFromCoinGecko(symbol, tfKey) {
   }));
 }
 
-// ===== MASTER FETCHER DENGAN FALLBACK =====
+// ===== MASTER FETCHER =====
 async function fetchChartData(symbol, tfKey) {
-  // Coba CryptoCompare dulu
   try {
     const data = await fetchChartFromCryptoCompare(symbol, tfKey);
     if (data.length >= 30) {
@@ -481,13 +659,11 @@ async function fetchChartData(symbol, tfKey) {
     console.warn('[CryptoCompare] Failed:', e.message);
   }
   
-  // Fallback ke CoinGecko
   try {
     const data = await fetchChartFromCoinGecko(symbol, tfKey);
     if (data.length >= 30) {
       return { data, source: 'CoinGecko' };
     }
-    console.warn('CoinGecko data too few:', data.length);
   } catch (e) {
     console.warn('[CoinGecko] Failed:', e.message);
   }
@@ -502,11 +678,7 @@ async function fetchLiveFromCoinPaprika(symbol) {
   const data = await fetchWithTimeout(url, 6000);
   if (!data || !data.quotes || !data.quotes.USD) throw new Error('Invalid');
   const quote = data.quotes.USD;
-  return {
-    price: quote.price,
-    change24h: quote.percent_change_24h || 0,
-    source: 'CoinPaprika'
-  };
+  return { price: quote.price, change24h: quote.percent_change_24h || 0, source: 'CoinPaprika' };
 }
 
 async function fetchLiveFromCoinGecko(symbol) {
@@ -514,11 +686,7 @@ async function fetchLiveFromCoinGecko(symbol) {
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${maps.cg}&vs_currencies=usd&include_24hr_change=true`;
   const data = await fetchWithTimeout(url, 6000);
   if (!data || !data[maps.cg]) throw new Error('Invalid');
-  return {
-    price: data[maps.cg].usd,
-    change24h: data[maps.cg].usd_24h_change || 0,
-    source: 'CoinGecko'
-  };
+  return { price: data[maps.cg].usd, change24h: data[maps.cg].usd_24h_change || 0, source: 'CoinGecko' };
 }
 
 async function fetchLivePrice(symbol) {
@@ -526,14 +694,11 @@ async function fetchLivePrice(symbol) {
     { name: 'CoinPaprika', fn: () => fetchLiveFromCoinPaprika(symbol) },
     { name: 'CoinGecko', fn: () => fetchLiveFromCoinGecko(symbol) }
   ];
-  
   for (const api of apis) {
     try {
       const data = await api.fn();
-      console.log(`✅ Live price from ${api.name}: $${data.price}`);
       return data;
     } catch (e) {
-      console.warn(`[${api.name}] ❌`, e.message);
       await new Promise(r => setTimeout(r, 200));
     }
   }
@@ -547,78 +712,44 @@ let currentTfKey = '1h';
 let candleUpdateInterval = null;
 let livePriceData = null;
 
-// ===== UPDATE CANDLE TERAKHIR + BUAT CANDLE BARU =====
+// ===== UPDATE CANDLE =====
 async function updateLastCandle() {
   if (!currentChartData || currentChartData.length === 0) return;
-  
   try {
     const liveData = await fetchLivePrice(currentSymbol);
     const price = liveData.price;
     const tf = TF_MAPPING[currentTfKey];
     const now = Date.now();
     const nowSeconds = Math.floor(now / 1000);
-    
     const candleDuration = tf.candleMs / 1000;
     const currentCandleTime = Math.floor(nowSeconds / candleDuration) * candleDuration;
-    
     const lastCandle = currentChartData[currentChartData.length - 1];
     const lastCandleTime = lastCandle.time;
-    
     let targetCandle;
-    let newCandlesCreated = 0;
     
     if (currentCandleTime > lastCandleTime) {
       let prevClose = lastCandle.close;
       let timeToProcess = lastCandleTime + candleDuration;
-      
       while (timeToProcess <= currentCandleTime) {
         if (timeToProcess === currentCandleTime) {
-          targetCandle = {
-            time: timeToProcess,
-            open: prevClose,
-            high: price,
-            low: price,
-            close: price
-          };
+          targetCandle = { time: timeToProcess, open: prevClose, high: price, low: price, close: price };
           currentChartData.push(targetCandle);
-          newCandlesCreated++;
         } else {
-          const closedCandle = {
-            time: timeToProcess,
-            open: prevClose,
-            high: prevClose,
-            low: prevClose,
-            close: prevClose
-          };
-          currentChartData.push(closedCandle);
-          newCandlesCreated++;
+          currentChartData.push({ time: timeToProcess, open: prevClose, high: prevClose, low: prevClose, close: prevClose });
         }
         prevClose = price;
         timeToProcess += candleDuration;
       }
-      
-      while (currentChartData.length > 2000) {
-        currentChartData.shift();
-      }
-      
+      while (currentChartData.length > 2000) currentChartData.shift();
       targetCandle = currentChartData[currentChartData.length - 1];
-      console.log(`🆕 Created ${newCandlesCreated} new candle(s)`);
-      
     } else if (currentCandleTime === lastCandleTime) {
       targetCandle = lastCandle;
       targetCandle.close = price;
       targetCandle.high = Math.max(targetCandle.high, price);
       targetCandle.low = Math.min(targetCandle.low, price);
-    } else {
-      return;
-    }
+    } else { return; }
     
-    livePriceData = {
-      price: price,
-      source: liveData.source,
-      change24h: liveData.change24h || 0
-    };
-    
+    livePriceData = { price, source: liveData.source, change24h: liveData.change24h || 0 };
     candleSeries.update(targetCandle);
     
     smaSeries.setData(calcSMA(currentChartData, 20));
@@ -644,10 +775,8 @@ async function updateLastCandle() {
     if (candleUpdateEl) {
       const nextCandleTime = currentCandleTime + candleDuration;
       const remaining = Math.ceil((nextCandleTime * 1000 - now) / 1000);
-      const nextCandleDate = new Date(nextCandleTime * 1000);
-      candleUpdateEl.textContent = `🕯️ Candle: ${new Date(currentCandleTime * 1000).toLocaleTimeString('id-ID')} | Next: ${nextCandleDate.toLocaleTimeString('id-ID')} (${remaining}s)`;
+      candleUpdateEl.textContent = `🕯️ ${new Date(currentCandleTime * 1000).toLocaleTimeString('id-ID')} | Next: ${new Date(nextCandleTime * 1000).toLocaleTimeString('id-ID')} (${remaining}s)`;
     }
-    
   } catch (e) {
     console.warn('Candle update failed:', e.message);
   }
@@ -674,22 +803,13 @@ async function loadData() {
   statusBar.textContent = `🟢 Memuat chart...`;
   statusBar.className = 'status-bar status-ok';
 
-  console.log(`\n${'='.repeat(50)}`);
-  console.log(`[v7.5] Loading ${symbol} / ${tfKey}`);
-  console.log('='.repeat(50));
-
   try {
     const { data: candles, source } = await fetchChartData(symbol, tfKey);
-    
     if (!candles || candles.length === 0) throw new Error('Empty data');
-    
     currentChartData = candles;
     
-    statusBar.textContent = `🟢 ${source} — ${tfConfig.label}`;
-    statusBar.className = 'status-bar status-ok';
-    if (apiSource) apiSource.textContent = `📊 Chart: ${source} | ${candles.length} candles`;
-    
-    console.log(`✅ Chart loaded: ${candles.length} candles from ${source}`);
+    statusBar.textContent = ` ${source} — ${tfConfig.label}`;
+    if (apiSource) apiSource.textContent = `📊 ${source} | ${candles.length} candles`;
     
     candleSeries.setData(currentChartData);
     smaSeries.setData(calcSMA(currentChartData, 20));
@@ -708,7 +828,6 @@ async function loadData() {
     if (macdData.signalLine.length > 0) signalLineSeries.setData(macdData.signalLine);
     if (macdData.histogram.length > 0) macdHistSeries.setData(macdData.histogram);
 
-    // FIT CONTENT
     setTimeout(() => {
       mainChart.timeScale().fitContent();
       rsiChart.timeScale().fitContent();
@@ -720,26 +839,18 @@ async function loadData() {
 
     if (tfInfo) {
       const lastCandle = currentChartData[currentChartData.length - 1];
-      const lastDate = new Date(lastCandle.time * 1000);
-      tfInfo.textContent = `📊 ${tfKey} → ${tfConfig.actual} | Terakhir: ${lastDate.toLocaleString('id-ID')}`;
+      tfInfo.textContent = `📊 ${tfKey} → ${tfConfig.actual} | ${new Date(lastCandle.time * 1000).toLocaleString('id-ID')}`;
     }
-    
-    if (liveBadge) {
-      liveBadge.textContent = 'LIVE';
-      liveBadge.className = 'live-badge';
-    }
+    if (liveBadge) { liveBadge.textContent = 'LIVE'; liveBadge.className = 'live-badge'; }
     
     candleUpdateInterval = setInterval(updateLastCandle, 30000);
     setTimeout(updateLastCandle, 3000);
     
   } catch (e) {
     console.error('❌ Chart failed:', e.message);
-    statusBar.textContent = ` Gagal: ${e.message}`;
+    statusBar.textContent = `🔴 Gagal: ${e.message}`;
     statusBar.className = 'status-bar status-error';
-    if (liveBadge) {
-      liveBadge.textContent = 'OFFLINE';
-      liveBadge.className = 'stale-badge';
-    }
+    if (liveBadge) { liveBadge.textContent = 'OFFLINE'; liveBadge.className = 'stale-badge'; }
   }
 
   setTimeout(resizeCharts, 100);
@@ -750,28 +861,20 @@ async function loadData() {
 // ===== UPDATE UI =====
 function updateUI(analysis, data) {
   if (!data || data.length < 2) return;
-
   const { signalText, signalClass, confidence, reasons, indicators } = analysis;
   const { rsi, macd, signal, smaVal, emaVal, bbUp, bbLow, price } = indicators;
-  
   if (!price || isNaN(price)) return;
 
   const tf = TF_MAPPING[currentTfKey];
   const candleDuration = tf.candleMs / 1000;
   const currentCandleTime = Math.floor(Date.now() / 1000 / candleDuration) * candleDuration;
   const onePeriodAgo = currentCandleTime - candleDuration;
-  
   let baselinePrice = price;
   for (let i = data.length - 1; i >= 0; i--) {
-    if (data[i].time <= onePeriodAgo) {
-      baselinePrice = data[i].close;
-      break;
-    }
+    if (data[i].time <= onePeriodAgo) { baselinePrice = data[i].close; break; }
   }
-  
   const change = price - baselinePrice;
   const changePct = baselinePrice > 0 ? (change / baselinePrice) * 100 : 0;
-  
   const decimals = price < 1 ? 6 : price < 100 ? 4 : 2;
   const priceFormatted = '$' + price.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
@@ -785,20 +888,15 @@ function updateUI(analysis, data) {
     changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(decimals)} (${changePct.toFixed(2)}%)`;
     changeEl.className = 'price-change ' + (change >= 0 ? 'up' : 'down');
   }
-  if (lastUpdateEl) {
-    const now = new Date();
-    lastUpdateEl.textContent = `Update: ${now.toLocaleTimeString('id-ID')} (Live)`;
-  }
+  if (lastUpdateEl) lastUpdateEl.textContent = `Update: ${new Date().toLocaleTimeString('id-ID')} (Live)`;
   if (liveSourceEl && livePriceData) {
-    liveSourceEl.textContent = `📡 Live: ${livePriceData.source} | 24h: ${livePriceData.change24h >= 0 ? '+' : ''}${livePriceData.change24h.toFixed(2)}%`;
+    liveSourceEl.textContent = ` ${livePriceData.source} | 24h: ${livePriceData.change24h >= 0 ? '+' : ''}${livePriceData.change24h.toFixed(2)}%`;
   }
 
   const box = document.getElementById('signalBox');
   if (box) { box.textContent = signalText; box.className = 'signal-box ' + signalClass; }
-
   const confEl = document.getElementById('confidence');
   if (confEl) confEl.textContent = confidence.toFixed(0) + '%';
-  
   const meter = document.getElementById('confidenceMeter');
   if (meter) {
     meter.style.width = confidence + '%';
@@ -810,7 +908,6 @@ function updateUI(analysis, data) {
     const el = document.getElementById(id);
     if (el) { el.textContent = fmt(value); if (condition) el.className = 'indicator-value ' + condition; }
   };
-
   setIndicator('rsiValue', rsi, rsi < 30 ? 'up' : rsi > 70 ? 'down' : '');
   setIndicator('macdValue', macd, macd > signal ? 'up' : 'down');
   setIndicator('signalValue', signal, '');
@@ -838,7 +935,7 @@ autoBtn.addEventListener('click', () => {
     autoBtn.classList.remove('active');
   } else {
     autoInterval = setInterval(loadData, 300000);
-    autoBtn.textContent = '▶ Auto: ON (5m)';
+    autoBtn.textContent = '▶ Auto: ON';
     autoBtn.classList.add('active');
   }
 });
