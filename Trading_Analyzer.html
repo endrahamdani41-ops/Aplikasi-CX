@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Analyzer</title>
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+  .header { background: linear-gradient(135deg, #161b22, #0d1117); padding: 15px 25px; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .logo { font-size: 22px; font-weight: 700; color: #58a6ff; }
+  .logo span { color: #f0b90b; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  select, button { background: #21262d; color: #e6edf3; border: 1px solid #30363d; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+  select:hover, button:hover { border-color: #58a6ff; }
+  button.active { background: #1f6feb; border-color: #1f6feb; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .tf-select select {
+    padding: 8px 32px 8px 14px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat; background-position: right 8px center; background-size: 16px;
+    min-width: 140px;
+  }
+  .tf-select option.optgroup-label { background: #0d1117; color: #8b949e; font-weight: 700; font-size: 11px; letter-spacing: 1px; }
+  .container { display: grid; grid-template-columns: 1fr 320px; gap: 15px; padding: 15px; }
+  .chart-area { background: #161b22; border-radius: 10px; padding: 15px; border: 1px solid #30363d; }
+  .sidebar { display: flex; flex-direction: column; gap: 15px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 18px; }
+  .card h3 { font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .price-display { font-size: 32px; font-weight: 700; }
+  .price-change { font-size: 16px; margin-top: 5px; }
+  .up { color: #3fb950; } .down { color: #f85149; }
+  .live-badge { display: inline-block; background: #3fb950; color: #0d1117; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-left: 8px; animation: pulse 2s infinite; }
+  .stale-badge { display: inline-block; background: #f0b90b; color: #0d1117; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; margin-left: 8px; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .signal-box { text-align: center; padding: 25px 15px; border-radius: 8px; font-weight: 700; font-size: 28px; letter-spacing: 2px; }
+  .signal-buy { background: rgba(63,185,80,0.15); color: #3fb950; border: 2px solid #3fb950; }
+  .signal-sell { background: rgba(248,81,73,0.15); color: #f85149; border: 2px solid #f85149; }
+  .signal-neutral { background: rgba(139,148,158,0.15); color: #8b949e; border: 2px solid #8b949e; }
+  .indicator-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #21262d; font-size: 14px; }
+  .indicator-row:last-child { border-bottom: none; }
+  .indicator-label { color: #8b949e; } .indicator-value { font-weight: 600; }
+  .meter { height: 8px; background: #21262d; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .meter-fill { height: 100%; transition: width 0.5s, background 0.5s; }
+  .reason-list { list-style: none; font-size: 13px; }
+  .reason-list li { padding: 6px 0; padding-left: 20px; position: relative; }
+  .reason-list li::before { content: '●'; position: absolute; left: 0; }
+  .reason-list li.bull::before { color: #3fb950; }
+  .reason-list li.bear::before { color: #f85149; }
+  .reason-list li.neu::before { color: #8b949e; }
+  .sub-chart { margin-top: 10px; }
+  .sub-chart-label { font-size: 11px; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; }
+  .status-bar { padding: 6px 15px; font-size: 12px; border-radius: 6px; margin: 10px 15px 0; display: inline-block; }
+  .status-ok { background: rgba(63,185,80,0.15); color: #3fb950; }
+  .status-error { background: rgba(248,81,73,0.15); color: #f85149; }
+  .last-update { font-size: 11px; color: #6e7681; margin-top: 4px; }
+  .tf-info { font-size: 11px; color: #58a6ff; margin-top: 4px; font-style: italic; }
+  .api-source { font-size: 11px; color: #3fb950; margin-top: 2px; }
+  .live-source { font-size: 11px; color: #d2a8ff; margin-top: 2px; }
+  .candle-update { font-size: 10px; color: #3fb950; margin-top: 2px; }
+  .disclaimer { text-align: center; font-size: 11px; color: #6e7681; padding: 15px; margin-top: 10px; }
+  @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Trading<span>Analyzer</span> Pro <span style="font-size:11px;color:#8b949e;">v7.5</span></div>
+  <div class="controls">
+    <select id="symbolSelect">
+      <option value="BTCUSDT">BTC/USDT</option>
+      <option value="ETHUSDT">ETH/USDT</option>
+      <option value="BNBUSDT">BNB/USDT</option>
+      <option value="SOLUSDT">SOL/USDT</option>
+      <option value="XRPUSDT">XRP/USDT</option>
+      <option value="ADAUSDT">ADA/USDT</option>
+      <option value="DOGEUSDT">DOGE/USDT</option>
+      <option value="AVAXUSDT">AVAX/USDT</option>
+    </select>
+    <div class="tf-select">
+      <select id="intervalSelect">
+        <option class="optgroup-label" disabled>─── MINUTES ───</option>
+        <option value="5m">5 minutes</option>
+        <option value="15m">15 minutes</option>
+        <option value="30m">30 minutes</option>
+        <option class="optgroup-label" disabled>─── HOURS ───</option>
+        <option value="1h" selected>1 hour ★</option>
+        <option value="4h">4 hours</option>
+        <option class="optgroup-label" disabled>─── DAYS ───</option>
+        <option value="1d">1 day</option>
+        <option value="1w">1 week</option>
+      </select>
+    </div>
+    <button id="refreshBtn">🔄 Refresh</button>
+    <button id="autoBtn">⏸ Auto: OFF</button>
+  </div>
+</div>
+<div id="statusBar" class="status-bar status-ok">🟢 Memuat data...</div>
+
+<div class="container">
+  <div class="chart-area">
+    <div id="mainChart" style="height: 400px;"></div>
+    <div class="sub-chart">
+      <div class="sub-chart-label">RSI (14)</div>
+      <div id="rsiChart" style="height: 120px;"></div>
+    </div>
+    <div class="sub-chart">
+      <div class="sub-chart-label">MACD (12, 26, 9)</div>
+      <div id="macdChart" style="height: 120px;"></div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="card">
+      <h3>Harga Saat Ini <span class="live-badge" id="liveBadge">LIVE</span></h3>
+      <div class="price-display" id="currentPrice">-</div>
+      <div class="price-change" id="priceChange">-</div>
+      <div class="last-update" id="lastUpdate">-</div>
+      <div class="api-source" id="apiSource">-</div>
+      <div class="live-source" id="liveSource">-</div>
+      <div class="candle-update" id="candleUpdate">-</div>
+      <div class="tf-info" id="tfInfo">-</div>
+    </div>
+    <div class="card">
+      <h3>Sinyal Trading</h3>
+      <div class="signal-box signal-neutral" id="signalBox">ANALISIS...</div>
+      <div style="margin-top: 12px; font-size: 13px; color: #8b949e;">
+        Confidence: <span id="confidence" style="color:#e6edf3; font-weight:600;">-</span>
+      </div>
+      <div class="meter"><div class="meter-fill" id="confidenceMeter" style="width:0%; background:#8b949e;"></div></div>
+    </div>
+    <div class="card">
+      <h3>Indikator Teknikal</h3>
+      <div class="indicator-row"><span class="indicator-label">RSI (14)</span><span class="indicator-value" id="rsiValue">-</span></div>
+      <div class="indicator-row"><span class="indicator-label">MACD</span><span class="indicator-value" id="macdValue">-</span></div>
+      <div class="indicator-row"><span class="indicator-label">Signal Line</span><span class="indicator-value" id="signalValue">-</span></div>
+      <div class="indicator-row"><span class="indicator-label">SMA 20</span><span class="indicator-value" id="sma20Value">-</span></div>
+      <div class="indicator-row"><span class="indicator-label">EMA 50</span><span class="indicator-value" id="ema50Value">-</span></div>
+      <div class="indicator-row"><span class="indicator-label">BB Upper</span><span class="indicator-value" id="bbUpper">-</span></div>
+      <div class="indicator-row"><span class="indicator-label">BB Lower</span><span class="indicator-value" id="bbLower">-</span></div>
+    </div>
+    <div class="card">
+      <h3>Alasan Sinyal</h3>
+      <ul class="reason-list" id="reasonList"><li class="neu">Memuat data...</li></ul>
+    </div>
+  </div>
+</div>
+
+<div class="disclaimer">⚠️ Disclaimer: Aplikasi ini hanya untuk edukasi. Bukan saran finansial. Selalu lakukan riset sendiri (DYOR) dan gunakan manajemen risiko.</div>
+
+<script>
+console.log('%c[TradingAnalyzer v7.5] Fixed - Free APIs Only!', 'color: #58a6ff; font-weight: bold; font-size: 14px;');
+
+// ===== KONFIGURASI =====
+// Limit 200 untuk CryptoCompare (gratis tanpa API key)
+const TF_MAPPING = {
+  '5m':  { cc: 5,  limit: 200, label: '5m (~16h)',   actual: '5 menit',  candleMs: 5 * 60 * 1000 },
+  '15m': { cc: 15, limit: 200, label: '15m (~2d)',   actual: '15 menit', candleMs: 15 * 60 * 1000 },
+  '30m': { cc: 30, limit: 200, label: '30m (~4d)',   actual: '30 menit', candleMs: 30 * 60 * 1000 },
+  '1h':  { cc: 1,  limit: 200, label: '1h (~8d)',    actual: '1 jam',    candleMs: 60 * 60 * 1000 },
+  '4h':  { cc: 4,  limit: 200, label: '4h (~33d)',   actual: '4 jam',    candleMs: 4 * 60 * 60 * 1000 },
+  '1d':  { cc: 1,  limit: 200, label: '1d (~200d)',  actual: '1 hari',   candleMs: 24 * 60 * 60 * 1000 },
+  '1w':  { cc: 7,  limit: 100, label: '1w (~2y)',    actual: '1 minggu', candleMs: 7 * 24 * 60 * 60 * 1000 }
+};
+
+const SYMBOL_MAP = {
+  'BTCUSDT': { cc: 'BTC',  cp: 'btc-bitcoin',         cg: 'bitcoin' },
+  'ETHUSDT': { cc: 'ETH',  cp: 'eth-ethereum',        cg: 'ethereum' },
+  'BNBUSDT': { cc: 'BNB',  cp: 'bnb-binance-coin',    cg: 'binancecoin' },
+  'SOLUSDT': { cc: 'SOL',  cp: 'sol-solana',          cg: 'solana' },
+  'XRPUSDT': { cc: 'XRP',  cp: 'xrp-xrp',             cg: 'ripple' },
+  'ADAUSDT': { cc: 'ADA',  cp: 'ada-cardano',         cg: 'cardano' },
+  'DOGEUSDT':{ cc: 'DOGE', cp: 'doge-dogecoin',       cg: 'dogecoin' },
+  'AVAXUSDT':{ cc: 'AVAX', cp: 'avax-avalanche',      cg: 'avalanche-2' }
+};
+
+// ===== CHART =====
+const chartOptions = {
+  layout: { background: { color: '#161b22' }, textColor: '#e6edf3' },
+  grid: { vertLines: { color: '#21262d' }, horzLines: { color: '#21262d' } },
+  timeScale: { timeVisible: true, secondsVisible: false, borderColor: '#30363d' },
+  rightPriceScale: { borderColor: '#30363d' },
+  crosshair: { mode: 1 }
+};
+
+const mainChart = LightweightCharts.createChart(document.getElementById('mainChart'), chartOptions);
+const candleSeries = mainChart.addCandlestickSeries({
+  upColor: '#3fb950', downColor: '#f85149',
+  borderUpColor: '#3fb950', borderDownColor: '#f85149',
+  wickUpColor: '#3fb950', wickDownColor: '#f85149'
+});
+const smaSeries = mainChart.addLineSeries({ color: '#58a6ff', lineWidth: 2 });
+const emaSeries = mainChart.addLineSeries({ color: '#f0b90b', lineWidth: 2 });
+const bbUpperSeries = mainChart.addLineSeries({ color: '#bc8cff', lineWidth: 1, lineStyle: 2 });
+const bbLowerSeries = mainChart.addLineSeries({ color: '#bc8cff', lineWidth: 1, lineStyle: 2 });
+
+const rsiChart = LightweightCharts.createChart(document.getElementById('rsiChart'), {
+  ...chartOptions, height: 120,
+  rightPriceScale: { borderColor: '#30363d', scaleMargins: { top: 0.1, bottom: 0.1 } }
+});
+const rsiSeries = rsiChart.addLineSeries({ color: '#d2a8ff', lineWidth: 2 });
+const rsiLine30 = rsiChart.addLineSeries({ color: '#3fb950', lineWidth: 1, lineStyle: 2 });
+const rsiLine70 = rsiChart.addLineSeries({ color: '#f85149', lineWidth: 1, lineStyle: 2 });
+
+const macdChart = LightweightCharts.createChart(document.getElementById('macdChart'), {
+  ...chartOptions, height: 120
+});
+const macdLineSeries = macdChart.addLineSeries({ color: '#58a6ff', lineWidth: 2 });
+const signalLineSeries = macdChart.addLineSeries({ color: '#f0b90b', lineWidth: 2 });
+const macdHistSeries = macdChart.addHistogramSeries();
+
+mainChart.timeScale().subscribeVisibleLogicalRangeChange(range => {
+  if (range) {
+    rsiChart.timeScale().setVisibleLogicalRange(range);
+    macdChart.timeScale().setVisibleLogicalRange(range);
+  }
+});
+
+function resizeCharts() {
+  const m = document.getElementById('mainChart');
+  const r = document.getElementById('rsiChart');
+  const mc = document.getElementById('macdChart');
+  mainChart.applyOptions({ width: m.clientWidth, height: m.clientHeight });
+  rsiChart.applyOptions({ width: r.clientWidth, height: r.clientHeight });
+  macdChart.applyOptions({ width: mc.clientWidth, height: mc.clientHeight });
+}
+window.addEventListener('resize', resizeCharts);
+setTimeout(resizeCharts, 200);
+
+// ===== INDIKATOR =====
+function calcSMA(data, period) {
+  const result = [];
+  for (let i = period - 1; i < data.length; i++) {
+    let sum = 0;
+    for (let j = 0; j < period; j++) sum += data[i - j].close;
+    result.push({ time: data[i].time, value: sum / period });
+  }
+  return result;
+}
+
+function calcEMA(data, period) {
+  const result = [];
+  if (data.length === 0) return result;
+  const k = 2 / (period + 1);
+  let ema = data[0].close;
+  for (let i = 0; i < data.length; i++) {
+    ema = data[i].close * k + ema * (1 - k);
+    if (i >= period - 1) result.push({ time: data[i].time, value: ema });
+  }
+  return result;
+}
+
+function calcRSI(data, period = 14) {
+  const result = [];
+  if (data.length <= period) return result;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const diff = data[i].close - data[i - 1].close;
+    if (diff >= 0) gains += diff; else losses -= diff;
+  }
+  let avgGain = gains / period, avgLoss = losses / period;
+  result.push({ time: data[period].time, value: 100 - 100 / (1 + avgGain / (avgLoss || 0.0001)) });
+  for (let i = period + 1; i < data.length; i++) {
+    const diff = data[i].close - data[i - 1].close;
+    const gain = diff > 0 ? diff : 0;
+    const loss = diff < 0 ? -diff : 0;
+    avgGain = (avgGain * (period - 1) + gain) / period;
+    avgLoss = (avgLoss * (period - 1) + loss) / period;
+    result.push({ time: data[i].time, value: 100 - 100 / (1 + avgGain / (avgLoss || 0.0001)) });
+  }
+  return result;
+}
+
+function calcMACD(data, fast = 12, slow = 26, signal = 9) {
+  const empty = { macdLine: [], signalLine: [], histogram: [] };
+  if (data.length < slow + signal) return empty;
+  const emaFast = calcEMA(data, fast);
+  const emaSlow = calcEMA(data, slow);
+  const offset = slow - fast;
+  const macdLine = [];
+  for (let i = 0; i < emaFast.length - offset; i++) {
+    if (emaFast[i + offset] && emaSlow[i]) {
+      macdLine.push({ time: emaFast[i + offset].time, value: emaFast[i + offset].value - emaSlow[i].value });
+    }
+  }
+  if (macdLine.length < signal) return empty;
+  const signalLine = [];
+  const k = 2 / (signal + 1);
+  let ema = macdLine[0].value;
+  for (let i = 0; i < macdLine.length; i++) {
+    ema = macdLine[i].value * k + ema * (1 - k);
+    if (i >= signal - 1) signalLine.push({ time: macdLine[i].time, value: ema });
+  }
+  const histogram = [];
+  const sigOffset = macdLine.length - signalLine.length;
+  for (let i = 0; i < signalLine.length; i++) {
+    const m = macdLine[i + sigOffset]?.value;
+    const s = signalLine[i].value;
+    if (m !== undefined) {
+      histogram.push({
+        time: signalLine[i].time,
+        value: m - s,
+        color: (m - s) >= 0 ? 'rgba(63, 185, 80, 0.6)' : 'rgba(248, 81, 73, 0.6)'
+      });
+    }
+  }
+  return { macdLine, signalLine, histogram };
+}
+
+function calcBB(data, period = 20, mult = 2) {
+  const upper = [], lower = [];
+  for (let i = period - 1; i < data.length; i++) {
+    let sum = 0;
+    for (let j = 0; j < period; j++) sum += data[i - j].close;
+    const mean = sum / period;
+    let sqSum = 0;
+    for (let j = 0; j < period; j++) sqSum += Math.pow(data[i - j].close - mean, 2);
+    const std = Math.sqrt(sqSum / period);
+    upper.push({ time: data[i].time, value: mean + mult * std });
+    lower.push({ time: data[i].time, value: mean - mult * std });
+  }
+  return { upper, lower };
+}
+
+// ===== ANALISIS SINYAL =====
+function analyzeSignal(data) {
+  if (!data || data.length < 30) {
+    return {
+      signalText: 'DATA TIDAK CUKUP',
+      signalClass: 'signal-neutral',
+      confidence: 0, score: 0,
+      reasons: [{ text: 'Data candle tidak cukup (butuh 30+)', type: 'neu' }],
+      indicators: { rsi: 50, macd: 0, signal: 0, smaVal: 0, emaVal: 0, bbUp: 0, bbLow: 0, price: data?.[data.length-1]?.close || 0 }
+    };
+  }
+
+  const last = data[data.length - 1];
+  const prev = data[data.length - 2];
+  const rsiData = calcRSI(data);
+  const macdData = calcMACD(data);
+  const sma = calcSMA(data, 20);
+  const ema = calcEMA(data, 50);
+  const bb = calcBB(data);
+
+  const rsi = rsiData.length > 0 ? rsiData[rsiData.length - 1].value : 50;
+  const macd = macdData.macdLine.length > 0 ? macdData.macdLine[macdData.macdLine.length - 1].value : 0;
+  const signal = macdData.signalLine.length > 0 ? macdData.signalLine[macdData.signalLine.length - 1].value : 0;
+  const prevMacd = macdData.macdLine.length > 1 ? macdData.macdLine[macdData.macdLine.length - 2].value : macd;
+  const prevSignal = macdData.signalLine.length > 1 ? macdData.signalLine[macdData.signalLine.length - 2].value : signal;
+  const smaVal = sma.length > 0 ? sma[sma.length - 1].value : last.close;
+  const emaVal = ema.length > 0 ? ema[ema.length - 1].value : last.close;
+  const bbUp = bb.upper.length > 0 ? bb.upper[bb.upper.length - 1].value : last.close;
+  const bbLow = bb.lower.length > 0 ? bb.lower[bb.lower.length - 1].value : last.close;
+  const price = last.close;
+
+  let score = 0;
+  const reasons = [];
+
+  if (rsi < 30) { score += 2; reasons.push({ text: `RSI oversold (${rsi.toFixed(1)})`, type: 'bull' }); }
+  else if (rsi < 40) { score += 1; reasons.push({ text: `RSI mendekati oversold (${rsi.toFixed(1)})`, type: 'bull' }); }
+  else if (rsi > 70) { score -= 2; reasons.push({ text: `RSI overbought (${rsi.toFixed(1)})`, type: 'bear' }); }
+  else if (rsi > 60) { score -= 1; reasons.push({ text: `RSI mendekati overbought (${rsi.toFixed(1)})`, type: 'bear' }); }
+  else { reasons.push({ text: `RSI netral (${rsi.toFixed(1)})`, type: 'neu' }); }
+
+  if (macdData.macdLine.length > 1 && macdData.signalLine.length > 1) {
+    if (prevMacd < prevSignal && macd > signal) { score += 2; reasons.push({ text: 'MACD bullish crossover', type: 'bull' }); }
+    else if (prevMacd > prevSignal && macd < signal) { score -= 2; reasons.push({ text: 'MACD bearish crossover', type: 'bear' }); }
+    else if (macd > signal) { score += 1; reasons.push({ text: 'MACD di atas signal line', type: 'bull' }); }
+    else { score -= 1; reasons.push({ text: 'MACD di bawah signal line', type: 'bear' }); }
+  } else {
+    reasons.push({ text: 'MACD: data tidak cukup', type: 'neu' });
+  }
+
+  if (price <= bbLow) { score += 2; reasons.push({ text: 'Harga di lower BB (potensi rebound)', type: 'bull' }); }
+  else if (price >= bbUp) { score -= 2; reasons.push({ text: 'Harga di upper BB (potensi koreksi)', type: 'bear' }); }
+  else { reasons.push({ text: 'Harga dalam Bollinger Bands', type: 'neu' }); }
+
+  if (price > smaVal && price > emaVal) { score += 1; reasons.push({ text: 'Harga di atas SMA20 & EMA50 (uptrend)', type: 'bull' }); }
+  else if (price < smaVal && price < emaVal) { score -= 1; reasons.push({ text: 'Harga di bawah SMA20 & EMA50 (downtrend)', type: 'bear' }); }
+  else { reasons.push({ text: 'Harga di antara moving averages', type: 'neu' }); }
+
+  if (last.close > last.open && prev.close < prev.open) {
+    score += 1; reasons.push({ text: 'Candle reversal bullish', type: 'bull' });
+  } else if (last.close < last.open && prev.close > prev.open) {
+    score -= 1; reasons.push({ text: 'Candle reversal bearish', type: 'bear' });
+  }
+
+  let signalText = 'HOLD / WAIT';
+  let signalClass = 'signal-neutral';
+  let confidence = Math.min(100, Math.abs(score) * 15);
+
+  if (score >= 3) { signalText = '🟢 STRONG BUY'; signalClass = 'signal-buy'; }
+  else if (score >= 1) { signalText = '🟢 BUY'; signalClass = 'signal-buy'; }
+  else if (score <= -3) { signalText = '🔴 STRONG SELL'; signalClass = 'signal-sell'; }
+  else if (score <= -1) { signalText = '🔴 SELL'; signalClass = 'signal-sell'; }
+
+  return { signalText, signalClass, confidence, score, reasons,
+    indicators: { rsi, macd, signal, smaVal, emaVal, bbUp, bbLow, price } };
+}
+
+// ===== FETCH UTILITY =====
+async function fetchWithTimeout(url, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (response.status === 429) throw new Error('Rate limit');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (e) {
+    clearTimeout(timeoutId);
+    throw e;
+  }
+}
+
+// ===== FETCH CHART - CRYPTOCOMPARE (limit 200, gratis) =====
+async function fetchChartFromCryptoCompare(symbol, tfKey) {
+  const maps = SYMBOL_MAP[symbol] || SYMBOL_MAP['BTCUSDT'];
+  const tf = TF_MAPPING[tfKey];
+  
+  let url;
+  if (tfKey === '1d' || tfKey === '1w') {
+    url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${maps.cc}&tsym=USD&limit=${tf.limit}`;
+  } else {
+    url = `https://min-api.cryptocompare.com/data/v2/histohour?fsym=${maps.cc}&tsym=USD&aggregate=${tf.cc}&limit=${tf.limit}`;
+  }
+  
+  console.log('[Chart] CryptoCompare:', url);
+  const data = await fetchWithTimeout(url, 8000);
+  
+  if (!data || data.Response !== 'Success' || !data.Data || !data.Data.Data || data.Data.Data.length === 0) {
+    throw new Error('Empty or invalid data');
+  }
+  
+  const candles = data.Data.Data
+    .filter(k => k.open > 0 && k.high > 0 && k.low > 0 && k.close > 0)
+    .map(k => ({
+      time: k.time,
+      open: parseFloat(k.open),
+      high: parseFloat(k.high),
+      low: parseFloat(k.low),
+      close: parseFloat(k.close)
+    }));
+  
+  console.log(`✅ CryptoCompare: ${candles.length} valid candles`);
+  return candles;
+}
+
+// ===== FETCH CHART - COINGECKO (fallback) =====
+async function fetchChartFromCoinGecko(symbol, tfKey) {
+  const maps = SYMBOL_MAP[symbol] || SYMBOL_MAP['BTCUSDT'];
+  // CoinGecko OHLC: 1 hari = per menit, 7 hari = per jam, 30+ hari = per 4 jam
+  const daysMap = { '5m': 1, '15m': 7, '30m': 7, '1h': 7, '4h': 30, '1d': 90, '1w': 365 };
+  const days = daysMap[tfKey] || 7;
+  const url = `https://api.coingecko.com/api/v3/coins/${maps.cg}/ohlc?vs_currency=usd&days=${days}`;
+  console.log('[Chart] CoinGecko fallback:', url);
+  const data = await fetchWithTimeout(url, 8000);
+  if (!data || data.length === 0) throw new Error('Empty');
+  return data.map(k => ({
+    time: Math.floor(k[0] / 1000),
+    open: parseFloat(k[1]),
+    high: parseFloat(k[2]),
+    low: parseFloat(k[3]),
+    close: parseFloat(k[4])
+  }));
+}
+
+// ===== MASTER FETCHER DENGAN FALLBACK =====
+async function fetchChartData(symbol, tfKey) {
+  // Coba CryptoCompare dulu
+  try {
+    const data = await fetchChartFromCryptoCompare(symbol, tfKey);
+    if (data.length >= 30) {
+      return { data, source: 'CryptoCompare' };
+    }
+    console.warn('CryptoCompare data too few:', data.length);
+  } catch (e) {
+    console.warn('[CryptoCompare] Failed:', e.message);
+  }
+  
+  // Fallback ke CoinGecko
+  try {
+    const data = await fetchChartFromCoinGecko(symbol, tfKey);
+    if (data.length >= 30) {
+      return { data, source: 'CoinGecko' };
+    }
+    console.warn('CoinGecko data too few:', data.length);
+  } catch (e) {
+    console.warn('[CoinGecko] Failed:', e.message);
+  }
+  
+  throw new Error('Semua API gagal atau data tidak cukup');
+}
+
+// ===== FETCH LIVE PRICE =====
+async function fetchLiveFromCoinPaprika(symbol) {
+  const maps = SYMBOL_MAP[symbol] || SYMBOL_MAP['BTCUSDT'];
+  const url = `https://api.coinpaprika.com/v1/tickers/${maps.cp}`;
+  const data = await fetchWithTimeout(url, 6000);
+  if (!data || !data.quotes || !data.quotes.USD) throw new Error('Invalid');
+  const quote = data.quotes.USD;
+  return {
+    price: quote.price,
+    change24h: quote.percent_change_24h || 0,
+    source: 'CoinPaprika'
+  };
+}
+
+async function fetchLiveFromCoinGecko(symbol) {
+  const maps = SYMBOL_MAP[symbol] || SYMBOL_MAP['BTCUSDT'];
+  const url = `https://api.coingecko.com/api/v3/simple/price?ids=${maps.cg}&vs_currencies=usd&include_24hr_change=true`;
+  const data = await fetchWithTimeout(url, 6000);
+  if (!data || !data[maps.cg]) throw new Error('Invalid');
+  return {
+    price: data[maps.cg].usd,
+    change24h: data[maps.cg].usd_24h_change || 0,
+    source: 'CoinGecko'
+  };
+}
+
+async function fetchLivePrice(symbol) {
+  const apis = [
+    { name: 'CoinPaprika', fn: () => fetchLiveFromCoinPaprika(symbol) },
+    { name: 'CoinGecko', fn: () => fetchLiveFromCoinGecko(symbol) }
+  ];
+  
+  for (const api of apis) {
+    try {
+      const data = await api.fn();
+      console.log(`✅ Live price from ${api.name}: $${data.price}`);
+      return data;
+    } catch (e) {
+      console.warn(`[${api.name}] ❌`, e.message);
+      await new Promise(r => setTimeout(r, 200));
+    }
+  }
+  throw new Error('All live APIs failed');
+}
+
+// ===== GLOBAL STATE =====
+let currentSymbol = 'BTCUSDT';
+let currentChartData = null;
+let currentTfKey = '1h';
+let candleUpdateInterval = null;
+let livePriceData = null;
+
+// ===== UPDATE CANDLE TERAKHIR + BUAT CANDLE BARU =====
+async function updateLastCandle() {
+  if (!currentChartData || currentChartData.length === 0) return;
+  
+  try {
+    const liveData = await fetchLivePrice(currentSymbol);
+    const price = liveData.price;
+    const tf = TF_MAPPING[currentTfKey];
+    const now = Date.now();
+    const nowSeconds = Math.floor(now / 1000);
+    
+    const candleDuration = tf.candleMs / 1000;
+    const currentCandleTime = Math.floor(nowSeconds / candleDuration) * candleDuration;
+    
+    const lastCandle = currentChartData[currentChartData.length - 1];
+    const lastCandleTime = lastCandle.time;
+    
+    let targetCandle;
+    let newCandlesCreated = 0;
+    
+    if (currentCandleTime > lastCandleTime) {
+      let prevClose = lastCandle.close;
+      let timeToProcess = lastCandleTime + candleDuration;
+      
+      while (timeToProcess <= currentCandleTime) {
+        if (timeToProcess === currentCandleTime) {
+          targetCandle = {
+            time: timeToProcess,
+            open: prevClose,
+            high: price,
+            low: price,
+            close: price
+          };
+          currentChartData.push(targetCandle);
+          newCandlesCreated++;
+        } else {
+          const closedCandle = {
+            time: timeToProcess,
+            open: prevClose,
+            high: prevClose,
+            low: prevClose,
+            close: prevClose
+          };
+          currentChartData.push(closedCandle);
+          newCandlesCreated++;
+        }
+        prevClose = price;
+        timeToProcess += candleDuration;
+      }
+      
+      while (currentChartData.length > 2000) {
+        currentChartData.shift();
+      }
+      
+      targetCandle = currentChartData[currentChartData.length - 1];
+      console.log(`🆕 Created ${newCandlesCreated} new candle(s)`);
+      
+    } else if (currentCandleTime === lastCandleTime) {
+      targetCandle = lastCandle;
+      targetCandle.close = price;
+      targetCandle.high = Math.max(targetCandle.high, price);
+      targetCandle.low = Math.min(targetCandle.low, price);
+    } else {
+      return;
+    }
+    
+    livePriceData = {
+      price: price,
+      source: liveData.source,
+      change24h: liveData.change24h || 0
+    };
+    
+    candleSeries.update(targetCandle);
+    
+    smaSeries.setData(calcSMA(currentChartData, 20));
+    emaSeries.setData(calcEMA(currentChartData, 50));
+    const bb = calcBB(currentChartData);
+    if (bb.upper.length > 0) bbUpperSeries.setData(bb.upper);
+    if (bb.lower.length > 0) bbLowerSeries.setData(bb.lower);
+    
+    const rsiData = calcRSI(currentChartData);
+    if (rsiData.length > 0) rsiSeries.setData(rsiData);
+    rsiLine30.setData(currentChartData.map(d => ({ time: d.time, value: 30 })));
+    rsiLine70.setData(currentChartData.map(d => ({ time: d.time, value: 70 })));
+    
+    const macdData = calcMACD(currentChartData);
+    if (macdData.macdLine.length > 0) macdLineSeries.setData(macdData.macdLine);
+    if (macdData.signalLine.length > 0) signalLineSeries.setData(macdData.signalLine);
+    if (macdData.histogram.length > 0) macdHistSeries.setData(macdData.histogram);
+    
+    const analysis = analyzeSignal(currentChartData);
+    updateUI(analysis, currentChartData);
+    
+    const candleUpdateEl = document.getElementById('candleUpdate');
+    if (candleUpdateEl) {
+      const nextCandleTime = currentCandleTime + candleDuration;
+      const remaining = Math.ceil((nextCandleTime * 1000 - now) / 1000);
+      const nextCandleDate = new Date(nextCandleTime * 1000);
+      candleUpdateEl.textContent = `🕯️ Candle: ${new Date(currentCandleTime * 1000).toLocaleTimeString('id-ID')} | Next: ${nextCandleDate.toLocaleTimeString('id-ID')} (${remaining}s)`;
+    }
+    
+  } catch (e) {
+    console.warn('Candle update failed:', e.message);
+  }
+}
+
+// ===== LOAD DATA =====
+async function loadData() {
+  const symbol = document.getElementById('symbolSelect').value;
+  const tfKey = document.getElementById('intervalSelect').value;
+  const statusBar = document.getElementById('statusBar');
+  const tfInfo = document.getElementById('tfInfo');
+  const apiSource = document.getElementById('apiSource');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const liveBadge = document.getElementById('liveBadge');
+  
+  currentSymbol = symbol;
+  currentTfKey = tfKey;
+  const tfConfig = TF_MAPPING[tfKey];
+  
+  if (candleUpdateInterval) clearInterval(candleUpdateInterval);
+  
+  refreshBtn.disabled = true;
+  refreshBtn.textContent = '⏳ Loading...';
+  statusBar.textContent = `🟢 Memuat chart...`;
+  statusBar.className = 'status-bar status-ok';
+
+  console.log(`\n${'='.repeat(50)}`);
+  console.log(`[v7.5] Loading ${symbol} / ${tfKey}`);
+  console.log('='.repeat(50));
+
+  try {
+    const { data: candles, source } = await fetchChartData(symbol, tfKey);
+    
+    if (!candles || candles.length === 0) throw new Error('Empty data');
+    
+    currentChartData = candles;
+    
+    statusBar.textContent = `🟢 ${source} — ${tfConfig.label}`;
+    statusBar.className = 'status-bar status-ok';
+    if (apiSource) apiSource.textContent = `📊 Chart: ${source} | ${candles.length} candles`;
+    
+    console.log(`✅ Chart loaded: ${candles.length} candles from ${source}`);
+    
+    candleSeries.setData(currentChartData);
+    smaSeries.setData(calcSMA(currentChartData, 20));
+    emaSeries.setData(calcEMA(currentChartData, 50));
+    const bb = calcBB(currentChartData);
+    if (bb.upper.length > 0) bbUpperSeries.setData(bb.upper);
+    if (bb.lower.length > 0) bbLowerSeries.setData(bb.lower);
+
+    const rsiData = calcRSI(currentChartData);
+    if (rsiData.length > 0) rsiSeries.setData(rsiData);
+    rsiLine30.setData(currentChartData.map(d => ({ time: d.time, value: 30 })));
+    rsiLine70.setData(currentChartData.map(d => ({ time: d.time, value: 70 })));
+
+    const macdData = calcMACD(currentChartData);
+    if (macdData.macdLine.length > 0) macdLineSeries.setData(macdData.macdLine);
+    if (macdData.signalLine.length > 0) signalLineSeries.setData(macdData.signalLine);
+    if (macdData.histogram.length > 0) macdHistSeries.setData(macdData.histogram);
+
+    // FIT CONTENT
+    setTimeout(() => {
+      mainChart.timeScale().fitContent();
+      rsiChart.timeScale().fitContent();
+      macdChart.timeScale().fitContent();
+    }, 100);
+
+    const analysis = analyzeSignal(currentChartData);
+    updateUI(analysis, currentChartData);
+
+    if (tfInfo) {
+      const lastCandle = currentChartData[currentChartData.length - 1];
+      const lastDate = new Date(lastCandle.time * 1000);
+      tfInfo.textContent = `📊 ${tfKey} → ${tfConfig.actual} | Terakhir: ${lastDate.toLocaleString('id-ID')}`;
+    }
+    
+    if (liveBadge) {
+      liveBadge.textContent = 'LIVE';
+      liveBadge.className = 'live-badge';
+    }
+    
+    candleUpdateInterval = setInterval(updateLastCandle, 30000);
+    setTimeout(updateLastCandle, 3000);
+    
+  } catch (e) {
+    console.error('❌ Chart failed:', e.message);
+    statusBar.textContent = ` Gagal: ${e.message}`;
+    statusBar.className = 'status-bar status-error';
+    if (liveBadge) {
+      liveBadge.textContent = 'OFFLINE';
+      liveBadge.className = 'stale-badge';
+    }
+  }
+
+  setTimeout(resizeCharts, 100);
+  refreshBtn.disabled = false;
+  refreshBtn.textContent = '🔄 Refresh';
+}
+
+// ===== UPDATE UI =====
+function updateUI(analysis, data) {
+  if (!data || data.length < 2) return;
+
+  const { signalText, signalClass, confidence, reasons, indicators } = analysis;
+  const { rsi, macd, signal, smaVal, emaVal, bbUp, bbLow, price } = indicators;
+  
+  if (!price || isNaN(price)) return;
+
+  const tf = TF_MAPPING[currentTfKey];
+  const candleDuration = tf.candleMs / 1000;
+  const currentCandleTime = Math.floor(Date.now() / 1000 / candleDuration) * candleDuration;
+  const onePeriodAgo = currentCandleTime - candleDuration;
+  
+  let baselinePrice = price;
+  for (let i = data.length - 1; i >= 0; i--) {
+    if (data[i].time <= onePeriodAgo) {
+      baselinePrice = data[i].close;
+      break;
+    }
+  }
+  
+  const change = price - baselinePrice;
+  const changePct = baselinePrice > 0 ? (change / baselinePrice) * 100 : 0;
+  
+  const decimals = price < 1 ? 6 : price < 100 ? 4 : 2;
+  const priceFormatted = '$' + price.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+
+  const priceEl = document.getElementById('currentPrice');
+  const changeEl = document.getElementById('priceChange');
+  const lastUpdateEl = document.getElementById('lastUpdate');
+  const liveSourceEl = document.getElementById('liveSource');
+  
+  if (priceEl) priceEl.textContent = priceFormatted;
+  if (changeEl) {
+    changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(decimals)} (${changePct.toFixed(2)}%)`;
+    changeEl.className = 'price-change ' + (change >= 0 ? 'up' : 'down');
+  }
+  if (lastUpdateEl) {
+    const now = new Date();
+    lastUpdateEl.textContent = `Update: ${now.toLocaleTimeString('id-ID')} (Live)`;
+  }
+  if (liveSourceEl && livePriceData) {
+    liveSourceEl.textContent = `📡 Live: ${livePriceData.source} | 24h: ${livePriceData.change24h >= 0 ? '+' : ''}${livePriceData.change24h.toFixed(2)}%`;
+  }
+
+  const box = document.getElementById('signalBox');
+  if (box) { box.textContent = signalText; box.className = 'signal-box ' + signalClass; }
+
+  const confEl = document.getElementById('confidence');
+  if (confEl) confEl.textContent = confidence.toFixed(0) + '%';
+  
+  const meter = document.getElementById('confidenceMeter');
+  if (meter) {
+    meter.style.width = confidence + '%';
+    meter.style.background = signalClass.includes('buy') ? '#3fb950' : signalClass.includes('sell') ? '#f85149' : '#8b949e';
+  }
+
+  const fmt = v => (!v || isNaN(v)) ? '-' : v.toFixed(v < 1 ? 4 : 2);
+  const setIndicator = (id, value, condition) => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = fmt(value); if (condition) el.className = 'indicator-value ' + condition; }
+  };
+
+  setIndicator('rsiValue', rsi, rsi < 30 ? 'up' : rsi > 70 ? 'down' : '');
+  setIndicator('macdValue', macd, macd > signal ? 'up' : 'down');
+  setIndicator('signalValue', signal, '');
+  setIndicator('sma20Value', smaVal, '');
+  setIndicator('ema50Value', emaVal, '');
+  setIndicator('bbUpper', bbUp, '');
+  setIndicator('bbLower', bbLow, '');
+
+  const list = document.getElementById('reasonList');
+  if (list) list.innerHTML = reasons.map(r => `<li class="${r.type}">${r.text}</li>`).join('');
+}
+
+// ===== EVENTS =====
+document.getElementById('symbolSelect').addEventListener('change', loadData);
+document.getElementById('intervalSelect').addEventListener('change', loadData);
+document.getElementById('refreshBtn').addEventListener('click', loadData);
+
+let autoInterval = null;
+const autoBtn = document.getElementById('autoBtn');
+autoBtn.addEventListener('click', () => {
+  if (autoInterval) {
+    clearInterval(autoInterval);
+    autoInterval = null;
+    autoBtn.textContent = ' Auto: OFF';
+    autoBtn.classList.remove('active');
+  } else {
+    autoInterval = setInterval(loadData, 300000);
+    autoBtn.textContent = '▶ Auto: ON (5m)';
+    autoBtn.classList.add('active');
+  }
+});
+
+loadData();
+</script>
+</body>
+</html>
