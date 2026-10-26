@@ -381,12 +381,12 @@
             
             <!-- TOMBOL MIKROFON BARU -->
             <button class="btn btn-mic" id="micBtn" onclick="toggleVoiceInput()">
-                <span id="micIcon">🎙️</span> <span id="micText">Aktifkan Suara</span>
+                <span id="micIcon">🎙️</span> <span id="micText"></span>
             </button>
 
-            <button class="btn btn-check" onclick="handleCheckAnswer()"><span>🔍</span> Cek</button>
-            <button class="btn btn-wrong" onclick="triggerStrike()"><span>❌</span> Salah</button>
-            <button class="btn btn-switch" onclick="toggleActiveTeam()"><span>🔄</span> Ganti Tim</button>
+            <button class="btn btn-check" onclick="handleCheckAnswer()"><span>🔍</span></button>
+            <button class="btn btn-wrong" onclick="triggerStrike()"><span>❌</span></button>
+            <button class="btn btn-switch" onclick="toggleActiveTeam()"><span>🔄</span></button>
         </div>
         <div class="control-row-2">
             <div class="manual-btn-group">
@@ -398,11 +398,11 @@
                 <button class="btn-manual-num" onclick="manualReveal(4)">5</button>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
-                <button class="btn btn-edit" onclick="openEditModal()"><span>⚙️</span> Edit Soal</button>
-                <button class="btn btn-reset-x" onclick="resetStrikes()"><span>🧹</span> Reset X</button>
-                <button class="btn btn-reveal-all" onclick="revealAllAnswers()"><span>👁️</span> Buka Semua</button>
-                <button class="btn btn-next" onclick="nextQuestion()"><span>➡️</span> Soal Berikutnya</button>
-                <button class="btn btn-reset-game" onclick="resetGame()"><span>↺</span> Reset Game</button>
+                <button class="btn btn-edit" onclick="openEditModal()"><span>⚙️</span></button>
+                
+                <button class="btn btn-reveal-all" onclick="revealAllAnswers()"><span>👁️</span></button>
+                <button class="btn btn-next" onclick="nextQuestion()"><span>➡️</span></button>
+                <button class="btn btn-reset-game" onclick="resetGame()"><span>↺</span></button>
             </div>
         </div>
     </div>
