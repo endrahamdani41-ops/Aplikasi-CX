@@ -2,9 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Klinik Hewan Ajaib: IF Majemuk</title>
-<!-- Menggunakan font modern 'Poppins' -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root { 
@@ -22,17 +21,15 @@
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
   
   body { 
-    /* Background elegan gelap kebiruan */
     background: linear-gradient(135deg, var(--bg-dark) 0%, #172554 100%); 
     min-height: 100vh; 
     color: var(--text-main); 
     display: flex; 
     justify-content: center; 
     align-items: center; 
-    padding: 20px; 
+    padding: 15px; 
   }
   
-  /* Glassmorphism Container */
   .container { 
     max-width: 850px; 
     width: 100%; 
@@ -96,16 +93,20 @@
   .mission-box h2 { color: var(--accent); margin-bottom: 12px; font-size: 1.4em; }
   .mission-box p { color: var(--text-muted); line-height: 1.6; }
   
-  /* Styling Tabel Premium */
+  /* Wrapper untuk tabel agar responsif di layar kecil */
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    margin-top: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
   table { 
     width: 100%; 
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 20px; 
+    min-width: 400px; /* Mencegah tabel terlalu menyusut */
+    border-collapse: collapse;
     background: rgba(255,255,255,0.03); 
-    border-radius: 12px; 
-    overflow: hidden; 
-    border: 1px solid rgba(255,255,255,0.05);
   }
   
   th, td { 
@@ -129,7 +130,6 @@
   .input-area { margin: 25px 0; }
   .input-area label { display: block; margin-bottom: 10px; font-weight: 500; color: var(--text-muted); }
   
-  /* Styling Input Code */
   input[type="text"] { 
     width: 100%; 
     padding: 18px; 
@@ -150,7 +150,6 @@
     background: rgba(0,0,0,0.6);
   }
 
-  /* Grid 4 Tombol Sejajar */
   .buttons { 
     display: grid; 
     grid-template-columns: repeat(4, 1fr); 
@@ -167,7 +166,7 @@
     color: white; 
     font-size: 0.95em;
     transition: all 0.3s ease; 
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -182,7 +181,6 @@
   
   button:active { transform: translateY(1px); }
 
-  /* Gradasi Tombol Premium */
   .btn-check { background: linear-gradient(135deg, #10b981, #059669); }
   .btn-hint { background: linear-gradient(135deg, #f59e0b, #d97706); }
   .btn-answer { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
@@ -200,10 +198,46 @@
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   
-  /* Responsif Layar Kecil */
+  /* ========================================= */
+  /* MEDIA QUERIES UNTUK RESPONSIVE MOBILE     */
+  /* ========================================= */
+  
+  /* Tablet / Layar Menengah */
   @media (max-width: 768px) {
-    .buttons { grid-template-columns: 1fr 1fr; }
-    .container { padding: 25px; }
+    .container { padding: 25px; border-radius: 20px; }
+    h1 { font-size: 1.8em; }
+    .buttons { grid-template-columns: 1fr 1fr; } /* Ubah jadi 2x2 grid */
+  }
+
+  /* Layar Smartphone Kecil */
+  @media (max-width: 480px) {
+    .container { padding: 20px 15px; border-radius: 16px; }
+    h1 { font-size: 1.5em; }
+    .subtitle { font-size: 0.9em; margin-bottom: 15px; }
+    
+    .status-bar { 
+      flex-direction: column; 
+      gap: 10px; 
+      border-radius: 15px; 
+      padding: 15px;
+    }
+    
+    .mission-box { padding: 15px; margin-bottom: 15px; }
+    .mission-box h2 { font-size: 1.2em; }
+    .mission-box p { font-size: 0.9em; }
+    
+    th, td { padding: 10px; font-size: 0.85em; }
+    
+    .input-area { margin: 15px 0; }
+    /* Font 16px mencegah auto-zoom di iOS/iPhone */
+    input[type="text"] { font-size: 16px; padding: 15px; }
+    
+    .buttons { 
+      grid-template-columns: 1fr; /* Susun tombol memanjang ke bawah (vertikal) */
+      gap: 10px; 
+    }
+    
+    button { padding: 16px; font-size: 1em; } /* Perbesar area sentuh jari */
   }
 </style>
 </head>
@@ -222,10 +256,14 @@
     <div class="mission-box">
       <h2 id="missionTitle">Misi Level 1</h2>
       <p id="missionDesc">Deskripsi misi...</p>
-      <table id="criteriaTable">
-        <thead><tr><th>Kondisi (Sel A2)</th><th>Hasil (Fase Naga)</th></tr></thead>
-        <tbody id="criteriaBody"></tbody>
-      </table>
+      
+      <!-- Tambahan bungkus div agar tabel bisa digeser di HP -->
+      <div class="table-responsive">
+        <table id="criteriaTable">
+          <thead><tr><th>Kondisi (Sel A2)</th><th>Hasil (Fase Naga)</th></tr></thead>
+          <tbody id="criteriaBody"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="input-area">
@@ -290,13 +328,11 @@ function checkAnswer() {
   
   const lowerInput = rawInput.toLowerCase();
   
-  // 1. Cek Sel Referensi
   if (!lowerInput.includes(req.cellRef)) { 
     showFeedback('error', `❌ Gunakan referensi sel ${req.cellRef.toUpperCase()} untuk mengevaluasi skor.`); 
     return; 
   }
   
-  // 2. Cek Jumlah IF
   const ifPattern = /if\s*\(/g;
   const matches = lowerInput.match(ifPattern);
   const ifCount = matches ? matches.length : 0;
@@ -306,7 +342,6 @@ function checkAnswer() {
     return;
   }
   
-  // 3. Cek Angka Kunci
   for (const num of req.numbers) {
     if (!lowerInput.includes(num.toString())) {
        showFeedback('error', `❌ Kondisi angka batas <b>${num}</b> belum dimasukkan ke dalam rumus.`);
@@ -314,7 +349,6 @@ function checkAnswer() {
     }
   }
   
-  // 4. Cek Label Hasil
   for (const label of req.labels) {
     if (!lowerInput.includes(label)) { 
       showFeedback('error', `❌ Teks keluaran/hasil "<b>${label}</b>" belum ditemukan dalam rumus. Pastikan penulisannya persis.`); 
@@ -322,7 +356,6 @@ function checkAnswer() {
     }
   }
   
-  // 5. Cek Tanda Kurung Seimbang
   let balance = 0;
   for (const ch of rawInput) {
     if (ch === '(') balance++;
@@ -331,7 +364,6 @@ function checkAnswer() {
   }
   if (balance !== 0) { showFeedback('error', '❌ Tanda kurung tidak seimbang! Kurang kurung tutup di bagian akhir rumus.'); return; }
   
-  // LULUS VALIDASI
   const earned = Math.max(50, level.points - hintsUsed * 20);
   points += earned;
   document.getElementById('points').textContent = points;
@@ -394,11 +426,11 @@ function hideFeedback() { document.getElementById('feedback').className = 'feedb
 
 function showComplete() {
   document.getElementById('gameArea').innerHTML = `
-    <div style="text-align:center; padding:40px;">
+    <div style="text-align:center; padding:20px 0;">
       <div style="font-size:4em; margin-bottom:20px;">🏆</div>
-      <h2 style="color:var(--accent); font-size:2em; margin-bottom: 10px;">SELAMAT! KAMU LULUS!</h2>
-      <p style="margin:20px 0; font-size:1.2em; color:var(--text-muted);">Dr. Ignis sangat bangga padamu! Total Poin: <b style="color:var(--accent); font-size:1.3em;">${points}</b></p>
-      <button class="btn-check" onclick="location.reload()" style="margin: 0 auto; width: 50%;">🔄 Main Lagi Dari Awal</button>
+      <h2 style="color:var(--accent); font-size:1.8em; margin-bottom: 10px;">SELAMAT! KAMU LULUS!</h2>
+      <p style="margin:20px 0; font-size:1.1em; color:var(--text-muted);">Dr. Ignis sangat bangga padamu! Total Poin: <b style="color:var(--accent); font-size:1.3em;">${points}</b></p>
+      <button class="btn-check" onclick="location.reload()" style="margin: 0 auto; width: 100%;">🔄 Main Lagi Dari Awal</button>
     </div>`;
 }
 
