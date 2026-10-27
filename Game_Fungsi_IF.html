@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klinik Hewan Ajaib: IF Majemuk</title>
+<!-- Menggunakan font modern 'Poppins' -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { 
+    --primary: #ff8a00; 
+    --secondary: #e52e71; 
+    --accent: #f6d365;
+    --bg-dark: #0f172a; 
+    --bg-light: #1e293b;
+    --success: #10b981; 
+    --error: #ef4444; 
+    --text-main: #f8fafc;
+    --text-muted: #cbd5e1;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+  
+  body { 
+    /* Background elegan gelap kebiruan */
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #172554 100%); 
+    min-height: 100vh; 
+    color: var(--text-main); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px; 
+  }
+  
+  /* Glassmorphism Container */
+  .container { 
+    max-width: 850px; 
+    width: 100%; 
+    background: rgba(30, 41, 59, 0.7); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 24px; 
+    padding: 40px; 
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+  
+  h1 { 
+    text-align: center; 
+    background: linear-gradient(to right, var(--accent), #ffb347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px; 
+    font-size: 2.2em;
+    font-weight: 700;
+  }
+  
+  .subtitle { 
+    text-align: center; 
+    color: var(--text-muted); 
+    margin-bottom: 25px; 
+    font-style: italic; 
+    font-weight: 400;
+  }
+  
+  .status-bar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    background: rgba(0,0,0,0.25); 
+    padding: 12px 25px; 
+    border-radius: 50px; 
+    margin-bottom: 25px; 
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  .level-badge { 
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+    padding: 6px 18px; 
+    border-radius: 20px; 
+    box-shadow: 0 4px 15px rgba(229, 46, 113, 0.3);
+  }
+  
+  .points { color: var(--accent); font-size: 1.1em; }
+
+  .mission-box { 
+    background: rgba(15, 23, 42, 0.6); 
+    border-left: 5px solid var(--primary); 
+    padding: 25px; 
+    border-radius: 12px; 
+    margin-bottom: 25px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+  }
+  
+  .mission-box h2 { color: var(--accent); margin-bottom: 12px; font-size: 1.4em; }
+  .mission-box p { color: var(--text-muted); line-height: 1.6; }
+  
+  /* Styling Tabel Premium */
+  table { 
+    width: 100%; 
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px; 
+    background: rgba(255,255,255,0.03); 
+    border-radius: 12px; 
+    overflow: hidden; 
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  th, td { 
+    padding: 15px; 
+    text-align: center; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+  }
+  
+  th { 
+    background: rgba(255, 138, 0, 0.15); 
+    color: var(--accent); 
+    font-weight: 600; 
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 1px;
+  }
+  
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.05); transition: 0.3s; }
+
+  .input-area { margin: 25px 0; }
+  .input-area label { display: block; margin-bottom: 10px; font-weight: 500; color: var(--text-muted); }
+  
+  /* Styling Input Code */
+  input[type="text"] { 
+    width: 100%; 
+    padding: 18px; 
+    font-size: 1.15em; 
+    font-family: 'Courier New', Courier, monospace; 
+    background: rgba(0,0,0,0.4); 
+    border: 2px solid rgba(255, 138, 0, 0.3); 
+    border-radius: 12px; 
+    color: #a7f3d0; 
+    outline: none; 
+    transition: all 0.3s ease;
+  }
+  
+  input[type="text"]::placeholder { color: rgba(255,255,255,0.2); }
+  input[type="text"]:focus { 
+    border-color: var(--accent); 
+    box-shadow: 0 0 20px rgba(246, 211, 101, 0.2); 
+    background: rgba(0,0,0,0.6);
+  }
+
+  /* Grid 4 Tombol Sejajar */
+  .buttons { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 12px; 
+    margin-top: 20px; 
+  }
+  
+  button { 
+    padding: 14px 10px; 
+    font-weight: 600; 
+    border: none; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    color: white; 
+    font-size: 0.95em;
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  button:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.1); 
+  }
+  
+  button:active { transform: translateY(1px); }
+
+  /* Gradasi Tombol Premium */
+  .btn-check { background: linear-gradient(135deg, #10b981, #059669); }
+  .btn-hint { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .btn-answer { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+  .btn-reset { background: linear-gradient(135deg, #64748b, #475569); }
+
+  .feedback { margin-top: 25px; padding: 18px; border-radius: 12px; display: none; animation: fadeIn 0.5s; line-height: 1.6; font-weight: 500; }
+  .feedback.show { display: block; }
+  .feedback.success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: #a7f3d0; }
+  .feedback.error { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--error); color: #fecaca; }
+  .feedback.hint { background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #fde68a; }
+  
+  .answer-reveal { margin-top: 20px; background: rgba(139, 92, 246, 0.1); border: 1px dashed #8b5cf6; padding: 20px; border-radius: 12px; display: none; text-align: center; }
+  .answer-reveal strong { color: #ddd6fe; }
+  .answer-reveal code { display: block; background: rgba(0,0,0,0.5); padding: 15px; margin-top: 15px; border-radius: 8px; color: #a7f3d0; word-break: break-all; font-family: monospace; font-size: 1.1em; border: 1px solid rgba(255,255,255,0.05);}
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  
+  /* Responsif Layar Kecil */
+  @media (max-width: 768px) {
+    .buttons { grid-template-columns: 1fr 1fr; }
+    .container { padding: 25px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🐉 Klinik Hewan Ajaib</h1>
+  <p class="subtitle">~ Master IF Majemuk ~</p>
+
+  <div class="status-bar">
+    <span class="level-badge" id="levelBadge">Level 1 - Pemula</span>
+    <span class="points">🪙 Poin: <span id="points">0</span></span>
+  </div>
+
+  <div id="gameArea">
+    <div class="mission-box">
+      <h2 id="missionTitle">Misi Level 1</h2>
+      <p id="missionDesc">Deskripsi misi...</p>
+      <table id="criteriaTable">
+        <thead><tr><th>Kondisi (Sel A2)</th><th>Hasil (Fase Naga)</th></tr></thead>
+        <tbody id="criteriaBody"></tbody>
+      </table>
+    </div>
+
+    <div class="input-area">
+      <label>✍️ Tuliskan Rumus Excel-mu:</label>
+      <input type="text" id="formula" placeholder='Contoh: =IF(A2>90;"Naga Kuno";...)' autocomplete="off">
+    </div>
+
+    <div class="buttons">
+      <button class="btn-check" onclick="checkAnswer()">✅ Cek Jawaban</button>
+      <button class="btn-hint" onclick="giveHint()">💡 Petunjuk</button>
+      <button class="btn-answer" onclick="showAnswer()">👁️ Jawaban</button>
+      <button class="btn-reset" onclick="resetGame()">🔄 Main Ulang</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+    <div class="answer-reveal" id="answerReveal">
+      <strong>✨ Ini Contoh Rumus yang Benar:</strong>
+      <code id="correctCode"></code>
+    </div>
+  </div>
+</div>
+
+<script>
+const levels = [
+  {
+    title: "📋 Misi Level 1: Klasifikasi Dasar",
+    desc: "Halo Asisten! Aku Dr. Ignis 🔥. Bantu aku menentukan Fase Pertumbuhan Naga berdasarkan Skor Semburan Api di sel A2.",
+    criteria: [ ["A2 > 90", "🐉 Naga Kuno"], ["A2 > 75", "🐉 Naga Dewasa"], ["A2 > 50", "🦎 Naga Remaja"], ["A2 <= 50", "🥚 Naga Bayi"] ],
+    correctFormula: '=IF(A2>90;"Naga Kuno";IF(A2>75;"Naga Dewasa";IF(A2>50;"Naga Remaja";"Naga Bayi")))',
+    required: { numbers: [90,75,50], labels: ["naga kuno","naga dewasa","naga remaja","naga bayi"], cellRef: "a2", nestedIfCount: 3 },
+    points: 100
+  },
+  {
+    title: "📋 Misi Level 2: Naga Sangat Berbahaya!",
+    desc: "Kerja bagus! 🔥 Tambahkan kondisi: jika skor > 95, naga adalah 'Sangat Berbahaya'. Letakkan di paling atas!",
+    criteria: [ ["A2 > 95", "⚠️ Sangat Berbahaya"], ["A2 > 90", "🧙 Naga Kuno"], ["A2 > 75", "🐉 Naga Dewasa"], ["A2 > 50", "🦎 Naga Remaja"], ["A2 <= 50", "🥚 Naga Bayi"] ],
+    correctFormula: '=IF(A2>95;"Sangat Berbahaya";IF(A2>90;"Naga Kuno";IF(A2>75;"Naga Dewasa";IF(A2>50;"Naga Remaja";"Naga Bayi"))))',
+    required: { numbers: [95,90,75,50], labels: ["sangat berbahaya","naga kuno","naga dewasa","naga remaja","naga bayi"], cellRef: "a2", nestedIfCount: 4 },
+    points: 150
+  },
+  {
+    title: "🛠️ Misi Level 3: Debugging Rumus Rusak!",
+    desc: "Awas! 🐲 Rumus asisten sebelumnya SALAH karena urutannya terbalik. Perbaiki rumus berikut menjadi benar!",
+    criteria: [ ["A2 > 90", "🧙 Naga Kuno"], ["A2 > 75", "🐉 Naga Dewasa"], ["A2 > 50", "🦎 Naga Remaja"], ["A2 <= 50", "🥚 Naga Bayi"] ],
+    correctFormula: '=IF(A2>90;"Naga Kuno";IF(A2>75;"Naga Dewasa";IF(A2>50;"Naga Remaja";"Naga Bayi")))',
+    required: { numbers: [90,75,50], labels: ["naga kuno","naga dewasa","naga remaja","naga bayi"], cellRef: "a2", nestedIfCount: 3 },
+    points: 200
+  }
+];
+
+let currentLevel = 0;
+let points = 0;
+let hintsUsed = 0;
+
+function checkAnswer() {
+  const rawInput = document.getElementById('formula').value.trim();
+  const level = levels[currentLevel];
+  const req = level.required;
+  
+  if (!rawInput) { showFeedback('error', '⚠️ Kamu belum menulis rumus!'); return; }
+  if (!rawInput.startsWith('=')) { showFeedback('error', '❌ Rumus harus dimulai dengan tanda sama dengan (=)'); return; }
+  
+  const lowerInput = rawInput.toLowerCase();
+  
+  // 1. Cek Sel Referensi
+  if (!lowerInput.includes(req.cellRef)) { 
+    showFeedback('error', `❌ Gunakan referensi sel ${req.cellRef.toUpperCase()} untuk mengevaluasi skor.`); 
+    return; 
+  }
+  
+  // 2. Cek Jumlah IF
+  const ifPattern = /if\s*\(/g;
+  const matches = lowerInput.match(ifPattern);
+  const ifCount = matches ? matches.length : 0;
+
+  if (ifCount !== req.nestedIfCount) {
+    showFeedback('error', `❌ Butuh tepat ${req.nestedIfCount} fungsi IF untuk menyelesaikan level ini. Terdeteksi ${ifCount} fungsi IF.<br><small>Pastikan penulisan "IF(" benar tanpa terputus.</small>`);
+    return;
+  }
+  
+  // 3. Cek Angka Kunci
+  for (const num of req.numbers) {
+    if (!lowerInput.includes(num.toString())) {
+       showFeedback('error', `❌ Kondisi angka batas <b>${num}</b> belum dimasukkan ke dalam rumus.`);
+       return;
+    }
+  }
+  
+  // 4. Cek Label Hasil
+  for (const label of req.labels) {
+    if (!lowerInput.includes(label)) { 
+      showFeedback('error', `❌ Teks keluaran/hasil "<b>${label}</b>" belum ditemukan dalam rumus. Pastikan penulisannya persis.`); 
+      return; 
+    }
+  }
+  
+  // 5. Cek Tanda Kurung Seimbang
+  let balance = 0;
+  for (const ch of rawInput) {
+    if (ch === '(') balance++;
+    if (ch === ')') balance--;
+    if (balance < 0) { showFeedback('error', '❌ Tanda kurung tidak seimbang! Ada kurung tutup yang kelebihan.'); return; }
+  }
+  if (balance !== 0) { showFeedback('error', '❌ Tanda kurung tidak seimbang! Kurang kurung tutup di bagian akhir rumus.'); return; }
+  
+  // LULUS VALIDASI
+  const earned = Math.max(50, level.points - hintsUsed * 20);
+  points += earned;
+  document.getElementById('points').textContent = points;
+  
+  showFeedback('success', `🎉 LUAR BIASA! Rumusmu benar! ✨<br>+${earned} Poin Emas! 🪙`);
+  
+  setTimeout(() => {
+    if (currentLevel < levels.length - 1) {
+      currentLevel++;
+      loadLevel();
+      showFeedback('success', `🚀 Level ${currentLevel+1} terbuka!`);
+    } else {
+      showComplete();
+    }
+  }, 3000);
+}
+
+function loadLevel() {
+  const level = levels[currentLevel];
+  document.getElementById('missionTitle').innerHTML = level.title;
+  document.getElementById('missionDesc').innerHTML = level.desc;
+  document.getElementById('levelBadge').textContent = `Level ${currentLevel+1} - ${['Pemula','Menengah','Ahli'][currentLevel]}`;
+  
+  const tbody = document.getElementById('criteriaBody');
+  tbody.innerHTML = '';
+  level.criteria.forEach(row => {
+    tbody.innerHTML += `<tr><td>${row[0]}</td><td>${row[1]}</td></tr>`;
+  });
+  
+  document.getElementById('formula').value = '';
+  hideFeedback();
+  document.getElementById('answerReveal').style.display = 'none';
+  hintsUsed = 0;
+}
+
+function showAnswer() {
+  const level = levels[currentLevel];
+  document.getElementById('correctCode').textContent = level.correctFormula;
+  document.getElementById('answerReveal').style.display = 'block';
+  showFeedback('hint', 'Contoh jawaban ditampilkan di bawah. (Catatan: Kamu bisa menggunakan titik koma ";" atau koma "," sesuai region Excel-mu).');
+}
+
+function giveHint() {
+  hintsUsed++;
+  const level = levels[currentLevel];
+  const hints = [
+    `💡 Struktur IF Bertingkat: =IF(kondisi1; hasil1; IF(kondisi2; hasil2; ...))`,
+    `💡 Selalu periksa urutan kondisi. Mulailah dari angka evaluasi terbesar ke terkecil.`,
+    `💡 Jumlah tanda kurung tutup "))" di akhir rumus harus sama persis dengan jumlah kata "IF" yang kamu ketik.`
+  ];
+  showFeedback('hint', hints[Math.min(hintsUsed-1, 2)]);
+}
+
+function showFeedback(type, msg) {
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + type;
+  fb.innerHTML = msg;
+}
+function hideFeedback() { document.getElementById('feedback').className = 'feedback'; }
+
+function showComplete() {
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center; padding:40px;">
+      <div style="font-size:4em; margin-bottom:20px;">🏆</div>
+      <h2 style="color:var(--accent); font-size:2em; margin-bottom: 10px;">SELAMAT! KAMU LULUS!</h2>
+      <p style="margin:20px 0; font-size:1.2em; color:var(--text-muted);">Dr. Ignis sangat bangga padamu! Total Poin: <b style="color:var(--accent); font-size:1.3em;">${points}</b></p>
+      <button class="btn-check" onclick="location.reload()" style="margin: 0 auto; width: 50%;">🔄 Main Lagi Dari Awal</button>
+    </div>`;
+}
+
+function resetGame() { if(confirm("Yakin ingin mengulang dari awal dan kehilangan poin?")) location.reload(); }
+document.getElementById('formula').addEventListener('keypress', e => { if (e.key === 'Enter') checkAnswer(); });
+
+loadLevel();
+</script>
+</body>
+</html>
