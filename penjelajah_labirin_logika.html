@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CodeQuest: Penjelajah Labirin Logika</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root {
@@ -35,6 +35,19 @@
   .stat-item { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 10px; border: 1px solid var(--border-glass); }
   .stat-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; }
   .stat-value { font-size: 1.1rem; font-weight: 700; color: var(--accent-yellow); }
+  
+  .stat-item.timer-active {
+    background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(255,0,234,0.15));
+    border-color: var(--accent-cyan);
+    animation: timerPulse 1s ease-in-out infinite;
+  }
+  .stat-item.timer-active .stat-value {
+    color: var(--accent-cyan);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    text-shadow: 0 0 10px var(--accent-cyan);
+  }
+  @keyframes timerPulse { 0%, 100% { box-shadow: 0 0 5px rgba(0,240,255,0.3); } 50% { box-shadow: 0 0 20px rgba(0,240,255,0.6); } }
   
   .btn { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta)); color: white; border: none; padding: 10px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
   .btn:active { transform: scale(0.98); }
@@ -111,6 +124,19 @@
   
   .stars { font-size: 1.8rem; margin: 10px 0; letter-spacing: 5px; }
   
+  .timer-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 20px var(--accent-cyan);
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(0,240,255,0.1);
+    border-radius: 12px;
+    border: 2px solid var(--accent-cyan);
+  }
+  
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta)); color: white; padding: 10px 20px; border-radius: 25px; font-weight: 600; font-size: 0.85rem; box-shadow: 0 10px 30px rgba(0,240,255,0.4); z-index: 200; transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
   .toast.show { transform: translateX(-50%) translateY(0); }
   
@@ -124,6 +150,8 @@
   .badge-7A { background: #ff3860; } .badge-7B { background: #00f0ff; color: black; }
   .badge-7C { background: #ffd700; color: black; } .badge-7D { background: #00ff88; color: black; }
   .badge-7E { background: #ff00ea; } .badge-7F { background: #a855f7; }
+  .badge-8D { background: #ff6b35; } .badge-8E { background: #4ecdc4; color: black; }
+  .badge-8F { background: #95e1d3; color: black; }
   
   .filter-btns { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin-bottom: 10px; }
   .filter-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.7rem; cursor: pointer; font-family: 'Poppins'; }
@@ -144,7 +172,7 @@
   <div class="modal">
     <div class="modal-icon">🎮</div>
     <h2 class="modal-title">Selamat Datang di CodeQuest!</h2>
- <br>
+   <br>
     
     <div id="formLoginContainer">
       <div class="input-group">
@@ -177,10 +205,12 @@
       <button class="filter-btn" onclick="filterClass('7A')">7A</button><button class="filter-btn" onclick="filterClass('7B')">7B</button>
       <button class="filter-btn" onclick="filterClass('7C')">7C</button><button class="filter-btn" onclick="filterClass('7D')">7D</button>
       <button class="filter-btn" onclick="filterClass('7E')">7E</button><button class="filter-btn" onclick="filterClass('7F')">7F</button>
+      <button class="filter-btn" onclick="filterClass('8D')">8D</button><button class="filter-btn" onclick="filterClass('8E')">8E</button>
+      <button class="filter-btn" onclick="filterClass('8F')">8F</button>
     </div>
     <div style="max-height:300px;overflow-y:auto">
       <table class="lb-table">
-        <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>Level</th><th>Cmd</th></tr></thead>
+        <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>Level</th><th>Cmd</th><th>Waktu</th></tr></thead>
         <tbody id="leaderboardBody"></tbody>
       </table>
     </div>
@@ -197,12 +227,10 @@
     <div class="modal-icon">🔐</div>
     <h2 class="modal-title">Verifikasi Password</h2>
 
-    
     <div class="input-group" style="margin: 20px 0;">
       <label>🔑 Password:</label>
       <input type="password" id="resetPassword" placeholder="Masukkan password" style="text-align: center; font-size: 1.1rem; letter-spacing: 2px;">
     </div>
-    
     <div style="display:flex; gap: 10px;">
       <button class="btn btn-secondary" onclick="closePasswordModal()" style="flex:1">Batal</button>
       <button class="btn btn-danger" onclick="verifyAndReset()" id="btnVerifyReset" style="flex:1">🗑️ Reset Data</button>
@@ -240,6 +268,10 @@
       <div class="stat-item"><div class="stat-label">Kunci</div><div class="stat-value" id="statKeys">0</div></div>
       <div class="stat-item"><div class="stat-label">Langkah</div><div class="stat-value" id="statSteps">0</div></div>
       <div class="stat-item"><div class="stat-label">Perintah</div><div class="stat-value" id="statCmds">0</div></div>
+      <div class="stat-item" id="timerStatItem" style="grid-column: span 2;">
+        <div class="stat-label">⏱️ Waktu</div>
+        <div class="stat-value" id="statTimer">00:00.0</div>
+      </div>
     </div>
     <button class="btn btn-secondary" onclick="resetPosition()">🔄 Reset</button>
     <button class="btn btn-secondary" onclick="toggleEditor()">🛠️ Editor Labirin</button>
@@ -306,6 +338,7 @@
     <div class="modal-icon">🎉</div>
     <h2 class="modal-title">Misi Berhasil!</h2>
     <p class="modal-text" id="successText">Kamu berhasil!</p>
+    <div class="timer-display" id="finalTimer">00:00.0</div>
     <div class="stars" id="stars">⭐⭐⭐</div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-secondary" onclick="closeModal();resetPosition()">🔄 Coba Lagi</button>
@@ -340,7 +373,7 @@
 
 <script>
 // ============ KONFIGURASI API ============
-const API_URL = 'https://script.google.com/macros/s/AKfycbxEFtsdny9XV7mnk9muyOlo97Do-3DusTy_57FFNdPGAbEqJ9dn97JZ9kjs_9JT8EDn/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxxWnxfQGhYc9JuJwH2-YXTtkhfXrP8BOBg37Q7LdOxTJys8Gjo4jb9qGMFfq40Fd9q/exec';
 
 // ============ LEVELS ============
 const LEVELS = [
@@ -357,8 +390,57 @@ let currentPlayer = { nis: '', nama: '', kelas: '' };
 let gameRecords = [];
 let currentFilter = 'all';
 
+// ============ TIMER STATE ============
+let timerInterval = null;
+let elapsedTime = 0;
+let finalTime = '';
+
 const CELL_TYPES = { WALL: 1, PATH: 0, START: 2, FINISH: 3, KEY: 4, DOOR: 5, TRAP: 6 };
 const CELL_ICONS = { 0: '', 1: '', 2: '', 3: '🏁', 4: '🔑', 5: '🚪', 6: '💀' };
+
+// ============ TIMER FUNCTIONS ============
+function formatTime(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const tenths = Math.floor((ms % 1000) / 100);
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${tenths}`;
+}
+
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  elapsedTime = 0;
+  updateTimerDisplay();
+  document.getElementById('timerStatItem').classList.add('timer-active');
+  timerInterval = setInterval(() => {
+    elapsedTime += 100;
+    updateTimerDisplay();
+  }, 100);
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  document.getElementById('timerStatItem').classList.remove('timer-active');
+  finalTime = formatTime(elapsedTime);
+}
+
+function resetTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  elapsedTime = 0;
+  finalTime = '';
+  updateTimerDisplay();
+  document.getElementById('timerStatItem').classList.remove('timer-active');
+}
+
+function updateTimerDisplay() {
+  document.getElementById('statTimer').textContent = formatTime(elapsedTime);
+}
 
 // ============ INIT ============
 function init() {
@@ -457,6 +539,8 @@ function loadLevel(idx) {
   if (!startFound) robot = { x: 1, y: 1, dir: 'east' };
   
   hasKey = false; steps = 0; commands = [];
+  resetTimer(); // Timer di-reset, TIDAK dimulai
+  
   document.getElementById('levelBadge').textContent = `LEVEL ${idx + 1}`;
   document.getElementById('levelTitle').textContent = level.name;
   document.getElementById('levelDesc').textContent = level.desc;
@@ -499,7 +583,6 @@ function renderMaze() {
         robotEl.textContent = '🤖';
         cell.appendChild(robotEl);
       }
-      
       grid.appendChild(cell);
     }
   }
@@ -593,13 +676,17 @@ async function runCode() {
   document.getElementById('stopBtn').style.display = 'block';
   renderMaze();
   
+  // ✅ TIMER MULAI SAAT TOMBOL JALANKAN DIKLIK
+  startTimer();
+  
   try { 
     for (const cmd of cmds) { 
       if (!isRunning) break; 
       await executeCommand(cmd); 
     } 
   } catch (e) { 
-    showToast('❌ ' + e.message); 
+    // ❌ JANGAN stopTimer() di sini! Timer tetap berjalan saat error
+    showToast('❌ ' + e.message + ' (Timer tetap berjalan)'); 
   }
   
   isRunning = false;
@@ -609,6 +696,7 @@ async function runCode() {
 
 function stopCode() { 
   isRunning = false; 
+  stopTimer(); // Timer berhenti karena user menekan Stop
   document.getElementById('runBtn').style.display = 'block'; 
   document.getElementById('stopBtn').style.display = 'none'; 
 }
@@ -673,12 +761,17 @@ function updateStats() { document.getElementById('statSteps').textContent = step
 function resetPosition() { stopCode(); loadLevel(currentLevel); }
 
 function winGame() {
+  // ✅ TIMER BERHENTI HANYA SAAT MENANG
+  stopTimer();
+  
   const level = LEVELS[currentLevel] || { target: 5 };
   let stars = 3;
   if (commands.length > level.target * 2) stars = 1; 
   else if (commands.length > level.target) stars = 2;
+  
   document.getElementById('stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
   document.getElementById('successText').textContent = `Perintah: ${commands.length} | Langkah: ${steps}`;
+  document.getElementById('finalTimer').textContent = finalTime;
   document.getElementById('successModal').classList.add('active');
   saveRecord(); 
   launchConfetti();
@@ -687,9 +780,12 @@ function winGame() {
 function saveRecord() {
   const rec = { 
     nis: currentPlayer.nis, nama: currentPlayer.nama, kelas: currentPlayer.kelas, 
-    level: currentLevel + 1, commands: commands.length, steps: steps, 
-    tanggal: new Date().toLocaleString('id-ID') 
+    level: currentLevel + 1, perintah: commands.length, langkah: steps, 
+    waktu: finalTime, tanggal: new Date().toLocaleString('id-ID') 
   };
+  
+  console.log('Data yang dikirim ke Sheet:', rec);
+  
   gameRecords.push(rec);
   localStorage.setItem('cq_records', JSON.stringify(gameRecords));
   
@@ -699,8 +795,9 @@ function saveRecord() {
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(rec)
-    }).then(() => console.log('✅ Hasil tersimpan ke Google Sheets'))
-      .catch(err => console.warn('❌ Gagal simpan:', err));
+    })
+    .then(() => console.log('✅ Hasil tersimpan ke Google Sheets'))
+    .catch(err => console.warn('❌ Gagal simpan:', err));
   }
 }
 
@@ -719,10 +816,10 @@ function loadRecordsFromStorage() {
 
 function renderLeaderboard() {
   const filtered = currentFilter === 'all' ? gameRecords : gameRecords.filter(r => r.kelas === currentFilter);
-  const sorted = [...filtered].sort((a, b) => a.commands - b.commands);
+  const sorted = [...filtered].sort((a, b) => a.perintah - b.perintah);
   document.getElementById('leaderboardBody').innerHTML = sorted.map((r, i) => `
-    <tr><td>${i+1}</td><td>${r.nama}</td><td><span class="badge badge-${r.kelas}">${r.kelas}</span></td><td>${r.level}</td><td>${r.commands}</td></tr>
-  `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-secondary)">Belum ada data</td></tr>';
+    <tr><td>${i+1}</td><td>${r.nama}</td><td><span class="badge badge-${r.kelas}">${r.kelas}</span></td><td>${r.level}</td><td>${r.perintah}</td><td>${r.waktu || '-'}</td></tr>
+  `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-secondary)">Belum ada data</td></tr>';
 }
 
 function filterClass(kelas) {
