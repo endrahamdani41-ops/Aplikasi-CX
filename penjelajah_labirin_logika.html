@@ -131,6 +131,10 @@
   
   .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
   @keyframes spin { to { transform: rotate(360deg); } }
+  
+  .password-error { color: var(--accent-red); margin-top: 10px; font-size: 0.85rem; display: none; }
+  .password-error.show { display: block; animation: shake 0.4s; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 </style>
 </head>
 <body>
@@ -140,9 +144,8 @@
   <div class="modal">
     <div class="modal-icon">🎮</div>
     <h2 class="modal-title">Selamat Datang di CodeQuest!</h2>
-    <br>
+ <br>
     
-    <!-- FORM INPUT (akan tersembunyi setelah data ditemukan) -->
     <div id="formLoginContainer">
       <div class="input-group">
         <label>🔢 Nomor Induk Siswa (NIS)</label>
@@ -151,7 +154,6 @@
       <button class="btn btn-success" onclick="cariNIS()" id="btnCari">🔍 Cari Data Siswa</button>
     </div>
     
-    <!-- INFO SISWA (awalnya tersembunyi) -->
     <div id="studentInfoBox" style="display:none">
       <div class="student-info">
         <div class="info-row"><span class="info-label">👤 Nama:</span><span class="info-value" id="infoNama">-</span></div>
@@ -186,6 +188,26 @@
       <button class="btn btn-danger" onclick="resetLeaderboard()" style="flex:1">🗑️ Reset Data</button>
       <button class="btn btn-secondary" onclick="closeLeaderboard()" style="flex:1">Tutup</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL PASSWORD RESET -->
+<div class="modal-overlay" id="passwordModal">
+  <div class="modal">
+    <div class="modal-icon">🔐</div>
+    <h2 class="modal-title">Verifikasi Password</h2>
+
+    
+    <div class="input-group" style="margin: 20px 0;">
+      <label>🔑 Password:</label>
+      <input type="password" id="resetPassword" placeholder="Masukkan password" style="text-align: center; font-size: 1.1rem; letter-spacing: 2px;">
+    </div>
+    
+    <div style="display:flex; gap: 10px;">
+      <button class="btn btn-secondary" onclick="closePasswordModal()" style="flex:1">Batal</button>
+      <button class="btn btn-danger" onclick="verifyAndReset()" id="btnVerifyReset" style="flex:1">🗑️ Reset Data</button>
+    </div>
+    <p id="passwordError" class="password-error">❌ Password salah! Coba lagi.</p>
   </div>
 </div>
 
@@ -318,7 +340,7 @@
 
 <script>
 // ============ KONFIGURASI API ============
-const API_URL = 'https://script.google.com/macros/s/AKfycbxzmhHWT7vN_BOkkv6k1HRGls-XbFcZlFmmQZB93HLzackbHXW8GfQS3JbIfpfNJc8o/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxEFtsdny9XV7mnk9muyOlo97Do-3DusTy_57FFNdPGAbEqJ9dn97JZ9kjs_9JT8EDn/exec';
 
 // ============ LEVELS ============
 const LEVELS = [
@@ -351,6 +373,13 @@ function init() {
   });
   loadLevel(0);
   loadRecordsFromStorage();
+  
+  document.getElementById('resetPassword').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') verifyAndReset();
+  });
+  document.getElementById('nisInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') cariNIS();
+  });
 }
 
 // ============ LOGIN NIS ============
@@ -372,8 +401,6 @@ async function cariNIS() {
       showToast(`✅ Halo ${data.data.nama}!`);
     } else {
       showToast('❌ ' + data.message);
-      document.getElementById('formLoginContainer').style.display = 'block';
-      document.getElementById('nisInput').focus();
     }
   } catch (err) {
     console.warn('API tidak tersedia, menggunakan mode offline');
@@ -390,14 +417,11 @@ function tampilkanInfoSiswa() {
   document.getElementById('infoNis').textContent = currentPlayer.nis;
   document.getElementById('infoNama').textContent = currentPlayer.nama;
   document.getElementById('infoKelas').textContent = currentPlayer.kelas;
-  
-  // Sembunyikan form input, tampilkan info siswa
   document.getElementById('formLoginContainer').style.display = 'none';
   document.getElementById('studentInfoBox').style.display = 'block';
 }
 
 function resetFormLogin() {
-  // Tampilkan kembali form input, sembunyikan info
   document.getElementById('studentInfoBox').style.display = 'none';
   document.getElementById('formLoginContainer').style.display = 'block';
   document.getElementById('nisInput').value = '';
@@ -419,7 +443,6 @@ function loadLevel(idx) {
   const level = LEVELS[idx];
   maze = level.maze.map(row => [...row]);
   
-  // Cari posisi start robot
   let startFound = false;
   for (let y = 0; y < maze.length; y++) {
     for (let x = 0; x < maze[y].length; x++) {
@@ -431,10 +454,7 @@ function loadLevel(idx) {
     }
     if (startFound) break;
   }
-  
-  if (!startFound) {
-    robot = { x: 1, y: 1, dir: 'east' };
-  }
+  if (!startFound) robot = { x: 1, y: 1, dir: 'east' };
   
   hasKey = false; steps = 0; commands = [];
   document.getElementById('levelBadge').textContent = `LEVEL ${idx + 1}`;
@@ -473,7 +493,6 @@ function renderMaze() {
       if (editorMode) cell.classList.add('editor-mode');
       cell.innerHTML = CELL_ICONS[type] || '';
       
-      // Tambahkan robot di cell yang benar
       if (x === robot.x && y === robot.y) {
         const robotEl = document.createElement('div');
         robotEl.className = `robot ${robot.dir}`;
@@ -486,9 +505,7 @@ function renderMaze() {
   }
 }
 
-function updateRobotPosition() {
-  renderMaze();
-}
+function updateRobotPosition() { renderMaze(); }
 
 function onCellClick(x, y) {
   if (!editorMode) return;
@@ -525,11 +542,7 @@ function clearMaze() {
 }
 
 // ============ COMMANDS ============
-function addCommand(cmd) { 
-  commands.push(cmd); 
-  renderCommands();
-}
-
+function addCommand(cmd) { commands.push(cmd); renderCommands(); }
 function addLoop() { document.getElementById('loopModal').classList.add('active'); }
 function confirmLoop() {
   const n = parseInt(document.getElementById('loopCount').value);
@@ -539,21 +552,17 @@ function confirmLoop() {
   document.getElementById('loopModal').classList.remove('active'); 
   renderCommands();
 }
-
 function renderCommands() {
   const area = document.getElementById('codeArea');
   document.getElementById('statCmds').textContent = commands.length;
-  
   if (commands.length === 0) { 
     area.innerHTML = '<div class="empty-msg">Belum ada perintah. Klik tombol di atas untuk menambah!</div>'; 
     return; 
   }
-  
   area.innerHTML = commands.map((cmd, i) => 
     `<div class="code-block"><span>${i+1}. ${cmd}</span><button class="remove" onclick="removeCommand(${i})">✕</button></div>`
   ).join('');
 }
-
 function removeCommand(i) { commands.splice(i, 1); renderCommands(); }
 function clearCommands() { commands = []; renderCommands(); }
 function switchMode(mode) {
@@ -568,10 +577,8 @@ async function runCode() {
   if (isRunning) return;
   const isBlock = document.getElementById('blockMode').style.display !== 'none';
   const cmds = isBlock ? [...commands] : parseTextCode();
-  
   if (cmds.length === 0) { showToast('⚠️ Tidak ada perintah!'); return; }
   
-  // Reset ke posisi start
   for (let y = 0; y < maze.length; y++) {
     for (let x = 0; x < maze[y].length; x++) {
       if (maze[y][x] === CELL_TYPES.START) {
@@ -640,61 +647,24 @@ function executeSingle(cmd) {
           const dirs = { north: [0,-1], east: [1,0], south: [0,1], west: [-1,0] };
           const [dx, dy] = dirs[robot.dir];
           const nx = robot.x + dx, ny = robot.y + dy;
-          
-          if (ny < 0 || ny >= maze.length || nx < 0 || nx >= maze[0].length) { 
-            reject(new Error('Menabrak tepi labirin!')); 
-            return; 
-          }
-          
+          if (ny < 0 || ny >= maze.length || nx < 0 || nx >= maze[0].length) { reject(new Error('Menabrak tepi labirin!')); return; }
           const cell = maze[ny][nx];
-          if (cell === CELL_TYPES.WALL) { 
-            reject(new Error('Menabrak dinding!')); 
-            return; 
-          }
-          if (cell === CELL_TYPES.DOOR && !hasKey) { 
-            reject(new Error('Pintu terkunci! Ambil kunci dulu.')); 
-            return; 
-          }
-          if (cell === CELL_TYPES.TRAP) { 
-            reject(new Error('Jebakan! Robot jatuh.')); 
-            return; 
-          }
-          
-          robot.x = nx; 
-          robot.y = ny; 
-          steps++;
-          
-          if (cell === CELL_TYPES.DOOR) { 
-            maze[ny][nx] = CELL_TYPES.PATH; 
-            hasKey = false; 
-          }
-          
-          updateRobotPosition(); 
-          updateStats();
-          
-          if (cell === CELL_TYPES.FINISH) { 
-            setTimeout(() => winGame(), 300); 
-          }
+          if (cell === CELL_TYPES.WALL) { reject(new Error('Menabrak dinding!')); return; }
+          if (cell === CELL_TYPES.DOOR && !hasKey) { reject(new Error('Pintu terkunci! Ambil kunci dulu.')); return; }
+          if (cell === CELL_TYPES.TRAP) { reject(new Error('Jebakan! Robot jatuh.')); return; }
+          robot.x = nx; robot.y = ny; steps++;
+          if (cell === CELL_TYPES.DOOR) { maze[ny][nx] = CELL_TYPES.PATH; hasKey = false; }
+          updateRobotPosition(); updateStats();
+          if (cell === CELL_TYPES.FINISH) setTimeout(() => winGame(), 300);
         } else if (cmd === 'putarKiri()') {
-          const d = ['north','west','south','east']; 
-          robot.dir = d[(d.indexOf(robot.dir)+1)%4]; 
-          updateRobotPosition();
+          const d = ['north','west','south','east']; robot.dir = d[(d.indexOf(robot.dir)+1)%4]; updateRobotPosition();
         } else if (cmd === 'putarKanan()') {
-          const d = ['north','east','south','west']; 
-          robot.dir = d[(d.indexOf(robot.dir)+1)%4]; 
-          updateRobotPosition();
+          const d = ['north','east','south','west']; robot.dir = d[(d.indexOf(robot.dir)+1)%4]; updateRobotPosition();
         } else if (cmd === 'ambilKunci()') {
-          if (maze[robot.y][robot.x] === CELL_TYPES.KEY) { 
-            hasKey = true; 
-            maze[robot.y][robot.x] = CELL_TYPES.PATH; 
-            renderMaze(); 
-            showToast('🔑 Kunci diambil!'); 
-          }
+          if (maze[robot.y][robot.x] === CELL_TYPES.KEY) { hasKey = true; maze[robot.y][robot.x] = CELL_TYPES.PATH; renderMaze(); showToast('🔑 Kunci diambil!'); }
         }
         resolve();
-      } catch (e) { 
-        reject(e); 
-      }
+      } catch (e) { reject(e); }
     }, speed);
   });
 }
@@ -716,12 +686,8 @@ function winGame() {
 
 function saveRecord() {
   const rec = { 
-    nis: currentPlayer.nis, 
-    nama: currentPlayer.nama, 
-    kelas: currentPlayer.kelas, 
-    level: currentLevel + 1, 
-    commands: commands.length,
-    steps: steps, 
+    nis: currentPlayer.nis, nama: currentPlayer.nama, kelas: currentPlayer.kelas, 
+    level: currentLevel + 1, commands: commands.length, steps: steps, 
     tanggal: new Date().toLocaleString('id-ID') 
   };
   gameRecords.push(rec);
@@ -766,12 +732,49 @@ function filterClass(kelas) {
   renderLeaderboard();
 }
 
-// ============ RESET LEADERBOARD ============
-async function resetLeaderboard() {
-  if (!confirm('⚠️ PERINGATAN: Semua data leaderboard akan dihapus permanen! Yakin?')) {
-    return;
+// ============ RESET DENGAN PASSWORD (DARI SHEET) ============
+function resetLeaderboard() {
+  document.getElementById('passwordModal').classList.add('active');
+  document.getElementById('resetPassword').value = '';
+  document.getElementById('passwordError').classList.remove('show');
+  setTimeout(() => document.getElementById('resetPassword').focus(), 100);
+}
+
+function closePasswordModal() {
+  document.getElementById('passwordModal').classList.remove('active');
+}
+
+async function verifyAndReset() {
+  const inputPassword = document.getElementById('resetPassword').value;
+  if (!inputPassword) return;
+
+  const btn = document.getElementById('btnVerifyReset');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<span class="loading"></span>Memeriksa...';
+  btn.disabled = true;
+
+  try {
+    const response = await fetch(`${API_URL}?action=verifikasiPassword&password=${encodeURIComponent(inputPassword)}`);
+    const data = await response.json();
+
+    if (data.success) {
+      closePasswordModal();
+      performReset();
+    } else {
+      document.getElementById('passwordError').classList.add('show');
+      document.getElementById('resetPassword').value = '';
+      document.getElementById('resetPassword').focus();
+    }
+  } catch (err) {
+    showToast('❌ Gagal koneksi: ' + err.message);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
   }
-  
+}
+
+async function performReset() {
+  if (!confirm('⚠️ PERINGATAN: Semua data leaderboard akan dihapus permanen! Yakin?')) return;
   try {
     if (!API_URL.includes('GANTI_DENGAN')) {
       await fetch(`${API_URL}?action=resetData`);
