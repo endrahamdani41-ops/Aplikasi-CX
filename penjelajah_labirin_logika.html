@@ -13,22 +13,36 @@
     --accent-yellow: #ffd700; --accent-green: #00ff88; --accent-red: #ff3860;
     --text-primary: #fff; --text-secondary: #a0a8c8;
   }
-  body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0a0e27, #1a0e3a, #0a0e27); min-height: 100vh; color: var(--text-primary); }
+  body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0a0e27, #1a0e3a, #0a0e27); min-height: 100vh; color: var(--text-primary); display: flex; flex-direction: column; }
   body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(circle at 20% 30%, rgba(0,240,255,0.08), transparent 50%), radial-gradient(circle at 80% 70%, rgba(255,0,234,0.08), transparent 50%); z-index: -1; }
   
-  .header { text-align: center; padding: 20px; }
+  .header { text-align: center; padding: 20px 20px 10px; }
   .logo { font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .subtitle { color: var(--text-secondary); font-size: 0.85rem; }
   .player-tag { display: inline-block; background: rgba(0,255,136,0.15); padding: 6px 15px; border-radius: 20px; font-size: 0.8rem; border: 1px solid var(--accent-green); margin-top: 10px; }
   
-  .container { max-width: 1400px; margin: 0 auto; padding: 15px; display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 15px; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 15px; display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 15px; flex: 1; }
   @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
   
   .card { background: var(--bg-glass); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 15px; position: relative; }
   .card-title { font-size: 0.9rem; font-weight: 600; color: var(--accent-cyan); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
   
-  .level-badge { display: inline-block; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta)); padding: 3px 10px; border-radius: 15px; font-size: 0.7rem; font-weight: 600; margin-bottom: 8px; }
-  .level-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; }
+  /* ✅ LEVEL BADGE DI POJOK KANAN ATAS */
+  .level-badge { 
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta)); 
+    padding: 5px 12px; 
+    border-radius: 20px; 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+    color: white; 
+    z-index: 10;
+  }
+  
+  .classification-badge { display: inline-block; background: linear-gradient(135deg, var(--accent-yellow), #ff8c00); padding: 3px 10px; border-radius: 15px; font-size: 0.65rem; font-weight: 600; margin-bottom: 8px; color: #000; }
+  .level-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; margin-top: 5px; }
   .level-desc { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 12px; }
   
   .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -36,18 +50,10 @@
   .stat-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; }
   .stat-value { font-size: 1.1rem; font-weight: 700; color: var(--accent-yellow); }
   
-  .stat-item.timer-active {
-    background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(255,0,234,0.15));
-    border-color: var(--accent-cyan);
-    animation: timerPulse 1s ease-in-out infinite;
-  }
-  .stat-item.timer-active .stat-value {
-    color: var(--accent-cyan);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.3rem;
-    text-shadow: 0 0 10px var(--accent-cyan);
-  }
-  @keyframes timerPulse { 0%, 100% { box-shadow: 0 0 5px rgba(0,240,255,0.3); } 50% { box-shadow: 0 0 20px rgba(0,240,255,0.6); } }
+  .speed-control { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 10px; }
+  .speed-control label { font-size: 0.7rem; color: var(--text-secondary); }
+  .speed-control input[type="range"] { flex: 1; -webkit-appearance: none; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; outline: none; }
+  .speed-control input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta)); border-radius: 50%; cursor: pointer; }
   
   .btn { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta)); color: white; border: none; padding: 10px; border-radius: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.8rem; cursor: pointer; width: 100%; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
   .btn:active { transform: scale(0.98); }
@@ -58,6 +64,27 @@
   
   .maze-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; overflow-x: auto; width: 100%; padding: 10px 0; }
   .maze-container { display: grid; gap: 2px; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 12px; border: 2px solid var(--border-glass); position: relative; }
+  
+  /* TIMER KECIL DI SUDUT KANAN ATAS LABIRIN */
+  .maze-timer {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(255, 0, 234, 0.15));
+    border: 1px solid var(--accent-cyan);
+    border-radius: 8px;
+    padding: 4px 10px;
+    text-align: right;
+    min-width: 80px;
+    z-index: 5;
+    transition: all 0.3s ease;
+  }
+  .maze-timer-label { font-size: 0.55rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0; line-height: 1; }
+  .maze-timer-value { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--accent-yellow); text-shadow: 0 0 8px rgba(255, 215, 0, 0.4); line-height: 1.2; }
+  .maze-timer.timer-active { background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(255, 0, 234, 0.25)); animation: timerPulse 1s ease-in-out infinite; box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); }
+  .maze-timer.timer-active .maze-timer-value { color: var(--accent-cyan); text-shadow: 0 0 10px var(--accent-cyan); }
+  @keyframes timerPulse { 0%, 100% { box-shadow: 0 0 8px rgba(0, 240, 255, 0.2); } 50% { box-shadow: 0 0 18px rgba(0, 240, 255, 0.5); } }
+  @media (max-width: 900px) { .maze-timer { position: relative; top: auto; right: auto; margin-bottom: 10px; text-align: center; } }
   
   .cell { width: 45px; height: 45px; background: linear-gradient(135deg, #1a2040, #252b50); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; position: relative; cursor: pointer; user-select: none; }
   .cell.wall { background: linear-gradient(135deg, #3a3a5a, #2a2a4a); box-shadow: inset 0 0 8px rgba(0,0,0,0.8); border: 1px solid rgba(100,100,150,0.3); }
@@ -124,18 +151,7 @@
   
   .stars { font-size: 1.8rem; margin: 10px 0; letter-spacing: 5px; }
   
-  .timer-display {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--accent-cyan);
-    text-shadow: 0 0 20px var(--accent-cyan);
-    margin: 15px 0;
-    padding: 15px;
-    background: rgba(0,240,255,0.1);
-    border-radius: 12px;
-    border: 2px solid var(--accent-cyan);
-  }
+  .timer-display { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 700; color: var(--accent-cyan); text-shadow: 0 0 20px var(--accent-cyan); margin: 15px 0; padding: 15px; background: rgba(0,240,255,0.1); border-radius: 12px; border: 2px solid var(--accent-cyan); }
   
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta)); color: white; padding: 10px 20px; border-radius: 25px; font-weight: 600; font-size: 0.85rem; box-shadow: 0 10px 30px rgba(0,240,255,0.4); z-index: 200; transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
   .toast.show { transform: translateX(-50%) translateY(0); }
@@ -163,6 +179,14 @@
   .password-error { color: var(--accent-red); margin-top: 10px; font-size: 0.85rem; display: none; }
   .password-error.show { display: block; animation: shake 0.4s; }
   @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  
+  .syntax-guide { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6; }
+  .syntax-guide code { background: rgba(0,240,255,0.1); color: var(--accent-cyan); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+  .syntax-guide ul { list-style: none; padding-left: 0; }
+  .syntax-guide li { margin-bottom: 6px; }
+  .syntax-guide li strong { color: var(--accent-yellow); }
+  
+  .footer { text-align: center; padding: 15px; color: var(--text-secondary); font-size: 0.75rem; border-top: 1px solid var(--border-glass); margin-top: 20px; }
 </style>
 </head>
 <body>
@@ -172,8 +196,7 @@
   <div class="modal">
     <div class="modal-icon">🎮</div>
     <h2 class="modal-title">Selamat Datang di CodeQuest!</h2>
-   <br>
-    
+    <p class="modal-text">Masukkan NIS (Nomor Induk Siswa) untuk memulai petualangan logika.</p>
     <div id="formLoginContainer">
       <div class="input-group">
         <label>🔢 Nomor Induk Siswa (NIS)</label>
@@ -181,7 +204,6 @@
       </div>
       <button class="btn btn-success" onclick="cariNIS()" id="btnCari">🔍 Cari Data Siswa</button>
     </div>
-    
     <div id="studentInfoBox" style="display:none">
       <div class="student-info">
         <div class="info-row"><span class="info-label">👤 Nama:</span><span class="info-value" id="infoNama">-</span></div>
@@ -191,8 +213,8 @@
       <button class="btn btn-success" onclick="mulaiBermain()">🚀 Mulai Bermain</button>
       <button class="btn btn-secondary" onclick="resetFormLogin()" style="margin-top:8px">🔄 Ganti NIS</button>
     </div>
-    
     <button class="btn btn-secondary" onclick="showLeaderboardFromStart()" style="margin-top:10px">🏆 Lihat Leaderboard</button>
+    <button class="btn btn-secondary" onclick="showHelp()" style="margin-top:8px">📖 Panduan</button>
   </div>
 </div>
 
@@ -250,6 +272,24 @@
   </div>
 </div>
 
+<!-- MODAL PANDUAN -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal" style="max-width:600px;text-align:left">
+    <h2 class="modal-title" style="text-align:center">📖 Panduan & Sintaks Perintah</h2>
+    <div class="modal-text" style="text-align:left">
+      <p style="margin-bottom:10px"><strong style="color:var(--accent-cyan)">🎯 Tujuan Utama:</strong> Susun blok kode logika untuk menggerakkan Karakter Penjelajah dari titik awal sampai ke Bendera Finish. Hindari jebakan dan ambil kunci jika ada pintu terkunci!</p>
+      <p style="margin-bottom:8px"><strong style="color:var(--accent-cyan)">🕹️ Perintah Yang Tersedia:</strong></p>
+      <ul style="list-style:none;padding-left:0">
+        <li>🚶 <code style="color:var(--accent-green)">maju()</code> — Melangkah 1 kotak ke depan sesuai arah hadap robot saat ini.</li>
+        <li>↩️ <code style="color:var(--accent-green)">putarKiri()</code> / <code style="color:var(--accent-green)">putarKanan()</code> — Memutar arah hadap robot 90 derajat ke kiri atau ke kanan tanpa berpindah kotak.</li>
+        <li>🔑 <code style="color:var(--accent-green)">ambilKunci()</code> — Mengambil kunci yang terletak di kotak saat ini. Kunci otomatis digunakan untuk membuka pintu.</li>
+        <li>🔁 <code style="color:var(--accent-green)">ulangi(n) { ... }</code> — Menjalankan sekumpulan perintah di dalam tanda kurung kurawal sebanyak n kali secara berulang.</li>
+      </ul>
+    </div>
+    <button class="btn" onclick="document.getElementById('helpModal').classList.remove('active')" style="margin-top:15px">✅ Saya Mengerti</button>
+  </div>
+</div>
+
 <div class="header">
   <h1 class="logo">⚡ CODEQUEST</h1>
   <p class="subtitle">Penjelajah Labirin Logika</p>
@@ -260,28 +300,38 @@
   <!-- LEFT: Info -->
   <div class="card">
     <div class="card-title">📋 Info Level</div>
+    
+    <!-- ✅ LEVEL BADGE DI POJOK KANAN ATAS -->
     <span class="level-badge" id="levelBadge">LEVEL 1</span>
-    <h2 class="level-title" id="levelTitle">Dasar Gerak</h2>
-    <p class="level-desc" id="levelDesc">Bantu robot mencapai bendera tujuan!</p>
+    <h2 class="level-title" id="levelTitle"></h2>
+    <p class="level-desc" id="levelDesc"></p>
     <div class="stats-grid">
-      <div class="stat-item"><div class="stat-label">Target</div><div class="stat-value" id="statTarget">3</div></div>
+      <div class="stat-item"><div class="stat-label">Target Perintah</div><div class="stat-value" id="statTarget">3</div></div>
       <div class="stat-item"><div class="stat-label">Kunci</div><div class="stat-value" id="statKeys">0</div></div>
       <div class="stat-item"><div class="stat-label">Langkah</div><div class="stat-value" id="statSteps">0</div></div>
       <div class="stat-item"><div class="stat-label">Perintah</div><div class="stat-value" id="statCmds">0</div></div>
-      <div class="stat-item" id="timerStatItem" style="grid-column: span 2;">
-        <div class="stat-label">⏱️ Waktu</div>
-        <div class="stat-value" id="statTimer">00:00.0</div>
-      </div>
     </div>
-    <button class="btn btn-secondary" onclick="resetPosition()">🔄 Reset</button>
+    <div class="speed-control">
+      <label>🐢 Kecepatan:</label>
+      <input type="range" id="speedSlider" min="100" max="1000" value="500" step="100">
+      <label>🐇</label>
+    </div>
+    <button class="btn btn-secondary" onclick="resetPosition()">🔄 Reset Posisi</button>
     <button class="btn btn-secondary" onclick="toggleEditor()">🛠️ Editor Labirin</button>
     <button class="btn btn-secondary" onclick="showQR()">📱 QR Code</button>
     <button class="btn btn-secondary" onclick="showLeaderboard()">🏆 Leaderboard</button>
+    <button class="btn btn-secondary" onclick="showHelp()">📖 Panduan</button>
   </div>
   
   <!-- CENTER: Maze -->
   <div class="card">
     <div class="card-title">🗺️ Labirin</div>
+    
+    <!-- TIMER KECIL DI SUDUT KANAN ATAS -->
+    <div class="maze-timer" id="timerStatItem">
+      <div class="maze-timer-value" id="statTimer">00:00.0</div>
+    </div>
+    
     <div class="editor-tools" id="editorTools">
       <div class="tools-title">🎨 Alat Editor</div>
       <div class="tool-grid">
@@ -308,11 +358,11 @@
   <div class="card">
     <div class="card-title">💻 Editor Kode</div>
     <div class="mode-toggle">
-      <button class="mode-btn active" onclick="switchMode('block')" id="modeBlock">🧩 Blok</button>
-      <button class="mode-btn" onclick="switchMode('text')" id="modeText">📝 Text</button>
+      <button class="mode-btn active" onclick="switchMode('block')" id="modeBlock">🧩 Mode Blok Visual</button>
+      <button class="mode-btn" onclick="switchMode('text')" id="modeText">📝 Mode Text Editor</button>
     </div>
-    
     <div id="blockMode">
+      <p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px">KLIK PERINTAH UNTUK MENAMBAHKAN:</p>
       <div class="cmd-grid">
         <button class="cmd-btn" onclick="addCommand('maju()')">maju()</button>
         <button class="cmd-btn" onclick="addCommand('putarKiri()')">putarKiri()</button>
@@ -320,14 +370,23 @@
         <button class="cmd-btn" onclick="addCommand('ambilKunci()')">ambilKunci()</button>
         <button class="cmd-btn loop" onclick="addLoop()">➕ ulangi(n) { ... }</button>
       </div>
+      <p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px">URUTAN PERINTAH DITAMBAHKAN: <span id="cmdCount" style="color:var(--accent-yellow);font-weight:700">0</span> Perintah</p>
       <div class="code-area" id="codeArea">
-        <div class="empty-msg">Belum ada perintah. Klik tombol di atas untuk menambah!</div>
+        <div class="empty-msg">Belum ada perintah. Klik tombol di atas untuk menambah kode!</div>
       </div>
       <button class="btn btn-secondary" onclick="clearCommands()">🗑️ Hapus Semua</button>
     </div>
-    
     <div id="textMode" style="display:none">
+      <p style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:8px">TULISKAN KODE LANGSUNG:</p>
       <textarea class="text-editor" id="textEditor" placeholder="maju()&#10;putarKanan()&#10;ulangi(3) {&#10;  maju()&#10;}"></textarea>
+      <div class="syntax-guide">
+        <strong style="color:var(--accent-yellow)">Sintaks:</strong>
+        <ul>
+          <li><code>maju()</code> — Maju 1 kotak</li>
+          <li><code>putarKiri()</code> — Putar kiri 90°</li>
+          <li><code>ulangi(3) { maju() }</code> — Ulangi 3x</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
@@ -337,12 +396,13 @@
   <div class="modal">
     <div class="modal-icon">🎉</div>
     <h2 class="modal-title">Misi Berhasil!</h2>
-    <p class="modal-text" id="successText">Kamu berhasil!</p>
+    <p class="modal-text" id="successText">Kamu berhasil memandu penjelajah sampai ke tujuan!</p>
     <div class="timer-display" id="finalTimer">00:00.0</div>
-    <div class="stars" id="stars">⭐⭐⭐</div>
+    <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:10px">Bintang Ditentukan: <span id="stars">⭐⭐⭐</span></p>
+    <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:15px">Total Instruksi: <span id="totalInstruksi" style="color:var(--accent-yellow);font-weight:700">0</span></p>
     <div style="display:flex;gap:8px">
       <button class="btn btn-secondary" onclick="closeModal();resetPosition()">🔄 Coba Lagi</button>
-      <button class="btn" onclick="nextLevel()">➡️ Lanjut</button>
+      <button class="btn" onclick="nextLevel()">➡️ Level Berikutnya</button>
     </div>
   </div>
 </div>
@@ -350,13 +410,13 @@
 <!-- MODAL LOOP -->
 <div class="modal-overlay" id="loopModal">
   <div class="modal">
-    <h2 class="modal-title">➕ Perulangan</h2>
+    <h2 class="modal-title">➕ Tambah Blok Perulangan</h2>
     <div class="input-group">
-      <label>Jumlah (n):</label>
+      <label>Jumlah Perulangan (n):</label>
       <input type="number" id="loopCount" value="3" min="1" max="20">
     </div>
     <div class="input-group">
-      <label>Perintah:</label>
+      <label>Perintah di Dalam Loop:</label>
       <select id="loopCmd">
         <option value="maju()">maju()</option><option value="putarKiri()">putarKiri()</option>
         <option value="putarKanan()">putarKanan()</option><option value="ambilKunci()">ambilKunci()</option>
@@ -364,12 +424,17 @@
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-secondary" onclick="document.getElementById('loopModal').classList.remove('active')">Batal</button>
-      <button class="btn" onclick="confirmLoop()">Tambah</button>
+      <button class="btn" onclick="confirmLoop()">Tambahkan</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  CodeQuest © Media Pembelajaran Interaktif Pemrograman Dasar & Logika Digital
+</div>
 
 <script>
 // ============ KONFIGURASI API ============
@@ -394,6 +459,7 @@ let currentFilter = 'all';
 let timerInterval = null;
 let elapsedTime = 0;
 let finalTime = '';
+let timerStarted = false; // ✅ Flag untuk melacak apakah timer sudah dimulai
 
 const CELL_TYPES = { WALL: 1, PATH: 0, START: 2, FINISH: 3, KEY: 4, DOOR: 5, TRAP: 6 };
 const CELL_ICONS = { 0: '', 1: '', 2: '', 3: '🏁', 4: '🔑', 5: '🚪', 6: '💀' };
@@ -436,6 +502,7 @@ function resetTimer() {
   finalTime = '';
   updateTimerDisplay();
   document.getElementById('timerStatItem').classList.remove('timer-active');
+  timerStarted = false;
 }
 
 function updateTimerDisplay() {
@@ -453,6 +520,21 @@ function init() {
       onCellClick(x, y);
     }
   });
+  
+  // Slider kecepatan
+  document.getElementById('speedSlider').addEventListener('input', function(e) {
+    speed = 1100 - parseInt(e.target.value);
+  });
+  
+  // ✅ Timer mulai saat siswa mengetik di Text Editor
+  document.getElementById('textEditor').addEventListener('input', function() {
+    if (!timerStarted && this.value.trim().length > 0) {
+      startTimer();
+      timerStarted = true;
+      showToast('⏱️ Timer dimulai!');
+    }
+  });
+  
   loadLevel(0);
   loadRecordsFromStorage();
   
@@ -468,24 +550,19 @@ function init() {
 async function cariNIS() {
   const nis = document.getElementById('nisInput').value.trim();
   if (!nis) { showToast('⚠️ Masukkan NIS dulu!'); return; }
-  
   const btn = document.getElementById('btnCari');
   btn.disabled = true;
   btn.innerHTML = '<span class="loading"></span>Mencari...';
-  
   try {
     const response = await fetch(`${API_URL}?action=cariSiswa&nis=${encodeURIComponent(nis)}`);
     const data = await response.json();
-    
     if (data.success) {
       currentPlayer = { nis: data.data.nis, nama: data.data.nama, kelas: data.data.kelas };
       tampilkanInfoSiswa();
       showToast(`✅ Halo ${data.data.nama}!`);
-    } else {
-      showToast('❌ ' + data.message);
-    }
+    } else { showToast('❌ ' + data.message); }
   } catch (err) {
-    console.warn('API tidak tersedia, menggunakan mode offline');
+    console.warn('API tidak tersedia, mode offline');
     showToast('⚠️ Mode offline');
     currentPlayer = { nis: nis, nama: 'Siswa ' + nis, kelas: '7A' };
     tampilkanInfoSiswa();
@@ -524,7 +601,6 @@ function loadLevel(idx) {
   currentLevel = idx;
   const level = LEVELS[idx];
   maze = level.maze.map(row => [...row]);
-  
   let startFound = false;
   for (let y = 0; y < maze.length; y++) {
     for (let x = 0; x < maze[y].length; x++) {
@@ -537,10 +613,9 @@ function loadLevel(idx) {
     if (startFound) break;
   }
   if (!startFound) robot = { x: 1, y: 1, dir: 'east' };
-  
   hasKey = false; steps = 0; commands = [];
-  resetTimer(); // Timer di-reset, TIDAK dimulai
-  
+  timerStarted = false; // ✅ Reset flag timer
+  resetTimer();
   document.getElementById('levelBadge').textContent = `LEVEL ${idx + 1}`;
   document.getElementById('levelTitle').textContent = level.name;
   document.getElementById('levelDesc').textContent = level.desc;
@@ -557,7 +632,6 @@ function renderMaze() {
   const rows = maze.length, cols = maze[0].length;
   grid.style.gridTemplateColumns = `repeat(${cols}, 45px)`;
   grid.innerHTML = '';
-  
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const cell = document.createElement('div');
@@ -565,7 +639,6 @@ function renderMaze() {
       cell.className = 'cell';
       cell.dataset.x = x;
       cell.dataset.y = y;
-      
       if (type === CELL_TYPES.WALL) cell.classList.add('wall');
       else if (type === CELL_TYPES.PATH) cell.classList.add('path');
       else if (type === CELL_TYPES.START) cell.classList.add('start');
@@ -573,10 +646,8 @@ function renderMaze() {
       else if (type === CELL_TYPES.KEY) cell.classList.add('key');
       else if (type === CELL_TYPES.DOOR) cell.classList.add('door');
       else if (type === CELL_TYPES.TRAP) cell.classList.add('trap');
-      
       if (editorMode) cell.classList.add('editor-mode');
       cell.innerHTML = CELL_ICONS[type] || '';
-      
       if (x === robot.x && y === robot.y) {
         const robotEl = document.createElement('div');
         robotEl.className = `robot ${robot.dir}`;
@@ -621,25 +692,49 @@ function clearMaze() {
   for (let x = 0; x < cols; x++) { maze[0][x] = 1; maze[rows-1][x] = 1; }
   for (let y = 0; y < rows; y++) { maze[y][0] = 1; maze[y][cols-1] = 1; }
   maze[1][1] = 2; maze[rows-2][cols-2] = 3; robot = { x: 1, y: 1, dir: 'east' };
+  timerStarted = false;
+  resetTimer();
   renderMaze();
 }
 
 // ============ COMMANDS ============
-function addCommand(cmd) { commands.push(cmd); renderCommands(); }
+function addCommand(cmd) { 
+  commands.push(cmd); 
+  
+  // ✅ TIMER OTOMATIS MULAI SAAT PERINTAH PERTAMA DITAMBAHKAN
+  if (!timerStarted) {
+    startTimer();
+    timerStarted = true;
+    showToast('⏱️ Timer dimulai!');
+  }
+  
+  renderCommands();
+}
+
 function addLoop() { document.getElementById('loopModal').classList.add('active'); }
 function confirmLoop() {
   const n = parseInt(document.getElementById('loopCount').value);
   const cmd = document.getElementById('loopCmd').value;
   if (n < 1 || n > 20) { showToast('⚠️ 1-20'); return; }
+  
+  // ✅ Timer mulai saat loop pertama ditambahkan
+  if (!timerStarted) {
+    startTimer();
+    timerStarted = true;
+    showToast('⏱️ Timer dimulai!');
+  }
+  
   commands.push(`ulangi(${n}) { ${cmd} }`);
   document.getElementById('loopModal').classList.remove('active'); 
   renderCommands();
 }
+
 function renderCommands() {
   const area = document.getElementById('codeArea');
   document.getElementById('statCmds').textContent = commands.length;
+  document.getElementById('cmdCount').textContent = commands.length;
   if (commands.length === 0) { 
-    area.innerHTML = '<div class="empty-msg">Belum ada perintah. Klik tombol di atas untuk menambah!</div>'; 
+    area.innerHTML = '<div class="empty-msg">Belum ada perintah. Klik tombol di atas untuk menambah kode!</div>'; 
     return; 
   }
   area.innerHTML = commands.map((cmd, i) => 
@@ -647,7 +742,12 @@ function renderCommands() {
   ).join('');
 }
 function removeCommand(i) { commands.splice(i, 1); renderCommands(); }
-function clearCommands() { commands = []; renderCommands(); }
+function clearCommands() { 
+  commands = []; 
+  timerStarted = false; // ✅ Reset flag saat hapus semua
+  resetTimer();
+  renderCommands(); 
+}
 function switchMode(mode) {
   document.getElementById('blockMode').style.display = mode === 'block' ? 'block' : 'none';
   document.getElementById('textMode').style.display = mode === 'text' ? 'block' : 'none';
@@ -662,6 +762,12 @@ async function runCode() {
   const cmds = isBlock ? [...commands] : parseTextCode();
   if (cmds.length === 0) { showToast('⚠️ Tidak ada perintah!'); return; }
   
+  // ✅ Pastikan timer sudah berjalan (jika belum, mulai sekarang)
+  if (!timerStarted) {
+    startTimer();
+    timerStarted = true;
+  }
+  
   for (let y = 0; y < maze.length; y++) {
     for (let x = 0; x < maze[y].length; x++) {
       if (maze[y][x] === CELL_TYPES.START) {
@@ -670,14 +776,10 @@ async function runCode() {
       }
     }
   }
-  
   hasKey = false; steps = 0; isRunning = true;
   document.getElementById('runBtn').style.display = 'none';
   document.getElementById('stopBtn').style.display = 'block';
   renderMaze();
-  
-  // ✅ TIMER MULAI SAAT TOMBOL JALANKAN DIKLIK
-  startTimer();
   
   try { 
     for (const cmd of cmds) { 
@@ -685,10 +787,8 @@ async function runCode() {
       await executeCommand(cmd); 
     } 
   } catch (e) { 
-    // ❌ JANGAN stopTimer() di sini! Timer tetap berjalan saat error
     showToast('❌ ' + e.message + ' (Timer tetap berjalan)'); 
   }
-  
   isRunning = false;
   document.getElementById('runBtn').style.display = 'block';
   document.getElementById('stopBtn').style.display = 'none';
@@ -696,7 +796,8 @@ async function runCode() {
 
 function stopCode() { 
   isRunning = false; 
-  stopTimer(); // Timer berhenti karena user menekan Stop
+  stopTimer();
+  timerStarted = false;
   document.getElementById('runBtn').style.display = 'block'; 
   document.getElementById('stopBtn').style.display = 'none'; 
 }
@@ -758,19 +859,22 @@ function executeSingle(cmd) {
 }
 
 function updateStats() { document.getElementById('statSteps').textContent = steps; }
-function resetPosition() { stopCode(); loadLevel(currentLevel); }
+function resetPosition() { 
+  stopCode(); 
+  timerStarted = false;
+  loadLevel(currentLevel); 
+}
 
 function winGame() {
-  // ✅ TIMER BERHENTI HANYA SAAT MENANG
   stopTimer();
-  
+  timerStarted = false;
   const level = LEVELS[currentLevel] || { target: 5 };
   let stars = 3;
   if (commands.length > level.target * 2) stars = 1; 
   else if (commands.length > level.target) stars = 2;
-  
   document.getElementById('stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-  document.getElementById('successText').textContent = `Perintah: ${commands.length} | Langkah: ${steps}`;
+  document.getElementById('successText').textContent = `Kamu berhasil memandu penjelajah sampai ke tujuan!`;
+  document.getElementById('totalInstruksi').textContent = commands.length;
   document.getElementById('finalTimer').textContent = finalTime;
   document.getElementById('successModal').classList.add('active');
   saveRecord(); 
@@ -783,12 +887,9 @@ function saveRecord() {
     level: currentLevel + 1, perintah: commands.length, langkah: steps, 
     waktu: finalTime, tanggal: new Date().toLocaleString('id-ID') 
   };
-  
   console.log('Data yang dikirim ke Sheet:', rec);
-  
   gameRecords.push(rec);
   localStorage.setItem('cq_records', JSON.stringify(gameRecords));
-  
   if (!API_URL.includes('GANTI_DENGAN')) {
     fetch(API_URL, {
       method: 'POST',
@@ -829,7 +930,7 @@ function filterClass(kelas) {
   renderLeaderboard();
 }
 
-// ============ RESET DENGAN PASSWORD (DARI SHEET) ============
+// ============ RESET DENGAN PASSWORD ============
 function resetLeaderboard() {
   document.getElementById('passwordModal').classList.add('active');
   document.getElementById('resetPassword').value = '';
@@ -844,16 +945,13 @@ function closePasswordModal() {
 async function verifyAndReset() {
   const inputPassword = document.getElementById('resetPassword').value;
   if (!inputPassword) return;
-
   const btn = document.getElementById('btnVerifyReset');
   const originalText = btn.innerHTML;
   btn.innerHTML = '<span class="loading"></span>Memeriksa...';
   btn.disabled = true;
-
   try {
     const response = await fetch(`${API_URL}?action=verifikasiPassword&password=${encodeURIComponent(inputPassword)}`);
     const data = await response.json();
-
     if (data.success) {
       closePasswordModal();
       performReset();
@@ -883,6 +981,11 @@ async function performReset() {
   } catch (err) {
     showToast('❌ Gagal reset: ' + err.message);
   }
+}
+
+// ============ PANDUAN ============
+function showHelp() {
+  document.getElementById('helpModal').classList.add('active');
 }
 
 // ============ QR CODE ============
