@@ -3,350 +3,205 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FUNGSI IF Excel</title>
+<title>Operasi Data IF Excel</title>
 <style>
     :root {
-        --bg-primary: #0f172a;
-        --bg-secondary: #1e293b;
-        --bg-tertiary: #334155;
-        --text-primary: #f8fafc;
-        --text-secondary: #94a3b8;
-        --accent-cyan: #06b6d4;
-        --accent-green: #10b981;
-        --accent-red: #ef4444;
-        --accent-yellow: #f59e0b;
-        --border-color: #475569;
-        --excel-header-bg: #f3f4f6;
-        --excel-grid-line: #e5e7eb;
-        --excel-active-border: #217346;
+        --bg-primary: #0f172a; --bg-secondary: #1e293b; --bg-tertiary: #334155;
+        --text-primary: #f8fafc; --text-secondary: #94a3b8;
+        --accent-cyan: #06b6d4; --accent-green: #10b981; --accent-red: #ef4444;
+        --accent-yellow: #f59e0b; --border-color: #475569;
+        --excel-header-bg: #f3f4f6; --excel-grid-line: #e5e7eb; --excel-active-border: #217346;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    html, body { height: 100vh; overflow: hidden; background-color: var(--bg-primary); color: var(--text-primary); }
+    body { display: flex; justify-content: center; align-items: center; padding: 10px; }
+    .game-container { width: 100%; max-width: 1200px; height: 100vh; max-height: 100vh; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; }
     
-    html, body { 
-        height: 100vh; 
-        overflow: hidden; 
-        background-color: var(--bg-primary); 
-        color: var(--text-primary);
-    }
+    .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+    .login-box { background: var(--bg-secondary); border: 2px solid var(--accent-cyan); border-radius: 16px; padding: 40px; max-width: 520px; width: 100%; box-shadow: 0 0 40px rgba(6, 182, 212, 0.3); text-align: center; }
+    .login-box h1 { color: var(--accent-cyan); font-size: 2rem; margin-bottom: 10px; letter-spacing: 2px; }
+    .login-box .subtitle { color: var(--text-secondary); margin-bottom: 25px; font-size: 1.05rem; }
+    .login-box .input-group { text-align: left; margin-bottom: 12px; }
+    .login-box label { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 6px; font-weight: 600; }
+    .login-box input { width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-size: 1.1rem; outline: none; transition: border-color 0.3s; }
+    .login-box input:focus { border-color: var(--accent-cyan); }
+    .login-box input:disabled { background: var(--bg-tertiary); color: var(--accent-green); cursor: not-allowed; border-color: var(--accent-green); font-weight: bold; }
+    .login-box .nis-row { display: flex; gap: 10px; align-items: flex-end; }
+    .login-box .nis-row input { flex: 1; }
+    .btn-cek { padding: 12px 20px; background: var(--accent-yellow); color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; white-space: nowrap; transition: all 0.3s; }
+    .btn-cek:hover { background: #d97706; }
+    .login-box .status-msg { min-height: 24px; margin: 10px 0; font-size: 1rem; font-weight: 600; }
+    .status-msg.valid { color: var(--accent-green); }
+    .status-msg.invalid { color: var(--accent-red); }
+    .login-box button.btn-mulai { width: 100%; padding: 14px; margin-top: 10px; background: var(--accent-cyan); color: var(--bg-primary); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+    .login-box button.btn-mulai:hover:not(:disabled) { background: #0891b2; transform: translateY(-2px); }
+    .login-box button.btn-mulai:disabled { background: var(--bg-tertiary); color: var(--text-secondary); cursor: not-allowed; }
     
-    body { 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        padding: 10px;
-    }
-    
-    .game-container { 
-        width: 100%; 
-        max-width: 1200px; 
-        height: 100vh;
-        max-height: 100vh;
-        background-color: var(--bg-secondary); 
-        border: 1px solid var(--border-color); 
-        border-radius: 12px; 
-        overflow: hidden; 
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* HEADER - FONT LEBIH BESAR */
-    .header { 
-        background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary)); 
-        padding: 15px 25px; 
-        border-bottom: 2px solid var(--accent-cyan); 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center;
-        flex-shrink: 0;
-    }
-    .header h1 { 
-        font-size: 1.6rem; /* Diperbesar */
-        color: var(--accent-cyan); 
-        letter-spacing: 1px; 
-    }
-    .header .status { 
-        font-size: 1.1rem; /* Diperbesar */
-        color: var(--text-secondary); 
-        text-align: right; 
-    }
-    .header .status span { color: var(--accent-green); font-weight: bold; }
-
-    .progress-bar-container { 
-        width: 100%; 
-        height: 5px; 
-        background-color: var(--bg-primary); 
-        flex-shrink: 0;
-    }
-    .progress-bar { 
-        height: 100%; 
-        background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green)); 
-        width: 0%; 
-        transition: width 0.5s ease; 
-    }
-
-    /* MAIN CONTENT */
-    .main-content { 
-        padding: 18px 25px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        overflow-y: auto;
-        min-height: 0;
-    }
-    
-    .mission-brief { 
-        background-color: var(--bg-primary); 
-        border-left: 4px solid var(--accent-yellow); 
-        padding: 15px 20px; 
-        border-radius: 0 8px 8px 0;
-        flex-shrink: 0;
-    }
-    .mission-brief h2 { 
-        color: var(--accent-yellow); 
-        margin-bottom: 6px; 
-        font-size: 1.3rem; /* Diperbesar */
-    }
-    .mission-brief p { 
-        color: var(--text-secondary); 
-        line-height: 1.5; 
-        font-size: 1.05rem; /* Diperbesar */
-    }
-
-    /* TABEL EXCEL - FONT LEBIH BESAR */
-    .excel-simulation { 
-        background-color: #ffffff; 
-        border-radius: 4px; 
-        overflow: hidden; 
-        border: 1px solid #d1d5db; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        flex-shrink: 0;
-    }
-    
-    .excel-toolbar { 
-        background-color: #217346; 
-        padding: 8px 15px; 
-        color: white; 
-        font-weight: bold; 
-        font-size: 1rem; /* Diperbesar */
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center;
-    }
-    
-    .excel-grid { 
-        width: 100%; 
-        border-collapse: collapse; 
-        table-layout: fixed;
-    }
-    
-    .excel-grid th { 
-        background-color: var(--excel-header-bg); 
-        color: #374151; 
-        font-weight: 600; 
-        text-align: center; 
-        border: 1px solid var(--excel-grid-line); 
-        padding: 6px;
-        font-size: 1rem; /* Diperbesar */
-        user-select: none;
-    }
-
-    .excel-grid td { 
-        border: 1px solid var(--excel-grid-line); 
-        padding: 8px 12px; 
-        text-align: center;
-        font-size: 1.05rem; /* Diperbesar */
-        color: #1f2937; 
-        background-color: #ffffff;
-        height: 38px;
-        vertical-align: middle;
-    }
-
-    .excel-grid td.active-cell { 
-        background-color: #ffffff; 
-        border: 2px solid var(--excel-active-border); 
-        color: #000; 
-        font-weight: normal;
-        position: relative;
-        z-index: 10;
-    }
-    
-    .excel-grid td.active-cell::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        right: -4px;
-        width: 7px;
-        height: 7px;
-        background-color: var(--excel-active-border);
-        border: 1px solid #fff;
-    }
-
-    /* DRAG AND DROP - FONT LEBIH BESAR */
-    .formula-area { 
-        flex-shrink: 0;
-    }
-    .formula-area label {
-        color: var(--text-secondary);
-        font-size: 1.05rem; /* Diperbesar */
-        margin-bottom: 6px;
+    /* PERBAIKAN: Tombol Panel Laporan Guru yang lebih menonjol */
+    .btn-teacher {
         display: block;
-        font-weight: 600;
-    }
-    .formula-dropzone { 
-        background-color: var(--bg-primary); 
-        border: 2px dashed var(--border-color); 
-        border-radius: 6px; 
-        padding: 12px; 
-        min-height: 50px; 
-        display: flex; 
-        align-items: center; 
-        gap: 6px; 
-        flex-wrap: wrap;
-        transition: all 0.3s;
-    }
-    .formula-dropzone.drag-over { border-color: var(--accent-cyan); background-color: rgba(6, 182, 212, 0.1); }
-    .formula-dropzone span {
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: #000;
+        border: 2px solid #f59e0b;
+        border-radius: 8px;
         font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+    .btn-teacher:hover {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    }
+    .btn-teacher:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
     }
     
-    .code-block-palette { 
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px; 
-        margin-top: 10px; 
-        padding: 12px; 
-        background-color: var(--bg-tertiary); 
-        border-radius: 6px; 
-        justify-content: flex-start;
-        max-height: 110px;
-        overflow-y: auto;
-    }
-    
-    .draggable-block {
-        background-color: #3b82f6;
-        color: white;
-        width: auto;
-        min-width: 40px; 
-        padding: 8px 14px;
-        border-radius: 4px;
-        cursor: grab;
-        font-family: monospace;
-        font-size: 1.05rem; /* Diperbesar */
-        text-align: center;
-        user-select: none;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        white-space: nowrap;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        flex-shrink: 0;
-    }
+    .login-box .db-status { margin-top: 15px; padding: 10px; border-radius: 6px; font-size: 0.9rem; }
+    .db-status.connected { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid var(--accent-green); }
+    .db-status.disconnected { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid var(--accent-red); }
+
+    .report-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+    .report-overlay.active { display: flex; }
+    .report-box { background: var(--bg-secondary); border: 2px solid var(--accent-yellow); border-radius: 16px; padding: 30px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .report-box h2 { color: var(--accent-yellow); margin-bottom: 20px; font-size: 1.8rem; text-align: center; }
+    .report-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: var(--bg-primary); border-radius: 8px; overflow: hidden; }
+    .report-table th, .report-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    .report-table th { background: var(--bg-tertiary); color: var(--accent-cyan); font-weight: bold; }
+    .report-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+    .report-actions button { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    .btn-export { background: var(--accent-green); color: white; }
+    .btn-reset { background: var(--accent-red); color: white; }
+    .btn-close { background: var(--bg-tertiary); color: white; border: 1px solid var(--border-color); }
+    .empty-report { text-align: center; color: var(--text-secondary); padding: 30px; font-size: 1.1rem; }
+
+    .header { background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary)); padding: 15px 25px; border-bottom: 2px solid var(--accent-cyan); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+    .header h1 { font-size: 1.6rem; color: var(--accent-cyan); letter-spacing: 1px; }
+    .header .status { font-size: 1.1rem; color: var(--text-secondary); text-align: right; }
+    .header .status span { color: var(--accent-green); font-weight: bold; }
+    .header .student-info { font-size: 0.95rem; color: var(--accent-yellow); margin-top: 4px; }
+    .progress-bar-container { width: 100%; height: 5px; background-color: var(--bg-primary); flex-shrink: 0; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green)); width: 0%; transition: width 0.5s ease; }
+    .main-content { padding: 18px 25px; flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-height: 0; }
+    .mission-brief { background-color: var(--bg-primary); border-left: 4px solid var(--accent-yellow); padding: 15px 20px; border-radius: 0 8px 8px 0; flex-shrink: 0; }
+    .mission-brief h2 { color: var(--accent-yellow); margin-bottom: 6px; font-size: 1.3rem; }
+    .mission-brief p { color: var(--text-secondary); line-height: 1.5; font-size: 1.05rem; }
+    .excel-simulation { background-color: #ffffff; border-radius: 4px; overflow: hidden; border: 1px solid #d1d5db; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; }
+    .excel-toolbar { background-color: #217346; padding: 8px 15px; color: white; font-weight: bold; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .excel-grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .excel-grid th { background-color: var(--excel-header-bg); color: #374151; font-weight: 600; text-align: center; border: 1px solid var(--excel-grid-line); padding: 6px; font-size: 1rem; user-select: none; }
+    .excel-grid td { border: 1px solid var(--excel-grid-line); padding: 8px 12px; text-align: center; font-size: 1.05rem; color: #1f2937; background-color: #ffffff; height: 38px; vertical-align: middle; }
+    .excel-grid td.active-cell { background-color: #ffffff; border: 2px solid var(--excel-active-border); color: #000; font-weight: normal; position: relative; z-index: 10; }
+    .excel-grid td.active-cell::after { content: ''; position: absolute; bottom: -4px; right: -4px; width: 7px; height: 7px; background-color: var(--excel-active-border); border: 1px solid #fff; }
+    .formula-area { flex-shrink: 0; }
+    .formula-area label { color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 6px; display: block; font-weight: 600; }
+    .formula-dropzone { background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: 6px; padding: 12px; min-height: 50px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; transition: all 0.3s; }
+    .formula-dropzone.drag-over { border-color: var(--accent-cyan); background-color: rgba(6, 182, 212, 0.1); }
+    .code-block-palette { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding: 12px; background-color: var(--bg-tertiary); border-radius: 6px; justify-content: flex-start; max-height: 110px; overflow-y: auto; }
+    .draggable-block { background-color: #3b82f6; color: white; width: auto; min-width: 40px; padding: 8px 14px; border-radius: 4px; cursor: grab; font-family: monospace; font-size: 1.05rem; text-align: center; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2); white-space: nowrap; display: inline-flex; justify-content: center; align-items: center; flex-shrink: 0; }
     .draggable-block:active { cursor: grabbing; transform: scale(0.95); }
     .draggable-block.operator { background-color: var(--accent-yellow); color: #000; }
     .draggable-block.text { background-color: var(--accent-green); }
     .draggable-block.function { background-color: var(--accent-cyan); color: #000; font-weight: bold; }
     .draggable-block.range { background-color: #8b5cf6; color: white; }
-
-    .action-buttons { 
-        display: flex; 
-        gap: 12px; 
-        flex-wrap: wrap;
-        flex-shrink: 0;
-    }
-    button { 
-        padding: 10px 22px; 
-        border: none; 
-        border-radius: 6px; 
-        font-size: 1.05rem; /* Diperbesar */
-        font-weight: bold; 
-        cursor: pointer; 
-        transition: all 0.2s ease; 
-    }
+    .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+    button { padding: 10px 18px; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
     .btn-primary { background-color: var(--accent-cyan); color: var(--bg-primary); }
     .btn-primary:hover { background-color: #0891b2; transform: translateY(-2px); }
     .btn-secondary { background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
     .btn-danger { background-color: var(--accent-red); color: white; }
-
-    .console-log { 
-        background-color: #000000; 
-        border: 1px solid var(--border-color); 
-        border-radius: 6px; 
-        padding: 12px; 
-        min-height: 70px;
-        max-height: 110px;
-        overflow-y: auto; 
-        font-family: monospace; 
-        font-size: 1rem; /* Diperbesar */
-        line-height: 1.5;
-        flex-shrink: 0;
-    }
+    .btn-nav { background-color: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+    .btn-nav:hover:not(:disabled) { background-color: var(--accent-cyan); color: var(--bg-primary); transform: translateY(-2px); }
+    .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-skip { background-color: transparent; color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+    .btn-skip:hover { background-color: var(--accent-yellow); color: #000; transform: translateY(-2px); }
+    .console-log { background-color: #000000; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; min-height: 70px; max-height: 110px; overflow-y: auto; font-family: monospace; font-size: 1rem; line-height: 1.5; flex-shrink: 0; }
     .console-log .log-success { color: var(--accent-green); }
     .console-log .log-error { color: var(--accent-red); }
     .console-log .log-info { color: var(--accent-cyan); }
     .console-log .log-warning { color: var(--accent-yellow); }
-
-    .victory-screen { 
-        text-align: center; 
-        padding: 40px 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-    }
-    .victory-screen h2 { 
-        font-size: 2.5rem; /* Diperbesar */
-        color: var(--accent-green); 
-        margin-bottom: 20px; 
-    }
-    .victory-screen p {
-        font-size: 1.1rem;
-    }
+    .victory-screen { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
+    .victory-screen h2 { font-size: 2.5rem; color: var(--accent-green); margin-bottom: 20px; }
     .hidden { display: none !important; }
-
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg-primary); }
     ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
-
     @media (max-width: 768px) {
-        body { padding: 5px; }
-        .main-content { padding: 12px; gap: 10px; }
-        .header h1 { font-size: 1.2rem; }
-        .header .status { font-size: 0.9rem; }
-        .mission-brief h2 { font-size: 1.1rem; }
-        .mission-brief p { font-size: 0.95rem; }
-        .excel-grid th { font-size: 0.9rem; }
-        .excel-grid td { font-size: 0.95rem; padding: 6px; }
+        body { padding: 5px; } .main-content { padding: 12px; gap: 10px; }
+        .header h1 { font-size: 1.2rem; } .header .status { font-size: 0.9rem; }
+        .mission-brief h2 { font-size: 1.1rem; } .mission-brief p { font-size: 0.95rem; }
+        .excel-grid th { font-size: 0.9rem; } .excel-grid td { font-size: 0.95rem; padding: 6px; }
         .draggable-block { font-size: 0.95rem; padding: 6px 10px; }
-        button { font-size: 0.95rem; padding: 8px 16px; }
-        .console-log { font-size: 0.9rem; }
+        button { font-size: 0.9rem; padding: 8px 12px; } .console-log { font-size: 0.9rem; }
+        .login-box { padding: 25px; } .login-box h1 { font-size: 1.5rem; }
+        .nis-row { flex-direction: column !important; } .nis-row .btn-cek { width: 100%; }
+        .btn-teacher { font-size: 0.95rem; padding: 10px 16px; }
     }
 </style>
 </head>
 <body>
 
-<div class="game-container">
-    <div class="header">
+<div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
         <h1>🚀 OPERASI DATA</h1>
-        <div class="status">
-            SOAL : <span id="currentLevel">1 / 36</span> &nbsp;|&nbsp; 
-            SKOR : <span id="score">0</span>
+
+        <div class="db-status loading" id="dbStatus">⏳ Menghubungkan ke database...</div><br>
+        <div class="input-group">
+
+            <div class="nis-row">
+                <input type="text" id="inputNIS" placeholder="Contoh: 12345" autocomplete="off" disabled>
+                <button class="btn-cek" id="btnCek" onclick="cekNIS()" disabled>Cek NIS</button>
+            </div>
+        </div>
+        <div class="input-group">
+
+            <input type="text" id="inputNama" placeholder="Nama akan muncul otomatis..." disabled>
+        </div>
+        <div class="input-group">
+
+            <input type="text" id="inputKelas" placeholder="Kelas akan muncul otomatis..." disabled>
+        </div>
+        <div class="status-msg" id="statusMsg"></div>
+        <button class="btn-mulai" id="btnMulai" onclick="mulaiMisi()" disabled>🚀 MULAI</button>
+        
+        <!-- PERBAIKAN: Tombol Panel Laporan Guru yang lebih menonjol -->
+        <button class="btn-teacher" onclick="bukaLaporanGuru()">👨‍🏫 Panel Laporan Guru</button>
+    </div>
+</div>
+
+<div class="report-overlay" id="reportOverlay">
+    <div class="report-box">
+        <h2>📊 LAPORAN SKOR SISWA</h2>
+        <div id="reportContent"></div>
+        <div class="report-actions">
+            <button class="btn-export" onclick="exportCSV()">📥 Export CSV</button>
+            <button class="btn-reset" onclick="resetLocalData()">🗑️ Reset Data Lokal</button>
+            <button class="btn-close" onclick="tutupLaporan()">✕ Tutup</button>
         </div>
     </div>
-    <div class="progress-bar-container">
-        <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="game-container">
+    <div class="header">
+        <h1>🚀 OPERASI DATA ANTARIKSA</h1>
+        <div class="status">
+            MISI: <span id="currentLevel">1 / 36</span> &nbsp;|&nbsp; SKOR: <span id="score">0</span>
+            <div class="student-info" id="studentInfo">Siswa: -</div>
+        </div>
     </div>
+    <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 
     <div class="main-content" id="gameArea">
         <div class="mission-brief">
-            <h2 id="missionTitle">Memuat Soal...</h2>
+            <h2 id="missionTitle">Memuat Misi...</h2>
             <p id="missionDesc">Sistem sedang menyiapkan data...</p>
         </div>
-
         <div class="excel-simulation">
             <div class="excel-toolbar">
                 <span>📊 Sheet1</span>
@@ -354,7 +209,6 @@
             </div>
             <table class="excel-grid" id="excelTable"></table>
         </div>
-
         <div class="formula-area">
             <label>🔧 Susun Rumus Anda:</label>
             <div class="formula-dropzone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -362,13 +216,13 @@
             </div>
             <div class="code-block-palette" id="palette"></div>
         </div>
-
         <div class="action-buttons">
+            <button class="btn-nav" id="btnPrev" onclick="prevQuestion()" disabled>⏮️ SOAL SEBELUMNYA</button>
             <button class="btn-primary" onclick="checkFormula()">▶ EKSEKUSI RUMUS</button>
             <button class="btn-danger" onclick="clearDropZone()">✕ HAPUS SEMUA</button>
             <button class="btn-secondary" onclick="showHint()">💡 BANTUAN (HINT)</button>
+            <button class="btn-skip" onclick="skipQuestion()">⏭️ LEWATI SOAL</button>
         </div>
-
         <div class="console-log" id="consoleLog">
             <div class="log-info">> Sistem siap. Silakan susun rumus menggunakan blok kode.</div>
         </div>
@@ -376,71 +230,244 @@
 
     <div class="main-content hidden" id="victoryArea">
         <div class="victory-screen">
-            <h2>🎉 SOAL BERHASIL DISELESAIKAN!</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px;">Selamat, Astranot Data SMPN 110 Jakarta! Anda telah menyelesaikan 36 tantangan logika Excel yang bervariasi.</p>
+            <h2>🎉 MISI BERHASIL DISELESAIKAN!</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Selamat, <span id="victoryName">Astranot</span> (<span id="victoryKelas">-</span>)! Skor Anda telah disimpan.</p>
             <p style="font-size: 1.3rem;">Total Skor Akhir: <span id="finalScore" style="color: var(--accent-green); font-weight: bold; font-size: 2.2rem;">0</span></p>
-            <button class="btn-primary" onclick="restartGame()" style="margin-top: 20px; padding: 14px 35px; font-size: 1.1rem;">🔄 ULANGI SOAL DARI AWAL</button>
+            <button class="btn-primary" onclick="restartGame()" style="margin-top: 20px; padding: 14px 35px; font-size: 1.1rem;">🔄 ULANGI MISI DARI AWAL</button>
         </div>
     </div>
 </div>
 
 <script>
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(type) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        if (type === 'success') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-        } else if (type === 'error') {
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwE1WMBMe7E3pH2kiKMJoJAtFRadCDqaExc8ZXD-6akPAQVeWUNyRXUirO4_lXbHnvH/exec';
+    let databaseSiswa = [];
+    let dataSiswaAktif = { nis: '', nama: '', kelas: '' };
+    const PASSWORD_GURU = 'guru123';
+    let answeredLevels = new Set();
+
+    async function loadDatabase() {
+        const dbStatus = document.getElementById('dbStatus');
+        const inputNIS = document.getElementById('inputNIS');
+        const btnCek = document.getElementById('btnCek');
+        try {
+            if (APPS_SCRIPT_URL.includes('GANTI_DENGAN_URL')) {
+                dbStatus.className = 'db-status disconnected';
+                dbStatus.innerHTML = '⚠️ Mode Offline.';
+                databaseSiswa = [{ nis: "12345", nama: "Ahmad Fauzi", kelas: "7A" }];
+                inputNIS.disabled = false; btnCek.disabled = false; inputNIS.focus(); return;
+            }
+            dbStatus.className = 'db-status loading';
+            dbStatus.innerHTML = '⏳ Menghubungkan ke Google Sheets...';
+            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSiswa`);
+            const result = await response.json();
+            if (result.success) {
+                databaseSiswa = result.data;
+                dbStatus.className = 'db-status connected';
+                dbStatus.innerHTML = `✅ Terhubung! ${result.total} siswa terdaftar.`;
+                inputNIS.disabled = false; btnCek.disabled = false; inputNIS.focus();
+            } else { throw new Error(result.error || 'Gagal memuat data'); }
+        } catch (error) {
+            dbStatus.className = 'db-status disconnected';
+            dbStatus.innerHTML = `❌ Gagal terhubung. Mode offline.`;
+            databaseSiswa = [{ nis: "12345", nama: "Ahmad Fauzi", kelas: "7A" }];
+            inputNIS.disabled = false; btnCek.disabled = false; inputNIS.focus();
         }
     }
 
+    async function simpanSkorKeSheets() {
+        if (APPS_SCRIPT_URL.includes('GANTI_DENGAN_URL')) return;
+        try {
+            const data = { action: 'simpanSkor', nis: dataSiswaAktif.nis, nama: dataSiswaAktif.nama, kelas: dataSiswaAktif.kelas, progress: currentLevelIndex, skor: score, selesai: currentLevelIndex >= 36 };
+            await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        } catch (error) { console.error('Gagal menyimpan skor:', error); }
+    }
+
+    async function ambilSkorDariSheets() {
+        if (APPS_SCRIPT_URL.includes('GANTI_DENGAN_URL')) return JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+        try {
+            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSkor`);
+            const result = await response.json();
+            if (result.success) return result.data;
+        } catch (error) { console.error('Gagal mengambil skor:', error); }
+        return JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+    }
+
+    function cariSiswa(nis) { return databaseSiswa.find(s => s.nis === nis.toString().trim()) || null; }
+    function cekNIS() {
+        const nisInput = document.getElementById('inputNIS').value.trim();
+        const statusMsg = document.getElementById('statusMsg');
+        const btnMulai = document.getElementById('btnMulai');
+        const inputNama = document.getElementById('inputNama');
+        const inputKelas = document.getElementById('inputKelas');
+        statusMsg.className = 'status-msg'; statusMsg.innerText = '';
+        inputNama.value = ''; inputKelas.value = ''; btnMulai.disabled = true;
+        if (!nisInput) { statusMsg.className = 'status-msg invalid'; statusMsg.innerText = '⚠️ NIS tidak boleh kosong!'; return; }
+        const siswa = cariSiswa(nisInput);
+        if (siswa) {
+            inputNama.value = siswa.nama; inputKelas.value = siswa.kelas;
+            statusMsg.className = 'status-msg valid';
+            statusMsg.innerText = `✅ NIS ditemukan: ${siswa.nama} - Kelas ${siswa.kelas}`;
+            btnMulai.disabled = false;
+            dataSiswaAktif = { nis: siswa.nis, nama: siswa.nama, kelas: siswa.kelas };
+        } else {
+            statusMsg.className = 'status-msg invalid';
+            statusMsg.innerText = '❌ NIS tidak terdaftar!';
+        }
+    }
+    document.getElementById('inputNIS').addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); cekNIS(); } });
+
+    function hashNIS(nis) {
+        let hash = 0; const str = nis.toString().trim().toLowerCase();
+        for (let i = 0; i < str.length; i++) { const char = str.charCodeAt(i); hash = ((hash << 5) - hash) + char; hash = hash & hash; }
+        return Math.abs(hash);
+    }
+    function seededRandom(seed) { let x = Math.sin(seed++) * 10000; return x - Math.floor(x); }
+    function shuffleWithSeed(array, seed) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(seededRandom(seed + i) * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+        return shuffled;
+    }
+
+    function simpanProgressLokal() {
+        const key = `game_if_${dataSiswaAktif.nis}`;
+        const data = { nis: dataSiswaAktif.nis, nama: dataSiswaAktif.nama, kelas: dataSiswaAktif.kelas, currentLevelIndex: currentLevelIndex, score: score, answeredLevels: Array.from(answeredLevels), timestamp: new Date().toISOString(), selesai: currentLevelIndex >= 36 };
+        localStorage.setItem(key, JSON.stringify(data));
+        const skorGlobal = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+        const idx = skorGlobal.findIndex(s => s.nis === dataSiswaAktif.nis);
+        if (idx >= 0) skorGlobal[idx] = data; else skorGlobal.push(data);
+        localStorage.setItem('skor_global_if', JSON.stringify(skorGlobal));
+    }
+
+    function muatProgress() {
+        const key = `game_if_${dataSiswaAktif.nis}`;
+        const saved = localStorage.getItem(key);
+        if (saved) {
+            const data = JSON.parse(saved);
+            currentLevelIndex = data.currentLevelIndex || 0;
+            score = data.score || 0;
+            answeredLevels = new Set(data.answeredLevels || []);
+            document.getElementById('score').innerText = score;
+            return true;
+        }
+        return false;
+    }
+
+    function mulaiMisi() {
+        if (!dataSiswaAktif.nis) { alert('⚠️ Silakan cek NIS terlebih dahulu!'); return; }
+        const seed = hashNIS(dataSiswaAktif.nis);
+        levels = shuffleWithSeed(allLevels, seed);
+        answeredLevels = new Set();
+        muatProgress();
+        document.getElementById('studentInfo').innerText = `${dataSiswaAktif.nama} (${dataSiswaAktif.kelas}) - NIS: ${dataSiswaAktif.nis}`;
+        document.getElementById('victoryName').innerText = dataSiswaAktif.nama;
+        document.getElementById('victoryKelas').innerText = dataSiswaAktif.kelas;
+        document.getElementById('loginOverlay').classList.add('hidden');
+        loadLevel();
+    }
+
+    // PERBAIKAN: Fungsi bukaLaporanGuru yang lebih robust
+    function bukaLaporanGuru() {
+        console.log('Tombol Panel Laporan Guru diklik!');
+        const pwd = prompt('🔐 Masukkan Password Guru:');
+        if (pwd === null) return; // User cancel
+        if (pwd !== PASSWORD_GURU) {
+            alert('❌ Password salah!\n\nPassword default: guru123');
+            return;
+        }
+        tampilkanLaporan();
+        document.getElementById('reportOverlay').classList.add('active');
+    }
+    
+    function tutupLaporan() { document.getElementById('reportOverlay').classList.remove('active'); }
+
+    function resetLocalData() {
+        if (confirm('⚠️ PERINGATAN: Yakin ingin menghapus SEMUA data progres siswa yang tersimpan di browser ini?\n\n(Data di Google Sheets TIDAK akan terhapus, hanya cache lokal yang direset.)')) {
+            const keysToDelete = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('game_if_') || key === 'skor_global_if') {
+                    keysToDelete.push(key);
+                }
+            }
+            keysToDelete.forEach(key => localStorage.removeItem(key));
+            alert('✅ Semua data lokal berhasil dihapus! Halaman akan dimuat ulang.');
+            location.reload();
+        }
+    }
+
+    async function tampilkanLaporan() {
+        const skorGlobal = await ambilSkorDariSheets();
+        const content = document.getElementById('reportContent');
+        if (skorGlobal.length === 0) { content.innerHTML = '<div class="empty-report">📭 Belum ada data siswa.</div>'; return; }
+        skorGlobal.sort((a, b) => (b.skor || b.score) - (a.skor || a.score));
+        let html = `<table class="report-table"><thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Progress</th><th>Skor</th><th>Status</th><th>Waktu</th></tr></thead><tbody>`;
+        skorGlobal.forEach((s, i) => {
+            const progress = `${s.currentLevelIndex || s.progress || 0} / 36`;
+            const skor = s.skor || s.score || 0;
+            const status = s.selesai ? '✅ Selesai' : (s.status || '🔄 Proses');
+            const waktu = s.timestamp ? new Date(s.timestamp).toLocaleString('id-ID') : '-';
+            html += `<tr><td>${i + 1}</td><td>${s.nis}</td><td>${s.nama}</td><td>${s.kelas || '-'}</td><td>${progress}</td><td><strong>${skor}</strong></td><td>${status}</td><td>${waktu}</td></tr>`;
+        });
+        html += '</tbody></table>';
+        content.innerHTML = html;
+    }
+
+    function exportCSV() {
+        const skorGlobal = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+        if (skorGlobal.length === 0) { alert('Tidak ada data!'); return; }
+        let csv = 'No,NIS,Nama,Kelas,Progress,Skor,Status,Waktu\n';
+        skorGlobal.sort((a, b) => b.score - a.score);
+        skorGlobal.forEach((s, i) => { csv += `${i+1},"${s.nis}","${s.nama}","${s.kelas || '-'}","${s.currentLevelIndex}/36",${s.score},"${s.selesai ? 'Selesai' : 'Proses'}","${s.timestamp ? new Date(s.timestamp).toLocaleString('id-ID') : '-'}"\n`; });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `Laporan_Skor_${new Date().toISOString().split('T')[0]}.csv`; a.click(); URL.revokeObjectURL(url);
+    }
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        if (type === 'success') { osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4); osc.start(); osc.stop(audioCtx.currentTime + 0.4); } 
+        else if (type === 'error') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); }
+    }
+
     const allLevels = [
-        {title:"Soal 1: Kelulusan Siswa",desc:"Jika nilai di A2 >= 75 maka 'Lulus', jika tidak 'Remedial'.",table:[["A (Nilai)","B (Status)"],["85",""]],target:"B2",correct:'=IF(A2>=75,"Lulus","Remedial")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'75'},{t:'text',v:'"Lulus"'},{t:'text',v:'"Remedial"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 2: Suhu Planet",desc:"Jika suhu di A2 < 0 maka 'Beku', jika tidak 'Cair'.",table:[["A (Suhu °C)","B (Wujud)"],["-5",""]],target:"B2",correct:'=IF(A2<0,"Beku","Cair")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'0'},{t:'text',v:'"Beku"'},{t:'text',v:'"Cair"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 3: Diskon Belanja",desc:"Jika total di A2 > 100000 maka 'Diskon', jika tidak 'Normal'.",table:[["A (Total)","B (Status)"],["150000",""]],target:"B2",correct:'=IF(A2>100000,"Diskon","Normal")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'100000'},{t:'text',v:'"Diskon"'},{t:'text',v:'"Normal"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 4: Grade Nilai",desc:"Jika C2 >= 80 'A', >= 70 'B', selain itu 'C'.",table:[["A","B","C (Nilai)","D (Grade)"],["","","85",""]],target:"D2",correct:'=IF(C2>=80,"A",IF(C2>=70,"B","C"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'C2'},{t:'operator',v:'>='},{t:'number',v:'80'},{t:'number',v:'70'},{t:'text',v:'"A"'},{t:'text',v:'"B"'},{t:'text',v:'"C"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 5: Seleksi Ganda",desc:"Jika A2 >= 80 DAN B2 >= 80 maka 'Lolos', jika tidak 'Gagal'.",table:[["A (Teori)","B (Praktik)","C (Status)"],["85","90",""]],target:"C2",correct:'=IF(AND(A2>=80,B2>=80),"Lolos","Gagal")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AND('},{t:'cell',v:'A2'},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'number',v:'80'},{t:'text',v:'"Lolos"'},{t:'text',v:'"Gagal"'},{t:'symbol',v:','},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 6: Total Belanja",desc:"Jika SUM(A2:C2) > 200000 maka 'VIP', jika tidak 'Reguler'.",table:[["A","B","C","D (Kategori)"],["50000","80000","90000",""]],target:"D2",correct:'=IF(SUM(A2:C2)>200000,"VIP","Reguler")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'SUM('},{t:'range',v:'A2:C2'},{t:'symbol',v:')'},{t:'operator',v:'>'},{t:'number',v:'200000'},{t:'text',v:'"VIP"'},{t:'text',v:'"Reguler"'},{t:'symbol',v:','}]},
-        {title:"Soal 7: Rata-rata Kelas",desc:"Jika AVERAGE(A2:A4) >= 75 maka 'Baik', jika tidak 'Cukup'.",table:[["A (Nilai)"],["80"],["70"],["75"],["Rata-rata",""]],target:"B5",correct:'=IF(AVERAGE(A2:A4)>=75,"Baik","Cukup")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AVERAGE('},{t:'range',v:'A2:A4'},{t:'symbol',v:')'},{t:'operator',v:'>='},{t:'number',v:'75'},{t:'text',v:'"Baik"'},{t:'text',v:'"Cukup"'},{t:'symbol',v:','}]},
-        {title:"Soal 8: Kategori BMI",desc:"Jika A2 < 18.5 'Kurus', < 25 'Normal', selain itu 'Gemuk'.",table:[["A (BMI)","B (Kategori)"],["22.5",""]],target:"B2",correct:'=IF(A2<18.5,"Kurus",IF(A2<25,"Normal","Gemuk"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'18.5'},{t:'number',v:'25'},{t:'text',v:'"Kurus"'},{t:'text',v:'"Normal"'},{t:'text',v:'"Gemuk"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 9: Hari Libur",desc:"Jika A2 'Sabtu' ATAU 'Minggu' maka 'Libur', jika tidak 'Kerja'.",table:[["A (Hari)","B (Status)"],["Sabtu",""]],target:"B2",correct:'=IF(OR(A2="Sabtu",A2="Minggu"),"Libur","Kerja")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'OR('},{t:'cell',v:'A2'},{t:'text',v:'"Sabtu"'},{t:'text',v:'"Minggu"'},{t:'text',v:'"Libur"'},{t:'text',v:'"Kerja"'},{t:'symbol',v:','},{t:'symbol',v:'='},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soali 10: Kategori Umur",desc:"Jika A2 < 17 'Anak', < 60 'Dewasa', selain itu 'Lansia'.",table:[["A (Umur)","B (Kategori)"],["25",""]],target:"B2",correct:'=IF(A2<17,"Anak",IF(A2<60,"Dewasa","Lansia"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'17'},{t:'number',v:'60'},{t:'text',v:'"Anak"'},{t:'text',v:'"Dewasa"'},{t:'text',v:'"Lansia"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 11: Status Stok",desc:"Jika A2 = 0 maka 'Habis', jika tidak 'Tersedia'.",table:[["A (Stok)","B (Status)"],["0",""]],target:"B2",correct:'=IF(A2=0,"Habis","Tersedia")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'number',v:'0'},{t:'text',v:'"Habis"'},{t:'text',v:'"Tersedia"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 12: Diskon Member",desc:"Jika B2 'Member' maka 'Diskon 10%', jika tidak 'Harga Normal'.",table:[["A (Nama)","B (Tipe)","C (Harga)"],["Andi","Member",""]],target:"C2",correct:'=IF(B2="Member","Diskon 10%","Harga Normal")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'B2'},{t:'operator',v:'='},{t:'text',v:'"Member"'},{t:'text',v:'"Diskon 10%"'},{t:'text',v:'"Harga Normal"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 13: Nilai Huruf A-E",desc:"Jika C2>=90 'A', >=80 'B', >=70 'C', >=60 'D', selain itu 'E'.",table:[["A","B","C (Nilai)","D (Huruf)"],["","","75",""]],target:"D2",correct:'=IF(C2>=90,"A",IF(C2>=80,"B",IF(C2>=70,"C",IF(C2>=60,"D","E"))))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'C2'},{t:'operator',v:'>='},{t:'number',v:'90'},{t:'number',v:'80'},{t:'number',v:'70'},{t:'number',v:'60'},{t:'text',v:'"A"'},{t:'text',v:'"B"'},{t:'text',v:'"C"'},{t:'text',v:'"D"'},{t:'text',v:'"E"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'function',v:'IF('},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 14: Nilai Tertinggi",desc:"Jika A2 = MAX(A2:A4) maka 'Tertinggi', jika tidak 'Biasa'.",table:[["A (Nilai)","B (Status)"],["95",""],["80",""],["70",""]],target:"B2",correct:'=IF(A2=MAX(A2:A4),"Tertinggi","Biasa")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'function',v:'MAX('},{t:'range',v:'A2:A4'},{t:'symbol',v:')'},{t:'text',v:'"Tertinggi"'},{t:'text',v:'"Biasa"'},{t:'symbol',v:','}]},
-        {title:"Soal 15: Nilai Terendah",desc:"Jika A2 = MIN(A2:A4) maka 'Terendah', jika tidak 'Aman'.",table:[["A (Nilai)","B (Status)"],["60",""],["80",""],["90",""]],target:"B2",correct:'=IF(A2=MIN(A2:A4),"Terendah","Aman")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'function',v:'MIN('},{t:'range',v:'A2:A4'},{t:'symbol',v:')'},{t:'text',v:'"Terendah"'},{t:'text',v:'"Aman"'},{t:'symbol',v:','}]},
-        {title:"Soal 16: Bonus Sales",desc:"Jika A2 > 50 maka 'Bonus 500rb', jika tidak 'Tidak Bonus'.",table:[["A (Unit Terjual)","B (Bonus)"],["75",""]],target:"B2",correct:'=IF(A2>50,"Bonus 500rb","Tidak Bonus")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'50'},{t:'text',v:'"Bonus 500rb"'},{t:'text',v:'"Tidak Bonus"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 17: Pajak Penghasilan",desc:"Jika A2 > 5000000 maka 'Kena Pajak', jika tidak 'Bebas Pajak'.",table:[["A (Gaji)","B (Status Pajak)"],["7500000",""]],target:"B2",correct:'=IF(A2>5000000,"Kena Pajak","Bebas Pajak")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'5000000'},{t:'text',v:'"Kena Pajak"'},{t:'text',v:'"Bebas Pajak"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 18: Predikat IPK",desc:"Jika A2 >= 3.5 'Cumlaude', >= 3.0 'Sangat Baik', selain itu 'Baik'.",table:[["A (IPK)","B (Predikat)"],["3.75",""]],target:"B2",correct:'=IF(A2>=3.5,"Cumlaude",IF(A2>=3.0,"Sangat Baik","Baik"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'3.5'},{t:'number',v:'3.0'},{t:'text',v:'"Cumlaude"'},{t:'text',v:'"Sangat Baik"'},{t:'text',v:'"Baik"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 19: Wujud Air",desc:"Jika A2 <= 0 'Es', < 100 'Air', selain itu 'Uap'.",table:[["A (Suhu °C)","B (Wujud)"],["25",""]],target:"B2",correct:'=IF(A2<=0,"Es",IF(A2<100,"Air","Uap"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<='},{t:'number',v:'0'},{t:'number',v:'100'},{t:'text',v:'"Es"'},{t:'text',v:'"Air"'},{t:'text',v:'"Uap"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 20: Diskon Bertingkat",desc:"Jika A2 > 500000 'Diskon 20%', > 200000 'Diskon 10%', selain itu 'Tanpa Diskon'.",table:[["A (Belanja)","B (Diskon)"],["300000",""]],target:"B2",correct:'=IF(A2>500000,"Diskon 20%",IF(A2>200000,"Diskon 10%","Tanpa Diskon"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'500000'},{t:'number',v:'200000'},{t:'text',v:'"Diskon 20%"'},{t:'text',v:'"Diskon 10%"'},{t:'text',v:'"Tanpa Diskon"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 21: Ganjil atau Genap",desc:"Jika MOD(A2,2)=0 maka 'Genap', jika tidak 'Ganjil'.",table:[["A (Angka)","B (Tipe)"],["14",""]],target:"B2",correct:'=IF(MOD(A2,2)=0,"Genap","Ganjil")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'MOD('},{t:'cell',v:'A2'},{t:'number',v:'2'},{t:'symbol',v:')'},{t:'operator',v:'='},{t:'number',v:'0'},{t:'text',v:'"Genap"'},{t:'text',v:'"Ganjil"'},{t:'symbol',v:','}]},
-        {title:"Soal 22: Status Pegawai",desc:"Jika B2 >= 5 'Tetap', jika tidak 'Kontrak'.",table:[["A (Nama)","B (Masa Kerja)","C (Status)"],["Budi","7",""]],target:"C2",correct:'=IF(B2>=5,"Tetap","Kontrak")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'number',v:'5'},{t:'text',v:'"Tetap"'},{t:'text',v:'"Kontrak"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 23: Kategori Internet",desc:"Jika A2 < 10 'Lambat', < 50 'Sedang', selain itu 'Cepat'.",table:[["A (Mbps)","B (Kategori)"],["75",""]],target:"B2",correct:'=IF(A2<10,"Lambat",IF(A2<50,"Sedang","Cepat"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'10'},{t:'number',v:'50'},{t:'text',v:'"Lambat"'},{t:'text',v:'"Sedang"'},{t:'text',v:'"Cepat"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 24: Status Pembayaran",desc:"Jika A2 = 'Lunas' maka 'Selesai', jika tidak 'Belum Lunas'.",table:[["A (Status)","B (Keterangan)"],["Lunas",""]],target:"B2",correct:'=IF(A2="Lunas","Selesai","Belum Lunas")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'text',v:'"Lunas"'},{t:'text',v:'"Selesai"'},{t:'text',v:'"Belum Lunas"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 25: Level Game",desc:"Jika A2 >= 1000 'Pro', >= 500 'Medium', selain itu 'Beginner'.",table:[["A (Skor)","B (Level)"],["750",""]],target:"B2",correct:'=IF(A2>=1000,"Pro",IF(A2>=500,"Medium","Beginner"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'1000'},{t:'number',v:'500'},{t:'text',v:'"Pro"'},{t:'text',v:'"Medium"'},{t:'text',v:'"Beginner"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 26: Jumlah Hadir",desc:"Jika COUNT(A2:A6) >= 5 maka 'Rajin', jika tidak 'Kurang'.",table:[["A (Kehadiran)"],["H"],["H"],["H"],["H"],["H"],["Total",""]],target:"B7",correct:'=IF(COUNT(A2:A6)>=5,"Rajin","Kurang")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'COUNT('},{t:'range',v:'A2:A6'},{t:'symbol',v:')'},{t:'operator',v:'>='},{t:'number',v:'5'},{t:'text',v:'"Rajin"'},{t:'text',v:'"Kurang"'},{t:'symbol',v:','}]},
-        {title:"Soal 27: Kategori Tinggi",desc:"Jika A2 < 150 'Pendek', < 170 'Sedang', selain itu 'Tinggi'.",table:[["A (cm)","B (Kategori)"],["175",""]],target:"B2",correct:'=IF(A2<150,"Pendek",IF(A2<170,"Sedang","Tinggi"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'150'},{t:'number',v:'170'},{t:'text',v:'"Pendek"'},{t:'text',v:'"Sedang"'},{t:'text',v:'"Tinggi"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 28: Panjang Password",desc:"Jika LEN(A2) >= 8 maka 'Aman', jika tidak 'Lemah'.",table:[["A (Password)","B (Status)"],["rahasia123",""]],target:"B2",correct:'=IF(LEN(A2)>=8,"Aman","Lemah")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'LEN('},{t:'cell',v:'A2'},{t:'symbol',v:')'},{t:'operator',v:'>='},{t:'number',v:'8'},{t:'text',v:'"Aman"'},{t:'text',v:'"Lemah"'},{t:'symbol',v:','}]},
-        {title:"Soal 29: Kelulusan Komprehensif",desc:"Jika A2 >= 70 DAN B2 >= 70 maka 'Lulus', jika tidak 'Tidak Lulus'.",table:[["A (Ujian)","B (Tugas)","C (Hasil)"],["85","75",""]],target:"C2",correct:'=IF(AND(A2>=70,B2>=70),"Lulus","Tidak Lulus")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AND('},{t:'cell',v:'A2'},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'number',v:'70'},{t:'text',v:'"Lulus"'},{t:'text',v:'"Tidak Lulus"'},{t:'symbol',v:','},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 30: Jenjang Sekolah",desc:"Jika A2 < 7 'TK', < 13 'SD', < 16 'SMP', selain itu 'SMA'.",table:[["A (Umur)","B (Jenjang)"],["14",""]],target:"B2",correct:'=IF(A2<7,"TK",IF(A2<13,"SD",IF(A2<16,"SMP","SMA")))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'7'},{t:'number',v:'13'},{t:'number',v:'16'},{t:'text',v:'"TK"'},{t:'text',v:'"SD"'},{t:'text',v:'"SMP"'},{t:'text',v:'"SMA"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 31: Kode Wilayah",desc:"Jika LEFT(A2,2)='JK' maka 'Jakarta', jika tidak 'Lainnya'.",table:[["A (Kode Pos)","B (Kota)"],["JK001",""]],target:"B2",correct:'=IF(LEFT(A2,2)="JK","Jakarta","Lainnya")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'LEFT('},{t:'cell',v:'A2'},{t:'number',v:'2'},{t:'symbol',v:')'},{t:'operator',v:'='},{t:'text',v:'"JK"'},{t:'text',v:'"Jakarta"'},{t:'text',v:'"Lainnya"'},{t:'symbol',v:','}]},
-        {title:"Soal 32: Kategori Produk",desc:"Jika A2 < 10000 'Murah', < 100000 'Menengah', selain itu 'Mewah'.",table:[["A (Harga)","B (Kategori)"],["50000",""]],target:"B2",correct:'=IF(A2<10000,"Murah",IF(A2<100000,"Menengah","Mewah"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'10000'},{t:'number',v:'100000'},{t:'text',v:'"Murah"'},{t:'text',v:'"Menengah"'},{t:'text',v:'"Mewah"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 33: Kode Kelas",desc:"Jika MID(A2,2,1)='A' maka 'Kelas A', jika tidak 'Kelas B'.",table:[["A (NIS)","B (Kelas)"],["1A234",""]],target:"B2",correct:'=IF(MID(A2,2,1)="A","Kelas A","Kelas B")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'MID('},{t:'cell',v:'A2'},{t:'number',v:'2'},{t:'number',v:'1'},{t:'symbol',v:')'},{t:'operator',v:'='},{t:'text',v:'"A"'},{t:'text',v:'"Kelas A"'},{t:'text',v:'"Kelas B"'},{t:'symbol',v:','}]},
-        {title:"Soal 34: Bonus Tahunan",desc:"Jika A2 >= 1000000 'Bonus 1jt', >= 500000 'Bonus 500rb', selain itu 'Tidak Bonus'.",table:[["A (Penjualan)","B (Bonus)"],["750000",""]],target:"B2",correct:'=IF(A2>=1000000,"Bonus 1jt",IF(A2>=500000,"Bonus 500rb","Tidak Bonus"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'1000000'},{t:'number',v:'500000'},{t:'text',v:'"Bonus 1jt"'},{t:'text',v:'"Bonus 500rb"'},{t:'text',v:'"Tidak Bonus"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Soal 35: Validasi Kode",desc:"Jika A2 = 'ADMIN' maka 'Akses Penuh', jika tidak 'Akses Terbatas'.",table:[["A (Role)","B (Akses)"],["ADMIN",""]],target:"B2",correct:'=IF(A2="ADMIN","Akses Penuh","Akses Terbatas")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'text',v:'"ADMIN"'},{t:'text',v:'"Akses Penuh"'},{t:'text',v:'"Akses Terbatas"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
-        {title:"Soal 36: Beasiswa Mahasiswa",desc:"Jika A2 >= 3.5 DAN B2 <= 2000000 maka 'Dapat Beasiswa', jika tidak 'Tidak Dapat'.",table:[["A (IPK)","B (Penghasilan)","C (Beasiswa)"],["3.8","1500000",""]],target:"C2",correct:'=IF(AND(A2>=3.5,B2<=2000000),"Dapat Beasiswa","Tidak Dapat")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AND('},{t:'cell',v:'A2'},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'operator',v:'<='},{t:'number',v:'3.5'},{t:'number',v:'2000000'},{t:'text',v:'"Dapat Beasiswa"'},{t:'text',v:'"Tidak Dapat"'},{t:'symbol',v:','},{t:'symbol',v:')'},{t:'symbol',v:')'}]}
+        {title:"Kelulusan Siswa",desc:"Jika nilai di A2 >= 75 maka 'Lulus', jika tidak 'Remedial'.",table:[["A (Nilai)","B (Status)"],["85",""]],target:"B2",correct:'=IF(A2>=75,"Lulus","Remedial")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'75'},{t:'text',v:'"Lulus"'},{t:'text',v:'"Remedial"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Suhu Planet",desc:"Jika suhu di A2 < 0 maka 'Beku', jika tidak 'Cair'.",table:[["A (Suhu °C)","B (Wujud)"],["-5",""]],target:"B2",correct:'=IF(A2<0,"Beku","Cair")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'0'},{t:'text',v:'"Beku"'},{t:'text',v:'"Cair"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Diskon Belanja",desc:"Jika total di A2 > 100000 maka 'Diskon', jika tidak 'Normal'.",table:[["A (Total)","B (Status)"],["150000",""]],target:"B2",correct:'=IF(A2>100000,"Diskon","Normal")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'100000'},{t:'text',v:'"Diskon"'},{t:'text',v:'"Normal"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Grade Nilai",desc:"Jika C2 >= 80 'A', >= 70 'B', selain itu 'C'.",table:[["A","B","C (Nilai)","D (Grade)"],["","","85",""]],target:"D2",correct:'=IF(C2>=80,"A",IF(C2>=70,"B","C"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'C2'},{t:'operator',v:'>='},{t:'number',v:'80'},{t:'number',v:'70'},{t:'text',v:'"A"'},{t:'text',v:'"B"'},{t:'text',v:'"C"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Seleksi Ganda",desc:"Jika A2 >= 80 DAN B2 >= 80 maka 'Lolos', jika tidak 'Gagal'.",table:[["A (Teori)","B (Praktik)","C (Status)"],["85","90",""]],target:"C2",correct:'=IF(AND(A2>=80,B2>=80),"Lolos","Gagal")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AND('},{t:'cell',v:'A2'},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'number',v:'80'},{t:'text',v:'"Lolos"'},{t:'text',v:'"Gagal"'},{t:'symbol',v:','},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Total Belanja",desc:"Jika SUM(A2:C2) > 200000 maka 'VIP', jika tidak 'Reguler'.",table:[["A","B","C","D (Kategori)"],["50000","80000","90000",""]],target:"D2",correct:'=IF(SUM(A2:C2)>200000,"VIP","Reguler")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'SUM('},{t:'range',v:'A2:C2'},{t:'symbol',v:')'},{t:'operator',v:'>'},{t:'number',v:'200000'},{t:'text',v:'"VIP"'},{t:'text',v:'"Reguler"'},{t:'symbol',v:','}]},
+        {title:"Rata-rata Kelas",desc:"Jika AVERAGE(A2:A4) >= 75 maka 'Baik', jika tidak 'Cukup'.",table:[["A (Nilai)"],["80"],["70"],["75"],["Rata-rata",""]],target:"B5",correct:'=IF(AVERAGE(A2:A4)>=75,"Baik","Cukup")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AVERAGE('},{t:'range',v:'A2:A4'},{t:'symbol',v:')'},{t:'operator',v:'>='},{t:'number',v:'75'},{t:'text',v:'"Baik"'},{t:'text',v:'"Cukup"'},{t:'symbol',v:','}]},
+        {title:"Kategori BMI",desc:"Jika A2 < 18.5 'Kurus', < 25 'Normal', selain itu 'Gemuk'.",table:[["A (BMI)","B (Kategori)"],["22.5",""]],target:"B2",correct:'=IF(A2<18.5,"Kurus",IF(A2<25,"Normal","Gemuk"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'18.5'},{t:'number',v:'25'},{t:'text',v:'"Kurus"'},{t:'text',v:'"Normal"'},{t:'text',v:'"Gemuk"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Hari Libur",desc:"Jika A2 'Sabtu' ATAU 'Minggu' maka 'Libur', jika tidak 'Kerja'.",table:[["A (Hari)","B (Status)"],["Sabtu",""]],target:"B2",correct:'=IF(OR(A2="Sabtu",A2="Minggu"),"Libur","Kerja")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'OR('},{t:'cell',v:'A2'},{t:'text',v:'"Sabtu"'},{t:'text',v:'"Minggu"'},{t:'text',v:'"Libur"'},{t:'text',v:'"Kerja"'},{t:'symbol',v:','},{t:'symbol',v:'='},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Kategori Umur",desc:"Jika A2 < 17 'Anak', < 60 'Dewasa', selain itu 'Lansia'.",table:[["A (Umur)","B (Kategori)"],["25",""]],target:"B2",correct:'=IF(A2<17,"Anak",IF(A2<60,"Dewasa","Lansia"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'17'},{t:'number',v:'60'},{t:'text',v:'"Anak"'},{t:'text',v:'"Dewasa"'},{t:'text',v:'"Lansia"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Status Stok",desc:"Jika A2 = 0 maka 'Habis', jika tidak 'Tersedia'.",table:[["A (Stok)","B (Status)"],["0",""]],target:"B2",correct:'=IF(A2=0,"Habis","Tersedia")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'number',v:'0'},{t:'text',v:'"Habis"'},{t:'text',v:'"Tersedia"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Diskon Member",desc:"Jika B2 'Member' maka 'Diskon 10%', jika tidak 'Harga Normal'.",table:[["A (Nama)","B (Tipe)","C (Harga)"],["Andi","Member",""]],target:"C2",correct:'=IF(B2="Member","Diskon 10%","Harga Normal")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'B2'},{t:'operator',v:'='},{t:'text',v:'"Member"'},{t:'text',v:'"Diskon 10%"'},{t:'text',v:'"Harga Normal"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Nilai Huruf A-E",desc:"Jika C2>=90 'A', >=80 'B', >=70 'C', >=60 'D', selain itu 'E'.",table:[["A","B","C (Nilai)","D (Huruf)"],["","","75",""]],target:"D2",correct:'=IF(C2>=90,"A",IF(C2>=80,"B",IF(C2>=70,"C",IF(C2>=60,"D","E"))))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'C2'},{t:'operator',v:'>='},{t:'number',v:'90'},{t:'number',v:'80'},{t:'number',v:'70'},{t:'number',v:'60'},{t:'text',v:'"A"'},{t:'text',v:'"B"'},{t:'text',v:'"C"'},{t:'text',v:'"D"'},{t:'text',v:'"E"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'function',v:'IF('},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Nilai Tertinggi",desc:"Jika A2 = MAX(A2:A4) maka 'Tertinggi', jika tidak 'Biasa'.",table:[["A (Nilai)","B (Status)"],["95",""],["80",""],["70",""]],target:"B2",correct:'=IF(A2=MAX(A2:A4),"Tertinggi","Biasa")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'function',v:'MAX('},{t:'range',v:'A2:A4'},{t:'symbol',v:')'},{t:'text',v:'"Tertinggi"'},{t:'text',v:'"Biasa"'},{t:'symbol',v:','}]},
+        {title:"Nilai Terendah",desc:"Jika A2 = MIN(A2:A4) maka 'Terendah', jika tidak 'Aman'.",table:[["A (Nilai)","B (Status)"],["60",""],["80",""],["90",""]],target:"B2",correct:'=IF(A2=MIN(A2:A4),"Terendah","Aman")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'function',v:'MIN('},{t:'range',v:'A2:A4'},{t:'symbol',v:')'},{t:'text',v:'"Terendah"'},{t:'text',v:'"Aman"'},{t:'symbol',v:','}]},
+        {title:"Bonus Sales",desc:"Jika A2 > 50 maka 'Bonus 500rb', jika tidak 'Tidak Bonus'.",table:[["A (Unit Terjual)","B (Bonus)"],["75",""]],target:"B2",correct:'=IF(A2>50,"Bonus 500rb","Tidak Bonus")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'50'},{t:'text',v:'"Bonus 500rb"'},{t:'text',v:'"Tidak Bonus"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Pajak Penghasilan",desc:"Jika A2 > 5000000 maka 'Kena Pajak', jika tidak 'Bebas Pajak'.",table:[["A (Gaji)","B (Status Pajak)"],["7500000",""]],target:"B2",correct:'=IF(A2>5000000,"Kena Pajak","Bebas Pajak")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'5000000'},{t:'text',v:'"Kena Pajak"'},{t:'text',v:'"Bebas Pajak"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Predikat IPK",desc:"Jika A2 >= 3.5 'Cumlaude', >= 3.0 'Sangat Baik', selain itu 'Baik'.",table:[["A (IPK)","B (Predikat)"],["3.75",""]],target:"B2",correct:'=IF(A2>=3.5,"Cumlaude",IF(A2>=3.0,"Sangat Baik","Baik"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'3.5'},{t:'number',v:'3.0'},{t:'text',v:'"Cumlaude"'},{t:'text',v:'"Sangat Baik"'},{t:'text',v:'"Baik"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Wujud Air",desc:"Jika A2 <= 0 'Es', < 100 'Air', selain itu 'Uap'.",table:[["A (Suhu °C)","B (Wujud)"],["25",""]],target:"B2",correct:'=IF(A2<=0,"Es",IF(A2<100,"Air","Uap"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<='},{t:'number',v:'0'},{t:'number',v:'100'},{t:'text',v:'"Es"'},{t:'text',v:'"Air"'},{t:'text',v:'"Uap"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Diskon Bertingkat",desc:"Jika A2 > 500000 'Diskon 20%', > 200000 'Diskon 10%', selain itu 'Tanpa Diskon'.",table:[["A (Belanja)","B (Diskon)"],["300000",""]],target:"B2",correct:'=IF(A2>500000,"Diskon 20%",IF(A2>200000,"Diskon 10%","Tanpa Diskon"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'500000'},{t:'number',v:'200000'},{t:'text',v:'"Diskon 20%"'},{t:'text',v:'"Diskon 10%"'},{t:'text',v:'"Tanpa Diskon"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Ganjil atau Genap",desc:"Jika MOD(A2,2)=0 maka 'Genap', jika tidak 'Ganjil'.",table:[["A (Angka)","B (Tipe)"],["14",""]],target:"B2",correct:'=IF(MOD(A2,2)=0,"Genap","Ganjil")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'MOD('},{t:'cell',v:'A2'},{t:'number',v:'2'},{t:'symbol',v:')'},{t:'operator',v:'='},{t:'number',v:'0'},{t:'text',v:'"Genap"'},{t:'text',v:'"Ganjil"'},{t:'symbol',v:','}]},
+        {title:"Status Pegawai",desc:"Jika B2 >= 5 'Tetap', jika tidak 'Kontrak'.",table:[["A (Nama)","B (Masa Kerja)","C (Status)"],["Budi","7",""]],target:"C2",correct:'=IF(B2>=5,"Tetap","Kontrak")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'number',v:'5'},{t:'text',v:'"Tetap"'},{t:'text',v:'"Kontrak"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Kategori Internet",desc:"Jika A2 < 10 'Lambat', < 50 'Sedang', selain itu 'Cepat'.",table:[["A (Mbps)","B (Kategori)"],["75",""]],target:"B2",correct:'=IF(A2<10,"Lambat",IF(A2<50,"Sedang","Cepat"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'10'},{t:'number',v:'50'},{t:'text',v:'"Lambat"'},{t:'text',v:'"Sedang"'},{t:'text',v:'"Cepat"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Status Pembayaran",desc:"Jika A2 = 'Lunas' maka 'Selesai', jika tidak 'Belum Lunas'.",table:[["A (Status)","B (Keterangan)"],["Lunas",""]],target:"B2",correct:'=IF(A2="Lunas","Selesai","Belum Lunas")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'text',v:'"Lunas"'},{t:'text',v:'"Selesai"'},{t:'text',v:'"Belum Lunas"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Level Game",desc:"Jika A2 >= 1000 'Pro', >= 500 'Medium', selain itu 'Beginner'.",table:[["A (Skor)","B (Level)"],["750",""]],target:"B2",correct:'=IF(A2>=1000,"Pro",IF(A2>=500,"Medium","Beginner"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'1000'},{t:'number',v:'500'},{t:'text',v:'"Pro"'},{t:'text',v:'"Medium"'},{t:'text',v:'"Beginner"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Jumlah Hadir",desc:"Jika COUNT(A2:A6) >= 5 maka 'Rajin', jika tidak 'Kurang'.",table:[["A (Kehadiran)"],["H"],["H"],["H"],["H"],["H"],["Total",""]],target:"B7",correct:'=IF(COUNT(A2:A6)>=5,"Rajin","Kurang")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'COUNT('},{t:'range',v:'A2:A6'},{t:'symbol',v:')'},{t:'operator',v:'>='},{t:'number',v:'5'},{t:'text',v:'"Rajin"'},{t:'text',v:'"Kurang"'},{t:'symbol',v:','}]},
+        {title:"Kategori Tinggi",desc:"Jika A2 < 150 'Pendek', < 170 'Sedang', selain itu 'Tinggi'.",table:[["A (cm)","B (Kategori)"],["175",""]],target:"B2",correct:'=IF(A2<150,"Pendek",IF(A2<170,"Sedang","Tinggi"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'150'},{t:'number',v:'170'},{t:'text',v:'"Pendek"'},{t:'text',v:'"Sedang"'},{t:'text',v:'"Tinggi"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Panjang Password",desc:"Jika LEN(A2) >= 8 maka 'Aman', jika tidak 'Lemah'.",table:[["A (Password)","B (Status)"],["rahasia123",""]],target:"B2",correct:'=IF(LEN(A2)>=8,"Aman","Lemah")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'LEN('},{t:'cell',v:'A2'},{t:'symbol',v:')'},{t:'operator',v:'>='},{t:'number',v:'8'},{t:'text',v:'"Aman"'},{t:'text',v:'"Lemah"'},{t:'symbol',v:','}]},
+        {title:"Kelulusan Komprehensif",desc:"Jika A2 >= 70 DAN B2 >= 70 maka 'Lulus', jika tidak 'Tidak Lulus'.",table:[["A (Ujian)","B (Tugas)","C (Hasil)"],["85","75",""]],target:"C2",correct:'=IF(AND(A2>=70,B2>=70),"Lulus","Tidak Lulus")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AND('},{t:'cell',v:'A2'},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'number',v:'70'},{t:'text',v:'"Lulus"'},{t:'text',v:'"Tidak Lulus"'},{t:'symbol',v:','},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Jenjang Sekolah",desc:"Jika A2 < 7 'TK', < 13 'SD', < 16 'SMP', selain itu 'SMA'.",table:[["A (Umur)","B (Jenjang)"],["14",""]],target:"B2",correct:'=IF(A2<7,"TK",IF(A2<13,"SD",IF(A2<16,"SMP","SMA")))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'7'},{t:'number',v:'13'},{t:'number',v:'16'},{t:'text',v:'"TK"'},{t:'text',v:'"SD"'},{t:'text',v:'"SMP"'},{t:'text',v:'"SMA"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Kode Wilayah",desc:"Jika LEFT(A2,2)='JK' maka 'Jakarta', jika tidak 'Lainnya'.",table:[["A (Kode Pos)","B (Kota)"],["JK001",""]],target:"B2",correct:'=IF(LEFT(A2,2)="JK","Jakarta","Lainnya")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'LEFT('},{t:'cell',v:'A2'},{t:'number',v:'2'},{t:'symbol',v:')'},{t:'operator',v:'='},{t:'text',v:'"JK"'},{t:'text',v:'"Jakarta"'},{t:'text',v:'"Lainnya"'},{t:'symbol',v:','}]},
+        {title:"Kategori Produk",desc:"Jika A2 < 10000 'Murah', < 100000 'Menengah', selain itu 'Mewah'.",table:[["A (Harga)","B (Kategori)"],["50000",""]],target:"B2",correct:'=IF(A2<10000,"Murah",IF(A2<100000,"Menengah","Mewah"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'10000'},{t:'number',v:'100000'},{t:'text',v:'"Murah"'},{t:'text',v:'"Menengah"'},{t:'text',v:'"Mewah"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Kode Kelas",desc:"Jika MID(A2,2,1)='A' maka 'Kelas A', jika tidak 'Kelas B'.",table:[["A (NIS)","B (Kelas)"],["1A234",""]],target:"B2",correct:'=IF(MID(A2,2,1)="A","Kelas A","Kelas B")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'MID('},{t:'cell',v:'A2'},{t:'number',v:'2'},{t:'number',v:'1'},{t:'symbol',v:')'},{t:'operator',v:'='},{t:'text',v:'"A"'},{t:'text',v:'"Kelas A"'},{t:'text',v:'"Kelas B"'},{t:'symbol',v:','}]},
+        {title:"Bonus Tahunan",desc:"Jika A2 >= 1000000 'Bonus 1jt', >= 500000 'Bonus 500rb', selain itu 'Tidak Bonus'.",table:[["A (Penjualan)","B (Bonus)"],["750000",""]],target:"B2",correct:'=IF(A2>=1000000,"Bonus 1jt",IF(A2>=500000,"Bonus 500rb","Tidak Bonus"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'1000000'},{t:'number',v:'500000'},{t:'text',v:'"Bonus 1jt"'},{t:'text',v:'"Bonus 500rb"'},{t:'text',v:'"Tidak Bonus"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Validasi Kode",desc:"Jika A2 = 'ADMIN' maka 'Akses Penuh', jika tidak 'Akses Terbatas'.",table:[["A (Role)","B (Akses)"],["ADMIN",""]],target:"B2",correct:'=IF(A2="ADMIN","Akses Penuh","Akses Terbatas")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'text',v:'"ADMIN"'},{t:'text',v:'"Akses Penuh"'},{t:'text',v:'"Akses Terbatas"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
+        {title:"Beasiswa Mahasiswa",desc:"Jika A2 >= 3.5 DAN B2 <= 2000000 maka 'Dapat Beasiswa', jika tidak 'Tidak Dapat'.",table:[["A (IPK)","B (Penghasilan)","C (Beasiswa)"],["3.8","1500000",""]],target:"C2",correct:'=IF(AND(A2>=3.5,B2<=2000000),"Dapat Beasiswa","Tidak Dapat")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AND('},{t:'cell',v:'A2'},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'operator',v:'<='},{t:'number',v:'3.5'},{t:'number',v:'2000000'},{t:'text',v:'"Dapat Beasiswa"'},{t:'text',v:'"Tidak Dapat"'},{t:'symbol',v:','},{t:'symbol',v:')'},{t:'symbol',v:')'}]}
     ];
 
     let levels = [...allLevels];
@@ -452,19 +479,15 @@
         document.getElementById('missionTitle').innerText = level.title;
         document.getElementById('missionDesc').innerText = level.desc;
         document.getElementById('currentLevel').innerText = `${currentLevelIndex + 1} / 36`;
-        const progress = ((currentLevelIndex) / 36) * 100;
-        document.getElementById('progressBar').style.width = progress + '%';
-
+        document.getElementById('progressBar').style.width = ((currentLevelIndex) / 36) * 100 + '%';
         const colMatch = level.target.match(/[A-Z]+/);
         const rowMatch = level.target.match(/\d+/);
         const targetColIndex = colMatch ? colMatch[0].charCodeAt(0) - 64 : 1; 
         const targetRowIndex = rowMatch ? parseInt(rowMatch[0]) : 1;
-
         const table = document.getElementById('excelTable');
         table.innerHTML = '';
         const maxRows = Math.max(level.table.length, targetRowIndex); 
         const maxCols = Math.max(level.table.reduce((max, row) => Math.max(max, row.length), 0), targetColIndex) + 1; 
-
         for (let r = 0; r < maxRows; r++) {
             const tr = document.createElement('tr');
             const thRow = document.createElement('th');
@@ -478,20 +501,16 @@
                 } else {
                     const td = document.createElement('td');
                     const rowData = level.table[r] || [];
-                    const cellData = (rowData[c] !== undefined) ? rowData[c] : "";
-                    td.innerText = cellData;
-                    const currentColLetter = String.fromCharCode(65 + c);
-                    const currentCellRef = `${currentColLetter}${r + 1}`; 
-                    if (currentCellRef === level.target) {
+                    td.innerText = (rowData[c] !== undefined) ? rowData[c] : "";
+                    if (`${String.fromCharCode(65 + c)}${r + 1}` === level.target) {
                         td.className = 'active-cell';
-                        document.getElementById('cellReference').innerText = `Sel Aktif: ${currentCellRef}`;
+                        document.getElementById('cellReference').innerText = `Sel Aktif: ${level.target}`;
                     }
                     tr.appendChild(td);
                 }
             }
             table.appendChild(tr);
         }
-
         const palette = document.getElementById('palette');
         palette.innerHTML = '';
         level.blocks.forEach((block, idx) => {
@@ -503,12 +522,17 @@
             div.ondragstart = drag;
             palette.appendChild(div);
         });
-
         clearDropZone();
         clearConsole();
-        addLog('info', `> Memuat ${level.title}...`);
-        const correctedCell = document.getElementById('cellReference').innerText.replace("Sel Aktif: ", "");
-        addLog('info', `> Target: Susun rumus di sel ${correctedCell}`);
+        const isAlreadyAnswered = answeredLevels.has(currentLevelIndex);
+        if (isAlreadyAnswered) {
+            addLog('info', `> Memuat ${level.title}...`);
+            addLog('warning', `> ⚠️ Soal ini sudah pernah dijawab benar. Poin tidak akan ditambah.`);
+        } else {
+            addLog('info', `> Memuat ${level.title}...`);
+        }
+        addLog('info', `> Target: Susun rumus di sel ${level.target}`);
+        document.getElementById('btnPrev').disabled = (currentLevelIndex === 0);
     }
 
     function allowDrop(ev) { ev.preventDefault(); document.getElementById('dropZone').classList.add('drag-over'); }
@@ -516,66 +540,64 @@
     function drop(ev) {
         ev.preventDefault();
         document.getElementById('dropZone').classList.remove('drag-over');
-        const data = ev.dataTransfer.getData("text");
-        const draggedElement = document.getElementById(data);
-        const clone = draggedElement.cloneNode(true);
-        clone.id = ""; 
-        clone.style.cursor = "pointer";
+        const clone = document.getElementById(ev.dataTransfer.getData("text")).cloneNode(true);
+        clone.id = ""; clone.style.cursor = "pointer";
         clone.onclick = function() { this.remove(); }; 
         const dropZone = document.getElementById('dropZone');
-        if (dropZone.children[0] && dropZone.children[0].style.fontStyle === 'italic') {
-            dropZone.innerHTML = '';
-        }
+        if (dropZone.children[0] && dropZone.children[0].style.fontStyle === 'italic') dropZone.innerHTML = '';
         dropZone.appendChild(clone);
     }
-
-    function clearDropZone() {
-        const dropZone = document.getElementById('dropZone');
-        dropZone.innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Tarik blok kode ke sini...</span>';
-    }
+    function clearDropZone() { document.getElementById('dropZone').innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Tarik blok kode ke sini...</span>'; }
 
     function checkFormula() {
-        const dropZone = document.getElementById('dropZone');
-        const blocks = Array.from(dropZone.children);
-        const activeBlocks = blocks.filter(b => b.style.fontStyle !== 'italic');
-        if (activeBlocks.length === 0) {
-            addLog('warning', '> PERINGATAN: Area rumus kosong.');
-            playSound('error');
-            return;
-        }
+        const activeBlocks = Array.from(document.getElementById('dropZone').children).filter(b => b.style.fontStyle !== 'italic');
+        if (activeBlocks.length === 0) { addLog('warning', '> PERINGATAN: Area rumus kosong.'); playSound('error'); return; }
         let constructedFormula = activeBlocks.map(b => b.innerText).join('');
         const level = levels[currentLevelIndex];
         let normalizedInput = constructedFormula.replace(/\s/g, '');
         let normalizedCorrect = level.correct.replace(/\s/g, '');
-        const openParens = (normalizedInput.match(/\(/g) || []).length;
-        const closeParens = (normalizedInput.match(/\)/g) || []).length;
-        const missingParens = openParens - closeParens;
+        const missingParens = (normalizedInput.match(/\(/g) || []).length - (normalizedInput.match(/\)/g) || []).length;
         if (missingParens > 0) normalizedInput += ')'.repeat(missingParens);
-        const isCorrect = normalizedInput === normalizedCorrect;
-
-        if (isCorrect) {
-            playSound('success');
-            score += 100;
-            document.getElementById('score').innerText = score;
-            addLog('success', `> EKSEKUSI BERHASIL! Rumus: ${constructedFormula}`);
+        if (normalizedInput === normalizedCorrect) {
+            if (answeredLevels.has(currentLevelIndex)) {
+                playSound('success');
+                addLog('success', `> ✓ Rumus benar! (Sudah pernah dijawab, poin tidak ditambah)`);
+            } else {
+                playSound('success');
+                score += 100;
+                document.getElementById('score').innerText = score;
+                answeredLevels.add(currentLevelIndex);
+                addLog('success', `> EKSEKUSI BERHASIL! Rumus: ${constructedFormula}`);
+            }
+            simpanProgressLokal();
+            simpanSkorKeSheets();
             setTimeout(() => {
                 currentLevelIndex++;
-                if (currentLevelIndex < 36) loadLevel();
-                else showVictory();
+                if (currentLevelIndex < 36) loadLevel(); else showVictory();
             }, 1500);
         } else {
             playSound('error');
             addLog('error', '> KESALAHAN: Susunan blok tidak tepat.');
             addLog('info', `> Hasil saat ini: ${constructedFormula}`);
-            addLog('warning', '> Cek kembali sel aktif dan fungsi yang diminta soal.');
         }
     }
 
-    function showHint() {
-        const correctedCell = document.getElementById('cellReference').innerText.replace("Sel Aktif: ", "");
-        addLog('warning', `> HINT: Perhatikan sel target (${correctedCell}) dan kata kunci dalam soal.`);
+    function prevQuestion() {
+        if (currentLevelIndex > 0) {
+            currentLevelIndex--;
+            addLog('info', `> ⏮️ Kembali ke soal sebelumnya...`);
+            loadLevel();
+        }
     }
-
+    function skipQuestion() {
+        addLog('warning', '> Soal dilewati. Memuat misi berikutnya...');
+        currentLevelIndex++;
+        simpanProgressLokal();
+        simpanSkorKeSheets();
+        if (currentLevelIndex < 36) { setTimeout(() => { loadLevel(); }, 800); } 
+        else { setTimeout(() => { showVictory(); }, 800); }
+    }
+    function showHint() { addLog('warning', `> HINT: Perhatikan sel target (${levels[currentLevelIndex].target}) dan kata kunci dalam soal.`); }
     function addLog(type, message) {
         const consoleLog = document.getElementById('consoleLog');
         const div = document.createElement('div');
@@ -584,28 +606,27 @@
         consoleLog.appendChild(div);
         consoleLog.scrollTop = consoleLog.scrollHeight;
     }
-
     function clearConsole() { document.getElementById('consoleLog').innerHTML = ''; }
-
     function showVictory() {
+        simpanProgressLokal();
+        simpanSkorKeSheets();
         document.getElementById('progressBar').style.width = '100%';
         document.getElementById('gameArea').classList.add('hidden');
         document.getElementById('victoryArea').classList.remove('hidden');
         document.getElementById('finalScore').innerText = score;
         playSound('success');
     }
-
     function restartGame() {
-        currentLevelIndex = 0;
-        score = 0;
+        localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
+        currentLevelIndex = 0; score = 0; answeredLevels = new Set();
         document.getElementById('score').innerText = score;
         document.getElementById('gameArea').classList.remove('hidden');
         document.getElementById('victoryArea').classList.add('hidden');
+        levels = shuffleWithSeed(allLevels, hashNIS(dataSiswaAktif.nis));
         loadLevel();
     }
 
-    window.onload = () => { loadLevel(); };
+    window.onload = () => { loadDatabase(); };
 </script>
-
 </body>
 </html>
