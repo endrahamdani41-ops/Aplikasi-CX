@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Operasi Data IF Excel</title>
+<title>Fungsi IF Excel</title>
 <style>
     :root {
         --bg-primary: #0f172a; --bg-secondary: #1e293b; --bg-tertiary: #334155;
@@ -36,44 +36,60 @@
     .login-box button.btn-mulai { width: 100%; padding: 14px; margin-top: 10px; background: var(--accent-cyan); color: var(--bg-primary); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s; }
     .login-box button.btn-mulai:hover:not(:disabled) { background: #0891b2; transform: translateY(-2px); }
     .login-box button.btn-mulai:disabled { background: var(--bg-tertiary); color: var(--text-secondary); cursor: not-allowed; }
-    
-    /* PERBAIKAN: Tombol Panel Laporan Guru yang lebih menonjol */
-    .btn-teacher {
-        display: block;
-        width: 100%;
-        margin-top: 20px;
-        padding: 12px 20px;
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        color: #000;
-        border: 2px solid #f59e0b;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-    }
-    .btn-teacher:hover {
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
-    }
-    .btn-teacher:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
-    }
-    
+    .btn-teacher { display: block; width: 100%; margin-top: 20px; padding: 12px 20px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #000; border: 2px solid #f59e0b; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+    .btn-teacher:hover { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5); }
     .login-box .db-status { margin-top: 15px; padding: 10px; border-radius: 6px; font-size: 0.9rem; }
     .db-status.connected { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid var(--accent-green); }
     .db-status.disconnected { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid var(--accent-red); }
 
+    /* ===== PERBAIKAN UTAMA: TABEL LAPORAN 1 BARIS ===== */
     .report-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
     .report-overlay.active { display: flex; }
-    .report-box { background: var(--bg-secondary); border: 2px solid var(--accent-yellow); border-radius: 16px; padding: 30px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .report-box { 
+        background: var(--bg-secondary); 
+        border: 2px solid var(--accent-yellow); 
+        border-radius: 16px; 
+        padding: 30px; 
+        max-width: 1100px;  /* Diperlebar agar tabel lebih lega */
+        width: 100%; 
+        max-height: 90vh; 
+        overflow-y: auto; 
+    }
     .report-box h2 { color: var(--accent-yellow); margin-bottom: 20px; font-size: 1.8rem; text-align: center; }
-    .report-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: var(--bg-primary); border-radius: 8px; overflow: hidden; }
-    .report-table th, .report-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    
+    /* Wrapper agar tabel bisa scroll horizontal jika layar sempit */
+    .report-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        margin: 20px 0;
+        border-radius: 8px;
+    }
+    
+    .report-table { 
+        width: 100%; 
+        min-width: 900px;  /* Lebar minimum agar tidak terlalu gepeng */
+        border-collapse: collapse; 
+        background: var(--bg-primary); 
+        border-radius: 8px; 
+        overflow: hidden; 
+    }
+    .report-table th, .report-table td { 
+        padding: 12px 15px; 
+        text-align: left; 
+        border-bottom: 1px solid var(--border-color);
+        white-space: nowrap;  /* ✅ KUNCI: Paksa teks tetap 1 baris */
+        vertical-align: middle;
+    }
     .report-table th { background: var(--bg-tertiary); color: var(--accent-cyan); font-weight: bold; }
+    .report-table tr:hover td { background: rgba(6, 182, 212, 0.05); }
+    
+    /* Kolom Nama bisa lebih lebar */
+    .report-table td:nth-child(3) { max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
+    /* Kolom Waktu rata kanan agar rapi */
+    .report-table td:nth-child(8), .report-table th:nth-child(8) { text-align: right; }
+    .report-table td:nth-child(6), .report-table th:nth-child(6) { text-align: center; }
+    .report-table td:nth-child(5), .report-table th:nth-child(5) { text-align: center; }
+    
     .report-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
     .report-actions button { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
     .btn-export { background: var(--accent-green); color: white; }
@@ -141,7 +157,7 @@
         button { font-size: 0.9rem; padding: 8px 12px; } .console-log { font-size: 0.9rem; }
         .login-box { padding: 25px; } .login-box h1 { font-size: 1.5rem; }
         .nis-row { flex-direction: column !important; } .nis-row .btn-cek { width: 100%; }
-        .btn-teacher { font-size: 0.95rem; padding: 10px 16px; }
+        .report-table { min-width: 700px; }
     }
 </style>
 </head>
@@ -168,9 +184,7 @@
             <input type="text" id="inputKelas" placeholder="Kelas akan muncul otomatis..." disabled>
         </div>
         <div class="status-msg" id="statusMsg"></div>
-        <button class="btn-mulai" id="btnMulai" onclick="mulaiMisi()" disabled>🚀 MULAI</button>
-        
-        <!-- PERBAIKAN: Tombol Panel Laporan Guru yang lebih menonjol -->
+        <button class="btn-mulai" id="btnMulai" onclick="mulaiMisi()" disabled>🚀 MULAI SOAL</button>
         <button class="btn-teacher" onclick="bukaLaporanGuru()">👨‍🏫 Panel Laporan Guru</button>
     </div>
 </div>
@@ -189,7 +203,7 @@
 
 <div class="game-container">
     <div class="header">
-        <h1>🚀 OPERASI DATA ANTARIKSA</h1>
+        <h1>🚀 OPERASI DATA</h1>
         <div class="status">
             MISI: <span id="currentLevel">1 / 36</span> &nbsp;|&nbsp; SKOR: <span id="score">0</span>
             <div class="student-info" id="studentInfo">Siswa: -</div>
@@ -217,11 +231,11 @@
             <div class="code-block-palette" id="palette"></div>
         </div>
         <div class="action-buttons">
-            <button class="btn-nav" id="btnPrev" onclick="prevQuestion()" disabled>⏮️ SOAL SEBELUMNYA</button>
-            <button class="btn-primary" onclick="checkFormula()">▶ EKSEKUSI RUMUS</button>
-            <button class="btn-danger" onclick="clearDropZone()">✕ HAPUS SEMUA</button>
-            <button class="btn-secondary" onclick="showHint()">💡 BANTUAN (HINT)</button>
-            <button class="btn-skip" onclick="skipQuestion()">⏭️ LEWATI SOAL</button>
+            <button class="btn-nav" id="btnPrev" onclick="prevQuestion()" disabled>⏮️</button>
+            <button class="btn-primary" onclick="checkFormula()">▶</button>
+            <button class="btn-danger" onclick="clearDropZone()">✕</button>
+
+            <button class="btn-skip" onclick="skipQuestion()">⏭️</button>
         </div>
         <div class="console-log" id="consoleLog">
             <div class="log-info">> Sistem siap. Silakan susun rumus menggunakan blok kode.</div>
@@ -230,10 +244,10 @@
 
     <div class="main-content hidden" id="victoryArea">
         <div class="victory-screen">
-            <h2>🎉 MISI BERHASIL DISELESAIKAN!</h2>
+            <h2>🎉 SOAL BERHASIL DISELESAIKAN!</h2>
             <p style="color: var(--text-secondary); margin-bottom: 20px;">Selamat, <span id="victoryName">Astranot</span> (<span id="victoryKelas">-</span>)! Skor Anda telah disimpan.</p>
             <p style="font-size: 1.3rem;">Total Skor Akhir: <span id="finalScore" style="color: var(--accent-green); font-weight: bold; font-size: 2.2rem;">0</span></p>
-            <button class="btn-primary" onclick="restartGame()" style="margin-top: 20px; padding: 14px 35px; font-size: 1.1rem;">🔄 ULANGI MISI DARI AWAL</button>
+            <button class="btn-primary" onclick="restartGame()" style="margin-top: 20px; padding: 14px 35px; font-size: 1.1rem;">🔄 ULANGI SOAL DARI AWAL</button>
         </div>
     </div>
 </div>
@@ -365,19 +379,13 @@
         loadLevel();
     }
 
-    // PERBAIKAN: Fungsi bukaLaporanGuru yang lebih robust
     function bukaLaporanGuru() {
-        console.log('Tombol Panel Laporan Guru diklik!');
         const pwd = prompt('🔐 Masukkan Password Guru:');
-        if (pwd === null) return; // User cancel
-        if (pwd !== PASSWORD_GURU) {
-            alert('❌ Password salah!\n\nPassword default: guru123');
-            return;
-        }
+        if (pwd === null) return;
+        if (pwd !== PASSWORD_GURU) { alert('❌ Password salah!\n\nPassword default: guru123'); return; }
         tampilkanLaporan();
         document.getElementById('reportOverlay').classList.add('active');
     }
-    
     function tutupLaporan() { document.getElementById('reportOverlay').classList.remove('active'); }
 
     function resetLocalData() {
@@ -395,20 +403,42 @@
         }
     }
 
+    function formatWaktu(timestamp) {
+        if (!timestamp || typeof timestamp !== 'string' || timestamp.trim() === '') {
+            return '-';
+        }
+        const ts = timestamp.trim();
+        if (/^\d{2}\/\d{2}\/\d{4}/.test(ts)) {
+            return ts;
+        }
+        const date = new Date(ts);
+        if (!isNaN(date.getTime())) {
+            return date.toLocaleString('id-ID', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+        if (ts.includes('/') || ts.includes('-')) {
+            return ts;
+        }
+        return '-';
+    }
+
     async function tampilkanLaporan() {
         const skorGlobal = await ambilSkorDariSheets();
         const content = document.getElementById('reportContent');
         if (skorGlobal.length === 0) { content.innerHTML = '<div class="empty-report">📭 Belum ada data siswa.</div>'; return; }
         skorGlobal.sort((a, b) => (b.skor || b.score) - (a.skor || a.score));
-        let html = `<table class="report-table"><thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Progress</th><th>Skor</th><th>Status</th><th>Waktu</th></tr></thead><tbody>`;
+        // PERBAIKAN: Bungkus tabel dengan wrapper agar bisa scroll horizontal
+        let html = `<div class="report-table-wrapper"><table class="report-table"><thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Progress</th><th>Skor</th><th>Status</th><th>Waktu</th></tr></thead><tbody>`;
         skorGlobal.forEach((s, i) => {
             const progress = `${s.currentLevelIndex || s.progress || 0} / 36`;
             const skor = s.skor || s.score || 0;
             const status = s.selesai ? '✅ Selesai' : (s.status || '🔄 Proses');
-            const waktu = s.timestamp ? new Date(s.timestamp).toLocaleString('id-ID') : '-';
+            const waktu = formatWaktu(s.timestamp);
             html += `<tr><td>${i + 1}</td><td>${s.nis}</td><td>${s.nama}</td><td>${s.kelas || '-'}</td><td>${progress}</td><td><strong>${skor}</strong></td><td>${status}</td><td>${waktu}</td></tr>`;
         });
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         content.innerHTML = html;
     }
 
@@ -417,7 +447,10 @@
         if (skorGlobal.length === 0) { alert('Tidak ada data!'); return; }
         let csv = 'No,NIS,Nama,Kelas,Progress,Skor,Status,Waktu\n';
         skorGlobal.sort((a, b) => b.score - a.score);
-        skorGlobal.forEach((s, i) => { csv += `${i+1},"${s.nis}","${s.nama}","${s.kelas || '-'}","${s.currentLevelIndex}/36",${s.score},"${s.selesai ? 'Selesai' : 'Proses'}","${s.timestamp ? new Date(s.timestamp).toLocaleString('id-ID') : '-'}"\n`; });
+        skorGlobal.forEach((s, i) => {
+            const waktu = formatWaktu(s.timestamp);
+            csv += `${i+1},"${s.nis}","${s.nama}","${s.kelas || '-'}","${s.currentLevelIndex}/36",${s.score},"${s.selesai ? 'Selesai' : 'Proses'}","${waktu}"\n`;
+        });
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a'); a.href = url; a.download = `Laporan_Skor_${new Date().toISOString().split('T')[0]}.csv`; a.click(); URL.revokeObjectURL(url);
