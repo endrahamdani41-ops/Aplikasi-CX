@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fungsi IF Excel</title>
+<title>Operasi Data IF Excel</title>
 <style>
     :root {
         --bg-primary: #0f172a; --bg-secondary: #1e293b; --bg-tertiary: #334155;
@@ -22,7 +22,6 @@
     .login-box h1 { color: var(--accent-cyan); font-size: 2rem; margin-bottom: 10px; letter-spacing: 2px; }
     .login-box .subtitle { color: var(--text-secondary); margin-bottom: 25px; font-size: 1.05rem; }
     .login-box .input-group { text-align: left; margin-bottom: 12px; }
-    .login-box label { display: block; color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 6px; font-weight: 600; }
     .login-box input { width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-size: 1.1rem; outline: none; transition: border-color 0.3s; }
     .login-box input:focus { border-color: var(--accent-cyan); }
     .login-box input:disabled { background: var(--bg-tertiary); color: var(--accent-green); cursor: not-allowed; border-color: var(--accent-green); font-weight: bold; }
@@ -42,54 +41,66 @@
     .db-status.connected { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid var(--accent-green); }
     .db-status.disconnected { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid var(--accent-red); }
 
-    /* ===== PERBAIKAN UTAMA: TABEL LAPORAN 1 BARIS ===== */
     .report-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
     .report-overlay.active { display: flex; }
-    .report-box { 
-        background: var(--bg-secondary); 
-        border: 2px solid var(--accent-yellow); 
-        border-radius: 16px; 
-        padding: 30px; 
-        max-width: 1100px;  /* Diperlebar agar tabel lebih lega */
-        width: 100%; 
-        max-height: 90vh; 
-        overflow-y: auto; 
-    }
+    .report-box { background: var(--bg-secondary); border: 2px solid var(--accent-yellow); border-radius: 16px; padding: 30px; max-width: 1100px; width: 100%; max-height: 90vh; overflow-y: auto; }
     .report-box h2 { color: var(--accent-yellow); margin-bottom: 20px; font-size: 1.8rem; text-align: center; }
     
-    /* Wrapper agar tabel bisa scroll horizontal jika layar sempit */
-    .report-table-wrapper {
-        width: 100%;
-        overflow-x: auto;
-        margin: 20px 0;
+    /* FILTER KELAS */
+    .filter-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    .filter-label {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .filter-select {
+        padding: 10px 16px;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border: 2px solid var(--border-color);
         border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.3s;
+        min-width: 150px;
+    }
+    .filter-select:focus {
+        border-color: var(--accent-cyan);
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+    }
+    .filter-select option {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    .filter-count {
+        color: var(--accent-cyan);
+        font-size: 0.95rem;
+        font-weight: 600;
+        background: rgba(6, 182, 212, 0.1);
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--accent-cyan);
     }
     
-    .report-table { 
-        width: 100%; 
-        min-width: 900px;  /* Lebar minimum agar tidak terlalu gepeng */
-        border-collapse: collapse; 
-        background: var(--bg-primary); 
-        border-radius: 8px; 
-        overflow: hidden; 
-    }
-    .report-table th, .report-table td { 
-        padding: 12px 15px; 
-        text-align: left; 
-        border-bottom: 1px solid var(--border-color);
-        white-space: nowrap;  /* ✅ KUNCI: Paksa teks tetap 1 baris */
-        vertical-align: middle;
-    }
+    .report-table-wrapper { width: 100%; overflow-x: auto; margin: 20px 0; border-radius: 8px; }
+    .report-table { width: 100%; min-width: 900px; border-collapse: collapse; background: var(--bg-primary); border-radius: 8px; overflow: hidden; }
+    .report-table th, .report-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; vertical-align: middle; }
     .report-table th { background: var(--bg-tertiary); color: var(--accent-cyan); font-weight: bold; }
     .report-table tr:hover td { background: rgba(6, 182, 212, 0.05); }
-    
-    /* Kolom Nama bisa lebih lebar */
     .report-table td:nth-child(3) { max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
-    /* Kolom Waktu rata kanan agar rapi */
     .report-table td:nth-child(8), .report-table th:nth-child(8) { text-align: right; }
     .report-table td:nth-child(6), .report-table th:nth-child(6) { text-align: center; }
     .report-table td:nth-child(5), .report-table th:nth-child(5) { text-align: center; }
-    
+    .report-table td:nth-child(4), .report-table th:nth-child(4) { text-align: center; }
     .report-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
     .report-actions button { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; }
     .btn-export { background: var(--accent-green); color: white; }
@@ -126,22 +137,67 @@
     .draggable-block.text { background-color: var(--accent-green); }
     .draggable-block.function { background-color: var(--accent-cyan); color: #000; font-weight: bold; }
     .draggable-block.range { background-color: #8b5cf6; color: white; }
-    .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
-    button { padding: 10px 18px; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
-    .btn-primary { background-color: var(--accent-cyan); color: var(--bg-primary); }
-    .btn-primary:hover { background-color: #0891b2; transform: translateY(-2px); }
-    .btn-secondary { background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
-    .btn-danger { background-color: var(--accent-red); color: white; }
-    .btn-nav { background-color: transparent; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
-    .btn-nav:hover:not(:disabled) { background-color: var(--accent-cyan); color: var(--bg-primary); transform: translateY(-2px); }
-    .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-skip { background-color: transparent; color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
-    .btn-skip:hover { background-color: var(--accent-yellow); color: #000; transform: translateY(-2px); }
-    .console-log { background-color: #000000; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; min-height: 70px; max-height: 110px; overflow-y: auto; font-family: monospace; font-size: 1rem; line-height: 1.5; flex-shrink: 0; }
-    .console-log .log-success { color: var(--accent-green); }
-    .console-log .log-error { color: var(--accent-red); }
-    .console-log .log-info { color: var(--accent-cyan); }
-    .console-log .log-warning { color: var(--accent-yellow); }
+    
+    .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; justify-content: center; }
+    .icon-btn { 
+        width: 56px; height: 56px; min-width: 56px;
+        padding: 0; border: 2px solid var(--border-color); border-radius: 10px; 
+        font-size: 1.6rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease; 
+        display: flex; justify-content: center; align-items: center;
+        background-color: var(--bg-tertiary); color: var(--text-primary);
+    }
+    .icon-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .icon-btn.btn-prev { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(6, 182, 212, 0.1); }
+    .icon-btn.btn-prev:hover:not(:disabled) { background: var(--accent-cyan); color: var(--bg-primary); }
+    .icon-btn.btn-execute { border-color: var(--accent-green); color: var(--accent-green); background: rgba(16, 185, 129, 0.1); width: 64px; min-width: 64px; }
+    .icon-btn.btn-execute:hover:not(:disabled) { background: var(--accent-green); color: #000; }
+    .icon-btn.btn-clear { border-color: var(--accent-red); color: var(--accent-red); background: rgba(239, 68, 68, 0.1); }
+    .icon-btn.btn-clear:hover:not(:disabled) { background: var(--accent-red); color: #fff; }
+    .icon-btn.btn-skip { border-color: var(--accent-yellow); color: var(--accent-yellow); background: rgba(245, 158, 11, 0.1); }
+    .icon-btn.btn-skip:hover:not(:disabled) { background: var(--accent-yellow); color: #000; }
+
+    .password-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 4000; animation: fadeIn 0.3s ease; }
+    .password-overlay.active { display: flex; }
+    .password-box { background: linear-gradient(145deg, var(--bg-secondary) 0%, #0f172a 100%); border: 2px solid var(--accent-yellow); border-radius: 20px; padding: 35px 40px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(245, 158, 11, 0.2); animation: slideUp 0.4s ease; text-align: center; }
+    .password-icon { font-size: 3rem; margin-bottom: 15px; display: inline-block; animation: bounce 2s infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    .password-title { color: var(--accent-yellow); font-size: 1.4rem; font-weight: bold; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .password-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; }
+    .password-input-wrapper { position: relative; margin-bottom: 20px; }
+    .password-input { width: 100%; padding: 14px 50px 14px 18px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 10px; color: var(--text-primary); font-size: 1.1rem; outline: none; transition: all 0.3s ease; letter-spacing: 2px; }
+    .password-input:focus { border-color: var(--accent-yellow); box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+    .password-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem; padding: 5px; transition: color 0.3s; }
+    .password-toggle:hover { color: var(--accent-yellow); }
+    .password-error { color: var(--accent-red); font-size: 0.9rem; min-height: 20px; margin-bottom: 10px; font-weight: 600; }
+    .password-actions { display: flex; gap: 10px; justify-content: center; }
+    .password-btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; flex: 1; }
+    .password-btn.btn-ok { background: linear-gradient(135deg, var(--accent-yellow) 0%, #d97706 100%); color: #000; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+    .password-btn.btn-ok:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5); }
+    .password-btn.btn-cancel { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+    .password-btn.btn-cancel:hover { background: var(--border-color); }
+
+    .notification-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 3000; animation: fadeIn 0.3s ease; }
+    .notification-overlay.active { display: flex; }
+    .notification-box { background: var(--bg-secondary); border-radius: 16px; padding: 30px 40px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: slideUp 0.4s ease; }
+    .notification-box.success { border: 3px solid var(--accent-green); }
+    .notification-box.error { border: 3px solid var(--accent-red); }
+    .notification-box.warning { border: 3px solid var(--accent-yellow); }
+    .notification-box.info { border: 3px solid var(--accent-cyan); }
+    .notification-icon { font-size: 3.5rem; margin-bottom: 15px; }
+    .notification-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
+    .notification-box.success .notification-title { color: var(--accent-green); }
+    .notification-box.error .notification-title { color: var(--accent-red); }
+    .notification-box.warning .notification-title { color: var(--accent-yellow); }
+    .notification-box.info .notification-title { color: var(--accent-cyan); }
+    .notification-message { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.5; margin-bottom: 10px; }
+    .notification-formula { background: var(--bg-primary); padding: 10px 15px; border-radius: 6px; font-family: monospace; font-size: 1rem; color: var(--accent-cyan); margin: 10px 0; word-break: break-all; }
+    .notification-close { margin-top: 15px; padding: 10px 30px; background: var(--accent-cyan); color: var(--bg-primary); border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+    .notification-close:hover { background: #0891b2; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
+    
     .victory-screen { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
     .victory-screen h2 { font-size: 2.5rem; color: var(--accent-green); margin-bottom: 20px; }
     .hidden { display: none !important; }
@@ -154,10 +210,18 @@
         .mission-brief h2 { font-size: 1.1rem; } .mission-brief p { font-size: 0.95rem; }
         .excel-grid th { font-size: 0.9rem; } .excel-grid td { font-size: 0.95rem; padding: 6px; }
         .draggable-block { font-size: 0.95rem; padding: 6px 10px; }
-        button { font-size: 0.9rem; padding: 8px 12px; } .console-log { font-size: 0.9rem; }
         .login-box { padding: 25px; } .login-box h1 { font-size: 1.5rem; }
         .nis-row { flex-direction: column !important; } .nis-row .btn-cek { width: 100%; }
         .report-table { min-width: 700px; }
+        .notification-box { padding: 20px; }
+        .notification-icon { font-size: 2.5rem; }
+        .notification-title { font-size: 1.2rem; }
+        .icon-btn { width: 50px; height: 50px; min-width: 50px; font-size: 1.4rem; }
+        .icon-btn.btn-execute { width: 58px; min-width: 58px; }
+        .password-box { padding: 25px 20px; }
+        .password-title { font-size: 1.2rem; }
+        .filter-container { flex-direction: column; gap: 8px; }
+        .filter-select { width: 100%; }
     }
 </style>
 </head>
@@ -166,25 +230,22 @@
 <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
         <h1>🚀 OPERASI DATA</h1>
-
+        <p class="subtitle">Masukkan NIS untuk memulai soal</p>
         <div class="db-status loading" id="dbStatus">⏳ Menghubungkan ke database...</div><br>
         <div class="input-group">
-
             <div class="nis-row">
-                <input type="text" id="inputNIS" placeholder="Contoh: 12345" autocomplete="off" disabled>
+                <input type="text" id="inputNIS" placeholder="Masukkan NIS..." autocomplete="off" disabled>
                 <button class="btn-cek" id="btnCek" onclick="cekNIS()" disabled>Cek NIS</button>
             </div>
         </div>
         <div class="input-group">
-
             <input type="text" id="inputNama" placeholder="Nama akan muncul otomatis..." disabled>
         </div>
         <div class="input-group">
-
             <input type="text" id="inputKelas" placeholder="Kelas akan muncul otomatis..." disabled>
         </div>
         <div class="status-msg" id="statusMsg"></div>
-        <button class="btn-mulai" id="btnMulai" onclick="mulaiMisi()" disabled>🚀 MULAI SOAL</button>
+        <button class="btn-mulai" id="btnMulai" onclick="mulaiMisi()" disabled>🚀 MULAI</button>
         <button class="btn-teacher" onclick="bukaLaporanGuru()">👨‍🏫 Panel Laporan Guru</button>
     </div>
 </div>
@@ -192,6 +253,16 @@
 <div class="report-overlay" id="reportOverlay">
     <div class="report-box">
         <h2>📊 LAPORAN SKOR SISWA</h2>
+        
+        <!-- FILTER KELAS -->
+        <div class="filter-container">
+            <span class="filter-label">🔍 Filter Kelas:</span>
+            <select class="filter-select" id="filterKelas" onchange="filterLaporan()">
+                <option value="all">📋 Semua Kelas</option>
+            </select>
+            <span class="filter-count" id="filterCount">0 siswa</span>
+        </div>
+        
         <div id="reportContent"></div>
         <div class="report-actions">
             <button class="btn-export" onclick="exportCSV()">📥 Export CSV</button>
@@ -201,11 +272,38 @@
     </div>
 </div>
 
+<div class="password-overlay" id="passwordOverlay">
+    <div class="password-box">
+        <div class="password-icon">🔐</div>
+        <div class="password-title">Verifikasi Guru</div>
+        <div class="password-subtitle">Masukkan password untuk mengakses panel laporan</div>
+        <div class="password-input-wrapper">
+            <input type="password" class="password-input" id="passwordInput" placeholder="••••••••" autocomplete="off">
+            <button class="password-toggle" id="passwordToggle" onclick="togglePasswordVisibility()" title="Tampilkan/Sembunyikan">👁️</button>
+        </div>
+        <div class="password-error" id="passwordError"></div>
+        <div class="password-actions">
+            <button class="password-btn btn-cancel" onclick="tutupPassword()">Batal</button>
+            <button class="password-btn btn-ok" onclick="verifikasiPassword()">🔓 Masuk</button>
+        </div>
+    </div>
+</div>
+
+<div class="notification-overlay" id="notificationOverlay">
+    <div class="notification-box" id="notificationBox">
+        <div class="notification-icon" id="notifIcon">✅</div>
+        <div class="notification-title" id="notifTitle">Berhasil!</div>
+        <div class="notification-message" id="notifMessage">Jawaban Anda benar!</div>
+        <div class="notification-formula hidden" id="notifFormula"></div>
+        <button class="notification-close" onclick="tutupNotifikasi()">Tutup</button>
+    </div>
+</div>
+
 <div class="game-container">
     <div class="header">
         <h1>🚀 OPERASI DATA</h1>
         <div class="status">
-            MISI: <span id="currentLevel">1 / 36</span> &nbsp;|&nbsp; SKOR: <span id="score">0</span>
+            SOAL: <span id="currentLevel">1 / 36</span> &nbsp;|&nbsp; SKOR: <span id="score">0</span>
             <div class="student-info" id="studentInfo">Siswa: -</div>
         </div>
     </div>
@@ -213,7 +311,7 @@
 
     <div class="main-content" id="gameArea">
         <div class="mission-brief">
-            <h2 id="missionTitle">Memuat Misi...</h2>
+            <h2 id="missionTitle">Memuat Soal...</h2>
             <p id="missionDesc">Sistem sedang menyiapkan data...</p>
         </div>
         <div class="excel-simulation">
@@ -231,23 +329,19 @@
             <div class="code-block-palette" id="palette"></div>
         </div>
         <div class="action-buttons">
-            <button class="btn-nav" id="btnPrev" onclick="prevQuestion()" disabled>⏮️</button>
-            <button class="btn-primary" onclick="checkFormula()">▶</button>
-            <button class="btn-danger" onclick="clearDropZone()">✕</button>
-
-            <button class="btn-skip" onclick="skipQuestion()">⏭️</button>
-        </div>
-        <div class="console-log" id="consoleLog">
-            <div class="log-info">> Sistem siap. Silakan susun rumus menggunakan blok kode.</div>
+            <button class="icon-btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled title="Soal Sebelumnya">⏮️</button>
+            <button class="icon-btn btn-execute" onclick="checkFormula()" title="Eksekusi Rumus">▶</button>
+            <button class="icon-btn btn-clear" onclick="clearDropZone()" title="Hapus Semua">✕</button>
+            <button class="icon-btn btn-skip" onclick="skipQuestion()" title="Lewati Soal">⏭️</button>
         </div>
     </div>
 
     <div class="main-content hidden" id="victoryArea">
         <div class="victory-screen">
-            <h2>🎉 SOAL BERHASIL DISELESAIKAN!</h2>
+            <h2>🎉 SEMUA SOAL BERHASIL DISELESAIKAN!</h2>
             <p style="color: var(--text-secondary); margin-bottom: 20px;">Selamat, <span id="victoryName">Astranot</span> (<span id="victoryKelas">-</span>)! Skor Anda telah disimpan.</p>
             <p style="font-size: 1.3rem;">Total Skor Akhir: <span id="finalScore" style="color: var(--accent-green); font-weight: bold; font-size: 2.2rem;">0</span></p>
-            <button class="btn-primary" onclick="restartGame()" style="margin-top: 20px; padding: 14px 35px; font-size: 1.1rem;">🔄 ULANGI SOAL DARI AWAL</button>
+            <button class="btn-primary" onclick="restartGame()" style="margin-top: 20px; padding: 14px 35px; font-size: 1.1rem;">🔄 ULANGI DARI AWAL</button>
         </div>
     </div>
 </div>
@@ -258,6 +352,35 @@
     let dataSiswaAktif = { nis: '', nama: '', kelas: '' };
     const PASSWORD_GURU = 'guru123';
     let answeredLevels = new Set();
+    let notifAutoCloseTimer = null;
+    let semuaDataSkor = []; // Menyimpan semua data untuk filter
+
+    function tampilkanNotifikasi(tipe, judul, pesan, formula = null, autoClose = 2000) {
+        const overlay = document.getElementById('notificationOverlay');
+        const box = document.getElementById('notificationBox');
+        const icon = document.getElementById('notifIcon');
+        const title = document.getElementById('notifTitle');
+        const message = document.getElementById('notifMessage');
+        const formulaDiv = document.getElementById('notifFormula');
+        box.className = 'notification-box ' + tipe;
+        if (tipe === 'success') icon.innerText = '✅';
+        else if (tipe === 'error') icon.innerText = '❌';
+        else if (tipe === 'warning') icon.innerText = '⚠️';
+        else if (tipe === 'info') icon.innerText = '💡';
+        title.innerText = judul;
+        message.innerText = pesan;
+        if (formula) { formulaDiv.innerText = formula; formulaDiv.classList.remove('hidden'); }
+        else { formulaDiv.classList.add('hidden'); }
+        overlay.classList.add('active');
+        if (autoClose > 0) {
+            if (notifAutoCloseTimer) clearTimeout(notifAutoCloseTimer);
+            notifAutoCloseTimer = setTimeout(() => { tutupNotifikasi(); }, autoClose);
+        }
+    }
+    function tutupNotifikasi() {
+        document.getElementById('notificationOverlay').classList.remove('active');
+        if (notifAutoCloseTimer) { clearTimeout(notifAutoCloseTimer); notifAutoCloseTimer = null; }
+    }
 
     async function loadDatabase() {
         const dbStatus = document.getElementById('dbStatus');
@@ -380,58 +503,145 @@
     }
 
     function bukaLaporanGuru() {
-        const pwd = prompt('🔐 Masukkan Password Guru:');
-        if (pwd === null) return;
-        if (pwd !== PASSWORD_GURU) { alert('❌ Password salah!\n\nPassword default: guru123'); return; }
-        tampilkanLaporan();
-        document.getElementById('reportOverlay').classList.add('active');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordError').innerText = '';
+        document.getElementById('passwordInput').type = 'password';
+        document.getElementById('passwordToggle').innerText = '👁️';
+        document.getElementById('passwordOverlay').classList.add('active');
+        setTimeout(() => { document.getElementById('passwordInput').focus(); }, 100);
     }
+    
+    function tutupPassword() {
+        document.getElementById('passwordOverlay').classList.remove('active');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordError').innerText = '';
+    }
+    
+    function togglePasswordVisibility() {
+        const input = document.getElementById('passwordInput');
+        const toggle = document.getElementById('passwordToggle');
+        if (input.type === 'password') { input.type = 'text'; toggle.innerText = '🙈'; } 
+        else { input.type = 'password'; toggle.innerText = '👁️'; }
+    }
+    
+    function verifikasiPassword() {
+        const pwd = document.getElementById('passwordInput').value;
+        const errorDiv = document.getElementById('passwordError');
+        if (pwd === PASSWORD_GURU) {
+            tutupPassword();
+            tampilkanLaporan();
+            document.getElementById('reportOverlay').classList.add('active');
+        } else {
+            errorDiv.innerText = '❌ Password salah! Silakan coba lagi.';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordInput').focus();
+            const box = document.querySelector('.password-box');
+            box.style.animation = 'none';
+            setTimeout(() => { box.style.animation = 'shake 0.5s ease'; }, 10);
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('passwordInput');
+        if (passwordInput) {
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') { e.preventDefault(); verifikasiPassword(); }
+            });
+        }
+    });
+
     function tutupLaporan() { document.getElementById('reportOverlay').classList.remove('active'); }
 
     function resetLocalData() {
-        if (confirm('⚠️ PERINGATAN: Yakin ingin menghapus SEMUA data progres siswa yang tersimpan di browser ini?\n\n(Data di Google Sheets TIDAK akan terhapus, hanya cache lokal yang direset.)')) {
+        if (confirm('⚠️ Yakin ingin menghapus SEMUA data progres siswa di browser ini?\n\n(Data di Google Sheets TIDAK terhapus.)')) {
             const keysToDelete = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key.startsWith('game_if_') || key === 'skor_global_if') {
-                    keysToDelete.push(key);
-                }
+                if (key.startsWith('game_if_') || key === 'skor_global_if') { keysToDelete.push(key); }
             }
             keysToDelete.forEach(key => localStorage.removeItem(key));
-            alert('✅ Semua data lokal berhasil dihapus! Halaman akan dimuat ulang.');
+            alert('✅ Semua data lokal berhasil dihapus!');
             location.reload();
         }
     }
 
     function formatWaktu(timestamp) {
-        if (!timestamp || typeof timestamp !== 'string' || timestamp.trim() === '') {
-            return '-';
-        }
+        if (!timestamp || typeof timestamp !== 'string' || timestamp.trim() === '') return '-';
         const ts = timestamp.trim();
-        if (/^\d{2}\/\d{2}\/\d{4}/.test(ts)) {
-            return ts;
-        }
+        if (/^\d{2}\/\d{2}\/\d{4}/.test(ts)) return ts;
         const date = new Date(ts);
         if (!isNaN(date.getTime())) {
-            return date.toLocaleString('id-ID', {
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                hour: '2-digit', minute: '2-digit', second: '2-digit'
-            });
+            return date.toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
-        if (ts.includes('/') || ts.includes('-')) {
-            return ts;
-        }
+        if (ts.includes('/') || ts.includes('-')) return ts;
         return '-';
     }
 
+    // ============================================================
+    // FUNGSI BARU: TAMPILKAN LAPORAN DENGAN FILTER KELAS
+    // ============================================================
     async function tampilkanLaporan() {
         const skorGlobal = await ambilSkorDariSheets();
+        semuaDataSkor = skorGlobal; // Simpan semua data untuk filter
+        
+        // Update dropdown filter kelas
+        updateFilterKelas(skorGlobal);
+        
+        // Tampilkan semua data (default)
+        filterLaporan();
+    }
+    
+    // Fungsi untuk update dropdown kelas berdasarkan data yang ada
+    function updateFilterKelas(data) {
+        const filterSelect = document.getElementById('filterKelas');
+        
+        // Simpan pilihan saat ini
+        const pilihanSaatIni = filterSelect.value;
+        
+        // Hapus semua opsi kecuali "Semua Kelas"
+        filterSelect.innerHTML = '<option value="all">📋 Semua Kelas</option>';
+        
+        // Ambil daftar kelas unik dari data
+        const kelasUnik = [...new Set(data.map(s => s.kelas || '-'))].filter(k => k !== '-').sort();
+        
+        // Tambahkan opsi untuk setiap kelas
+        kelasUnik.forEach(kelas => {
+            const option = document.createElement('option');
+            option.value = kelas;
+            option.innerText = `🏫 Kelas ${kelas}`;
+            filterSelect.appendChild(option);
+        });
+        
+        // Restore pilihan jika masih ada
+        if (kelasUnik.includes(pilihanSaatIni)) {
+            filterSelect.value = pilihanSaatIni;
+        }
+    }
+    
+    // Fungsi untuk filter laporan berdasarkan kelas
+    function filterLaporan() {
+        const filterKelas = document.getElementById('filterKelas').value;
         const content = document.getElementById('reportContent');
-        if (skorGlobal.length === 0) { content.innerHTML = '<div class="empty-report">📭 Belum ada data siswa.</div>'; return; }
-        skorGlobal.sort((a, b) => (b.skor || b.score) - (a.skor || a.score));
-        // PERBAIKAN: Bungkus tabel dengan wrapper agar bisa scroll horizontal
+        const filterCount = document.getElementById('filterCount');
+        
+        // Filter data berdasarkan kelas
+        let dataFiltered = semuaDataSkor;
+        if (filterKelas !== 'all') {
+            dataFiltered = semuaDataSkor.filter(s => (s.kelas || '-') === filterKelas);
+        }
+        
+        // Update counter
+        filterCount.innerText = `${dataFiltered.length} siswa`;
+        
+        if (dataFiltered.length === 0) { 
+            content.innerHTML = '<div class="empty-report">📭 Tidak ada data untuk kelas ini.</div>'; 
+            return; 
+        }
+        
+        dataFiltered.sort((a, b) => (b.skor || b.score) - (a.skor || a.score));
+        
         let html = `<div class="report-table-wrapper"><table class="report-table"><thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Progress</th><th>Skor</th><th>Status</th><th>Waktu</th></tr></thead><tbody>`;
-        skorGlobal.forEach((s, i) => {
+        dataFiltered.forEach((s, i) => {
             const progress = `${s.currentLevelIndex || s.progress || 0} / 36`;
             const skor = s.skor || s.score || 0;
             const status = s.selesai ? '✅ Selesai' : (s.status || '🔄 Proses');
@@ -443,17 +653,28 @@
     }
 
     function exportCSV() {
-        const skorGlobal = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
-        if (skorGlobal.length === 0) { alert('Tidak ada data!'); return; }
+        // Export data yang sedang difilter (bukan semua data)
+        const filterKelas = document.getElementById('filterKelas').value;
+        let dataExport = semuaDataSkor;
+        if (filterKelas !== 'all') {
+            dataExport = semuaDataSkor.filter(s => (s.kelas || '-') === filterKelas);
+        }
+        
+        if (dataExport.length === 0) { alert('Tidak ada data untuk di-export!'); return; }
         let csv = 'No,NIS,Nama,Kelas,Progress,Skor,Status,Waktu\n';
-        skorGlobal.sort((a, b) => b.score - a.score);
-        skorGlobal.forEach((s, i) => {
+        dataExport.sort((a, b) => b.score - a.score);
+        dataExport.forEach((s, i) => {
             const waktu = formatWaktu(s.timestamp);
             csv += `${i+1},"${s.nis}","${s.nama}","${s.kelas || '-'}","${s.currentLevelIndex}/36",${s.score},"${s.selesai ? 'Selesai' : 'Proses'}","${waktu}"\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `Laporan_Skor_${new Date().toISOString().split('T')[0]}.csv`; a.click(); URL.revokeObjectURL(url);
+        const a = document.createElement('a'); 
+        const namaFile = filterKelas === 'all' ? 'Laporan_Skor_Semua_Kelas' : `Laporan_Skor_Kelas_${filterKelas}`;
+        a.href = url; 
+        a.download = `${namaFile}_${new Date().toISOString().split('T')[0]}.csv`; 
+        a.click(); 
+        URL.revokeObjectURL(url);
     }
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -556,15 +777,6 @@
             palette.appendChild(div);
         });
         clearDropZone();
-        clearConsole();
-        const isAlreadyAnswered = answeredLevels.has(currentLevelIndex);
-        if (isAlreadyAnswered) {
-            addLog('info', `> Memuat ${level.title}...`);
-            addLog('warning', `> ⚠️ Soal ini sudah pernah dijawab benar. Poin tidak akan ditambah.`);
-        } else {
-            addLog('info', `> Memuat ${level.title}...`);
-        }
-        addLog('info', `> Target: Susun rumus di sel ${level.target}`);
         document.getElementById('btnPrev').disabled = (currentLevelIndex === 0);
     }
 
@@ -584,7 +796,11 @@
 
     function checkFormula() {
         const activeBlocks = Array.from(document.getElementById('dropZone').children).filter(b => b.style.fontStyle !== 'italic');
-        if (activeBlocks.length === 0) { addLog('warning', '> PERINGATAN: Area rumus kosong.'); playSound('error'); return; }
+        if (activeBlocks.length === 0) { 
+            tampilkanNotifikasi('warning', 'Peringatan!', 'Area rumus masih kosong. Silakan susun rumus terlebih dahulu.', null, 2000);
+            playSound('error'); 
+            return; 
+        }
         let constructedFormula = activeBlocks.map(b => b.innerText).join('');
         const level = levels[currentLevelIndex];
         let normalizedInput = constructedFormula.replace(/\s/g, '');
@@ -594,13 +810,13 @@
         if (normalizedInput === normalizedCorrect) {
             if (answeredLevels.has(currentLevelIndex)) {
                 playSound('success');
-                addLog('success', `> ✓ Rumus benar! (Sudah pernah dijawab, poin tidak ditambah)`);
+                tampilkanNotifikasi('success', '✓ Rumus Benar!', 'Soal ini sudah pernah dijawab. Poin tidak ditambah.', constructedFormula, 2000);
             } else {
                 playSound('success');
                 score += 100;
                 document.getElementById('score').innerText = score;
                 answeredLevels.add(currentLevelIndex);
-                addLog('success', `> EKSEKUSI BERHASIL! Rumus: ${constructedFormula}`);
+                tampilkanNotifikasi('success', '🎉 Jawaban Benar!', `Selamat! Skor Anda bertambah +100`, constructedFormula, 2000);
             }
             simpanProgressLokal();
             simpanSkorKeSheets();
@@ -610,36 +826,24 @@
             }, 1500);
         } else {
             playSound('error');
-            addLog('error', '> KESALAHAN: Susunan blok tidak tepat.');
-            addLog('info', `> Hasil saat ini: ${constructedFormula}`);
+            tampilkanNotifikasi('error', '❌ Jawaban Salah', 'Susunan blok tidak tepat. Coba periksa kembali!', constructedFormula, 2500);
         }
     }
 
     function prevQuestion() {
         if (currentLevelIndex > 0) {
             currentLevelIndex--;
-            addLog('info', `> ⏮️ Kembali ke soal sebelumnya...`);
             loadLevel();
         }
     }
     function skipQuestion() {
-        addLog('warning', '> Soal dilewati. Memuat misi berikutnya...');
         currentLevelIndex++;
         simpanProgressLokal();
         simpanSkorKeSheets();
-        if (currentLevelIndex < 36) { setTimeout(() => { loadLevel(); }, 800); } 
-        else { setTimeout(() => { showVictory(); }, 800); }
+        if (currentLevelIndex < 36) { loadLevel(); } 
+        else { showVictory(); }
     }
-    function showHint() { addLog('warning', `> HINT: Perhatikan sel target (${levels[currentLevelIndex].target}) dan kata kunci dalam soal.`); }
-    function addLog(type, message) {
-        const consoleLog = document.getElementById('consoleLog');
-        const div = document.createElement('div');
-        div.className = `log-${type}`;
-        div.innerText = message;
-        consoleLog.appendChild(div);
-        consoleLog.scrollTop = consoleLog.scrollHeight;
-    }
-    function clearConsole() { document.getElementById('consoleLog').innerHTML = ''; }
+    
     function showVictory() {
         simpanProgressLokal();
         simpanSkorKeSheets();
