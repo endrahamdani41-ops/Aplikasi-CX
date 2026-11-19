@@ -275,7 +275,7 @@
 
 <div class="game-container">
     <div class="header">
-        <h1>🚀 OPERASI DATA</h1>
+        <h1>PERASI DATA</h1>
         <div class="status">
             SOAL: <span id="currentLevel">1 / <span id="totalSoal">25</span></span> &nbsp;|&nbsp;
             NILAI: <span id="score">0</span><span style="font-size:0.9rem;color:var(--text-secondary);">/100</span>
@@ -283,23 +283,25 @@
         </div>
     </div>
     <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
-
+<br>
     <div class="main-content" id="gameArea">
         <div class="mission-brief">
             <h2 id="missionTitle">Memuat Soal...</h2>
             <p id="missionDesc">Sistem sedang menyiapkan data...</p>
         </div>
         <div class="excel-simulation">
-            <div class="excel-toolbar"><span>📊 Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
+            <div class="excel-toolbar"><span>Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
             <table class="excel-grid" id="excelTable"></table>
         </div>
+        <br>
         <div class="formula-area">
-            <label>🔧 Susun Rumus Anda:</label>
+            <label>Susun Rumus Anda:</label>
             <div class="formula-dropzone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="leaveDrop()">
                 <span style="color: var(--text-secondary); font-style: italic;">Tarik blok kode ke sini...</span>
             </div>
             <div class="code-block-palette" id="palette"></div>
         </div>
+        <br>
         <div class="action-buttons">
             <button class="icon-btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled title="Soal Sebelumnya">⏮️</button>
             <button class="icon-btn btn-execute" id="btnExecute" onclick="handleExecute()" title="Cek Jawaban">▶</button>
