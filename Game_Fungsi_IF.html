@@ -29,9 +29,6 @@
     .login-box .nis-row input { flex: 1; }
     .btn-cek { padding: 12px 20px; background: var(--accent-yellow); color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; white-space: nowrap; transition: all 0.3s; }
     .btn-cek:hover { background: #d97706; }
-    .login-box .status-msg { min-height: 24px; margin: 10px 0; font-size: 1rem; font-weight: 600; }
-    .status-msg.valid { color: var(--accent-green); }
-    .status-msg.invalid { color: var(--accent-red); }
     .btn-mulai { width: 100%; padding: 14px; margin-top: 10px; background: var(--accent-cyan); color: var(--bg-primary); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s; }
     .btn-mulai:hover:not(:disabled) { background: #0891b2; transform: translateY(-2px); }
     .btn-mulai:disabled { background: var(--bg-tertiary); color: var(--text-secondary); cursor: not-allowed; }
@@ -59,21 +56,26 @@
     .report-table tr:hover td { background: rgba(6, 182, 212, 0.05); }
     .report-table td:nth-child(3) { max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
     .report-table td:nth-child(4), .report-table td:nth-child(5), .report-table td:nth-child(6), .report-table td:nth-child(7) { text-align: center; }
-    .report-table th:nth-child(4), .report-table th:nth-child(5), .report-table th:nth-child(6), .report-table th:nth-child(7) { text-align: center; }
     .report-table td:nth-child(8), .report-table th:nth-child(8) { text-align: right; }
     .report-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
     .report-actions button { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s; }
     .btn-export { background: var(--accent-green); color: white; }
-    .btn-export:hover { background: #059669; transform: translateY(-2px); }
     .btn-reset-lokal { background: var(--accent-yellow); color: #000; }
-    .btn-reset-lokal:hover { background: #d97706; transform: translateY(-2px); }
     .btn-reset-sheets { background: var(--accent-purple); color: white; }
-    .btn-reset-sheets:hover { background: #7c3aed; transform: translateY(-2px); }
     .btn-reset-all { background: var(--accent-red); color: white; }
-    .btn-reset-all:hover { background: #dc2626; transform: translateY(-2px); }
     .btn-close { background: var(--bg-tertiary); color: white; border: 1px solid var(--border-color); }
-    .btn-close:hover { background: var(--border-color); }
     .empty-report { text-align: center; color: var(--text-secondary); padding: 30px; font-size: 1.1rem; }
+
+    /* Panel Konfigurasi Guru */
+    .config-panel { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin: 20px 0; }
+    .config-panel h3 { color: var(--accent-yellow); margin-bottom: 15px; font-size: 1.2rem; }
+    .config-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .config-row label { color: var(--text-secondary); font-size: 0.95rem; min-width: 120px; }
+    .config-row input { flex: 1; min-width: 150px; padding: 8px 12px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 1rem; }
+    .config-row input:focus { border-color: var(--accent-cyan); outline: none; }
+    .btn-save-config { background: var(--accent-cyan); color: var(--bg-primary); padding: 8px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .btn-save-config:hover { background: #0891b2; }
+    .config-info { color: var(--text-secondary); font-size: 0.85rem; margin-top: 10px; font-style: italic; }
 
     .header { background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary)); padding: 15px 25px; border-bottom: 2px solid var(--accent-cyan); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
     .header h1 { font-size: 1.6rem; color: var(--accent-cyan); letter-spacing: 1px; }
@@ -114,6 +116,9 @@
     .icon-btn.btn-prev:hover:not(:disabled) { background: var(--accent-cyan); color: var(--bg-primary); }
     .icon-btn.btn-execute { border-color: var(--accent-green); color: var(--accent-green); background: rgba(16, 185, 129, 0.1); width: 64px; min-width: 64px; }
     .icon-btn.btn-execute:hover:not(:disabled) { background: var(--accent-green); color: #000; }
+    .icon-btn.btn-execute.submit-mode { border-color: var(--accent-yellow); color: var(--accent-yellow); background: rgba(245, 158, 11, 0.2); animation: pulse 1.5s infinite; }
+    .icon-btn.btn-execute.submit-mode:hover:not(:disabled) { background: var(--accent-yellow); color: #000; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); } }
     .icon-btn.btn-clear { border-color: var(--accent-red); color: var(--accent-red); background: rgba(239, 68, 68, 0.1); }
     .icon-btn.btn-clear:hover:not(:disabled) { background: var(--accent-red); color: #fff; }
     .icon-btn.btn-skip { border-color: var(--accent-yellow); color: var(--accent-yellow); background: rgba(245, 158, 11, 0.1); }
@@ -177,7 +182,6 @@
         .nis-row { flex-direction: column !important; } .nis-row .btn-cek { width: 100%; }
         .report-table { min-width: 700px; }
         .notification-box { padding: 20px; }
-        .notification-icon { font-size: 2.5rem; } .notification-title { font-size: 1.2rem; }
         .icon-btn { width: 48px; height: 48px; min-width: 48px; font-size: 1.3rem; }
         .icon-btn.btn-execute { width: 54px; min-width: 54px; }
         .password-box { padding: 25px 20px; }
@@ -202,7 +206,6 @@
         </div>
         <div class="input-group"><input type="text" id="inputNama" placeholder="Nama akan muncul otomatis..." disabled></div>
         <div class="input-group"><input type="text" id="inputKelas" placeholder="Kelas akan muncul otomatis..." disabled></div>
-        <div class="status-msg" id="statusMsg"></div>
         <button class="btn-mulai" id="btnMulai" onclick="mulaiMisi()" disabled>🚀 MULAI</button>
         <button class="btn-teacher" onclick="bukaLaporanGuru()">👨‍🏫 Panel Laporan Guru</button>
     </div>
@@ -217,6 +220,22 @@
             <span class="filter-count" id="filterCount">0 siswa</span>
         </div>
         <div id="reportContent"></div>
+        
+        <!-- ✅ PANEL KONFIGURASI GURU -->
+        <div class="config-panel">
+            <h3>⚙️ Konfigurasi Sistem</h3>
+            <div class="config-row">
+                <label>📝 Jumlah Soal:</label>
+                <input type="number" id="configJumlahSoal" min="1" max="100" value="15">
+            </div>
+            <div class="config-row">
+                <label>🔐 Password Guru:</label>
+                <input type="text" id="configPassword" value="guru123">
+            </div>
+            <button class="btn-save-config" onclick="simpanKonfigurasi()">💾 Simpan Konfigurasi</button>
+            <p class="config-info">Perubahan akan berlaku untuk siswa yang login berikutnya.</p>
+        </div>
+        
         <div class="report-actions">
             <button class="btn-export" onclick="exportCSV()">📥 Export CSV</button>
             <button class="btn-reset-lokal" onclick="resetLocalData()">🗑️ Reset Lokal</button>
@@ -256,7 +275,7 @@
 
 <div class="game-container">
     <div class="header">
-        <h1>OPERASI DATA</h1>
+        <h1>🚀 OPERASI DATA</h1>
         <div class="status">
             SOAL: <span id="currentLevel">1 / <span id="totalSoal">25</span></span> &nbsp;|&nbsp;
             NILAI: <span id="score">0</span><span style="font-size:0.9rem;color:var(--text-secondary);">/100</span>
@@ -270,24 +289,20 @@
             <h2 id="missionTitle">Memuat Soal...</h2>
             <p id="missionDesc">Sistem sedang menyiapkan data...</p>
         </div>
-        <br>
         <div class="excel-simulation">
-            <div class="excel-toolbar"><span>Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
+            <div class="excel-toolbar"><span>📊 Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
             <table class="excel-grid" id="excelTable"></table>
         </div>
-        <br>
         <div class="formula-area">
-            <label>Susun Rumus Anda:</label>
+            <label>🔧 Susun Rumus Anda:</label>
             <div class="formula-dropzone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="leaveDrop()">
                 <span style="color: var(--text-secondary); font-style: italic;">Tarik blok kode ke sini...</span>
             </div>
-            <br>
             <div class="code-block-palette" id="palette"></div>
         </div>
-        <br>
         <div class="action-buttons">
             <button class="icon-btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled title="Soal Sebelumnya">⏮️</button>
-            <button class="icon-btn btn-execute" onclick="checkFormula()" title="Eksekusi Rumus">▶</button>
+            <button class="icon-btn btn-execute" id="btnExecute" onclick="handleExecute()" title="Cek Jawaban">▶</button>
             <button class="icon-btn btn-clear" onclick="clearDropZone()" title="Hapus Semua">✕</button>
             <button class="icon-btn btn-shuffle" onclick="acakUlangPalet()" title="Acak Ulang Blok">🎲</button>
             <button class="icon-btn btn-skip" onclick="skipQuestion()" title="Lewati Soal">⏭️</button>
@@ -296,8 +311,8 @@
 
     <div class="main-content hidden" id="victoryArea">
         <div class="victory-screen">
-            <h2>🎉 SEMUA SOAL BERHASIL!</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 10px;">Selamat, <span id="victoryName">-</span> (<span id="victoryKelas">-</span>)!</p>
+ 
+            <h2 margin-bottom: 10px;"><span id="victoryName">-</span> (<span id="victoryKelas">-</span>)!</p>
             <p style="color: var(--text-secondary); margin-bottom: 20px;">Jawaban Benar: <strong id="victoryBenar" style="color: var(--accent-cyan);">0</strong> dari <strong id="victoryTotal">0</strong> soal</p>
             <p style="font-size: 1.1rem; color: var(--text-secondary);">Nilai Akhir:</p>
             <p style="font-size: 4rem; color: var(--accent-green); font-weight: bold; margin: 10px 0;"><span id="finalScore">0</span><span style="font-size: 2rem; color: var(--text-secondary);">/100</span></p>
@@ -308,22 +323,23 @@
 </div>
 
 <script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJWMRVrSHJu0fS5BnS4z-lIfmtheEHOpGS1cKtRX6y_YdZRt-GTURJnfm2H-FgAdHV/exec';
-    const PASSWORD_GURU = 'guru123';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3JYXoiCH2XJi6jd-buuO9i4nWRermS72sK4TkO12GQdHufQsUJMvjm8NUCvZS1q8/exec';
+    
+    // ✅ KONFIGURASI DEFAULT (akan di-override dari Sheets)
+    let JUMLAH_SOAL_UNIK = 15;
+    let PASSWORD_GURU = 'guru123';
+    
+    const ACAK_BLOK_PALET = true; 
+    const PAKAI_PENGECEH = true; 
+    const JUMLAH_PENGECEH = 3; 
+
     let databaseSiswa = [];
     let dataSiswaAktif = { nis: '', nama: '', kelas: '' };
     let answeredLevels = new Set();
     let notifAutoCloseTimer = null;
     let semuaDataSkor = [];
-    let totalSoal = 25;
-
-    // ============================================================
-    // KONFIGURASI RANDOMISASI SOAL
-    // ============================================================
-    const ACAK_BLOK_PALET = true;   // acak posisi blok di palet
-    const PAKAI_PENGECEH = true;    // tambahkan blok jebakan
-    const JUMLAH_PENGECEH = 3;      // jumlah blok pengecoh (1-5)
-    const URUTAN_SOAL_RANDOM = true; // acak urutan soal per NIS
+    let totalSoal = JUMLAH_SOAL_UNIK; 
+    let currentAnswered = false;
 
     const poolPengecoh = [
         {t:'cell',v:'B2'},{t:'cell',v:'C2'},{t:'cell',v:'A3'},{t:'cell',v:'D2'},{t:'cell',v:'E2'},
@@ -334,9 +350,6 @@
         {t:'range',v:'A2:A10'},{t:'range',v:'B2:B5'},{t:'range',v:'C1:C3'},{t:'symbol',v:';'}
     ];
 
-    // ============================================================
-    // NORMALISASI TEKS (FIX SMART QUOTES DARI GOOGLE SHEETS)
-    // ============================================================
     function normalisasiTeks(teks) {
         if (!teks) return '';
         return teks
@@ -347,9 +360,6 @@
             .toLowerCase();
     }
 
-    // ============================================================
-    // SKOR 0-100 & PREDIKAT
-    // ============================================================
     function hitungSkor() {
         if (totalSoal === 0) return 0;
         return Math.round((answeredLevels.size / totalSoal) * 100);
@@ -367,9 +377,6 @@
         document.getElementById('victoryPredikat').innerHTML = `${emoji} Predikat: <strong style="color:${warna};">${predikat}</strong>`;
     }
 
-    // ============================================================
-    // RANDOMISASI BLOK
-    // ============================================================
     function acakBlokPalet(blocks, seed) {
         const hasil = [...blocks];
         let s = Math.abs(seed);
@@ -395,9 +402,17 @@
         return hasil;
     }
 
-    // ============================================================
-    // SOAL FALLBACK (25 soal) - Dipakai jika Sheets gagal
-    // ============================================================
+    function getRandomSubset(array, count, seed) {
+        const shuffled = [...array];
+        let s = Math.abs(seed);
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            s = (s * 9301 + 49297) % 233280;
+            const j = Math.floor((s / 233280) * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled.slice(0, Math.min(count, shuffled.length));
+    }
+
     const soalDefault = [
         {title:"Kelulusan Siswa",desc:"Jika nilai di A2 >= 75 maka 'Lulus', jika tidak 'Remedial'.",table:[["A (Nilai)","B (Status)"],["85",""]],target:"B2",correct:'=IF(A2>=75,"Lulus","Remedial")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'75'},{t:'text',v:'"Lulus"'},{t:'text',v:'"Remedial"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
         {title:"Suhu Planet",desc:"Jika suhu di A2 < 0 maka 'Beku', jika tidak 'Cair'.",table:[["A (Suhu °C)","B (Wujud)"],["-5",""]],target:"B2",correct:'=IF(A2<0,"Beku","Cair")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<'},{t:'number',v:'0'},{t:'text',v:'"Beku"'},{t:'text',v:'"Cair"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
@@ -426,28 +441,81 @@
         {title:"Beasiswa",desc:"Jika A2 >= 3.5 DAN B2 <= 2000000 maka 'Dapat Beasiswa', jika tidak 'Tidak Dapat'.",table:[["A (IPK)","B (Penghasilan)","C (Beasiswa)"],["3.8","1500000",""]],target:"C2",correct:'=IF(AND(A2>=3.5,B2<=2000000),"Dapat Beasiswa","Tidak Dapat")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'AND('},{t:'cell',v:'A2'},{t:'cell',v:'B2'},{t:'operator',v:'>='},{t:'operator',v:'<='},{t:'number',v:'3.5'},{t:'number',v:'2000000'},{t:'text',v:'"Dapat Beasiswa"'},{t:'text',v:'"Tidak Dapat"'},{t:'symbol',v:','},{t:'symbol',v:')'},{t:'symbol',v:')'}]}
     ];
 
-    let levels = [...soalDefault];
+    let levels = [];
     let currentLevelIndex = 0;
     let score = 0;
 
     // ============================================================
-    // LOAD SOAL DARI GOOGLE SHEETS
+    // FUNGSI BARU: LOAD KONFIGURASI DARI SHEETS
     // ============================================================
-    async function loadSoalDariSheets() {
+    async function loadKonfigurasi() {
         try {
-            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSoal`);
+            const response = await fetch(`${APPS_SCRIPT_URL}?action=getKonfigurasi`, { mode: 'cors' });
             const result = await response.json();
-            if (result.success && result.data && result.data.length > 0) return result.data;
-            return soalDefault;
+            if (result.success && result.data) {
+                JUMLAH_SOAL_UNIK = result.data.JumlahSoal || 15;
+                PASSWORD_GURU = result.data.PasswordGuru || 'guru123';
+                console.log(`✅ Konfigurasi dimuat: ${JUMLAH_SOAL_UNIK} soal, password: ${PASSWORD_GURU}`);
+                return true;
+            }
         } catch (error) {
-            console.warn('Gagal load soal dari Sheets, pakai fallback.');
-            return soalDefault;
+            console.warn('⚠️ Gagal load konfigurasi, pakai default:', error.message);
         }
+        return false;
     }
 
     // ============================================================
-    // NOTIFIKASI
+    // FUNGSI BARU: SIMPAN KONFIGURASI KE SHEETS
     // ============================================================
+    async function simpanKonfigurasi() {
+        const jumlahSoal = parseInt(document.getElementById('configJumlahSoal').value) || 15;
+        const password = document.getElementById('configPassword').value.trim() || 'guru123';
+        
+        if (jumlahSoal < 1 || jumlahSoal > 100) {
+            tampilkanNotifikasi('error', '❌ Error', 'Jumlah soal harus antara 1-100.', null, 3000);
+            return;
+        }
+        
+        try {
+            tampilkanNotifikasi('info', '⏳ Menyimpan...', 'Menyimpan konfigurasi ke Google Sheets...', null, 0);
+            const response = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'updateKonfigurasi',
+                    JumlahSoal: jumlahSoal,
+                    PasswordGuru: password
+                })
+            });
+            
+            // Update variabel lokal
+            JUMLAH_SOAL_UNIK = jumlahSoal;
+            PASSWORD_GURU = password;
+            
+            tutupNotifikasi();
+            tampilkanNotifikasi('success', '✅ Konfigurasi Tersimpan!', 
+                `Jumlah soal: ${JUMLAH_SOAL_UNIK} | Password: ${PASSWORD_GURU}`, null, 3000);
+        } catch (error) {
+            tutupNotifikasi();
+            tampilkanNotifikasi('error', '❌ Gagal', 'Error: ' + error.message, null, 3000);
+        }
+    }
+
+    async function loadSoalDariSheets() {
+        try {
+            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSoal`, { mode: 'cors' });
+            const result = await response.json();
+            if (result.success && result.data && result.data.length > 0) {
+                console.log(`✅ Berhasil memuat ${result.total} soal dari Google Sheets`);
+                return result.data;
+            }
+        } catch (error) {
+            console.warn('⚠️ Gagal load dari Sheets, pakai fallback lokal:', error.message);
+        }
+        return soalDefault;
+    }
+
     function tampilkanNotifikasi(tipe, judul, pesan, formula = null, autoClose = 2000) {
         const box = document.getElementById('notificationBox');
         box.className = 'notification-box ' + tipe;
@@ -469,17 +537,18 @@
         if (notifAutoCloseTimer) { clearTimeout(notifAutoCloseTimer); notifAutoCloseTimer = null; }
     }
 
-    // ============================================================
-    // DATABASE & LOGIN
-    // ============================================================
     async function loadDatabase() {
         const dbStatus = document.getElementById('dbStatus');
         const inputNIS = document.getElementById('inputNIS');
         const btnCek = document.getElementById('btnCek');
+        
+        // Load konfigurasi terlebih dahulu
+        await loadKonfigurasi();
+        
         try {
             dbStatus.className = 'db-status loading';
             dbStatus.innerHTML = '⏳ Menghubungkan ke Google Sheets...';
-            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSiswa`);
+            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSiswa`, { mode: 'cors' });
             const result = await response.json();
             if (result.success) {
                 databaseSiswa = result.data;
@@ -490,55 +559,37 @@
         } catch (error) {
             dbStatus.className = 'db-status disconnected';
             dbStatus.innerHTML = '❌ Gagal terhubung. Mode offline.';
-            databaseSiswa = [{ nis: "12345", nama: "Ahmad Fauzi", kelas: "7A" }];
+            databaseSiswa = [{ nis: "12888", nama: "ADDA KAAYUAN AULIA CAKRA NIRMALA", kelas: "8D" }];
             inputNIS.disabled = false; btnCek.disabled = false;
         }
     }
 
     function cariSiswa(nis) { return databaseSiswa.find(s => s.nis === nis.toString().trim()) || null; }
-
     function cekNIS() {
         const nisInput = document.getElementById('inputNIS').value.trim();
-        const statusMsg = document.getElementById('statusMsg');
         const btnMulai = document.getElementById('btnMulai');
-        statusMsg.className = 'status-msg'; statusMsg.innerText = '';
-        document.getElementById('inputNama').value = '';
-        document.getElementById('inputKelas').value = '';
+        const inputNama = document.getElementById('inputNama');
+        const inputKelas = document.getElementById('inputKelas');
+        inputNama.value = '';
+        inputKelas.value = '';
         btnMulai.disabled = true;
-        if (!nisInput) { statusMsg.className = 'status-msg invalid'; statusMsg.innerText = '⚠️ NIS tidak boleh kosong!'; return; }
+        if (!nisInput) return;
         const siswa = cariSiswa(nisInput);
         if (siswa) {
-            document.getElementById('inputNama').value = siswa.nama;
-            document.getElementById('inputKelas').value = siswa.kelas;
-            statusMsg.className = 'status-msg valid';
-            statusMsg.innerText = `✅ ${siswa.nama} - Kelas ${siswa.kelas}`;
+            inputNama.value = siswa.nama;
+            inputKelas.value = siswa.kelas;
             btnMulai.disabled = false;
             dataSiswaAktif = { nis: siswa.nis, nama: siswa.nama, kelas: siswa.kelas };
-        } else {
-            statusMsg.className = 'status-msg invalid';
-            statusMsg.innerText = '❌ NIS tidak terdaftar!';
         }
     }
     document.getElementById('inputNIS').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); cekNIS(); } });
 
-    // ============================================================
-    // HASH & SHUFFLE
-    // ============================================================
     function hashNIS(nis) {
         let hash = 0; const str = nis.toString().trim().toLowerCase();
         for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash = hash & hash; }
         return Math.abs(hash);
     }
-    function seededRandom(seed) { let x = Math.sin(seed++) * 10000; return x - Math.floor(x); }
-    function shuffleWithSeed(array, seed) {
-        const s = [...array];
-        for (let i = s.length - 1; i > 0; i--) { const j = Math.floor(seededRandom(seed + i) * (i + 1)); [s[i], s[j]] = [s[j], s[i]]; }
-        return s;
-    }
 
-    // ============================================================
-    // SAVE & LOAD PROGRESS
-    // ============================================================
     function simpanProgressLokal() {
         const key = `game_if_${dataSiswaAktif.nis}`;
         score = hitungSkor();
@@ -556,63 +607,118 @@
     function muatProgress() {
         const saved = localStorage.getItem(`game_if_${dataSiswaAktif.nis}`);
         if (saved) {
-            const data = JSON.parse(saved);
-            currentLevelIndex = data.currentLevelIndex || 0;
-            answeredLevels = new Set(data.answeredLevels || []);
-            score = hitungSkor();
-            document.getElementById('score').innerText = score;
-            return true;
+            try {
+                const data = JSON.parse(saved);
+                currentLevelIndex = Math.min(data.currentLevelIndex || 0, totalSoal - 1);
+                answeredLevels = new Set(data.answeredLevels || []);
+                score = hitungSkor();
+                document.getElementById('score').innerText = score;
+                return true;
+            } catch (e) { console.warn('Progress corrupt, reset'); }
         }
         return false;
     }
 
     async function simpanSkorKeSheets() {
         try {
-            const data = { action: 'simpanSkor', nis: dataSiswaAktif.nis, nama: dataSiswaAktif.nama, kelas: dataSiswaAktif.kelas,
-                progress: currentLevelIndex, skor: score, jumlahBenar: answeredLevels.size, totalSoal, selesai: currentLevelIndex >= totalSoal };
-            await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        } catch (e) { console.warn('Gagal simpan skor:', e); }
+            const data = {
+                action: 'simpanSkor',
+                nis: dataSiswaAktif.nis,
+                nama: dataSiswaAktif.nama,
+                kelas: dataSiswaAktif.kelas,
+                progress: currentLevelIndex,
+                skor: score,
+                jumlahBenar: answeredLevels.size,
+                totalSoal: totalSoal,
+                selesai: currentLevelIndex >= totalSoal
+            };
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(data)
+            });
+        } catch (error) {
+            console.error('❌ Gagal menyimpan skor:', error);
+        }
     }
 
     async function ambilSkorDariSheets() {
         try {
-            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSkor`);
+            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSkor`, { mode: 'cors' });
             const result = await response.json();
             if (result.success) return result.data;
-        } catch (e) {}
+        } catch (error) {
+            console.error('❌ Gagal mengambil skor:', error);
+        }
         return JSON.parse(localStorage.getItem('skor_global_if') || '[]');
     }
 
-    // ============================================================
-    // MULAI MISI
-    // ============================================================
+    function handleExecute() {
+        if (currentAnswered) {
+            lanjutKeSoalBerikutnya();
+        } else {
+            checkFormula();
+        }
+    }
+
+    function lanjutKeSoalBerikutnya() {
+        currentAnswered = false;
+        currentLevelIndex++;
+        if (currentLevelIndex < totalSoal) {
+            loadLevel();
+        } else {
+            showVictory();
+        }
+    }
+
     async function mulaiMisi() {
         if (!dataSiswaAktif.nis) { alert('⚠️ Cek NIS dulu!'); return; }
-        const soalDariSheets = await loadSoalDariSheets();
-        levels = [...soalDariSheets];
+        
+        const semuaSoal = await loadSoalDariSheets();
+        console.log(`📚 Total bank soal: ${semuaSoal.length}`);
+        
+        const seedUnik = hashNIS(dataSiswaAktif.nis);
+        levels = getRandomSubset(semuaSoal, JUMLAH_SOAL_UNIK, seedUnik);
+        
         totalSoal = levels.length;
         document.getElementById('totalSoal').innerText = totalSoal;
-        if (URUTAN_SOAL_RANDOM) levels = shuffleWithSeed(levels, hashNIS(dataSiswaAktif.nis));
+        
         answeredLevels = new Set();
+        currentAnswered = false;
         muatProgress();
+        
         document.getElementById('studentInfo').innerText = `${dataSiswaAktif.nama} (${dataSiswaAktif.kelas}) - NIS: ${dataSiswaAktif.nis}`;
         document.getElementById('victoryName').innerText = dataSiswaAktif.nama;
         document.getElementById('victoryKelas').innerText = dataSiswaAktif.kelas;
         document.getElementById('loginOverlay').classList.add('hidden');
+        
+        if (levels.length === 0) {
+            levels = [...soalDefault];
+            totalSoal = Math.min(JUMLAH_SOAL_UNIK, levels.length);
+            document.getElementById('totalSoal').innerText = totalSoal;
+        }
+        
         loadLevel();
     }
 
-    // ============================================================
-    // LOAD LEVEL (DENGAN RANDOMISASI BLOK)
-    // ============================================================
     function loadLevel() {
+        if (!levels || levels.length === 0) {
+            levels = [...soalDefault];
+            totalSoal = Math.min(JUMLAH_SOAL_UNIK, levels.length);
+        }
+        if (currentLevelIndex >= levels.length) {
+            currentLevelIndex = 0;
+        }
+        
         const level = levels[currentLevelIndex];
-        document.getElementById('missionTitle').innerText = level.title;
-        document.getElementById('missionDesc').innerText = level.desc;
+        if (!level) return;
+        
+        document.getElementById('missionTitle').innerText = level.title || 'Soal';
+        document.getElementById('missionDesc').innerText = level.desc || '';
         document.getElementById('currentLevel').innerText = `${currentLevelIndex + 1} / ${totalSoal}`;
         document.getElementById('progressBar').style.width = (currentLevelIndex / totalSoal) * 100 + '%';
 
-        // Render tabel Excel
         const colMatch = level.target.match(/[A-Z]+/);
         const rowMatch = level.target.match(/\d+/);
         const targetColIndex = colMatch ? colMatch[0].charCodeAt(0) - 64 : 1;
@@ -645,9 +751,8 @@
             table.appendChild(tr);
         }
 
-        // ✅ RANDOMISASI BLOK
         const seedBlok = hashNIS(dataSiswaAktif.nis) * 100 + currentLevelIndex;
-        let blocksSiapTampil = [...level.blocks];
+        let blocksSiapTampil = [...(level.blocks || [])];
         if (PAKAI_PENGECEH) blocksSiapTampil = tambahBlokPengecoh(blocksSiapTampil, JUMLAH_PENGECEH, seedBlok);
         if (ACAK_BLOK_PALET) blocksSiapTampil = acakBlokPalet(blocksSiapTampil, seedBlok);
 
@@ -664,11 +769,25 @@
         });
         clearDropZone();
         document.getElementById('btnPrev').disabled = (currentLevelIndex === 0);
+        
+        currentAnswered = false;
+        updateExecuteButton();
     }
 
-    // ============================================================
-    // DRAG & DROP
-    // ============================================================
+    function updateExecuteButton() {
+        const btn = document.getElementById('btnExecute');
+        if (!btn) return;
+        if (currentAnswered) {
+            btn.innerHTML = '✓';
+            btn.title = 'Kirim - Lanjut ke soal berikutnya';
+            btn.classList.add('submit-mode');
+        } else {
+            btn.innerHTML = '▶';
+            btn.title = 'Cek Jawaban';
+            btn.classList.remove('submit-mode');
+        }
+    }
+
     function allowDrop(ev) { ev.preventDefault(); document.getElementById('dropZone').classList.add('drag-over'); }
     function leaveDrop() { document.getElementById('dropZone').classList.remove('drag-over'); }
     function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
@@ -688,9 +807,6 @@
         document.getElementById('dropZone').innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Tarik blok kode ke sini...</span>';
     }
 
-    // ============================================================
-    // CEK RUMUS (dengan normalisasi + fallback)
-    // ============================================================
     function checkFormula() {
         const activeBlocks = Array.from(document.getElementById('dropZone').children).filter(b => b.style.fontStyle !== 'italic');
         if (activeBlocks.length === 0) {
@@ -713,36 +829,47 @@
         if (isCorrect) {
             if (answeredLevels.has(currentLevelIndex)) {
                 playSound('success');
-                tampilkanNotifikasi('success', '✓ Benar!', `Sudah dijawab. Nilai tetap: ${hitungSkor()}/100`, constructedFormula, 2000);
+                currentAnswered = true;
+                updateExecuteButton();
+                tampilkanNotifikasi('success', '✓ Sudah Dijawab!', 'Soal ini sudah pernah dijawab. Klik tombol ✓ untuk lanjut.', constructedFormula, 0);
             } else {
                 playSound('success');
                 answeredLevels.add(currentLevelIndex);
                 score = hitungSkor();
                 document.getElementById('score').innerText = score;
-                tampilkanNotifikasi('success', '🎉 Benar!', `Nilai Anda: ${score}/100`, constructedFormula, 2000);
+                currentAnswered = true;
+                updateExecuteButton();
+                tampilkanNotifikasi('success', '🎉 Jawaban Benar!', `Nilai Anda: ${score}/100. Klik tombol ✓ untuk lanjut ke soal berikutnya.`, constructedFormula, 0);
             }
             simpanProgressLokal();
             simpanSkorKeSheets();
-            setTimeout(() => {
-                currentLevelIndex++;
-                if (currentLevelIndex < totalSoal) loadLevel(); else showVictory();
-            }, 1500);
         } else {
             playSound('error');
             tampilkanNotifikasi('error', '❌ Jawaban Salah', 'Susunan blok tidak tepat. Coba lagi!', constructedFormula, 2500);
         }
     }
 
-    function prevQuestion() { if (currentLevelIndex > 0) { currentLevelIndex--; loadLevel(); } }
+    function prevQuestion() { 
+        if (currentLevelIndex > 0) { 
+            currentLevelIndex--; 
+            currentAnswered = false;
+            loadLevel(); 
+        } 
+    }
     function skipQuestion() {
         currentLevelIndex++;
+        currentAnswered = false;
         simpanProgressLokal(); simpanSkorKeSheets();
         if (currentLevelIndex < totalSoal) loadLevel(); else showVictory();
     }
     function acakUlangPalet() {
+        if (currentAnswered) {
+            tampilkanNotifikasi('warning', '⚠️ Tidak Bisa', 'Soal sudah dijawab. Klik ✓ untuk lanjut.', null, 2000);
+            return;
+        }
         const level = levels[currentLevelIndex];
         const seedBaru = Date.now();
-        let blocksSiapTampil = [...level.blocks];
+        let blocksSiapTampil = [...(level.blocks || [])];
         if (PAKAI_PENGECEH) blocksSiapTampil = tambahBlokPengecoh(blocksSiapTampil, JUMLAH_PENGECEH, seedBaru);
         blocksSiapTampil = acakBlokPalet(blocksSiapTampil, seedBaru);
         const palette = document.getElementById('palette');
@@ -773,16 +900,15 @@
     function restartGame() {
         localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
         currentLevelIndex = 0; score = 0; answeredLevels = new Set();
+        currentAnswered = false;
         document.getElementById('score').innerText = '0';
         document.getElementById('gameArea').classList.remove('hidden');
         document.getElementById('victoryArea').classList.add('hidden');
-        levels = shuffleWithSeed(levels, hashNIS(dataSiswaAktif.nis));
+        const seedUnik = hashNIS(dataSiswaAktif.nis);
+        levels = getRandomSubset(soalDefault, JUMLAH_SOAL_UNIK, seedUnik);
         loadLevel();
     }
 
-    // ============================================================
-    // PANEL GURU
-    // ============================================================
     function bukaLaporanGuru() {
         document.getElementById('passwordInput').value = '';
         document.getElementById('passwordError').innerText = '';
@@ -801,7 +927,8 @@
     function verifikasiPassword() {
         const pwd = document.getElementById('passwordInput').value;
         if (pwd === PASSWORD_GURU) {
-            tutupPassword(); tampilkanLaporan();
+            tutupPassword(); 
+            tampilkanLaporan();
             document.getElementById('reportOverlay').classList.add('active');
         } else {
             document.getElementById('passwordError').innerText = '❌ Password salah!';
@@ -814,9 +941,6 @@
     document.getElementById('passwordInput').addEventListener('keypress', e => { if (e.key === 'Enter') verifikasiPassword(); });
     function tutupLaporan() { document.getElementById('reportOverlay').classList.remove('active'); }
 
-    // ============================================================
-    // RESET DATA (3 LEVEL)
-    // ============================================================
     function resetLocalData() {
         if (confirm('🗑️ RESET DATA LOKAL\n\nHanya menghapus cache browser ini.\nData di Google Sheets TIDAK terhapus.\n\nLanjutkan?')) {
             hapusLocalKeys();
@@ -828,7 +952,7 @@
         if (confirm('☁️ HAPUS DATA GOOGLE SHEETS\n\nPERINGATAN: Data di Google Sheets akan dihapus permanen!\n\nLanjutkan?')) {
             try {
                 tampilkanNotifikasi('info', '⏳ Menghapus...', 'Menghapus data dari Google Sheets...', null, 0);
-                const response = await fetch(`${APPS_SCRIPT_URL}?action=hapusSkor`);
+                const response = await fetch(`${APPS_SCRIPT_URL}?action=hapusSkor`, { mode: 'cors' });
                 const result = await response.json();
                 tutupNotifikasi();
                 if (result.success) {
@@ -848,7 +972,7 @@
         try {
             tampilkanNotifikasi('info', '⏳ Menghapus...', 'Menghapus semua data...', null, 0);
             hapusLocalKeys();
-            const response = await fetch(`${APPS_SCRIPT_URL}?action=hapusSkor`);
+            const response = await fetch(`${APPS_SCRIPT_URL}?action=hapusSkor`, { mode: 'cors' });
             const result = await response.json();
             if (!result.success) throw new Error(result.error);
             tutupNotifikasi();
@@ -868,9 +992,6 @@
         keys.forEach(k => localStorage.removeItem(k));
     }
 
-    // ============================================================
-    // LAPORAN & FILTER
-    // ============================================================
     function formatWaktu(ts) {
         if (!ts) return '-';
         const s = ts.toString().trim();
@@ -882,6 +1003,10 @@
         semuaDataSkor = await ambilSkorDariSheets();
         updateFilterKelas(semuaDataSkor);
         filterLaporan();
+        
+        // Update tampilan konfigurasi dengan nilai dari Sheets
+        document.getElementById('configJumlahSoal').value = JUMLAH_SOAL_UNIK;
+        document.getElementById('configPassword').value = PASSWORD_GURU;
     }
     function updateFilterKelas(data) {
         const sel = document.getElementById('filterKelas');
@@ -926,9 +1051,6 @@
         a.click();
     }
 
-    // ============================================================
-    // AUDIO
-    // ============================================================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(type) {
         const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
