@@ -38,6 +38,23 @@
     .db-status.connected { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid var(--accent-green); }
     .db-status.disconnected { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid var(--accent-red); }
     .db-status.loading { background: rgba(148, 163, 184, 0.1); color: var(--text-secondary); border: 1px solid var(--border-color); }
+    .progress-info { margin-top: 10px; padding: 8px 12px; background: rgba(6, 182, 212, 0.1); border: 1px solid var(--accent-cyan); border-radius: 6px; font-size: 0.85rem; color: var(--accent-cyan); display: none; }
+    .progress-info.show { display: block; }
+
+    .restore-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 5000; padding: 20px; }
+    .restore-overlay.active { display: flex; }
+    .restore-box { background: var(--bg-secondary); border: 2px solid var(--accent-cyan); border-radius: 16px; padding: 30px; max-width: 450px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.4s ease; text-align: center; }
+    .restore-box h2 { color: var(--accent-cyan); margin-bottom: 15px; font-size: 1.5rem; }
+    .restore-box p { color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
+    .restore-info { background: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; }
+    .restore-info-row { display: flex; justify-content: space-between; padding: 5px 0; color: var(--text-primary); font-size: 0.95rem; }
+    .restore-info-row span:first-child { color: var(--text-secondary); }
+    .restore-buttons { display: flex; gap: 10px; }
+    .restore-buttons button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s; }
+    .btn-restore-yes { background: var(--accent-green); color: white; }
+    .btn-restore-yes:hover { background: #059669; }
+    .btn-restore-no { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+    .btn-restore-no:hover { background: var(--border-color); }
 
     .report-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
     .report-overlay.active { display: flex; }
@@ -60,28 +77,143 @@
     .report-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
     .report-actions button { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s; }
     .btn-export { background: var(--accent-green); color: white; }
+    .btn-refresh { background: var(--accent-cyan); color: white; }
+    .btn-refresh:hover { background: #0891b2; transform: translateY(-2px); }
     .btn-reset-lokal { background: var(--accent-yellow); color: #000; }
     .btn-reset-sheets { background: var(--accent-purple); color: white; }
     .btn-reset-all { background: var(--accent-red); color: white; }
     .btn-close { background: var(--bg-tertiary); color: white; border: 1px solid var(--border-color); }
     .empty-report { text-align: center; color: var(--text-secondary); padding: 30px; font-size: 1.1rem; }
 
-    /* Panel Konfigurasi Guru */
     .config-panel { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin: 20px 0; }
     .config-panel h3 { color: var(--accent-yellow); margin-bottom: 15px; font-size: 1.2rem; }
     .config-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
-    .config-row label { color: var(--text-secondary); font-size: 0.95rem; min-width: 120px; }
+    .config-row label { color: var(--text-secondary); font-size: 0.95rem; min-width: 130px; }
     .config-row input { flex: 1; min-width: 150px; padding: 8px 12px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 1rem; }
     .config-row input:focus { border-color: var(--accent-cyan); outline: none; }
     .btn-save-config { background: var(--accent-cyan); color: var(--bg-primary); padding: 8px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     .btn-save-config:hover { background: #0891b2; }
     .config-info { color: var(--text-secondary); font-size: 0.85rem; margin-top: 10px; font-style: italic; }
 
-    .header { background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary)); padding: 15px 25px; border-bottom: 2px solid var(--accent-cyan); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-    .header h1 { font-size: 1.6rem; color: var(--accent-cyan); letter-spacing: 1px; }
-    .header .status { font-size: 1.1rem; color: var(--text-secondary); text-align: right; }
-    .header .status span { color: var(--accent-green); font-weight: bold; }
-    .header .student-info { font-size: 0.95rem; color: var(--accent-yellow); margin-top: 4px; }
+    .header { 
+        background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary)); 
+        padding: 12px 25px 15px; 
+        border-bottom: 2px solid var(--accent-cyan); 
+        display: flex; 
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0; 
+    }
+    .header-title-row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    .header-title-row h1 { 
+        font-size: 1.8rem; 
+        color: var(--accent-cyan); 
+        letter-spacing: 2px; 
+        margin: 0;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    .header-title-row h1:hover {
+        text-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+        transform: scale(1.02);
+    }
+    .header-info-row {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 6px;
+    }
+    .header-info-row .status { 
+        font-size: 1.1rem; 
+        color: var(--text-secondary); 
+        text-align: center;
+    }
+    .header-info-row .status span { 
+        color: var(--accent-green); 
+        font-weight: bold; 
+    }
+    .header-info-row .student-info { 
+        font-size: 0.9rem; 
+        color: var(--accent-yellow); 
+        text-align: center;
+    }
+    .header-dots-row {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+    .header-dots-row .save-indicator { 
+        font-size: 0.8rem; 
+        color: var(--accent-green); 
+        opacity: 0; 
+        transition: opacity 0.3s;
+        text-align: center;
+    }
+    .header-dots-row .save-indicator.show { opacity: 1; }
+
+    .question-indicator { 
+        display: flex; 
+        gap: 6px; 
+        flex-wrap: nowrap;
+        justify-content: center;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        padding: 4px 0;
+    }
+    .question-indicator::-webkit-scrollbar { height: 4px; }
+    .question-indicator::-webkit-scrollbar-track { background: var(--bg-primary); border-radius: 2px; }
+    .question-indicator::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 2px; }
+
+    .q-dot {
+        width: 28px; height: 28px; border-radius: 4px;
+        font-size: 0.75rem; font-weight: bold;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s;
+        border: 1px solid var(--border-color);
+        background: var(--bg-tertiary); color: var(--text-secondary);
+        user-select: none; flex-shrink: 0;
+    }
+    .q-dot.answered {
+        background: linear-gradient(135deg, var(--accent-green), #059669);
+        color: white; border-color: var(--accent-green);
+        cursor: not-allowed !important;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+    }
+    .q-dot.answered::after { content: '✓'; font-size: 0.6rem; margin-left: 1px; }
+    .q-dot.current {
+        background: linear-gradient(135deg, var(--accent-cyan), #0891b2);
+        color: var(--bg-primary); border-color: var(--accent-cyan);
+        transform: scale(1.15);
+        box-shadow: 0 0 12px rgba(6, 182, 212, 0.5);
+        cursor: default;
+        animation: glow 2s ease-in-out infinite;
+    }
+    @keyframes glow {
+        0%, 100% { box-shadow: 0 0 8px rgba(6, 182, 212, 0.4); }
+        50% { box-shadow: 0 0 16px rgba(6, 182, 212, 0.8); }
+    }
+    .q-dot.available {
+        background: var(--bg-tertiary); color: var(--text-primary);
+        border-color: var(--border-color); cursor: pointer;
+    }
+    .q-dot.available:hover {
+        background: var(--accent-cyan); color: var(--bg-primary);
+        border-color: var(--accent-cyan);
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+    }
+
     .progress-bar-container { width: 100%; height: 5px; background-color: var(--bg-primary); flex-shrink: 0; }
     .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green)); width: 0%; transition: width 0.5s ease; }
     .main-content { padding: 18px 25px; flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-height: 0; }
@@ -97,9 +229,12 @@
     .excel-grid td.active-cell::after { content: ''; position: absolute; bottom: -4px; right: -4px; width: 7px; height: 7px; background-color: var(--excel-active-border); border: 1px solid #fff; }
     .formula-area { flex-shrink: 0; }
     .formula-area label { color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 6px; display: block; font-weight: 600; }
-    .formula-dropzone { background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: 6px; padding: 12px; min-height: 50px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; transition: all 0.3s; }
+    .formula-dropzone { background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: 6px; padding: 12px; min-height: 50px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; transition: all 0.3s; position: relative; }
     .formula-dropzone.drag-over { border-color: var(--accent-cyan); background-color: rgba(6, 182, 212, 0.1); }
+    .formula-dropzone.locked { border-color: var(--accent-green); background-color: rgba(16, 185, 129, 0.05); cursor: not-allowed; }
+    .formula-dropzone.locked::after { content: '🔒 Terkunci'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: var(--accent-green); font-weight: bold; }
     .code-block-palette { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding: 12px; background-color: var(--bg-tertiary); border-radius: 6px; justify-content: flex-start; max-height: 130px; overflow-y: auto; }
+    .code-block-palette.locked .draggable-block { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
     .draggable-block { background-color: #3b82f6; color: white; min-width: 40px; padding: 8px 14px; border-radius: 4px; cursor: grab; font-family: monospace; font-size: 1.05rem; text-align: center; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2); white-space: nowrap; display: inline-flex; justify-content: center; align-items: center; }
     .draggable-block:active { cursor: grabbing; transform: scale(0.95); }
     .draggable-block.operator { background-color: var(--accent-yellow); color: #000; }
@@ -164,6 +299,7 @@
 
     .victory-screen { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
     .victory-screen h2 { font-size: 2.2rem; color: var(--accent-green); margin-bottom: 15px; }
+    .victory-badge { display: inline-block; background: var(--accent-green); color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; }
     .btn-primary { padding: 14px 35px; font-size: 1.1rem; background: var(--accent-cyan); color: var(--bg-primary); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     .btn-primary:hover { background: #0891b2; }
     .hidden { display: none !important; }
@@ -174,7 +310,10 @@
     @media (max-width: 768px) {
         body { padding: 10px; }
         .main-content { padding: 12px; gap: 10px; }
-        .header h1 { font-size: 1.2rem; } .header .status { font-size: 0.85rem; }
+        .header { padding: 10px 15px 12px; }
+        .header-title-row h1 { font-size: 1.3rem; letter-spacing: 1px; }
+        .header-info-row .status { font-size: 0.9rem; }
+        .header-info-row .student-info { font-size: 0.8rem; }
         .mission-brief h2 { font-size: 1.1rem; } .mission-brief p { font-size: 0.95rem; }
         .excel-grid th { font-size: 0.85rem; } .excel-grid td { font-size: 0.9rem; padding: 6px; }
         .draggable-block { font-size: 0.9rem; padding: 6px 10px; }
@@ -188,6 +327,8 @@
         .filter-container { flex-direction: column; gap: 8px; } .filter-select { width: 100%; }
         .report-actions button { font-size: 0.8rem; padding: 8px 10px; }
         .victory-screen h2 { font-size: 1.5rem; }
+        .q-dot { width: 24px; height: 24px; font-size: 0.65rem; }
+        .question-indicator { gap: 3px; }
     }
 </style>
 </head>
@@ -206,8 +347,26 @@
         </div>
         <div class="input-group"><input type="text" id="inputNama" placeholder="Nama akan muncul otomatis..." disabled></div>
         <div class="input-group"><input type="text" id="inputKelas" placeholder="Kelas akan muncul otomatis..." disabled></div>
+        <div class="progress-info" id="progressInfo"></div>
         <button class="btn-mulai" id="btnMulai" onclick="mulaiMisi()" disabled>🚀 MULAI</button>
         <button class="btn-teacher" onclick="bukaLaporanGuru()">👨‍🏫 Panel Laporan Guru</button>
+    </div>
+</div>
+
+<div class="restore-overlay" id="restoreOverlay">
+    <div class="restore-box">
+        <h2>💾 Progress Tersimpan Ditemukan</h2>
+        <p id="restoreMessage">Anda memiliki progress yang belum selesai. Lanjutkan?</p>
+        <div class="restore-info">
+            <div class="restore-info-row"><span>📝 Soal selesai:</span><span id="restoreProgress">0 / 25</span></div>
+            <div class="restore-info-row"><span>⭐ Nilai saat ini:</span><span id="restoreScore">0</span></div>
+            <div class="restore-info-row"><span>📍 Soal berikutnya:</span><span id="restoreNextSoal">-</span></div>
+            <div class="restore-info-row"><span>📅 Terakhir disimpan:</span><span id="restoreTime">-</span></div>
+        </div>
+        <div class="restore-buttons">
+            <button class="btn-restore-no" onclick="mulaiBaru()">🔄 Mulai Baru</button>
+            <button class="btn-restore-yes" onclick="lanjutkanProgress()">▶️ Lanjutkan</button>
+        </div>
     </div>
 </div>
 
@@ -220,23 +379,21 @@
             <span class="filter-count" id="filterCount">0 siswa</span>
         </div>
         <div id="reportContent"></div>
-        
-        <!-- ✅ PANEL KONFIGURASI GURU -->
         <div class="config-panel">
             <h3>⚙️ Konfigurasi Sistem</h3>
             <div class="config-row">
                 <label>📝 Jumlah Soal:</label>
-                <input type="number" id="configJumlahSoal" min="1" max="100" value="15">
+                <input type="number" id="configJumlahSoal" min="1" max="100" value="25">
             </div>
             <div class="config-row">
                 <label>🔐 Password Guru:</label>
-                <input type="text" id="configPassword" value="guru123">
+                <input type="text" id="configPassword" value="">
             </div>
             <button class="btn-save-config" onclick="simpanKonfigurasi()">💾 Simpan Konfigurasi</button>
             <p class="config-info">Perubahan akan berlaku untuk siswa yang login berikutnya.</p>
         </div>
-        
         <div class="report-actions">
+            <button class="btn-refresh" onclick="refreshDataDariSheets()">🔄 Refresh Data</button>
             <button class="btn-export" onclick="exportCSV()">📥 Export CSV</button>
             <button class="btn-reset-lokal" onclick="resetLocalData()">🗑️ Reset Lokal</button>
             <button class="btn-reset-sheets" onclick="resetSheetsData()">☁️ Hapus Sheets</button>
@@ -275,35 +432,39 @@
 
 <div class="game-container">
     <div class="header">
-        <h1>OPERASI DATA</h1>
-        <div class="status">
-            SOAL: <span id="currentLevel">1 / <span id="totalSoal">25</span></span> &nbsp;|&nbsp;
-            NILAI: <span id="score">0</span><span style="font-size:0.9rem;color:var(--text-secondary);">/100</span>
+        <div class="header-title-row">
+            <h1>🚀 OPERASI DATA</h1>
+        </div>
+        <div class="header-info-row">
+            <div class="status">
+                SOAL: <span id="currentLevel">1 / <span id="totalSoal">25</span></span> &nbsp;|&nbsp;
+                NILAI: <span id="score">0</span><span style="font-size:0.9rem;color:var(--text-secondary);">/100</span>
+            </div>
             <div class="student-info" id="studentInfo">Siswa: -</div>
+        </div>
+        <div class="header-dots-row">
+            <div class="save-indicator" id="saveIndicator">💾 Tersimpan otomatis</div>
+            <div class="question-indicator" id="questionIndicator"></div>
         </div>
     </div>
     <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
-<br>
+
     <div class="main-content" id="gameArea">
         <div class="mission-brief">
             <h2 id="missionTitle">Memuat Soal...</h2>
             <p id="missionDesc">Sistem sedang menyiapkan data...</p>
         </div>
-        <br>
         <div class="excel-simulation">
-            <div class="excel-toolbar"><span>Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
+            <div class="excel-toolbar"><span>📊 Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
             <table class="excel-grid" id="excelTable"></table>
         </div>
-        <br>
         <div class="formula-area">
-            <label>Susun Rumus Anda:</label>
+            <label>🔧 Susun Rumus Anda:</label>
             <div class="formula-dropzone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="leaveDrop()">
                 <span style="color: var(--text-secondary); font-style: italic;">Tarik blok kode ke sini...</span>
             </div>
-            <br>
             <div class="code-block-palette" id="palette"></div>
         </div>
-        
         <div class="action-buttons">
             <button class="icon-btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled title="Soal Sebelumnya">⏮️</button>
             <button class="icon-btn btn-execute" id="btnExecute" onclick="handleExecute()" title="Cek Jawaban">▶</button>
@@ -315,23 +476,25 @@
 
     <div class="main-content hidden" id="victoryArea">
         <div class="victory-screen">
- 
-            <h2 margin-bottom: 10px;"><span id="victoryName">-</span> (<span id="victoryKelas">-</span>)!</p>
+            <h2>🎉 SEMUA SOAL BERHASIL!</h2>
+            <div class="victory-badge">✅ SELESAI - NILAI TERKUNCI</div>
+            <p style="color: var(--text-secondary); margin-bottom: 10px;">Selamat, <span id="victoryName">-</span> (<span id="victoryKelas">-</span>)!</p>
             <p style="color: var(--text-secondary); margin-bottom: 20px;">Jawaban Benar: <strong id="victoryBenar" style="color: var(--accent-cyan);">0</strong> dari <strong id="victoryTotal">0</strong> soal</p>
             <p style="font-size: 1.1rem; color: var(--text-secondary);">Nilai Akhir:</p>
             <p style="font-size: 4rem; color: var(--accent-green); font-weight: bold; margin: 10px 0;"><span id="finalScore">0</span><span style="font-size: 2rem; color: var(--text-secondary);">/100</span></p>
             <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 1.1rem;" id="victoryPredikat"></p>
-            <button class="btn-primary" onclick="restartGame()">🔄 ULANGI DARI AWAL</button>
+            <p style="color: var(--accent-yellow); font-size: 0.9rem; margin-bottom: 20px;">💾 Nilai Anda telah tersimpan permanen di database guru.</p>
+            <button class="btn-primary" onclick="restartGame()">🔄 MULAI ULANG (Reset Nilai)</button>
         </div>
     </div>
 </div>
 
 <script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3JYXoiCH2XJi6jd-buuO9i4nWRermS72sK4TkO12GQdHufQsUJMvjm8NUCvZS1q8/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJWMRVrSHJu0fS5BnS4z-lIfmtheEHOpGS1cKtRX6y_YdZRt-GTURJnfm2H-FgAdHV/exec';
     
-    // ✅ KONFIGURASI DEFAULT (akan di-override dari Sheets)
-    let JUMLAH_SOAL_UNIK = 15;
-    let PASSWORD_GURU = 'guru123';
+    let JUMLAH_SOAL_UNIK = 25;
+    let PASSWORD_GURU = '';
+    const PASSWORD_FALLBACK = 'guru123';
     
     const ACAK_BLOK_PALET = true; 
     const PAKAI_PENGECEH = true; 
@@ -344,6 +507,8 @@
     let semuaDataSkor = [];
     let totalSoal = JUMLAH_SOAL_UNIK; 
     let currentAnswered = false;
+    let autoSaveInterval = null;
+    let pendingRestore = null;
 
     const poolPengecoh = [
         {t:'cell',v:'B2'},{t:'cell',v:'C2'},{t:'cell',v:'A3'},{t:'cell',v:'D2'},{t:'cell',v:'E2'},
@@ -359,8 +524,9 @@
         return teks
             .replace(/[\u201C\u201D\u201E\u201F\u00AB\u00BB\uFF02\u2033\u2036]/g, '"')
             .replace(/[\u2018\u2019\u201A\u201B\u0060\u00B4\uFF07\u2032\u2035]/g, "'")
-            .replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\uFE58\uFE63\uFF0D]/g, '-')
-            .replace(/[\s\u00A0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000]+/g, '')
+            .replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\uFE58\uFE63\uFF0D\u2212]/g, '-')
+            .replace(/[\s\u00A0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\uFEFF\u200B\u200C\u200D]+/g, '')
+            .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
             .toLowerCase();
     }
 
@@ -434,7 +600,7 @@
         {title:"Nilai Tertinggi",desc:"Jika A2 = MAX(A2:A4) maka 'Tertinggi', jika tidak 'Biasa'.",table:[["A (Nilai)","B (Status)"],["95",""],["80",""],["70",""]],target:"B2",correct:'=IF(A2=MAX(A2:A4),"Tertinggi","Biasa")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'function',v:'MAX('},{t:'range',v:'A2:A4'},{t:'symbol',v:')'},{t:'text',v:'"Tertinggi"'},{t:'text',v:'"Biasa"'},{t:'symbol',v:','}]},
         {title:"Bonus Sales",desc:"Jika A2 > 50 maka 'Bonus 500rb', jika tidak 'Tidak Bonus'.",table:[["A (Unit)","B (Bonus)"],["75",""]],target:"B2",correct:'=IF(A2>50,"Bonus 500rb","Tidak Bonus")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>'},{t:'number',v:'50'},{t:'text',v:'"Bonus 500rb"'},{t:'text',v:'"Tidak Bonus"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
         {title:"Predikat IPK",desc:"Jika A2 >= 3.5 'Cumlaude', >= 3.0 'Sangat Baik', selain itu 'Baik'.",table:[["A (IPK)","B (Predikat)"],["3.75",""]],target:"B2",correct:'=IF(A2>=3.5,"Cumlaude",IF(A2>=3.0,"Sangat Baik","Baik"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'3.5'},{t:'number',v:'3.0'},{t:'text',v:'"Cumlaude"'},{t:'text',v:'"Sangat Baik"'},{t:'text',v:'"Baik"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
-        {title:"Wujud Air",desc:"Jika A2 <= 0 'Es', <= 100 'Air', selain itu 'Uap'.",table:[["A (Suhu)","B (Wujud)"],["25",""]],target:"B2",correct:'=IF(A2<=0,"Es",IF(A2<=100,"Air","Uap"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<='},{t:'number',v:'0'},{t:'number',v:'100'},{t:'text',v:'"Es"'},{t:'text',v:'"Air"'},{t:'text',v:'"Uap"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
+        {title:"Wujud Air",desc:"Jika A2 <= 0 'Es', < 100 'Air', selain itu 'Uap'.",table:[["A (Suhu)","B (Wujud)"],["25",""]],target:"B2",correct:'=IF(A2<=0,"Es",IF(A2<100,"Air","Uap"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'<='},{t:'number',v:'0'},{t:'number',v:'100'},{t:'text',v:'"Es"'},{t:'text',v:'"Air"'},{t:'text',v:'"Uap"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
         {title:"Ganjil Genap",desc:"Jika MOD(A2,2)=0 maka 'Genap', jika tidak 'Ganjil'.",table:[["A (Angka)","B (Tipe)"],["14",""]],target:"B2",correct:'=IF(MOD(A2,2)=0,"Genap","Ganjil")',blocks:[{t:'function',v:'=IF('},{t:'function',v:'MOD('},{t:'cell',v:'A2'},{t:'number',v:'2'},{t:'symbol',v:')'},{t:'operator',v:'='},{t:'number',v:'0'},{t:'text',v:'"Genap"'},{t:'text',v:'"Ganjil"'},{t:'symbol',v:','}]},
         {title:"Status Pembayaran",desc:"Jika A2 = 'Lunas' maka 'Selesai', jika tidak 'Belum Lunas'.",table:[["A (Status)","B (Keterangan)"],["Lunas",""]],target:"B2",correct:'=IF(A2="Lunas","Selesai","Belum Lunas")',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'='},{t:'text',v:'"Lunas"'},{t:'text',v:'"Selesai"'},{t:'text',v:'"Belum Lunas"'},{t:'symbol',v:','},{t:'symbol',v:')'}]},
         {title:"Level Game",desc:"Jika A2 >= 1000 'Pro', >= 500 'Medium', selain itu 'Beginner'.",table:[["A (Skor)","B (Level)"],["750",""]],target:"B2",correct:'=IF(A2>=1000,"Pro",IF(A2>=500,"Medium","Beginner"))',blocks:[{t:'function',v:'=IF('},{t:'cell',v:'A2'},{t:'operator',v:'>='},{t:'number',v:'1000'},{t:'number',v:'500'},{t:'text',v:'"Pro"'},{t:'text',v:'"Medium"'},{t:'text',v:'"Beginner"'},{t:'symbol',v:','},{t:'function',v:'IF('},{t:'symbol',v:')'},{t:'symbol',v:')'}]},
@@ -449,75 +615,170 @@
     let currentLevelIndex = 0;
     let score = 0;
 
-    // ============================================================
-    // FUNGSI BARU: LOAD KONFIGURASI DARI SHEETS
-    // ============================================================
+    function getSavedProgress(nis) {
+        const key = `game_if_${nis}`;
+        const saved = localStorage.getItem(key);
+        if (!saved) return null;
+        try { return JSON.parse(saved); } catch (e) { return null; }
+    }
+
+    function simpanProgressLokal() {
+        if (!dataSiswaAktif.nis) return;
+        const key = `game_if_${dataSiswaAktif.nis}`;
+        score = hitungSkor();
+        const data = { 
+            nis: dataSiswaAktif.nis, nama: dataSiswaAktif.nama, kelas: dataSiswaAktif.kelas,
+            currentLevelIndex, score, jumlahBenar: answeredLevels.size, totalSoal,
+            answeredLevels: Array.from(answeredLevels), 
+            timestamp: new Date().toISOString(),
+            selesai: answeredLevels.size >= totalSoal,
+            seedNIS: hashNIS(dataSiswaAktif.nis)
+        };
+        localStorage.setItem(key, JSON.stringify(data));
+        const g = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+        const idx = g.findIndex(s => s.nis === dataSiswaAktif.nis);
+        if (idx >= 0) g[idx] = data; else g.push(data);
+        localStorage.setItem('skor_global_if', JSON.stringify(g));
+        tampilkanIndikatorTersimpan();
+    }
+
+    function tampilkanIndikatorTersimpan() {
+        const indicator = document.getElementById('saveIndicator');
+        if (indicator) {
+            indicator.classList.add('show');
+            setTimeout(() => indicator.classList.remove('show'), 2000);
+        }
+    }
+
+    function cekProgressTersimpan(nis) { return getSavedProgress(nis); }
+
+    // ✅ FUNGSI BARU: Cari soal berikutnya yang belum dijawab
+    function cariSoalBerikutnyaYangBelumDijawab() {
+        // Cari dari index 0 sampai totalSoal-1, yang belum ada di answeredLevels
+        for (let i = 0; i < totalSoal; i++) {
+            if (!answeredLevels.has(i)) {
+                return i;
+            }
+        }
+        // Jika semua sudah dijawab, return -1
+        return -1;
+    }
+
+    function tampilkanDialogRestore(progress) {
+        pendingRestore = progress;
+        const soalSelesai = progress.jumlahBenar || (progress.answeredLevels ? progress.answeredLevels.length : 0);
+        document.getElementById('restoreProgress').innerText = `${soalSelesai} / ${progress.totalSoal || totalSoal}`;
+        document.getElementById('restoreScore').innerText = `${progress.score || 0}/100`;
+        document.getElementById('restoreTime').innerText = formatWaktu(progress.timestamp);
+        
+        // ✅ Tampilkan info soal berikutnya
+        const nextSoal = cariSoalBerikutnyaYangBelumDijawab();
+        if (nextSoal >= 0) {
+            document.getElementById('restoreNextSoal').innerText = `Soal ${nextSoal + 1}`;
+            document.getElementById('restoreMessage').innerText = `Anda sudah menjawab ${soalSelesai} soal. Lanjutkan dari soal ${nextSoal + 1}?`;
+        } else {
+            document.getElementById('restoreNextSoal').innerText = 'Semua selesai';
+            document.getElementById('restoreMessage').innerText = 'Semua soal sudah dijawab. Mulai ulang?';
+        }
+        
+        document.getElementById('restoreOverlay').classList.add('active');
+    }
+
+    function lanjutkanProgress() {
+        if (!pendingRestore) return;
+        document.getElementById('restoreOverlay').classList.remove('active');
+        
+        // ✅ LOGIKA BARU: Cari soal berikutnya yang belum dijawab
+        if (pendingRestore.answeredLevels && Array.isArray(pendingRestore.answeredLevels)) {
+            answeredLevels = new Set(pendingRestore.answeredLevels);
+        } else { answeredLevels = new Set(); }
+        
+        const validLevels = new Set();
+        answeredLevels.forEach(idx => { if (idx >= 0 && idx < totalSoal) validLevels.add(idx); });
+        answeredLevels = validLevels;
+        
+        // ✅ Tentukan currentLevelIndex = soal berikutnya yang belum dijawab
+        const nextSoal = cariSoalBerikutnyaYangBelumDijawab();
+        
+        if (nextSoal >= 0) {
+            currentLevelIndex = nextSoal;
+        } else {
+            // Semua sudah dijawab, tampilkan victory
+            currentLevelIndex = totalSoal;
+        }
+        
+        score = hitungSkor();
+        document.getElementById('score').innerText = score;
+        document.getElementById('loginOverlay').classList.add('hidden');
+        
+        if (currentLevelIndex >= totalSoal) {
+            showVictory();
+        } else {
+            loadLevel();
+            mulaiAutoSave();
+            tampilkanNotifikasi('info', '💾 Progress Dipulihkan', 
+                `Melanjutkan dari soal ${currentLevelIndex + 1} / ${totalSoal}. Sudah benar: ${answeredLevels.size} soal.`, null, 3000);
+        }
+    }
+
+    function mulaiBaru() {
+        if (!confirm('⚠️ PERINGATAN\n\nProgress yang tersimpan akan DIHAPUS dan Anda mulai dari awal.\n\nYakin?')) return;
+        localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
+        document.getElementById('restoreOverlay').classList.remove('active');
+        currentLevelIndex = 0; answeredLevels = new Set(); score = 0;
+        document.getElementById('score').innerText = '0';
+        document.getElementById('loginOverlay').classList.add('hidden');
+        loadLevel();
+        mulaiAutoSave();
+        tampilkanNotifikasi('info', '🔄 Mulai Baru', 'Progress lama dihapus. Mulai dari soal 1.', null, 2000);
+    }
+
+    function mulaiAutoSave() {
+        if (autoSaveInterval) clearInterval(autoSaveInterval);
+        autoSaveInterval = setInterval(() => {
+            if (dataSiswaAktif.nis && currentLevelIndex < totalSoal) {
+                simpanProgressLokal(); simpanSkorKeSheets();
+            }
+        }, 30000);
+    }
+
+    function hentikanAutoSave() {
+        if (autoSaveInterval) { clearInterval(autoSaveInterval); autoSaveInterval = null; }
+    }
+
+    window.addEventListener('beforeunload', function(e) {
+        if (dataSiswaAktif.nis && currentLevelIndex < totalSoal) {
+            simpanProgressLokal(); simpanSkorKeSheets();
+        }
+    });
+
     async function loadKonfigurasi() {
         try {
             const response = await fetch(`${APPS_SCRIPT_URL}?action=getKonfigurasi`, { mode: 'cors' });
             const result = await response.json();
             if (result.success && result.data) {
-                JUMLAH_SOAL_UNIK = result.data.JumlahSoal || 15;
-                PASSWORD_GURU = result.data.PasswordGuru || 'guru123';
-                console.log(`✅ Konfigurasi dimuat: ${JUMLAH_SOAL_UNIK} soal, password: ${PASSWORD_GURU}`);
+                JUMLAH_SOAL_UNIK = parseInt(result.data.JumlahSoal) || 25;
+                const pwdFromSheet = result.data.PasswordGuru;
+                PASSWORD_GURU = (pwdFromSheet && pwdFromSheet.toString().trim() !== '') ? pwdFromSheet.toString().trim() : PASSWORD_FALLBACK;
                 return true;
             }
-        } catch (error) {
-            console.warn('⚠️ Gagal load konfigurasi, pakai default:', error.message);
-        }
+        } catch (error) { console.warn('⚠️ Gagal load konfigurasi:', error.message); }
+        JUMLAH_SOAL_UNIK = 25; PASSWORD_GURU = PASSWORD_FALLBACK;
         return false;
     }
 
-    // ============================================================
-    // FUNGSI BARU: SIMPAN KONFIGURASI KE SHEETS
-    // ============================================================
     async function simpanKonfigurasi() {
-        const jumlahSoal = parseInt(document.getElementById('configJumlahSoal').value) || 15;
-        const password = document.getElementById('configPassword').value.trim() || 'guru123';
-        
-        if (jumlahSoal < 1 || jumlahSoal > 100) {
-            tampilkanNotifikasi('error', '❌ Error', 'Jumlah soal harus antara 1-100.', null, 3000);
-            return;
-        }
-        
+        const jumlahSoal = parseInt(document.getElementById('configJumlahSoal').value) || 25;
+        const password = document.getElementById('configPassword').value.trim();
+        if (jumlahSoal < 1 || jumlahSoal > 100) { tampilkanNotifikasi('error', '❌ Error', 'Jumlah soal harus antara 1-100.', null, 3000); return; }
+        if (!password) { tampilkanNotifikasi('error', '❌ Error', 'Password tidak boleh kosong.', null, 3000); return; }
         try {
             tampilkanNotifikasi('info', '⏳ Menyimpan...', 'Menyimpan konfigurasi ke Google Sheets...', null, 0);
-            const response = await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    action: 'updateKonfigurasi',
-                    JumlahSoal: jumlahSoal,
-                    PasswordGuru: password
-                })
-            });
-            
-            // Update variabel lokal
-            JUMLAH_SOAL_UNIK = jumlahSoal;
-            PASSWORD_GURU = password;
-            
+            await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'updateKonfigurasi', JumlahSoal: jumlahSoal, PasswordGuru: password }) });
+            JUMLAH_SOAL_UNIK = jumlahSoal; PASSWORD_GURU = password;
             tutupNotifikasi();
-            tampilkanNotifikasi('success', '✅ Konfigurasi Tersimpan!', 
-                `Jumlah soal: ${JUMLAH_SOAL_UNIK} | Password: ${PASSWORD_GURU}`, null, 3000);
-        } catch (error) {
-            tutupNotifikasi();
-            tampilkanNotifikasi('error', '❌ Gagal', 'Error: ' + error.message, null, 3000);
-        }
-    }
-
-    async function loadSoalDariSheets() {
-        try {
-            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSoal`, { mode: 'cors' });
-            const result = await response.json();
-            if (result.success && result.data && result.data.length > 0) {
-                console.log(`✅ Berhasil memuat ${result.total} soal dari Google Sheets`);
-                return result.data;
-            }
-        } catch (error) {
-            console.warn('⚠️ Gagal load dari Sheets, pakai fallback lokal:', error.message);
-        }
-        return soalDefault;
+            tampilkanNotifikasi('success', '✅ Konfigurasi Tersimpan!', `Jumlah soal: ${JUMLAH_SOAL_UNIK} | Password baru aktif.`, null, 3000);
+        } catch (error) { tutupNotifikasi(); tampilkanNotifikasi('error', '❌ Gagal', 'Error: ' + error.message, null, 3000); }
     }
 
     function tampilkanNotifikasi(tipe, judul, pesan, formula = null, autoClose = 2000) {
@@ -545,10 +806,7 @@
         const dbStatus = document.getElementById('dbStatus');
         const inputNIS = document.getElementById('inputNIS');
         const btnCek = document.getElementById('btnCek');
-        
-        // Load konfigurasi terlebih dahulu
         await loadKonfigurasi();
-        
         try {
             dbStatus.className = 'db-status loading';
             dbStatus.innerHTML = '⏳ Menghubungkan ke Google Sheets...';
@@ -574,16 +832,24 @@
         const btnMulai = document.getElementById('btnMulai');
         const inputNama = document.getElementById('inputNama');
         const inputKelas = document.getElementById('inputKelas');
-        inputNama.value = '';
-        inputKelas.value = '';
-        btnMulai.disabled = true;
+        const progressInfo = document.getElementById('progressInfo');
+        inputNama.value = ''; inputKelas.value = ''; btnMulai.disabled = true;
+        progressInfo.classList.remove('show');
         if (!nisInput) return;
         const siswa = cariSiswa(nisInput);
         if (siswa) {
-            inputNama.value = siswa.nama;
-            inputKelas.value = siswa.kelas;
+            inputNama.value = siswa.nama; inputKelas.value = siswa.kelas;
             btnMulai.disabled = false;
             dataSiswaAktif = { nis: siswa.nis, nama: siswa.nama, kelas: siswa.kelas };
+            const savedProgress = cekProgressTersimpan(nisInput);
+            if (savedProgress && !savedProgress.selesai) {
+                progressInfo.classList.add('show');
+                const soalBenar = savedProgress.jumlahBenar || (savedProgress.answeredLevels ? savedProgress.answeredLevels.length : 0);
+                progressInfo.innerHTML = `💾 Progress tersimpan: <strong>${soalBenar} soal benar</strong> dari ${savedProgress.totalSoal} | Nilai: ${savedProgress.score}/100`;
+            } else if (savedProgress && savedProgress.selesai) {
+                progressInfo.classList.add('show');
+                progressInfo.innerHTML = `✅ Sudah selesai dengan nilai: ${savedProgress.score}/100`;
+            }
         }
     }
     document.getElementById('inputNIS').addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); cekNIS(); } });
@@ -594,134 +860,96 @@
         return Math.abs(hash);
     }
 
-    function simpanProgressLokal() {
-        const key = `game_if_${dataSiswaAktif.nis}`;
-        score = hitungSkor();
-        const data = { nis: dataSiswaAktif.nis, nama: dataSiswaAktif.nama, kelas: dataSiswaAktif.kelas,
-            currentLevelIndex, score, jumlahBenar: answeredLevels.size, totalSoal,
-            answeredLevels: Array.from(answeredLevels), timestamp: new Date().toISOString(),
-            selesai: currentLevelIndex >= totalSoal };
-        localStorage.setItem(key, JSON.stringify(data));
-        const g = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
-        const idx = g.findIndex(s => s.nis === dataSiswaAktif.nis);
-        if (idx >= 0) g[idx] = data; else g.push(data);
-        localStorage.setItem('skor_global_if', JSON.stringify(g));
-    }
-
-    function muatProgress() {
-        const saved = localStorage.getItem(`game_if_${dataSiswaAktif.nis}`);
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                currentLevelIndex = Math.min(data.currentLevelIndex || 0, totalSoal - 1);
-                answeredLevels = new Set(data.answeredLevels || []);
-                score = hitungSkor();
-                document.getElementById('score').innerText = score;
-                return true;
-            } catch (e) { console.warn('Progress corrupt, reset'); }
-        }
-        return false;
-    }
-
     async function simpanSkorKeSheets() {
         try {
-            const data = {
-                action: 'simpanSkor',
-                nis: dataSiswaAktif.nis,
-                nama: dataSiswaAktif.nama,
-                kelas: dataSiswaAktif.kelas,
-                progress: currentLevelIndex,
-                skor: score,
-                jumlahBenar: answeredLevels.size,
-                totalSoal: totalSoal,
-                selesai: currentLevelIndex >= totalSoal
-            };
-            await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(data)
-            });
-        } catch (error) {
-            console.error('❌ Gagal menyimpan skor:', error);
-        }
+            const data = { action: 'simpanSkor', nis: dataSiswaAktif.nis, nama: dataSiswaAktif.nama, kelas: dataSiswaAktif.kelas,
+                progress: currentLevelIndex, skor: score, jumlahBenar: answeredLevels.size, totalSoal: totalSoal, selesai: answeredLevels.size >= totalSoal };
+            await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+        } catch (error) { console.error('❌ Gagal menyimpan skor:', error); }
     }
 
     async function ambilSkorDariSheets() {
         try {
             const response = await fetch(`${APPS_SCRIPT_URL}?action=getSkor`, { mode: 'cors' });
             const result = await response.json();
-            if (result.success) return result.data;
-        } catch (error) {
-            console.error('❌ Gagal mengambil skor:', error);
+            if (result.success && result.data && result.data.length > 0) {
+                console.log(`✅ Berhasil ambil ${result.total} data dari Google Sheets`);
+                localStorage.setItem('skor_global_if', JSON.stringify(result.data));
+                return result.data;
+            }
+        } catch (error) { console.warn('⚠️ Gagal fetch dari Sheets:', error.message); }
+        const localData = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+        if (localData.length > 0) {
+            console.log(`💾 Menggunakan ${localData.length} data dari localStorage`);
+            return localData;
         }
-        return JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+        return [];
     }
 
     function handleExecute() {
-        if (currentAnswered) {
-            lanjutKeSoalBerikutnya();
-        } else {
-            checkFormula();
-        }
+        if (currentAnswered) lanjutKeSoalBerikutnya();
+        else checkFormula();
     }
 
     function lanjutKeSoalBerikutnya() {
         currentAnswered = false;
-        currentLevelIndex++;
-        if (currentLevelIndex < totalSoal) {
+        // ✅ LOGIKA BARU: Cari soal berikutnya yang belum dijawab
+        const nextSoal = cariSoalBerikutnyaYangBelumDijawab();
+        
+        if (nextSoal >= 0) {
+            currentLevelIndex = nextSoal;
             loadLevel();
         } else {
+            // Semua soal sudah dijawab
             showVictory();
         }
     }
 
     async function mulaiMisi() {
         if (!dataSiswaAktif.nis) { alert('⚠️ Cek NIS dulu!'); return; }
-        
-        const semuaSoal = await loadSoalDariSheets();
-        console.log(`📚 Total bank soal: ${semuaSoal.length}`);
-        
+        const semuaSoal = [...soalDefault];
         const seedUnik = hashNIS(dataSiswaAktif.nis);
         levels = getRandomSubset(semuaSoal, JUMLAH_SOAL_UNIK, seedUnik);
-        
         totalSoal = levels.length;
         document.getElementById('totalSoal').innerText = totalSoal;
+        const savedProgress = cekProgressTersimpan(dataSiswaAktif.nis);
         
-        answeredLevels = new Set();
-        currentAnswered = false;
-        muatProgress();
-        
+        if (savedProgress && !savedProgress.selesai) {
+            // ✅ Ada progress tersimpan → tampilkan dialog restore
+            tampilkanDialogRestore(savedProgress);
+        } else if (savedProgress && savedProgress.selesai) {
+            // ✅ Sudah selesai → tampilkan konfirmasi
+            if (confirm(`✅ Anda sudah menyelesaikan soal ini dengan nilai ${savedProgress.score}/100.\n\nApakah ingin mengerjakan ulang (nilai akan direset)?\n\nOK = Mulai Baru\nBatal = Kembali`)) {
+                localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
+                currentLevelIndex = 0; answeredLevels = new Set(); score = 0;
+                document.getElementById('score').innerText = '0';
+                document.getElementById('loginOverlay').classList.add('hidden');
+                loadLevel(); mulaiAutoSave();
+            }
+        } else {
+            // ✅ TIDAK ADA progress → mulai dari soal 1
+            answeredLevels = new Set(); 
+            currentAnswered = false; 
+            currentLevelIndex = 0; // Mulai dari soal 1
+            score = 0;
+            document.getElementById('loginOverlay').classList.add('hidden');
+            loadLevel(); mulaiAutoSave();
+        }
         document.getElementById('studentInfo').innerText = `${dataSiswaAktif.nama} (${dataSiswaAktif.kelas}) - NIS: ${dataSiswaAktif.nis}`;
         document.getElementById('victoryName').innerText = dataSiswaAktif.nama;
         document.getElementById('victoryKelas').innerText = dataSiswaAktif.kelas;
-        document.getElementById('loginOverlay').classList.add('hidden');
-        
-        if (levels.length === 0) {
-            levels = [...soalDefault];
-            totalSoal = Math.min(JUMLAH_SOAL_UNIK, levels.length);
-            document.getElementById('totalSoal').innerText = totalSoal;
-        }
-        
-        loadLevel();
     }
 
     function loadLevel() {
-        if (!levels || levels.length === 0) {
-            levels = [...soalDefault];
-            totalSoal = Math.min(JUMLAH_SOAL_UNIK, levels.length);
-        }
-        if (currentLevelIndex >= levels.length) {
-            currentLevelIndex = 0;
-        }
-        
+        if (!levels || levels.length === 0) { levels = [...soalDefault]; totalSoal = Math.min(JUMLAH_SOAL_UNIK, levels.length); }
+        if (currentLevelIndex >= levels.length) currentLevelIndex = 0;
         const level = levels[currentLevelIndex];
         if (!level) return;
         
         document.getElementById('missionTitle').innerText = level.title || 'Soal';
         document.getElementById('missionDesc').innerText = level.desc || '';
         document.getElementById('currentLevel').innerText = `${currentLevelIndex + 1} / ${totalSoal}`;
-        document.getElementById('progressBar').style.width = (currentLevelIndex / totalSoal) * 100 + '%';
+        document.getElementById('progressBar').style.width = (answeredLevels.size / totalSoal) * 100 + '%';
 
         const colMatch = level.target.match(/[A-Z]+/);
         const rowMatch = level.target.match(/\d+/);
@@ -774,8 +1002,74 @@
         clearDropZone();
         document.getElementById('btnPrev').disabled = (currentLevelIndex === 0);
         
-        currentAnswered = false;
-        updateExecuteButton();
+        const sudahDijawab = answeredLevels.has(currentLevelIndex);
+        if (sudahDijawab) {
+            currentAnswered = true;
+            updateExecuteButton();
+            kunciUI();
+            tampilkanJawabanTerkunci(level);
+        } else {
+            currentAnswered = false;
+            updateExecuteButton();
+            bukaKunciUI();
+        }
+        
+        renderQuestionIndicator();
+        simpanProgressLokal();
+    }
+
+    function tampilkanJawabanTerkunci(level) {
+        const dz = document.getElementById('dropZone');
+        dz.innerHTML = '';
+        (level.blocks || []).forEach(block => {
+            const div = document.createElement('div');
+            div.className = `draggable-block ${block.t}`;
+            div.innerText = block.v;
+            div.draggable = false;
+            div.style.cursor = 'not-allowed';
+            div.style.opacity = '0.9';
+            dz.appendChild(div);
+        });
+        const lockBadge = document.createElement('span');
+        lockBadge.innerHTML = ' 🔒';
+        lockBadge.style.color = 'var(--accent-green)';
+        lockBadge.style.fontWeight = 'bold';
+        lockBadge.style.marginLeft = '8px';
+        dz.appendChild(lockBadge);
+    }
+
+    function renderQuestionIndicator() {
+        const container = document.getElementById('questionIndicator');
+        if (!container) return;
+        container.innerHTML = '';
+        for (let i = 0; i < totalSoal; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'q-dot';
+            dot.innerText = i + 1;
+            
+            const sudahDijawab = answeredLevels.has(i);
+            const adalahSoalSaatIni = (i === currentLevelIndex);
+            
+            if (sudahDijawab) {
+                dot.classList.add('answered');
+                dot.title = `Soal ${i+1}: ✅ Sudah dijawab (terkunci)`;
+                dot.onclick = null;
+            } else if (adalahSoalSaatIni) {
+                dot.classList.add('current');
+                dot.title = `Soal ${i+1}: 📍 Soal saat ini`;
+                dot.onclick = null;
+            } else {
+                dot.classList.add('available');
+                dot.title = `Soal ${i+1}: 🎯 Klik untuk mengerjakan`;
+                dot.onclick = () => {
+                    currentLevelIndex = i;
+                    simpanProgressLokal();
+                    loadLevel();
+                };
+            }
+            
+            container.appendChild(dot);
+        }
     }
 
     function updateExecuteButton() {
@@ -792,10 +1086,71 @@
         }
     }
 
-    function allowDrop(ev) { ev.preventDefault(); document.getElementById('dropZone').classList.add('drag-over'); }
+    function kunciUI() {
+        const dropZone = document.getElementById('dropZone');
+        const palette = document.getElementById('palette');
+        const btnExecute = document.getElementById('btnExecute');
+        const btnShuffle = document.querySelector('.btn-shuffle');
+        const btnClear = document.querySelector('.btn-clear');
+        
+        dropZone.classList.add('locked');
+        dropZone.ondrop = null;
+        dropZone.ondragover = null;
+        dropZone.ondragleave = null;
+        
+        palette.classList.add('locked');
+        palette.querySelectorAll('.draggable-block').forEach(b => {
+            b.draggable = false;
+            b.ondragstart = null;
+        });
+        
+        if (btnShuffle) btnShuffle.disabled = true;
+        if (btnClear) btnClear.disabled = true;
+        btnExecute.disabled = true;
+        btnExecute.title = 'Soal sudah dijawab. Klik ✓ untuk lanjut.';
+    }
+
+    function bukaKunciUI() {
+        const dropZone = document.getElementById('dropZone');
+        const palette = document.getElementById('palette');
+        const btnExecute = document.getElementById('btnExecute');
+        const btnShuffle = document.querySelector('.btn-shuffle');
+        const btnClear = document.querySelector('.btn-clear');
+        
+        dropZone.classList.remove('locked');
+        dropZone.ondrop = drop;
+        dropZone.ondragover = allowDrop;
+        dropZone.ondragleave = leaveDrop;
+        
+        palette.classList.remove('locked');
+        palette.querySelectorAll('.draggable-block').forEach((b, idx) => {
+            b.draggable = true;
+            b.id = `blk-${idx}`;
+            b.ondragstart = drag;
+            b.style.cursor = 'grab';
+        });
+        
+        if (btnShuffle) btnShuffle.disabled = false;
+        if (btnClear) btnClear.disabled = false;
+        btnExecute.disabled = false;
+    }
+
+    function allowDrop(ev) {
+        if (document.getElementById('dropZone').classList.contains('locked')) { ev.preventDefault(); return; }
+        ev.preventDefault();
+        document.getElementById('dropZone').classList.add('drag-over');
+    }
     function leaveDrop() { document.getElementById('dropZone').classList.remove('drag-over'); }
-    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+    function drag(ev) {
+        if (document.getElementById('dropZone').classList.contains('locked')) { ev.preventDefault(); return; }
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
     function drop(ev) {
+        if (document.getElementById('dropZone').classList.contains('locked')) {
+            ev.preventDefault();
+            tampilkanNotifikasi('warning', '🔒 Terkunci', 'Soal ini sudah dijawab.', null, 2000);
+            return;
+        }
         ev.preventDefault();
         document.getElementById('dropZone').classList.remove('drag-over');
         const src = document.getElementById(ev.dataTransfer.getData("text"));
@@ -806,9 +1161,15 @@
         const dz = document.getElementById('dropZone');
         if (dz.children[0] && dz.children[0].style.fontStyle === 'italic') dz.innerHTML = '';
         dz.appendChild(clone);
+        if (dataSiswaAktif.nis) simpanProgressLokal();
     }
     function clearDropZone() {
+        if (document.getElementById('dropZone').classList.contains('locked')) {
+            tampilkanNotifikasi('warning', '🔒 Terkunci', 'Soal ini sudah dijawab.', null, 2000);
+            return;
+        }
         document.getElementById('dropZone').innerHTML = '<span style="color: var(--text-secondary); font-style: italic;">Tarik blok kode ke sini...</span>';
+        if (dataSiswaAktif.nis) simpanProgressLokal();
     }
 
     function checkFormula() {
@@ -825,9 +1186,17 @@
         const closeP = (normalizedInput.match(/\)/g) || []).length;
         if (openP > closeP) normalizedInput += ')'.repeat(openP - closeP);
 
-        let isCorrect = (normalizedInput === normalizedCorrect);
+        let isCorrect = false;
+        if (normalizedInput === normalizedCorrect) isCorrect = true;
         if (!isCorrect) {
-            isCorrect = normalizedInput.replace(/["']/g, '') === normalizedCorrect.replace(/["']/g, '');
+            const inputNoQuotes = normalizedInput.replace(/["'`]/g, '');
+            const correctNoQuotes = normalizedCorrect.replace(/["'`]/g, '');
+            if (inputNoQuotes === correctNoQuotes) isCorrect = true;
+        }
+        if (!isCorrect) {
+            const inputStruktur = normalizedInput.replace(/[^a-z0-9\(\),=<>\+\-\*\/]/g, '');
+            const correctStruktur = normalizedCorrect.replace(/[^a-z0-9\(\),=<>\+\-\*\/]/g, '');
+            if (inputStruktur === correctStruktur) isCorrect = true;
         }
 
         if (isCorrect) {
@@ -835,7 +1204,9 @@
                 playSound('success');
                 currentAnswered = true;
                 updateExecuteButton();
-                tampilkanNotifikasi('success', '✓ Sudah Dijawab!', 'Soal ini sudah pernah dijawab. Klik tombol ✓ untuk lanjut.', constructedFormula, 0);
+                kunciUI();
+                tampilkanJawabanTerkunci(level);
+                tampilkanNotifikasi('success', '🔒 Sudah Dikunci!', 'Soal ini sudah pernah dijawab. Klik tombol ✓ untuk lanjut.', constructedFormula, 0);
             } else {
                 playSound('success');
                 answeredLevels.add(currentLevelIndex);
@@ -843,32 +1214,31 @@
                 document.getElementById('score').innerText = score;
                 currentAnswered = true;
                 updateExecuteButton();
-                tampilkanNotifikasi('success', '🎉 Jawaban Benar!', `Nilai Anda: ${score}/100. Klik tombol ✓ untuk lanjut ke soal berikutnya.`, constructedFormula, 0);
+                kunciUI();
+                tampilkanJawabanTerkunci(level);
+                tampilkanNotifikasi('success', '🎉 Jawaban Benar!', `Nilai Anda: ${score}/100. Soal dikunci. Klik ✓ untuk lanjut.`, constructedFormula, 0);
             }
             simpanProgressLokal();
             simpanSkorKeSheets();
         } else {
             playSound('error');
-            tampilkanNotifikasi('error', '❌ Jawaban Salah', 'Susunan blok tidak tepat. Coba lagi!', constructedFormula, 2500);
+            tampilkanNotifikasi('error', '❌ Jawaban Salah', 'Susunan blok tidak tepat. Coba lagi!', constructedFormula, 3000);
         }
     }
 
     function prevQuestion() { 
-        if (currentLevelIndex > 0) { 
-            currentLevelIndex--; 
-            currentAnswered = false;
-            loadLevel(); 
-        } 
+        if (currentLevelIndex > 0) { currentLevelIndex--; loadLevel(); } 
     }
+    
     function skipQuestion() {
         currentLevelIndex++;
-        currentAnswered = false;
-        simpanProgressLokal(); simpanSkorKeSheets();
-        if (currentLevelIndex < totalSoal) loadLevel(); else showVictory();
+        if (currentLevelIndex < totalSoal) loadLevel(); 
+        else showVictory();
     }
+    
     function acakUlangPalet() {
         if (currentAnswered) {
-            tampilkanNotifikasi('warning', '⚠️ Tidak Bisa', 'Soal sudah dijawab. Klik ✓ untuk lanjut.', null, 2000);
+            tampilkanNotifikasi('warning', '⚠️ Tidak Bisa', 'Soal sudah dijawab.', null, 2000);
             return;
         }
         const level = levels[currentLevelIndex];
@@ -893,15 +1263,38 @@
 
     function showVictory() {
         score = hitungSkor();
-        simpanProgressLokal(); simpanSkorKeSheets();
+        const key = `game_if_${dataSiswaAktif.nis}`;
+        const savedData = JSON.parse(localStorage.getItem(key) || '{}');
+        savedData.selesai = true;
+        savedData.nilaiFinal = score;
+        savedData.jumlahBenar = answeredLevels.size;
+        savedData.totalSoal = totalSoal;
+        savedData.tanggalSelesai = new Date().toISOString();
+        savedData.timestamp = new Date().toISOString();
+        localStorage.setItem(key, JSON.stringify(savedData));
+        const g = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+        const idx = g.findIndex(s => s.nis === dataSiswaAktif.nis);
+        if (idx >= 0) { 
+            g[idx].selesai = true; 
+            g[idx].skor = score; 
+            g[idx].nilaiFinal = score;
+            g[idx].jumlahBenar = answeredLevels.size;
+            g[idx].totalSoal = totalSoal;
+        }
+        localStorage.setItem('skor_global_if', JSON.stringify(g));
+        simpanSkorKeSheets();
+        hentikanAutoSave();
         document.getElementById('progressBar').style.width = '100%';
         document.getElementById('gameArea').classList.add('hidden');
         document.getElementById('victoryArea').classList.remove('hidden');
         document.getElementById('finalScore').innerText = score;
         tampilkanPredikat(score);
         playSound('success');
+        tampilkanNotifikasi('success', '🎉 SELAMAT!', `Anda menyelesaikan semua soal dengan nilai ${score}/100. Nilai tersimpan permanen.`, null, 5000);
     }
+    
     function restartGame() {
+        if (!confirm('⚠️ PERINGATAN\n\nAnda akan mengulang dari awal.\nNilai sebelumnya akan DIHAPUS.\n\nYakin?')) return;
         localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
         currentLevelIndex = 0; score = 0; answeredLevels = new Set();
         currentAnswered = false;
@@ -911,6 +1304,7 @@
         const seedUnik = hashNIS(dataSiswaAktif.nis);
         levels = getRandomSubset(soalDefault, JUMLAH_SOAL_UNIK, seedUnik);
         loadLevel();
+        mulaiAutoSave();
     }
 
     function bukaLaporanGuru() {
@@ -930,9 +1324,9 @@
     }
     function verifikasiPassword() {
         const pwd = document.getElementById('passwordInput').value;
-        if (pwd === PASSWORD_GURU) {
-            tutupPassword(); 
-            tampilkanLaporan();
+        const passwordAktif = PASSWORD_GURU || PASSWORD_FALLBACK;
+        if (pwd === passwordAktif) {
+            tutupPassword(); tampilkanLaporan();
             document.getElementById('reportOverlay').classList.add('active');
         } else {
             document.getElementById('passwordError').innerText = '❌ Password salah!';
@@ -1003,15 +1397,59 @@
         const d = new Date(s);
         return isNaN(d) ? s : d.toLocaleString('id-ID', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
     }
+
+    function perbaikiDataLama(data) {
+        let adaPerubahan = false;
+        data.forEach(s => {
+            const total = s.totalSoal || 25;
+            const progress = s.jumlahBenar || s.currentLevelIndex || s.progress || 0;
+            if (progress >= total && s.selesai !== true) {
+                s.selesai = true;
+                s.nilaiFinal = s.nilaiFinal || s.skor || s.score || 0;
+                adaPerubahan = true;
+            }
+        });
+        if (adaPerubahan) {
+            localStorage.setItem('skor_global_if', JSON.stringify(data));
+        }
+        return data;
+    }
+
+    async function refreshDataDariSheets() {
+        tampilkanNotifikasi('info', '⏳ Memuat...', 'Mengambil data dari Google Sheets...', null, 0);
+        try {
+            const response = await fetch(`${APPS_SCRIPT_URL}?action=getSkor`, { mode: 'cors' });
+            const result = await response.json();
+            if (result.success && result.data && result.data.length > 0) {
+                semuaDataSkor = result.data;
+                localStorage.setItem('skor_global_if', JSON.stringify(semuaDataSkor));
+                semuaDataSkor = perbaikiDataLama(semuaDataSkor);
+                tutupNotifikasi();
+                tampilkanNotifikasi('success', '✅ Data Diperbarui', `Berhasil memuat ${result.total} siswa dari Sheets.`, null, 3000);
+                updateFilterKelas(semuaDataSkor);
+                filterLaporan();
+            } else {
+                throw new Error(result.error || 'Data kosong dari Sheets');
+            }
+        } catch (error) {
+            tutupNotifikasi();
+            tampilkanNotifikasi('warning', '⚠️ Gagal dari Sheets', 'Menggunakan data dari localStorage: ' + error.message, null, 3000);
+            semuaDataSkor = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
+            semuaDataSkor = perbaikiDataLama(semuaDataSkor);
+            updateFilterKelas(semuaDataSkor);
+            filterLaporan();
+        }
+    }
+
     async function tampilkanLaporan() {
         semuaDataSkor = await ambilSkorDariSheets();
+        semuaDataSkor = perbaikiDataLama(semuaDataSkor);
         updateFilterKelas(semuaDataSkor);
         filterLaporan();
-        
-        // Update tampilan konfigurasi dengan nilai dari Sheets
         document.getElementById('configJumlahSoal').value = JUMLAH_SOAL_UNIK;
-        document.getElementById('configPassword').value = PASSWORD_GURU;
+        document.getElementById('configPassword').value = PASSWORD_GURU || '';
     }
+
     function updateFilterKelas(data) {
         const sel = document.getElementById('filterKelas');
         const current = sel.value;
@@ -1023,30 +1461,51 @@
         });
         if ([...sel.options].some(op => op.value === current)) sel.value = current;
     }
+
     function filterLaporan() {
         const f = document.getElementById('filterKelas').value;
         const content = document.getElementById('reportContent');
         let data = f === 'all' ? semuaDataSkor : semuaDataSkor.filter(s => (s.kelas || '-') === f);
         document.getElementById('filterCount').innerText = `${data.length} siswa`;
-        if (data.length === 0) { content.innerHTML = '<div class="empty-report">📭 Tidak ada data.</div>'; return; }
+        if (data.length === 0) { content.innerHTML = '<div class="empty-report">📭 Tidak ada data. Klik 🔄 Refresh Data untuk memuat dari Sheets.</div>'; return; }
         data.sort((a, b) => (b.skor || b.score || 0) - (a.skor || a.score || 0));
         let html = `<div class="report-table-wrapper"><table class="report-table"><thead><tr><th>No</th><th>NIS</th><th>Nama</th><th>Kelas</th><th>Progress</th><th>Nilai</th><th>Status</th><th>Waktu</th></tr></thead><tbody>`;
         data.forEach((s, i) => {
             const total = s.totalSoal || totalSoal;
-            const skor = s.skor || s.score || 0;
-            const status = s.selesai ? '✅ Selesai' : '🔄 Proses';
-            html += `<tr><td>${i+1}</td><td>${s.nis}</td><td>${s.nama}</td><td>${s.kelas || '-'}</td><td>${s.currentLevelIndex || s.progress || 0} / ${total}</td><td><strong>${skor}</strong></td><td>${status}</td><td>${formatWaktu(s.timestamp)}</td></tr>`;
+            const skor = s.nilaiFinal || s.skor || s.score || 0;
+            const progress = s.jumlahBenar || s.currentLevelIndex || s.progress || 0;
+            let status;
+            if (s.selesai === true || progress >= total) {
+                status = '✅ Selesai';
+            } else if (progress > 0) {
+                status = '🔄 Dalam Progress';
+            } else {
+                status = '⏳ Belum Mulai';
+            }
+            html += `<tr><td>${i+1}</td><td>${s.nis}</td><td>${s.nama}</td><td>${s.kelas || '-'}</td><td>${progress} / ${total}</td><td><strong>${skor}</strong></td><td>${status}</td><td>${formatWaktu(s.timestamp)}</td></tr>`;
         });
         html += '</tbody></table></div>';
         content.innerHTML = html;
     }
+
     function exportCSV() {
         const f = document.getElementById('filterKelas').value;
         let data = f === 'all' ? semuaDataSkor : semuaDataSkor.filter(s => (s.kelas || '-') === f);
         if (data.length === 0) { alert('Tidak ada data!'); return; }
         let csv = 'No,NIS,Nama,Kelas,Progress,Nilai,Status,Waktu\n';
         data.sort((a, b) => (b.skor || 0) - (a.skor || 0)).forEach((s, i) => {
-            csv += `${i+1},"${s.nis}","${s.nama}","${s.kelas || '-'}","${s.currentLevelIndex}/${s.totalSoal || totalSoal}",${s.skor || s.score || 0},"${s.selesai ? 'Selesai' : 'Proses'}","${formatWaktu(s.timestamp)}"\n`;
+            const skor = s.nilaiFinal || s.skor || 0;
+            const total = s.totalSoal || totalSoal;
+            const progress = s.jumlahBenar || s.currentLevelIndex || s.progress || 0;
+            let status;
+            if (s.selesai === true || progress >= total) {
+                status = 'Selesai';
+            } else if (progress > 0) {
+                status = 'Progress';
+            } else {
+                status = 'Belum Mulai';
+            }
+            csv += `${i+1},"${s.nis}","${s.nama}","${s.kelas || '-'}","${progress}/${total}",${skor},"${status}","${formatWaktu(s.timestamp)}"\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv' });
         const a = document.createElement('a');
