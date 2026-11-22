@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Operasi Data IF Excel - SMPN 110 Jakarta</title>
 <style>
     :root {
@@ -12,12 +12,12 @@
         --accent-yellow: #f59e0b; --accent-purple: #8b5cf6; --border-color: #475569;
         --excel-header-bg: #f3f4f6; --excel-grid-line: #e5e7eb; --excel-active-border: #217346;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-primary); color: var(--text-primary); }
     body { display: flex; justify-content: center; align-items: center; padding: 20px; }
     .game-container { width: 100%; max-width: 1200px; height: 100%; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; }
 
-    .login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+    .login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; overflow-y: auto; }
     .login-box { background: var(--bg-secondary); border: 2px solid var(--accent-cyan); border-radius: 16px; padding: 40px; max-width: 520px; width: 100%; box-shadow: 0 0 40px rgba(6, 182, 212, 0.3); text-align: center; }
     .login-box h1 { color: var(--accent-cyan); font-size: 1.8rem; margin-bottom: 6px; letter-spacing: 2px; }
     .login-box .subtitle { color: var(--text-secondary); margin-bottom: 20px; font-size: 1rem; }
@@ -43,7 +43,7 @@
 
     .restore-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 5000; padding: 20px; }
     .restore-overlay.active { display: flex; }
-    .restore-box { background: var(--bg-secondary); border: 2px solid var(--accent-cyan); border-radius: 16px; padding: 30px; max-width: 450px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.4s ease; text-align: center; }
+    .restore-box { background: var(--bg-secondary); border: 2px solid var(--accent-cyan); border-radius: 16px; padding: 30px; max-width: 450px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.4s ease; text-align: center; max-height: 90vh; overflow-y: auto; }
     .restore-box h2 { color: var(--accent-cyan); margin-bottom: 15px; font-size: 1.5rem; }
     .restore-box p { color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
     .restore-info { background: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; }
@@ -79,21 +79,25 @@
     .btn-export { background: var(--accent-green); color: white; }
     .btn-refresh { background: var(--accent-cyan); color: white; }
     .btn-refresh:hover { background: #0891b2; transform: translateY(-2px); }
-    .btn-reset-lokal { background: var(--accent-yellow); color: #000; }
-    .btn-reset-sheets { background: var(--accent-purple); color: white; }
-    .btn-reset-all { background: var(--accent-red); color: white; }
+    .btn-config { background: var(--accent-purple); color: white; }
+    .btn-config:hover { background: #7c3aed; transform: translateY(-2px); }
     .btn-close { background: var(--bg-tertiary); color: white; border: 1px solid var(--border-color); }
     .empty-report { text-align: center; color: var(--text-secondary); padding: 30px; font-size: 1.1rem; }
 
-    .config-panel { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin: 20px 0; }
-    .config-panel h3 { color: var(--accent-yellow); margin-bottom: 15px; font-size: 1.2rem; }
-    .config-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .config-panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 6000; padding: 20px; }
+    .config-panel-overlay.active { display: flex; }
+    .config-panel { background: var(--bg-secondary); border: 2px solid var(--accent-yellow); border-radius: 16px; padding: 30px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.4s ease; max-height: 90vh; overflow-y: auto; }
+    .config-panel h3 { color: var(--accent-yellow); margin-bottom: 20px; font-size: 1.4rem; text-align: center; }
+    .config-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
     .config-row label { color: var(--text-secondary); font-size: 0.95rem; min-width: 130px; }
-    .config-row input { flex: 1; min-width: 150px; padding: 8px 12px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 1rem; }
+    .config-row input { flex: 1; min-width: 150px; padding: 10px 12px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 1rem; }
     .config-row input:focus { border-color: var(--accent-cyan); outline: none; }
-    .btn-save-config { background: var(--accent-cyan); color: var(--bg-primary); padding: 8px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    .btn-save-config { background: var(--accent-cyan); color: var(--bg-primary); padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; font-size: 1rem; }
     .btn-save-config:hover { background: #0891b2; }
-    .config-info { color: var(--text-secondary); font-size: 0.85rem; margin-top: 10px; font-style: italic; }
+    .config-info { color: var(--text-secondary); font-size: 0.85rem; margin-top: 10px; font-style: italic; text-align: center; }
+    .config-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+    .config-actions button { flex: 1; min-width: 120px; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.9rem; transition: all 0.3s; }
+    .config-actions button:hover { transform: translateY(-2px); }
 
     .header { 
         background: linear-gradient(90deg, var(--bg-tertiary), var(--bg-secondary)); 
@@ -103,6 +107,7 @@
         flex-direction: column;
         align-items: center;
         flex-shrink: 0; 
+        position: relative;
     }
     .header-title-row {
         width: 100%;
@@ -110,6 +115,7 @@
         justify-content: center;
         align-items: center;
         margin-bottom: 8px;
+        position: relative;
     }
     .header-title-row h1 { 
         font-size: 1.8rem; 
@@ -170,6 +176,8 @@
         max-width: 100%;
         overflow-x: auto;
         padding: 4px 0;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
     }
     .question-indicator::-webkit-scrollbar { height: 4px; }
     .question-indicator::-webkit-scrollbar-track { background: var(--bg-primary); border-radius: 2px; }
@@ -183,6 +191,7 @@
         border: 1px solid var(--border-color);
         background: var(--bg-tertiary); color: var(--text-secondary);
         user-select: none; flex-shrink: 0;
+        touch-action: manipulation;
     }
     .q-dot.answered {
         background: linear-gradient(135deg, var(--accent-green), #059669);
@@ -207,7 +216,7 @@
         background: var(--bg-tertiary); color: var(--text-primary);
         border-color: var(--border-color); cursor: pointer;
     }
-    .q-dot.available:hover {
+    .q-dot.available:hover, .q-dot.available:active {
         background: var(--accent-cyan); color: var(--bg-primary);
         border-color: var(--accent-cyan);
         transform: scale(1.1);
@@ -216,13 +225,14 @@
 
     .progress-bar-container { width: 100%; height: 5px; background-color: var(--bg-primary); flex-shrink: 0; }
     .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green)); width: 0%; transition: width 0.5s ease; }
-    .main-content { padding: 18px 25px; flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-height: 0; }
+    .main-content { padding: 18px 25px; flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
     .mission-brief { background-color: var(--bg-primary); border-left: 4px solid var(--accent-yellow); padding: 15px 20px; border-radius: 0 8px 8px 0; flex-shrink: 0; }
     .mission-brief h2 { color: var(--accent-yellow); margin-bottom: 6px; font-size: 1.3rem; }
     .mission-brief p { color: var(--text-secondary); line-height: 1.5; font-size: 1.05rem; }
     .excel-simulation { background-color: #ffffff; border-radius: 4px; overflow: hidden; border: 1px solid #d1d5db; flex-shrink: 0; }
     .excel-toolbar { background-color: #217346; padding: 8px 15px; color: white; font-weight: bold; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; }
-    .excel-grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .excel-grid-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .excel-grid { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 400px; }
     .excel-grid th { background-color: var(--excel-header-bg); color: #374151; font-weight: 600; text-align: center; border: 1px solid var(--excel-grid-line); padding: 6px; font-size: 1rem; user-select: none; }
     .excel-grid td { border: 1px solid var(--excel-grid-line); padding: 8px 12px; text-align: center; font-size: 1.05rem; color: #1f2937; background-color: #ffffff; height: 38px; vertical-align: middle; }
     .excel-grid td.active-cell { border: 2px solid var(--excel-active-border); position: relative; z-index: 10; }
@@ -233,9 +243,9 @@
     .formula-dropzone.drag-over { border-color: var(--accent-cyan); background-color: rgba(6, 182, 212, 0.1); }
     .formula-dropzone.locked { border-color: var(--accent-green); background-color: rgba(16, 185, 129, 0.05); cursor: not-allowed; }
     .formula-dropzone.locked::after { content: '🔒 Terkunci'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: var(--accent-green); font-weight: bold; }
-    .code-block-palette { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding: 12px; background-color: var(--bg-tertiary); border-radius: 6px; justify-content: flex-start; max-height: 130px; overflow-y: auto; }
+    .code-block-palette { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding: 12px; background-color: var(--bg-tertiary); border-radius: 6px; justify-content: flex-start; max-height: 130px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
     .code-block-palette.locked .draggable-block { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
-    .draggable-block { background-color: #3b82f6; color: white; min-width: 40px; padding: 8px 14px; border-radius: 4px; cursor: grab; font-family: monospace; font-size: 1.05rem; text-align: center; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2); white-space: nowrap; display: inline-flex; justify-content: center; align-items: center; }
+    .draggable-block { background-color: #3b82f6; color: white; min-width: 40px; padding: 8px 14px; border-radius: 4px; cursor: grab; font-family: monospace; font-size: 1.05rem; text-align: center; user-select: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2); white-space: nowrap; display: inline-flex; justify-content: center; align-items: center; touch-action: none; }
     .draggable-block:active { cursor: grabbing; transform: scale(0.95); }
     .draggable-block.operator { background-color: var(--accent-yellow); color: #000; }
     .draggable-block.text { background-color: var(--accent-green); }
@@ -244,8 +254,9 @@
     .draggable-block.symbol { background-color: #64748b; color: white; }
 
     .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; justify-content: center; }
-    .icon-btn { width: 56px; height: 56px; min-width: 56px; padding: 0; border: 2px solid var(--border-color); border-radius: 10px; font-size: 1.6rem; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; background-color: var(--bg-tertiary); color: var(--text-primary); }
+    .icon-btn { width: 56px; height: 56px; min-width: 56px; padding: 0; border: 2px solid var(--border-color); border-radius: 10px; font-size: 1.6rem; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; background-color: var(--bg-tertiary); color: var(--text-primary); touch-action: manipulation; }
     .icon-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .icon-btn:active:not(:disabled) { transform: scale(0.95); }
     .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
     .icon-btn.btn-prev { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(6, 182, 212, 0.1); }
     .icon-btn.btn-prev:hover:not(:disabled) { background: var(--accent-cyan); color: var(--bg-primary); }
@@ -261,7 +272,7 @@
     .icon-btn.btn-shuffle { border-color: var(--accent-purple); color: var(--accent-purple); background: rgba(139, 92, 246, 0.1); }
     .icon-btn.btn-shuffle:hover:not(:disabled) { background: var(--accent-purple); color: #fff; }
 
-    .password-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 4000; }
+    .password-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 4000; padding: 20px; }
     .password-overlay.active { display: flex; }
     .password-box { background: linear-gradient(145deg, var(--bg-secondary) 0%, #0f172a 100%); border: 2px solid var(--accent-yellow); border-radius: 20px; padding: 35px 40px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: slideUp 0.4s ease; text-align: center; }
     .password-icon { font-size: 3rem; margin-bottom: 15px; display: inline-block; animation: bounce 2s infinite; }
@@ -278,9 +289,9 @@
     .password-btn.btn-ok { background: linear-gradient(135deg, var(--accent-yellow) 0%, #d97706 100%); color: #000; }
     .password-btn.btn-cancel { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
 
-    .notification-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 3000; }
+    .notification-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
     .notification-overlay.active { display: flex; }
-    .notification-box { background: var(--bg-secondary); border-radius: 16px; padding: 30px 40px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: slideUp 0.4s ease; }
+    .notification-box { background: var(--bg-secondary); border-radius: 16px; padding: 30px 40px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: slideUp 0.4s ease; max-height: 90vh; overflow-y: auto; }
     .notification-box.success { border: 3px solid var(--accent-green); }
     .notification-box.error { border: 3px solid var(--accent-red); }
     .notification-box.warning { border: 3px solid var(--accent-yellow); }
@@ -316,7 +327,7 @@
         .header-info-row .student-info { font-size: 0.8rem; }
         .mission-brief h2 { font-size: 1.1rem; } .mission-brief p { font-size: 0.95rem; }
         .excel-grid th { font-size: 0.85rem; } .excel-grid td { font-size: 0.9rem; padding: 6px; }
-        .draggable-block { font-size: 0.9rem; padding: 6px 10px; }
+        .draggable-block { font-size: 0.9rem; padding: 6px 10px; min-width: 36px; }
         .login-box { padding: 25px; } .login-box h1 { font-size: 1.4rem; }
         .nis-row { flex-direction: column !important; } .nis-row .btn-cek { width: 100%; }
         .report-table { min-width: 700px; }
@@ -329,6 +340,70 @@
         .victory-screen h2 { font-size: 1.5rem; }
         .q-dot { width: 24px; height: 24px; font-size: 0.65rem; }
         .question-indicator { gap: 3px; }
+        .restore-box { padding: 20px; }
+        .config-row { flex-direction: column; align-items: stretch; }
+        .config-row label { min-width: auto; }
+    }
+
+    @media (max-width: 480px) {
+        body { padding: 5px; }
+        .game-container { border-radius: 8px; }
+        .header { padding: 8px 10px 10px; }
+        .header-title-row h1 { font-size: 1.1rem; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .header-info-row .status { font-size: 0.8rem; }
+        .header-info-row .student-info { font-size: 0.7rem; }
+        .main-content { padding: 10px; gap: 8px; }
+        .mission-brief { padding: 10px 15px; }
+        .mission-brief h2 { font-size: 1rem; }
+        .mission-brief p { font-size: 0.85rem; }
+        .excel-toolbar { padding: 6px 10px; font-size: 0.85rem; }
+        .excel-grid th { font-size: 0.75rem; padding: 4px; }
+        .excel-grid td { font-size: 0.8rem; padding: 4px 6px; height: 32px; }
+        .formula-area label { font-size: 0.9rem; }
+        .formula-dropzone { padding: 8px; min-height: 40px; }
+        .code-block-palette { max-height: 100px; padding: 8px; gap: 6px; }
+        .draggable-block { font-size: 0.8rem; padding: 5px 8px; min-width: 32px; }
+        .action-buttons { gap: 6px; }
+        .icon-btn { width: 44px; height: 44px; min-width: 44px; font-size: 1.2rem; }
+        .icon-btn.btn-execute { width: 50px; min-width: 50px; }
+        .q-dot { width: 22px; height: 22px; font-size: 0.6rem; }
+        .question-indicator { gap: 2px; }
+        .login-box { padding: 20px; }
+        .login-box h1 { font-size: 1.2rem; }
+        .login-box .subtitle { font-size: 0.85rem; }
+        .login-box input { padding: 10px 12px; font-size: 0.95rem; }
+        .btn-cek, .btn-mulai, .btn-teacher { padding: 10px 16px; font-size: 0.9rem; }
+        .restore-box, .password-box, .notification-box { padding: 20px; }
+        .restore-box h2, .password-title { font-size: 1.2rem; }
+        .password-input { padding: 12px 40px 12px 14px; font-size: 1rem; }
+        .report-box { padding: 20px; }
+        .report-box h2 { font-size: 1.4rem; }
+        .config-panel { padding: 20px; }
+        .config-panel h3 { font-size: 1.2rem; }
+        .victory-screen { padding: 20px 10px; }
+        .victory-screen h2 { font-size: 1.3rem; }
+        .victory-badge { font-size: 0.8rem; padding: 5px 12px; }
+        .btn-primary { padding: 12px 24px; font-size: 1rem; }
+    }
+
+    @media (max-width: 360px) {
+        .header-title-row h1 { font-size: 1rem; }
+        .header-info-row .status { font-size: 0.75rem; }
+        .header-info-row .student-info { font-size: 0.65rem; }
+        .q-dot { width: 20px; height: 20px; font-size: 0.55rem; }
+        .draggable-block { font-size: 0.75rem; padding: 4px 6px; min-width: 28px; }
+        .icon-btn { width: 40px; height: 40px; min-width: 40px; font-size: 1.1rem; }
+        .icon-btn.btn-execute { width: 46px; min-width: 46px; }
+        .excel-grid td { font-size: 0.75rem; padding: 3px 4px; height: 28px; }
+        .mission-brief h2 { font-size: 0.9rem; }
+        .mission-brief p { font-size: 0.8rem; }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+        .q-dot.available { min-height: 44px; min-width: 44px; }
+        .icon-btn { min-height: 44px; }
+        .btn-cek, .btn-mulai, .btn-teacher, .btn-primary, .password-btn, .restore-buttons button, .report-actions button, .config-actions button { min-height: 44px; }
+        .draggable-block { min-height: 44px; }
     }
 </style>
 </head>
@@ -379,26 +454,34 @@
             <span class="filter-count" id="filterCount">0 siswa</span>
         </div>
         <div id="reportContent"></div>
-        <div class="config-panel">
-            <h3>⚙️ Konfigurasi Sistem</h3>
-            <div class="config-row">
-                <label>📝 Jumlah Soal:</label>
-                <input type="number" id="configJumlahSoal" min="1" max="100" value="25">
-            </div>
-            <div class="config-row">
-                <label>🔐 Password Guru:</label>
-                <input type="text" id="configPassword" value="">
-            </div>
-            <button class="btn-save-config" onclick="simpanKonfigurasi()">💾 Simpan Konfigurasi</button>
-            <p class="config-info">Perubahan akan berlaku untuk siswa yang login berikutnya.</p>
-        </div>
         <div class="report-actions">
             <button class="btn-refresh" onclick="refreshDataDariSheets()">🔄 Refresh Data</button>
             <button class="btn-export" onclick="exportCSV()">📥 Export CSV</button>
-            <button class="btn-reset-lokal" onclick="resetLocalData()">🗑️ Reset Lokal</button>
-            <button class="btn-reset-sheets" onclick="resetSheetsData()">☁️ Hapus Sheets</button>
-            <button class="btn-reset-all" onclick="resetSemuaData()">⚠️ HAPUS SEMUA</button>
+            <button class="btn-config" onclick="bukaKonfigurasi()">⚙️ Konfigurasi</button>
             <button class="btn-close" onclick="tutupLaporan()">✕ Tutup</button>
+        </div>
+    </div>
+</div>
+
+<div class="config-panel-overlay" id="configPanelOverlay">
+    <div class="config-panel">
+        <h3>Konfigurasi Sistem</h3>
+        <div class="config-row">
+            <label>Jumlah Soal:</label>
+            <input type="number" id="configJumlahSoal" min="1" max="100" value="25">
+        </div>
+        <div class="config-row">
+            <label>Password Guru:</label>
+            <input type="text" id="configPassword" value="">
+        </div>
+        <button class="btn-save-config" onclick="simpanKonfigurasi()">💾 Simpan Konfigurasi</button>
+        <p class="config-info">Perubahan akan berlaku untuk siswa yang login berikutnya.</p>
+        
+        <div class="config-actions">
+            <button class="btn-reset-lokal" onclick="resetLocalData(); tutupKonfigurasi();" style="background: var(--accent-yellow); color: #000;">Reset Lokal</button>
+            <button class="btn-reset-sheets" onclick="resetSheetsData(); tutupKonfigurasi();" style="background: var(--accent-purple); color: white;">Hapus Sheets</button>
+            <button class="btn-reset-all" onclick="resetSemuaData(); tutupKonfigurasi();" style="background: var(--accent-red); color: white;">HAPUS SEMUA</button>
+            <button class="btn-close" onclick="tutupKonfigurasi()" style="background: var(--bg-tertiary); color: white; border: 1px solid var(--border-color);">Tutup</button>
         </div>
     </div>
 </div>
@@ -455,11 +538,13 @@
             <p id="missionDesc">Sistem sedang menyiapkan data...</p>
         </div>
         <div class="excel-simulation">
-            <div class="excel-toolbar"><span>📊 Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
-            <table class="excel-grid" id="excelTable"></table>
+            <div class="excel-toolbar"><span>Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
+            <div class="excel-grid-wrapper">
+                <table class="excel-grid" id="excelTable"></table>
+            </div>
         </div>
         <div class="formula-area">
-            <label>🔧 Susun Rumus Anda:</label>
+            <label>Susun Rumus Anda:</label>
             <div class="formula-dropzone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="leaveDrop()">
                 <span style="color: var(--text-secondary); font-style: italic;">Tarik blok kode ke sini...</span>
             </div>
@@ -494,7 +579,7 @@
     
     let JUMLAH_SOAL_UNIK = 25;
     let PASSWORD_GURU = '';
-    const PASSWORD_FALLBACK = '';
+    const PASSWORD_FALLBACK = 'guru123';
     
     const ACAK_BLOK_PALET = true; 
     const PAKAI_PENGECEH = true; 
@@ -652,15 +737,10 @@
 
     function cekProgressTersimpan(nis) { return getSavedProgress(nis); }
 
-    // ✅ FUNGSI BARU: Cari soal berikutnya yang belum dijawab
     function cariSoalBerikutnyaYangBelumDijawab() {
-        // Cari dari index 0 sampai totalSoal-1, yang belum ada di answeredLevels
         for (let i = 0; i < totalSoal; i++) {
-            if (!answeredLevels.has(i)) {
-                return i;
-            }
+            if (!answeredLevels.has(i)) return i;
         }
-        // Jika semua sudah dijawab, return -1
         return -1;
     }
 
@@ -670,8 +750,6 @@
         document.getElementById('restoreProgress').innerText = `${soalSelesai} / ${progress.totalSoal || totalSoal}`;
         document.getElementById('restoreScore').innerText = `${progress.score || 0}/100`;
         document.getElementById('restoreTime').innerText = formatWaktu(progress.timestamp);
-        
-        // ✅ Tampilkan info soal berikutnya
         const nextSoal = cariSoalBerikutnyaYangBelumDijawab();
         if (nextSoal >= 0) {
             document.getElementById('restoreNextSoal').innerText = `Soal ${nextSoal + 1}`;
@@ -680,37 +758,27 @@
             document.getElementById('restoreNextSoal').innerText = 'Semua selesai';
             document.getElementById('restoreMessage').innerText = 'Semua soal sudah dijawab. Mulai ulang?';
         }
-        
         document.getElementById('restoreOverlay').classList.add('active');
     }
 
     function lanjutkanProgress() {
         if (!pendingRestore) return;
         document.getElementById('restoreOverlay').classList.remove('active');
-        
-        // ✅ LOGIKA BARU: Cari soal berikutnya yang belum dijawab
         if (pendingRestore.answeredLevels && Array.isArray(pendingRestore.answeredLevels)) {
             answeredLevels = new Set(pendingRestore.answeredLevels);
         } else { answeredLevels = new Set(); }
-        
         const validLevels = new Set();
         answeredLevels.forEach(idx => { if (idx >= 0 && idx < totalSoal) validLevels.add(idx); });
         answeredLevels = validLevels;
-        
-        // ✅ Tentukan currentLevelIndex = soal berikutnya yang belum dijawab
         const nextSoal = cariSoalBerikutnyaYangBelumDijawab();
-        
         if (nextSoal >= 0) {
             currentLevelIndex = nextSoal;
         } else {
-            // Semua sudah dijawab, tampilkan victory
             currentLevelIndex = totalSoal;
         }
-        
         score = hitungSkor();
         document.getElementById('score').innerText = score;
         document.getElementById('loginOverlay').classList.add('hidden');
-        
         if (currentLevelIndex >= totalSoal) {
             showVictory();
         } else {
@@ -893,14 +961,11 @@
 
     function lanjutKeSoalBerikutnya() {
         currentAnswered = false;
-        // ✅ LOGIKA BARU: Cari soal berikutnya yang belum dijawab
         const nextSoal = cariSoalBerikutnyaYangBelumDijawab();
-        
         if (nextSoal >= 0) {
             currentLevelIndex = nextSoal;
             loadLevel();
         } else {
-            // Semua soal sudah dijawab
             showVictory();
         }
     }
@@ -915,10 +980,8 @@
         const savedProgress = cekProgressTersimpan(dataSiswaAktif.nis);
         
         if (savedProgress && !savedProgress.selesai) {
-            // ✅ Ada progress tersimpan → tampilkan dialog restore
             tampilkanDialogRestore(savedProgress);
         } else if (savedProgress && savedProgress.selesai) {
-            // ✅ Sudah selesai → tampilkan konfirmasi
             if (confirm(`✅ Anda sudah menyelesaikan soal ini dengan nilai ${savedProgress.score}/100.\n\nApakah ingin mengerjakan ulang (nilai akan direset)?\n\nOK = Mulai Baru\nBatal = Kembali`)) {
                 localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
                 currentLevelIndex = 0; answeredLevels = new Set(); score = 0;
@@ -927,11 +990,7 @@
                 loadLevel(); mulaiAutoSave();
             }
         } else {
-            // ✅ TIDAK ADA progress → mulai dari soal 1
-            answeredLevels = new Set(); 
-            currentAnswered = false; 
-            currentLevelIndex = 0; // Mulai dari soal 1
-            score = 0;
+            answeredLevels = new Set(); currentAnswered = false; currentLevelIndex = 0; score = 0;
             document.getElementById('loginOverlay').classList.add('hidden');
             loadLevel(); mulaiAutoSave();
         }
@@ -1046,10 +1105,8 @@
             const dot = document.createElement('div');
             dot.className = 'q-dot';
             dot.innerText = i + 1;
-            
             const sudahDijawab = answeredLevels.has(i);
             const adalahSoalSaatIni = (i === currentLevelIndex);
-            
             if (sudahDijawab) {
                 dot.classList.add('answered');
                 dot.title = `Soal ${i+1}: ✅ Sudah dijawab (terkunci)`;
@@ -1067,7 +1124,6 @@
                     loadLevel();
                 };
             }
-            
             container.appendChild(dot);
         }
     }
@@ -1092,18 +1148,15 @@
         const btnExecute = document.getElementById('btnExecute');
         const btnShuffle = document.querySelector('.btn-shuffle');
         const btnClear = document.querySelector('.btn-clear');
-        
         dropZone.classList.add('locked');
         dropZone.ondrop = null;
         dropZone.ondragover = null;
         dropZone.ondragleave = null;
-        
         palette.classList.add('locked');
         palette.querySelectorAll('.draggable-block').forEach(b => {
             b.draggable = false;
             b.ondragstart = null;
         });
-        
         if (btnShuffle) btnShuffle.disabled = true;
         if (btnClear) btnClear.disabled = true;
         btnExecute.disabled = true;
@@ -1116,12 +1169,10 @@
         const btnExecute = document.getElementById('btnExecute');
         const btnShuffle = document.querySelector('.btn-shuffle');
         const btnClear = document.querySelector('.btn-clear');
-        
         dropZone.classList.remove('locked');
         dropZone.ondrop = drop;
         dropZone.ondragover = allowDrop;
         dropZone.ondragleave = leaveDrop;
-        
         palette.classList.remove('locked');
         palette.querySelectorAll('.draggable-block').forEach((b, idx) => {
             b.draggable = true;
@@ -1129,7 +1180,6 @@
             b.ondragstart = drag;
             b.style.cursor = 'grab';
         });
-        
         if (btnShuffle) btnShuffle.disabled = false;
         if (btnClear) btnClear.disabled = false;
         btnExecute.disabled = false;
@@ -1226,15 +1276,8 @@
         }
     }
 
-    function prevQuestion() { 
-        if (currentLevelIndex > 0) { currentLevelIndex--; loadLevel(); } 
-    }
-    
-    function skipQuestion() {
-        currentLevelIndex++;
-        if (currentLevelIndex < totalSoal) loadLevel(); 
-        else showVictory();
-    }
+    function prevQuestion() { if (currentLevelIndex > 0) { currentLevelIndex--; loadLevel(); } }
+    function skipQuestion() { currentLevelIndex++; if (currentLevelIndex < totalSoal) loadLevel(); else showVictory(); }
     
     function acakUlangPalet() {
         if (currentAnswered) {
@@ -1274,13 +1317,7 @@
         localStorage.setItem(key, JSON.stringify(savedData));
         const g = JSON.parse(localStorage.getItem('skor_global_if') || '[]');
         const idx = g.findIndex(s => s.nis === dataSiswaAktif.nis);
-        if (idx >= 0) { 
-            g[idx].selesai = true; 
-            g[idx].skor = score; 
-            g[idx].nilaiFinal = score;
-            g[idx].jumlahBenar = answeredLevels.size;
-            g[idx].totalSoal = totalSoal;
-        }
+        if (idx >= 0) { g[idx].selesai = true; g[idx].skor = score; g[idx].nilaiFinal = score; g[idx].jumlahBenar = answeredLevels.size; g[idx].totalSoal = totalSoal; }
         localStorage.setItem('skor_global_if', JSON.stringify(g));
         simpanSkorKeSheets();
         hentikanAutoSave();
@@ -1314,14 +1351,8 @@
         document.getElementById('passwordOverlay').classList.add('active');
         setTimeout(() => document.getElementById('passwordInput').focus(), 100);
     }
-    function tutupPassword() {
-        document.getElementById('passwordOverlay').classList.remove('active');
-        document.getElementById('passwordInput').value = '';
-    }
-    function togglePasswordVisibility() {
-        const inp = document.getElementById('passwordInput');
-        inp.type = inp.type === 'password' ? 'text' : 'password';
-    }
+    function tutupPassword() { document.getElementById('passwordOverlay').classList.remove('active'); document.getElementById('passwordInput').value = ''; }
+    function togglePasswordVisibility() { const inp = document.getElementById('passwordInput'); inp.type = inp.type === 'password' ? 'text' : 'password'; }
     function verifikasiPassword() {
         const pwd = document.getElementById('passwordInput').value;
         const passwordAktif = PASSWORD_GURU || PASSWORD_FALLBACK;
@@ -1339,11 +1370,19 @@
     document.getElementById('passwordInput').addEventListener('keypress', e => { if (e.key === 'Enter') verifikasiPassword(); });
     function tutupLaporan() { document.getElementById('reportOverlay').classList.remove('active'); }
 
+    function bukaKonfigurasi() {
+        document.getElementById('configJumlahSoal').value = JUMLAH_SOAL_UNIK;
+        document.getElementById('configPassword').value = PASSWORD_GURU || '';
+        document.getElementById('configPanelOverlay').classList.add('active');
+    }
+    function tutupKonfigurasi() {
+        document.getElementById('configPanelOverlay').classList.remove('active');
+    }
+
     function resetLocalData() {
         if (confirm('🗑️ RESET DATA LOKAL\n\nHanya menghapus cache browser ini.\nData di Google Sheets TIDAK terhapus.\n\nLanjutkan?')) {
             hapusLocalKeys();
             tampilkanNotifikasi('success', '✅ Reset Lokal', 'Cache browser dihapus.', null, 2000);
-            setTimeout(tampilkanLaporan, 1500);
         }
     }
     async function resetSheetsData() {
@@ -1353,14 +1392,9 @@
                 const response = await fetch(`${APPS_SCRIPT_URL}?action=hapusSkor`, { mode: 'cors' });
                 const result = await response.json();
                 tutupNotifikasi();
-                if (result.success) {
-                    tampilkanNotifikasi('success', '✅ Berhasil', result.message, null, 3000);
-                    setTimeout(tampilkanLaporan, 1500);
-                } else tampilkanNotifikasi('error', '❌ Gagal', result.error || 'Kesalahan.', null, 3000);
-            } catch (e) {
-                tutupNotifikasi();
-                tampilkanNotifikasi('error', '❌ Error', 'Gagal terhubung: ' + e.message, null, 3000);
-            }
+                if (result.success) { tampilkanNotifikasi('success', '✅ Berhasil', result.message, null, 3000); }
+                else tampilkanNotifikasi('error', '❌ Gagal', result.error || 'Kesalahan.', null, 3000);
+            } catch (e) { tutupNotifikasi(); tampilkanNotifikasi('error', '❌ Error', 'Gagal terhubung: ' + e.message, null, 3000); }
         }
     }
     async function resetSemuaData() {
@@ -1376,17 +1410,11 @@
             tutupNotifikasi();
             alert('✅ SEMUA DATA DIHAPUS! Halaman akan dimuat ulang.');
             location.reload();
-        } catch (e) {
-            tutupNotifikasi();
-            tampilkanNotifikasi('error', '❌ Gagal', 'Error: ' + e.message, null, 4000);
-        }
+        } catch (e) { tutupNotifikasi(); tampilkanNotifikasi('error', '❌ Gagal', 'Error: ' + e.message, null, 4000); }
     }
     function hapusLocalKeys() {
         const keys = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith('game_if_') || key === 'skor_global_if') keys.push(key);
-        }
+        for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key.startsWith('game_if_') || key === 'skor_global_if') keys.push(key); }
         keys.forEach(k => localStorage.removeItem(k));
     }
 
@@ -1403,15 +1431,9 @@
         data.forEach(s => {
             const total = s.totalSoal || 25;
             const progress = s.jumlahBenar || s.currentLevelIndex || s.progress || 0;
-            if (progress >= total && s.selesai !== true) {
-                s.selesai = true;
-                s.nilaiFinal = s.nilaiFinal || s.skor || s.score || 0;
-                adaPerubahan = true;
-            }
+            if (progress >= total && s.selesai !== true) { s.selesai = true; s.nilaiFinal = s.nilaiFinal || s.skor || s.score || 0; adaPerubahan = true; }
         });
-        if (adaPerubahan) {
-            localStorage.setItem('skor_global_if', JSON.stringify(data));
-        }
+        if (adaPerubahan) localStorage.setItem('skor_global_if', JSON.stringify(data));
         return data;
     }
 
@@ -1428,9 +1450,7 @@
                 tampilkanNotifikasi('success', '✅ Data Diperbarui', `Berhasil memuat ${result.total} siswa dari Sheets.`, null, 3000);
                 updateFilterKelas(semuaDataSkor);
                 filterLaporan();
-            } else {
-                throw new Error(result.error || 'Data kosong dari Sheets');
-            }
+            } else { throw new Error(result.error || 'Data kosong dari Sheets'); }
         } catch (error) {
             tutupNotifikasi();
             tampilkanNotifikasi('warning', '⚠️ Gagal dari Sheets', 'Menggunakan data dari localStorage: ' + error.message, null, 3000);
@@ -1446,8 +1466,6 @@
         semuaDataSkor = perbaikiDataLama(semuaDataSkor);
         updateFilterKelas(semuaDataSkor);
         filterLaporan();
-        document.getElementById('configJumlahSoal').value = JUMLAH_SOAL_UNIK;
-        document.getElementById('configPassword').value = PASSWORD_GURU || '';
     }
 
     function updateFilterKelas(data) {
@@ -1475,13 +1493,9 @@
             const skor = s.nilaiFinal || s.skor || s.score || 0;
             const progress = s.jumlahBenar || s.currentLevelIndex || s.progress || 0;
             let status;
-            if (s.selesai === true || progress >= total) {
-                status = '✅ Selesai';
-            } else if (progress > 0) {
-                status = '🔄 Dalam Progress';
-            } else {
-                status = '⏳ Belum Mulai';
-            }
+            if (s.selesai === true || progress >= total) status = '✅ Selesai';
+            else if (progress > 0) status = '🔄 Dalam Progress';
+            else status = '⏳ Belum Mulai';
             html += `<tr><td>${i+1}</td><td>${s.nis}</td><td>${s.nama}</td><td>${s.kelas || '-'}</td><td>${progress} / ${total}</td><td><strong>${skor}</strong></td><td>${status}</td><td>${formatWaktu(s.timestamp)}</td></tr>`;
         });
         html += '</tbody></table></div>';
@@ -1498,13 +1512,9 @@
             const total = s.totalSoal || totalSoal;
             const progress = s.jumlahBenar || s.currentLevelIndex || s.progress || 0;
             let status;
-            if (s.selesai === true || progress >= total) {
-                status = 'Selesai';
-            } else if (progress > 0) {
-                status = 'Progress';
-            } else {
-                status = 'Belum Mulai';
-            }
+            if (s.selesai === true || progress >= total) status = 'Selesai';
+            else if (progress > 0) status = 'Progress';
+            else status = 'Belum Mulai';
             csv += `${i+1},"${s.nis}","${s.nama}","${s.kelas || '-'}","${progress}/${total}",${skor},"${status}","${formatWaktu(s.timestamp)}"\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv' });
