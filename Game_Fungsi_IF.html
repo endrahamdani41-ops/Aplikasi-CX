@@ -111,14 +111,14 @@
     .header-dots-row .save-indicator { font-size: 0.8rem; color: var(--accent-green); opacity: 0; transition: opacity 0.3s; text-align: center; }
     .header-dots-row .save-indicator.show { opacity: 1; }
 
-    .question-indicator { display: flex; gap: clamp(2px, 0.5vw, 6px); flex-wrap: wrap; justify-content: center; align-content: center; width: 100%; max-width: 100%; padding: 4px 0; max-height: 120px; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .question-indicator { display: flex; gap: clamp(1px, 0.3vw, 3px); flex-wrap: wrap; justify-content: center; align-content: center; width: 100%; max-width: 100%; padding: 4px 0; max-height: 100px; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
     .question-indicator::-webkit-scrollbar { width: 4px; height: 4px; }
     .question-indicator::-webkit-scrollbar-track { background: var(--bg-primary); border-radius: 2px; }
     .question-indicator::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 2px; }
 
-    .q-dot { width: clamp(20px, 3.5vw, 28px); height: clamp(20px, 3.5vw, 28px); border-radius: 4px; font-size: clamp(0.55rem, 1.2vw, 0.75rem); font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-secondary); user-select: none; touch-action: manipulation; line-height: 1; }
+    .q-dot { width: clamp(12px, 3.2vw, 28px); height: clamp(12px, 3.2vw, 28px); border-radius: 3px; font-size: clamp(0.45rem, 1.1vw, 0.75rem); font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-secondary); user-select: none; touch-action: manipulation; line-height: 1; padding: 0 1px; }
     .q-dot.answered { background: linear-gradient(135deg, var(--accent-green), #059669); color: white; border-color: var(--accent-green); cursor: not-allowed !important; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3); }
-    .q-dot.answered::after { content: '✓'; font-size: clamp(0.45rem, 1vw, 0.6rem); margin-left: 1px; }
+    .q-dot.answered::after { content: '✓'; font-size: clamp(0.35rem, 0.9vw, 0.6rem); margin-left: 0; }
     .q-dot.current { background: linear-gradient(135deg, var(--accent-cyan), #0891b2); color: var(--bg-primary); border-color: var(--accent-cyan); transform: scale(1.15); box-shadow: 0 0 12px rgba(6, 182, 212, 0.5); cursor: default; animation: glow 2s ease-in-out infinite; }
     @keyframes glow { 0%, 100% { box-shadow: 0 0 8px rgba(6, 182, 212, 0.4); } 50% { box-shadow: 0 0 16px rgba(6, 182, 212, 0.8); } }
     .q-dot.available { background: var(--bg-tertiary); color: var(--text-primary); border-color: var(--border-color); cursor: pointer; }
@@ -270,8 +270,9 @@
         .action-buttons { gap: 6px; }
         .icon-btn { width: 44px; height: 44px; min-width: 44px; font-size: 1.2rem; }
         .icon-btn.btn-execute { width: 50px; min-width: 50px; }
-        .q-dot { width: clamp(16px, 5vw, 22px); height: clamp(16px, 5vw, 22px); font-size: clamp(0.45rem, 1.8vw, 0.6rem); }
-        .question-indicator { gap: 2px; max-height: 90px; }
+        .q-dot { width: clamp(11px, 3.5vw, 18px); height: clamp(11px, 3.5vw, 18px); font-size: clamp(0.4rem, 1.3vw, 0.55rem); border-radius: 2px; }
+        .question-indicator { gap: 1px; max-height: 80px; }
+        .q-dot.answered::after { font-size: 0.35rem; }
         .login-box { padding: 20px; }
         .login-box h1 { font-size: 1.2rem; }
         .login-box .subtitle { font-size: 0.85rem; }
@@ -294,7 +295,9 @@
         .header-title-row h1 { font-size: 1rem; }
         .header-info-row .status { font-size: 0.75rem; }
         .header-info-row .student-info { font-size: 0.65rem; }
-        .q-dot { width: clamp(14px, 5.5vw, 20px); height: clamp(14px, 5.5vw, 20px); font-size: clamp(0.4rem, 2vw, 0.55rem); }
+        .q-dot { width: clamp(10px, 3.8vw, 16px); height: clamp(10px, 3.8vw, 16px); font-size: clamp(0.38rem, 1.4vw, 0.5rem); border-radius: 2px; }
+        .question-indicator { gap: 1px; max-height: 70px; }
+        .q-dot.answered::after { font-size: 0.3rem; }
         .draggable-block { font-size: 0.75rem; padding: 4px 6px; min-width: 28px; }
         .icon-btn { width: 40px; height: 40px; min-width: 40px; font-size: 1.1rem; }
         .icon-btn.btn-execute { width: 46px; min-width: 46px; }
@@ -337,9 +340,9 @@
         <h2>💾 Progress Tersimpan</h2>
         <p id="restoreMessage">Anda memiliki progress yang belum selesai. Lanjutkan?</p>
         <div class="restore-info">
-            <div class="restore-info-row"><span>Soal selesai:</span><span id="restoreProgress">0 / 25</span></div>
-            <div class="restore-info-row"><span>Nilai saat ini:</span><span id="restoreScore">0</span></div>
-            <div class="restore-info-row"><span>Terakhir disimpan:</span><span id="restoreTime">-</span></div>
+            <div class="restore-info-row"><span>📝 Soal selesai:</span><span id="restoreProgress">0 / 25</span></div>
+            <div class="restore-info-row"><span>⭐ Nilai saat ini:</span><span id="restoreScore">0</span></div>
+            <div class="restore-info-row"><span>📅 Terakhir disimpan:</span><span id="restoreTime">-</span></div>
         </div>
         <div class="restore-buttons">
             <button class="btn-restore-no" onclick="mulaiBaru()">🔄 Mulai Baru</button>
@@ -440,21 +443,18 @@
             <p id="missionDesc">Sistem sedang menyiapkan data...</p>
         </div>
         <div class="excel-simulation">
-            <div class="excel-toolbar"><span>Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
+            <div class="excel-toolbar"><span>📊 Sheet1</span><span id="cellReference">Sel Aktif: -</span></div>
             <div class="excel-grid-wrapper">
                 <table class="excel-grid" id="excelTable"></table>
             </div>
         </div>
-        <br>
         <div class="formula-area">
-            <label>Susun Rumus Anda: <span style="font-size:0.85rem;color:var(--text-secondary);">(Klik atau drag blok)</span></label>
+            <label>🔧 Susun Rumus Anda: <span style="font-size:0.85rem;color:var(--text-secondary);">(Klik atau drag blok)</span></label>
             <div class="formula-dropzone" id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="leaveDrop()">
                 <span style="color: var(--text-secondary); font-style: italic;" id="dropzoneHint">Tarik atau klik blok kode ke sini...</span>
             </div>
-            <br>
             <div class="code-block-palette" id="palette"></div>
         </div>
-        <br>
         <div class="action-buttons">
             <button class="icon-btn btn-prev" id="btnPrev" onclick="prevQuestion()" disabled title="Soal Sebelumnya">⏮️</button>
             <button class="icon-btn btn-execute" id="btnExecute" onclick="handleExecute()" title="Cek Jawaban">▶</button>
@@ -604,6 +604,39 @@
     let currentLevelIndex = 0;
     let score = 0;
 
+    // ✅ FUNGSI BARU: Acak soal untuk sesi baru
+    function acakSoalSesiBaru() {
+        const semuaSoal = [...soalDefault];
+        const seedRandom = Date.now() + Math.random() * 10000;
+        const hasil = getRandomSubset(semuaSoal, JUMLAH_SOAL_UNIK, seedRandom);
+        console.log(`🎲 Soal diacak dengan seed: ${seedRandom}`);
+        return hasil;
+    }
+
+    // ✅ FUNGSI BARU: Simpan urutan soal ke localStorage
+    function simpanUrutanSoal() {
+        const keyUrutan = `game_if_urutan_${dataSiswaAktif.nis}`;
+        const urutanIndex = levels.map(level => soalDefault.indexOf(level));
+        localStorage.setItem(keyUrutan, JSON.stringify(urutanIndex));
+    }
+
+    // ✅ FUNGSI BARU: Ambil urutan soal dari localStorage
+    function ambilUrutanSoal() {
+        const keyUrutan = `game_if_urutan_${dataSiswaAktif.nis}`;
+        const saved = localStorage.getItem(keyUrutan);
+        if (!saved) return null;
+        try {
+            const urutanIndex = JSON.parse(saved);
+            return urutanIndex.map(i => soalDefault[i]);
+        } catch (e) { return null; }
+    }
+
+    // ✅ FUNGSI BARU: Hapus urutan soal dari localStorage
+    function hapusUrutanSoal() {
+        const keyUrutan = `game_if_urutan_${dataSiswaAktif.nis}`;
+        localStorage.removeItem(keyUrutan);
+    }
+
     function getSavedProgress(nis) {
         const key = `game_if_${nis}`;
         const saved = localStorage.getItem(key);
@@ -648,7 +681,6 @@
         return -1;
     }
 
-    // ✅ PERBAIKAN: Baris "Soal berikutnya" dihapus dari dialog
     function tampilkanDialogRestore(progress) {
         pendingRestore = progress;
         const soalSelesai = progress.jumlahBenar || (progress.answeredLevels ? progress.answeredLevels.length : 0);
@@ -687,12 +719,16 @@
     function mulaiBaru() {
         if (!confirm('⚠️ PERINGATAN\n\nProgress yang tersimpan akan DIHAPUS dan Anda mulai dari awal.\n\nYakin?')) return;
         localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
+        hapusUrutanSoal();
         document.getElementById('restoreOverlay').classList.remove('active');
         currentLevelIndex = 0; answeredLevels = new Set(); score = 0;
         document.getElementById('score').innerText = '0';
         document.getElementById('loginOverlay').classList.add('hidden');
+        // ✅ ACAK ULANG soal untuk sesi baru
+        levels = acakSoalSesiBaru();
+        simpanUrutanSoal();
         loadLevel(); mulaiAutoSave();
-        tampilkanNotifikasi('info', '🔄 Mulai Baru', 'Progress lama dihapus. Mulai dari soal 1.', null, 2000);
+        tampilkanNotifikasi('info', '🔄 Mulai Baru', 'Progress lama dihapus. Soal diacak ulang. Mulai dari soal 1.', null, 2000);
     }
 
     function mulaiAutoSave() {
@@ -848,21 +884,39 @@
         else { showVictory(); }
     }
 
+    // ✅ PERBAIKAN: Acak soal setiap sesi baru, konsisten saat restore
     async function mulaiMisi() {
         if (!dataSiswaAktif.nis) { alert('⚠️ Cek NIS dulu!'); return; }
-        const semuaSoal = [...soalDefault];
-        const seedUnik = hashNIS(dataSiswaAktif.nis);
-        levels = getRandomSubset(semuaSoal, JUMLAH_SOAL_UNIK, seedUnik);
+        
+        // ✅ CEK: Apakah ada urutan soal tersimpan untuk sesi ini?
+        const savedUrutan = ambilUrutanSoal();
+        
+        if (savedUrutan) {
+            // Ada sesi tersimpan → gunakan urutan yang sama (untuk restore)
+            levels = savedUrutan;
+            console.log(`🔄 Menggunakan urutan soal tersimpan (${levels.length} soal)`);
+        } else {
+            // Sesi baru → ACAK soal dengan seed random
+            levels = acakSoalSesiBaru();
+            simpanUrutanSoal();
+        }
+        
         totalSoal = levels.length;
         document.getElementById('totalSoal').innerText = totalSoal;
         const savedProgress = cekProgressTersimpan(dataSiswaAktif.nis);
-        if (savedProgress && !savedProgress.selesai) { tampilkanDialogRestore(savedProgress); }
-        else if (savedProgress && savedProgress.selesai) {
+        
+        if (savedProgress && !savedProgress.selesai) { 
+            tampilkanDialogRestore(savedProgress); 
+        } else if (savedProgress && savedProgress.selesai) {
             if (confirm(`✅ Anda sudah menyelesaikan soal ini dengan nilai ${savedProgress.score}/100.\n\nApakah ingin mengerjakan ulang (nilai akan direset)?\n\nOK = Mulai Baru\nBatal = Kembali`)) {
                 localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
+                hapusUrutanSoal();
                 currentLevelIndex = 0; answeredLevels = new Set(); score = 0;
                 document.getElementById('score').innerText = '0';
                 document.getElementById('loginOverlay').classList.add('hidden');
+                // ✅ ACAK ULANG soal untuk sesi baru
+                levels = acakSoalSesiBaru();
+                simpanUrutanSoal();
                 loadLevel(); mulaiAutoSave();
             }
         } else {
@@ -1003,7 +1057,6 @@
         });
     }
 
-    // ✅ PERBAIKAN: Gembok kiri DIHAPUS - hanya label CSS "🔒 Terkunci" di kanan
     function tampilkanJawabanTerkunci(level) {
         const dz = document.getElementById('dropZone');
         dz.innerHTML = '';
@@ -1212,6 +1265,8 @@
         const idx = g.findIndex(s => s.nis === dataSiswaAktif.nis);
         if (idx >= 0) { g[idx].selesai = true; g[idx].skor = score; g[idx].nilaiFinal = score; g[idx].jumlahBenar = answeredLevels.size; g[idx].totalSoal = totalSoal; }
         localStorage.setItem('skor_global_if', JSON.stringify(g));
+        // ✅ HAPUS urutan soal saat selesai (agar sesi berikutnya diacak ulang)
+        hapusUrutanSoal();
         simpanSkorKeSheets(); hentikanAutoSave();
         document.getElementById('progressBar').style.width = '100%';
         document.getElementById('gameArea').classList.add('hidden');
@@ -1224,12 +1279,14 @@
     function restartGame() {
         if (!confirm('⚠️ PERINGATAN\n\nAnda akan mengulang dari awal.\nNilai sebelumnya akan DIHAPUS.\n\nYakin?')) return;
         localStorage.removeItem(`game_if_${dataSiswaAktif.nis}`);
+        hapusUrutanSoal();
         currentLevelIndex = 0; score = 0; answeredLevels = new Set(); currentAnswered = false;
         document.getElementById('score').innerText = '0';
         document.getElementById('gameArea').classList.remove('hidden');
         document.getElementById('victoryArea').classList.add('hidden');
-        const seedUnik = hashNIS(dataSiswaAktif.nis);
-        levels = getRandomSubset(soalDefault, JUMLAH_SOAL_UNIK, seedUnik);
+        // ✅ ACAK ULANG soal untuk sesi baru
+        levels = acakSoalSesiBaru();
+        simpanUrutanSoal();
         loadLevel(); mulaiAutoSave();
     }
 
